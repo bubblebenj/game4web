@@ -1,0 +1,63 @@
+<html>
+<head><title>haXe / JS : CMainClient</title></head>
+<body>
+
+
+<canvas id="FinalRenderTarget" width="800" height="600">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+
+<script id="main_shader.vsh" type="x-shader/x-vertex">
+    uniform mat4 	u_modelViewProjMatrix;
+    uniform vec3 	u_lightDir;
+ 
+    attribute vec3 	_Normal;
+    attribute vec4 	_TexCoord;
+    attribute vec4 	_Position;
+ 
+    varying float 	v_Dot;
+    varying vec2 	v_texCoord;
+ 
+    void main()
+    {
+        gl_Position = u_modelViewProjMatrix * _Position;
+        v_texCoord = _TexCoord.st;
+        v_Dot = max(dot( _Normal.xyz, u_lightDir), 0.0);
+    }
+</script>
+
+<script id="main_shader.fsh" type="x-shader/x-fragment">
+    uniform sampler2D 	u_sampler2d;
+ 
+    varying float 		v_Dot;
+    varying vec2		v_texCoord;
+ 
+    void main()
+    {
+        vec2 l_texCoord = vec2(v_texCoord.s, 1.0 - v_texCoord.t);
+        vec4 l_color = texture2D(u_sampler2d, l_texCoord);
+        gl_FragColor = vec4(l_color.xyz * v_Dot,l_color.a);
+    }
+
+</script>
+
+<script id="white.vsh" type="x-shader/x-vertex">
+    void main()
+    {
+        gl_Position = u_modelViewProjMatrix * _Position;
+    }
+</script>
+
+<script id="white.fsh" type="x-shader/x-fragment">
+    void main()
+    {
+        gl_FragColor = vec4(1,1,1,1);
+	}
+</script>
+
+<div id="haxe:trace"></div>
+<script src="NativeSrc/JS/CGL.js" 	type="text/javascript" 	language="JavaScript"></script>
+<script type="text/javascript" src="../Build/JS/CMainClient.js"></script>
+
+</body>
+</html>
