@@ -1,4 +1,4 @@
 -cp ../Src
 
 -swf ../Build/SWF/CMainClient.swf
--main CMainClient
+-main CBeegonMainClient

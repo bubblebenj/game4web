@@ -1,11 +1,4 @@
 -cp ../Src
--cp ../Src/game
--cp ../Src/nativeJS
--cp ../Src/rsc
--cp ../Src/rsc/js
--cp ../Src/kernel/js
--cp ../Src/kernel
--cp ../Src/renderer
 
 -js ../build/JS/CMainClient.js
 -main CMainClient

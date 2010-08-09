@@ -1,4 +1,3 @@
--cp ../Src
 
 -neko ../build/Neko/CMainServer.n
--main CMainServer
+-main CBeegonMainServer
