@@ -1,0 +1,60 @@
+**		
+**	2010/08/10
+**
+ajout du dossier doc
+	tu me corriges si j'ai faux
+		archi.doc  -> contenu des repertoires
+		ressource-flow.ppt -> je pense qu'il est incomplet et pas forcement tres exact
+	ajout de ce fichier
+
+BEEGON kernel.input.device.CKeyCode.hx
+	mv & rename
+	drivers.as.kernel.CKeyCodeAS.hx
+	
+BEEGON kernel.input.device.CRawInputDevice.hx
+	mv & rename
+	drivers.as.kernel.CMouseAS.hx
+	
+BEEGON kernel.CVector2D
+	already exist as
+	math.CV2D
+	Note les methodes ne sont pas ecritent pareil --> PAS MAL DE CODE A VERIFIER
+
+fichier de build
+		Je ne comprend pas pourquoi il ne trouve pas les fichiers chez moi, alors qu'il le faisait chez toi avec :
+			-cp ../../Src/
+			-swf ../../Build/SWF/CMainClient.swf
+			-main CBeegonMainClient
+		Je suis oblige d'ajouter la ligne suivante pour qu'il daigne trouver mon main :
+			-cp ../../Src/game/client/
+			
+	En fait si, il le trouve bien c'est juste le message d'erreur qui n'est pas approprie. la ligne precedente
+	d'avoir	le vrai message d'erreur.
+	J'ai retire la ligne apres correction de l'erreur.
+	
+CMouse 
+	ajout dans
+	kernel.CMouse.hx
+	Et modification de drivers.as.kernel.CMouseAS pour qu'il herite de CMouse
+
+BEEGON gamesystem.engine.CSprite.hx
+	mv & rename
+	driver.as.renderer.C2DQuadAS.hx
+	des modif sont necessaires puisque CSprite heritait a l'origine de Sprite AS3..
+	..Difficile de faire herite de C2DQuad et de CSprite
+	Dodo. je vois ca demain
+	
+
+**		
+**	2010/09/10
+**
+driver.as.renderer.C2DQuadAS.hx
+	mv & rename
+	driver.as.renderer.C2DImageAS.hx qui va heriter de renderer.C2DImage.hx
+	
+Ajout de renderer.C2DImage.hx qui herite de renderer.C2DQuad.hx
+	
+	
+	
+	
+	
