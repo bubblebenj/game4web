@@ -52,7 +52,7 @@ driver.as.renderer.C2DQuadAS.hx
 	mv & rename
 	driver.as.renderer.C2DImageAS.hx qui va heriter de renderer.C2DImage.hx
 	
-Ajout de renderer.C2DImage.hx qui herite de renderer.C2DQuad.hx
+Ajout de renderer.C2DImage.hx
 	
 	
 	
