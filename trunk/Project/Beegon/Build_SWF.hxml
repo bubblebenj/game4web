@@ -1,4 +1,14 @@
--cp ../Src
+-cp ../../Src/
+-cp ../../Src/game/client/
 
--swf ../Build/SWF/CMainClient.swf
+### main class
 -main CBeegonMainClient
+
+### Output file
+-swf ../../Build/SWF/CBeegonMainClient.swf
+-swf-version 10
+-swf-header 512:384:120:DDDDDD
+
+# Option de compile
+-D DebugInfo
+-D Flash10
