@@ -146,16 +146,16 @@ class CSystem
 		return m_Renderer;
 	}
 	
-	public var m_BeforeDraw : Void -> Result;
-	public var m_AfterDraw : Void -> Result;
+	public var m_BeforeDraw		: Void -> Result;
+	public var m_AfterDraw		: Void -> Result;
 	
-	public var m_BeforeUpdate : Void -> Result;
-	public var m_AfterUpdate : Void -> Result;
+	public var m_BeforeUpdate	: Void -> Result;
+	public var m_AfterUpdate	: Void -> Result;
 	
 	public static inline var FRAMERATE : Int = 60;
 	public static inline var DT : Float = 1.0 / FRAMERATE;
 	
-			var m_FrameTime : Float;
+			var m_FrameTime	: Float;
 			var m_GameTime : Float;
 	
 			var m_FrameDeltaTime : Float;
@@ -173,7 +173,5 @@ class CSystem
 	
 	public 	var m_Display:  CDisplay;
 }
-
-
 
 

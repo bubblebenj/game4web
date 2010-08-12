@@ -79,10 +79,10 @@ class CDrawObject
 		m_Transfo.Copy(_Transfo);
 	}
 	
-			var 	m_Visible : Bool;
+			var 	m_Visible	: Bool;
 	
-			var 	m_Transfo : CMatrix44;
+			var 	m_Transfo	: CMatrix44;
 	
-	public 	var		m_VpMask : Int;
-			var		m_Cameras : Array<CCamera>;
+	public 	var		m_VpMask	: Int;
+			var		m_Cameras	: Array<CCamera>;
 }

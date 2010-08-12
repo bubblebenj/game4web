@@ -152,12 +152,12 @@ class CRenderer
 	
 	public function AddToScene( _Obj : CDrawObject )
 	{
-		m_Scene.push( _Obj);
+		m_Scene.push( _Obj );
 	}
 	
 	public function RemoveFromScene(  _Obj : CDrawObject )
 	{
-		m_Scene.remove(_Obj);
+		m_Scene.remove(_Obj );
 	}
 	
 	

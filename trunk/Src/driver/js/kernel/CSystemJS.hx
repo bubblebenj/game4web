@@ -48,7 +48,6 @@ class CSystemJS extends CSystem
 		m_RscJSFactory = new CRscJSFactory();
 		InitializeRscBuilders();
 		
-		
 		return SUCCESS;
 	}
 	

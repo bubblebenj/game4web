@@ -33,7 +33,7 @@ class CViewport extends CRsc
 	public function Initialize( _x, _y , _h, _w) 
 	{
 		m_x = _x;
-		m_y = _y ;
+		m_y = _y;
 		m_h = _h;
 		m_w = _w;
 	}
