@@ -9,6 +9,7 @@ import flash.events.Event;
 import flash.display.Loader;
 import flash.display.Sprite;
 import flash.net.URLRequest;
+import kernel.Glb;
 import math.CV2D;
 import renderer.C2DImage;
 
@@ -80,4 +81,24 @@ class C2DImageAS extends C2DImage
 			//trace ( "Sprite.m_Size [" + width + " | " + height + " ]" );
 		#end
 	}
+	
+	public function GetSprite()	: Sprite
+	{
+		return m_Sprite;
+	}
+	
+	public override function SetVisible( _Vis : Bool ) : Void 
+	{
+		super.SetVisible( _Vis );
+		
+		if( m_Visible )
+		{
+			//Glb.GetSystem.GetRendererAS().AddToSwfRoot( m_Sprite );
+		}
+		else
+		{
+			//Glb.GetSystem.GetRendererAS().RemoveFromSwfRoot( m_Sprite );
+		}
+	}
+
 }

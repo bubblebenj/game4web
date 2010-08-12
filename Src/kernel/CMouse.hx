@@ -5,8 +5,6 @@
  * @author bdubois
  */
 
-import flash.events.MouseEvent;
-import flash.Lib;
 import math.CV2D;
  
 /*

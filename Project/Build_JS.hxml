@@ -1,4 +1,4 @@
 -cp ../Src
 
--js ../build/JS/CMainClient.js
+-js ../Build/JS/CMainClient.js
 -main CMainClient
