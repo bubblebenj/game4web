@@ -23,16 +23,36 @@ class CV2D
 		y = _xy.y;
 	}
 	
+	/* Pourquoi 
+	 * Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
+	 * et pas
+	 * Add( _V0 : CV2D, _V1 :  CV2D ) : CV2D
+	 * ?
+	 */
 	public static inline function Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
 	{
 		_VOut.x = _V0.x + _V1.x;
 		_VOut.y = _V0.y + _V1.y;
 	}
 	
+	/* Meme chose : Pourquoi 
+	 * Sub( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
+	 * et pas
+	 * Sub( _V0 : CV2D, _V1 :  CV2D ) : CV2D
+	 * ?
+	 */
 	public static inline function Sub( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
 	{
 		_VOut.x = _V0.x - _V1.x;
 		_VOut.y = _V0.y - _V1.y;
+	}
+	
+	/* Je suppose que retourner un NEW QQCH c'est mal
+	 * Je vais suivre ton exemple :*/
+	public static inline function Scale( _VOut : CV2D, _a : Float, _V : CV2D ) :  Void
+	{
+		_VOut.x = _a * _V.x;
+		_VOut.y	= _a * _V.y;
 	}
 	
 	public static inline var ZERO 	: CV2D = new CV2D(0, 0);

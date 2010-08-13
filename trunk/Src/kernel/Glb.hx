@@ -4,6 +4,7 @@ package kernel;
 	import driver.js.kernel.CSystemJS;
 #elseif	flash10
 	import driver.as.kernel.CSystemAS;
+	import driver.as.renderer.CRendererAS;
 #end
 
 import renderer.CRenderer;
@@ -20,16 +21,21 @@ class Glb
 		public static var g_System : CSystem = new CSystem();
 	#end
 	
-	public static inline function GetRenderer() : CRenderer
-	{
+	public static inline function GetRenderer() : CRenderer		{
 		return g_System.GetRenderer();
 	}
+
+	#if flash10
+		public static inline function GetRendererAS() : CRendererAS		{
+			return cast g_SystemAS.GetRenderer();
+		}
+	#end
 	
 	public static inline function GetSystem() : CSystem
 	{
 		return g_System;
 	}
-		
+	
 	public static function StaticUpdate()
 	{
 		g_System.Update();
