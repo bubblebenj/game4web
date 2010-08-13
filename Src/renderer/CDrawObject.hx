@@ -13,6 +13,10 @@ import renderer.camera.CCamera;
 import kernel.CTypes;
 import kernel.Glb;
 
+#if flash10
+	import flash.display.DisplayObject;
+#end
+
 class CDrawObject 
 {
 	public function new()
@@ -52,10 +56,16 @@ class CDrawObject
 		if( m_Visible )
 		{
 			Glb.g_System.GetRenderer().AddToScene( this );
+			#if flash10
+			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			#end
 		}
 		else
 		{
 			Glb.g_System.GetRenderer().RemoveFromScene( this );
+			#if flash10
+			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			#end
 		}
 	}
 	
@@ -85,4 +95,12 @@ class CDrawObject
 	
 	public 	var		m_VpMask	: Int;
 			var		m_Cameras	: Array<CCamera>;
+	
+	/* 
+	 * Je suis sur que c'est mal.
+	 * Je vais me faire taper sur les doigts :D
+	 */
+	#if flash10
+		private	var	m_DisplayObject		: DisplayObject;
+	#end
 }
