@@ -7,7 +7,7 @@ package driver.as.renderer;
  */
 
 import flash.display.MovieClip;
-import flash.display.Sprite;
+import flash.display.DisplayObject;
 import kernel.CTypes;
 import renderer.CDrawObject;
 import renderer.CRenderer;
@@ -15,12 +15,12 @@ import renderer.CViewport;
 
 class CRendererAS extends CRenderer
 {
-	private var m_SwfRoot	: MovieClip;
+	private var m_SceneAS	: MovieClip;
 	
 	public function new() 
 	{
 		super();
-		m_SwfRoot	=	flash.Lib.current;
+		m_SceneAS	=	flash.Lib.current;
 	}
 	
 	public override function  Initialize()	: Result
@@ -37,24 +37,14 @@ class CRendererAS extends CRenderer
 		return new CViewportAS();
 	}
 	
-	
-	public override function AddToScene( _Obj : CDrawObject )
+	public function AddToSceneAS( _Obj : DisplayObject )
 	{
-		super.AddToScene( _Obj );
+		trace( Type.typeof( _Obj ));
+		m_SceneAS.addChild( _Obj );
 	}
 	
-	public override function RemoveFromScene(  _Obj : CDrawObject )
+	public function RemoveFromSceneAS( _Obj : DisplayObject )
 	{
-		super.RemoveFromScene( _Obj );
-	}
-	
-	public function AddToSwfRoot( _Obj : Sprite )
-	{
-		m_SwfRoot.AddChild( _Obj );
-	}
-	
-	public function RemoveFromSwfRoot( _Obj : Sprite )
-	{
-		m_SwfRoot.AddChild( _Obj );
+		m_SceneAS.removeChild( _Obj );
 	}
 }
