@@ -66,6 +66,7 @@ class CSystem
 	
 	public function MainLoop()
 	{
+		// Glb.StaticUpdate actually do g_System.Update();
 		m_SysTimer.add( Glb.StaticUpdate );
 	}
 	
