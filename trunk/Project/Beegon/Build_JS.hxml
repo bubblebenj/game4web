@@ -1,4 +1,5 @@
 -cp ../../Src
+-cp ../../Src/game/beegon/
 
 -js ../build/JS/CMainClient.js
 -main CBeegonMainClient

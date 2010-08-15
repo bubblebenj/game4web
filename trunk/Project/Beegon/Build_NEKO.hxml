@@ -1,3 +1,4 @@
+-cp ../../Src/game/beegon/
 
 -neko ../build/Neko/CMainServer.n
 -main CBeegonMainServer

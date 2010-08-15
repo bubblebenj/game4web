@@ -1,5 +1,5 @@
 -cp ../../Src/
--cp ../../Src/game/client/
+-cp ../../Src/game/beegon/
 
 ### main class
 -main CBeegonMainClient
