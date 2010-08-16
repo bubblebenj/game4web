@@ -57,19 +57,19 @@ class CEntity
 		
 	public function new( _Type : EENTITY_TYPE )
 	{
-		trace ( "\t \t [ -- new CEntity : " + _Type );
+		//trace ( "\t \t [ -- new CEntity : " + _Type );
 		
 		m_Type		= _Type;
 		m_Pos		= new CV2D( 0, 0 );
 		m_Size		= new CV2D( 0, 0 );
-		#if flash10
 		
+		#if flash10
 			m_Sprite	= new C2DImageAS();
 		#else
 			m_Sprite	= new C2DImage();;
 		#end
 		
-		trace ( "\t \t new CEntity -- ] ");
+		//trace ( "\t \t new CEntity -- ] ");
 	}
 	
 	/* ENTITY STATE RELATIVE FUNCTIONS
@@ -112,9 +112,9 @@ class CEntity
 			return m_Size;
 		}
 		
-		public function SetSize( _Pos : CV2D ) : Void
+		public function SetSize( _Size : CV2D ) : Void
 		{
-			m_Size.Copy( _Pos );
-			m_Sprite.SetSize( _Pos );
+			m_Size.Copy( _Size );
+			m_Sprite.SetSize( _Size );
 		}
 }
