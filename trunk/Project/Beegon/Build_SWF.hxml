@@ -7,7 +7,9 @@
 ### Output file
 -swf ../../Build/SWF/CBeegonMainClient.swf
 -swf-version 10
--swf-header 512:384:120:DDDDDD
+#-swf-header 512:384:120:DDDDDD
+-swf-header 800:700:120:DDDDDD
 
 # Option de compile
--D DebugInfo
+-D DebugInfo 
+-D CHexaGrid

@@ -34,7 +34,6 @@ class C2DQuad extends CDrawObject
 	// We suppose that the 2DQuad is already centered
 	public function SetSize( _Size : CV2D ) : Void
 	{
-		trace( _Size.x + " " + _Size.y );
 		// Get current position (middle of the rect)
 		var l_CurrentPos = new CV2D( 0, 0 );
 		CV2D.Add(	l_CurrentPos, m_Rect.m_TL, m_Rect.m_BR );
