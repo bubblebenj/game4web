@@ -18,6 +18,7 @@ import renderer.CMaterial;
 import renderer.CTexture;
 import renderer.CRenderStates;
 import renderer.CViewport;
+import renderer.CPrimitive;
 
 import CGL;
 
@@ -109,10 +110,11 @@ class CSystemJS extends CSystem
 		GetRscMan().AddBuilder( CRscShaderProgram.RSC_ID, 	new CRscBuilderDocElem() );
 		GetRscMan().AddBuilder( CRscPixelShader.RSC_ID,	 	new CRscBuilderDocElem() );
 		
-		GetRscMan().AddBuilder( CMaterial.RSC_ID, 	m_RscJSFactory );
-		GetRscMan().AddBuilder( CTexture.RSC_ID, 	m_RscJSFactory );
-		GetRscMan().AddBuilder( CViewport.RSC_ID, 	m_RscJSFactory );
+		GetRscMan().AddBuilder( CMaterial.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CTexture.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CViewport.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CRenderStates.RSC_ID, 	m_RscJSFactory );
+		GetRscMan().AddBuilder( CPrimitive.RSC_ID, 		m_RscJSFactory );
 		
 		return SUCCESS;
 	}

@@ -1,4 +1,5 @@
 -cp ../Src
+-cp ../Src/Game
 
 -js ../Build/JS/CMainClient.js
 -main CMainClient

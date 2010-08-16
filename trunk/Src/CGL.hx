@@ -22,14 +22,20 @@ extern class WebGLTexture { }
 extern class WebGLObjectArray { } 
 extern class WebGLUniformLocation{}
 extern class WebGLActiveInfo { }
-extern class WebGLFloatArray 
+
+extern class WebGLIntArray 
 {
-	public function new( _Arr : Array<Float> ) : Void;
+	public function new( _Arr : Array<Int> ) : Void;
 }
 
 extern class WebGLUnsignedByteArray 
 {
-	
+	public function new( _Arr : Array<Int> ) : Void;
+}
+
+extern class WebGLFloatArray 
+{
+	public function new( _Arr : Array<Float> ) : Void;
 }
 
 
@@ -83,8 +89,9 @@ extern class CGL
 	
 	public function GetShaderParameter( _Shdr : WebGLShader, _Type : Int)	: Dynamic;
 	public function GetProgramParameter( _prgm : WebGLProgram, _enm: GLenum ): Dynamic;
-	public function GetProgramInfoLog( _prgm : WebGLProgram): DOMString ;
 	
+	public function GetShaderInfoLog( _Shdr : WebGLShader): DOMString ;
+	public function GetProgramInfoLog( _prgm : WebGLProgram): DOMString ;
 	
 	public function GetUniformLocation( _Name : DOMString) : WebGLUniformLocation;
 	public function Uniform3f( _Loc : WebGLUniformLocation , _x:Float, _y:Float, _z:Float) : Void;
@@ -101,11 +108,11 @@ extern class CGL
 	public function BufferData( _tgt : GLenum, _Buffer : Dynamic, _usage : GLenum  ) : Void;
 	public function BufferSubData( _tgt : GLenum,  _Offset : GLsizeiptr,  _Buffer : Dynamic  ) : Void;
 	
-	public function VertexAttribPointer( 	_idx : GLuint, _sz : GLint, 
+	public function VertexAttribPointer	( 	_idx : GLuint, _sz : GLint, 
 											_type : GLenum, _nrmlizd:GLboolean,
 											_stride : GLsizei, _offset : GLsizeiptr ) : Void;
 											
-	public function BindAttributeLocation(  _Prgm : WebGLProgram, _Index : GLuint, _Name : DOMString ) : Void;
+	public function BindAttribLocation	(  _Prgm : WebGLProgram, _Index : GLuint, _Name : DOMString ) : Void;
 	
 	public function DrawArrays( _md : GLenum , _frst : Int, _cnt :Int) : Void;
 	

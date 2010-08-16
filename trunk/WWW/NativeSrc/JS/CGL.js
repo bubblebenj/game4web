@@ -246,9 +246,9 @@ CGL.prototype.VertexAttribPointer = function( _idx,_sz,_type,_nrmlizd,_stride,_o
 	m_GLContext.vertexAttribPointer(  _idx,_sz,_type,_nrmlizd,_stride,_offset );
 }
 
-CGL.prototype.BindAttributeLocation  = function (  _Prgm , _Index , _Name  )
+CGL.prototype.BindAttribLocation  = function (  _Prgm , _Index , _Name  )
 {
-	m_GLContext.bindAttributeLocation(_Prgm,_Index,_Name);
+	m_GLContext.bindAttribLocation(_Prgm,_Index,_Name);
 }
 
 CGL.prototype.DrawArrays = function( _md, _frst, _cnt)

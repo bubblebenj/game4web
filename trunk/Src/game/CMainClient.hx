@@ -45,7 +45,7 @@ class CMainClient
 		l_OrthoCam.SetNear( 0.1 );
 		l_OrthoCam.SetFar( 1000.0 );
 		
-		/*
+		
 		m_Quad = new CGlQuad();
 		m_Quad.Initialize();
 		
@@ -58,7 +58,7 @@ class CMainClient
 		m_Quad.SetCamera( CRenderer.VP_FULLSCREEN , l_OrthoCam );
 		
 		m_Quad.SetVisible( true );
-		*/
+		
 	}
 	#end
 	

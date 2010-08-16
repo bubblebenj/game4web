@@ -7,8 +7,8 @@ package driver.js.rsc;
 
 import kernel.CTypes;
 import kernel.Glb;
-import kernel.CSystem
-;
+import kernel.CSystem;
+import kernel.CDebug;
 
 import rsc.CRsc;
 import rsc.CRscMan;
@@ -65,6 +65,8 @@ class CRscFragmentShader extends CRscShader
 			return FAILURE;
 		}
 		
+		CDebug.CONSOLEMSG("Initialized fsh.");
+		
 		return SUCCESS;
 	}
 
@@ -77,8 +79,15 @@ class CRscFragmentShader extends CRscShader
 		
 		if( !l_Gl.GetShaderParameter( m_Object, CGL.COMPILE_STATUS) ) 
 		{
+			var l_Error = l_Gl.GetShaderInfoLog ( m_Object );
+			if (l_Error != null)
+			{
+				CDebug.CONSOLEMSG("Error in fragment shader compile: " + l_Error);
+			}
 			return FAILURE;
 		}
+		
+		CDebug.CONSOLEMSG("Success in fragment shader compiling.");
 		
 		return SUCCESS;
 	}
