@@ -61,19 +61,19 @@ class C2DQuadAS extends C2DQuad
 	// We suppose that the 2DQuad is already centered
 	public override function SetSize( _Size : CV2D ) : Void
 	{
-			trace ( "\t \t [ -- C2DQuadAS.SetSize ( " + _Size.x + " " + _Size.y );
 		super.SetSize( _Size );
 		//resize
-			trace ( "\t \t m_DisplayObject	= "+GetDisplayObject() );
-		m_DisplayObject.width	= m_Rect.m_BR.x - m_Rect.m_TL.x;
-			//trace ( "\t \t m_DisplayObject.width	= "+m_DisplayObject.width );
-			trace ( "\t \t m_DisplayObject.height	= m_Rect.m_BR.y - m_Rect.m_TL.y; ");
-		m_DisplayObject.height	= m_Rect.m_BR.y - m_Rect.m_TL.y;
+		if ( m_DisplayObject == null )
+		{
+			trace(" /!\\ m_DisplayObject not created yet. Skipping its resizing ");
+		}
+		else
+		{
+			m_DisplayObject.width	= m_Rect.m_BR.x - m_Rect.m_TL.x;
+			m_DisplayObject.height	= m_Rect.m_BR.y - m_Rect.m_TL.y;
 		// move to keep the center right
-			trace ( "\t \t m_DisplayObject.x	= m_Rect.m_TL.x; ");
-		m_DisplayObject.x	= m_Rect.m_TL.x;
-			trace ( "\t \t m_DisplayObject.y	= m_Rect.m_TL.y; ");
-		m_DisplayObject.y	= m_Rect.m_TL.y;
-			trace ( "\t \t C2DQuadAS.SetSize -- ] ");
+			m_DisplayObject.x	= m_Rect.m_TL.x;
+			m_DisplayObject.y	= m_Rect.m_TL.y;
+		}
 	}
 }
