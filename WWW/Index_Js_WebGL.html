@@ -8,12 +8,12 @@ This text is displayed if your browser does not support HTML5 Canvas.
 </canvas>
 
 <script id="main_shader.vsh" type="x-shader/x-vertex">
-    uniform mat4 	u_modelViewProjMatrix;
+    uniform mat4 	u_MVPMatrix;
     uniform vec3 	u_lightDir;
  
     attribute vec3 	_Normal;
     attribute vec4 	_TexCoord;
-    attribute vec4 	_Position;
+    attribute vec3 	_Vertex;
  
     varying float 	v_Dot;
     varying vec2 	v_texCoord;
@@ -34,17 +34,17 @@ This text is displayed if your browser does not support HTML5 Canvas.
  
     void main()
     {
-        vec2 l_texCoord = vec2(v_texCoord.s, 1.0 - v_texCoord.t);
-        vec4 l_color = texture2D(u_sampler2d, l_texCoord);
         gl_FragColor = vec4(l_color.xyz * v_Dot,l_color.a);
     }
 
 </script>
 
 <script id="white.vsh" type="x-shader/x-vertex">
+	uniform mat4 	u_MVPMatrix;
+	attribute vec3 	_Vertex;
     void main()
     {
-        gl_Position = u_modelViewProjMatrix * _Position;
+        gl_Position = u_MVPMatrix * _Vertex;
     }
 </script>
 
