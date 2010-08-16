@@ -35,7 +35,7 @@ class CRscMan
 		var l_Builder = m_Builders.get(_Type);
 		if (l_Builder == null )
 		{
-			trace("No builder for rsc type : " + _Type );
+			CDebug.CONSOLEMSG("No builder for rsc type : " + _Type );
 			return null;
 		}
 		else

@@ -50,7 +50,7 @@ class CRscBuilderDocElem extends CRscBuilder
 		if( _Type == CRscVertexShader.RSC_ID )
 		{
 			var l_Ret = new CRscVertexShader();
-			CDebug.CONSOLEMSG("initign vsh :" + _Path);
+			CDebug.CONSOLEMSG("Initializing vsh :" + _Path);
 			l_Ret.Initialize(l_Script);
 			return l_Ret;
 		}
@@ -58,7 +58,7 @@ class CRscBuilderDocElem extends CRscBuilder
 		if( _Type == CRscFragmentShader.RSC_ID )
 		{
 			var l_Ret = new CRscFragmentShader();
-			CDebug.CONSOLEMSG("initign fsh:" + _Path);
+			CDebug.CONSOLEMSG("Initializing fsh:" + _Path);
 			l_Ret.Initialize(l_Script);
 			return l_Ret;
 		}

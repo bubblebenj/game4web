@@ -1,4 +1,5 @@
 -cp ../Src
+-cp ../Src/Game
 
 -swf ../Build/SWF/CMainClient.swf
 -main CMainClient

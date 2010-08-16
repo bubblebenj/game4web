@@ -7,6 +7,7 @@ package driver.js.rscbuilders;
 
 import driver.js.renderer.CMaterialJS;
 import driver.js.renderer.CViewportJS;
+import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
 
 import kernel.CTypes;
@@ -15,6 +16,7 @@ import renderer.CTexture;
 import renderer.CMaterial;
 import renderer.CViewport;
 import renderer.CRenderStates;
+import renderer.CPrimitive;
 
 import rsc.CRscBuilder;
 import rsc.CRsc;
@@ -39,6 +41,9 @@ class CRscJSFactory extends CRscBuilder
 			
 			case CTexture.RSC_ID:
 			l_Rsc =	new CTexture();
+			
+			case CPrimitive.RSC_ID:
+			l_Rsc =	new CPrimitiveJS();
 			
 			case CRenderStates.RSC_ID:
 			l_Rsc =	new CRenderStatesJS();

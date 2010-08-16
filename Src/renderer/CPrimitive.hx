@@ -24,4 +24,5 @@ class CPrimitive extends CRsc
 		super();
 	}
 	
+	public function SetVertexArray(  _Vertices : Array< Float > ) : Void;
 }

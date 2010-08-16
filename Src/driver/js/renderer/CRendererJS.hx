@@ -40,7 +40,7 @@ class CRendererJS extends CRenderer
 		
 		//trace("CRendererJS::begin");
 		Glb.g_SystemJS.GetGL().ClearColor( l_FrameCount/255.0,0,0,1 );
-		Glb.g_SystemJS.GetGL().ClearDepth( 10000.0 );
+		Glb.g_SystemJS.GetGL().ClearDepth( 1000.0 );
 
 		Glb.g_SystemJS.GetGL().Clear( CGL.COLOR_BUFFER_BIT | CGL.DEPTH_BUFFER_BIT );
 		

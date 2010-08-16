@@ -6,11 +6,17 @@
 package driver.js.renderer;
 
 import driver.js.rsc.CRscShaderProgram;
-import renderer.CViewport;
+import driver.js.renderer.CPrimitiveJS;
+import driver.js.renderer.CRenderStatesJS;
 
+import CGL;
+
+import renderer.CViewport;
+import renderer.CRenderStates;
 import renderer.C2DQuad;
 import renderer.CRscShader;
 import renderer.CMaterial;
+import renderer.CPrimitive;
 
 import kernel.CDebug;
 import kernel.CSystem;
@@ -76,6 +82,12 @@ class CGlQuad extends C2DQuad
 			CDebug.CONSOLEMSG("Unable to create material");
 		}
 		
+		m_Primitive = cast( l_RscMan.Create( CPrimitive.RSC_ID ), CPrimitiveJS );
+		if( m_Primitive == null )
+		{
+			CDebug.CONSOLEMSG("Unable to create primitive");
+		}
+		
 		return l_Res;
 	}
 
@@ -93,24 +105,59 @@ class CGlQuad extends C2DQuad
 		
 		var l_Array : Array<Float> = new Array<Float>();
 		
+		/*
 		l_Array[0] = l_Left; 	l_Array[1] = l_Top; 	l_Array[2] = 1.0;
 		l_Array[3] = l_Right; 	l_Array[4] = l_Top; 	l_Array[5] = 1.0;
 		l_Array[6] = l_Left; 	l_Array[7] = l_Bottom; 	l_Array[8] = 1.0;
 		l_Array[9] = l_Right; 	l_Array[10] = l_Top; 	l_Array[11] = 1.0;
 		l_Array[12] = l_Left; 	l_Array[13] = l_Bottom; l_Array[14] = 1.0;
 		l_Array[15] = l_Right; 	l_Array[16] = l_Bottom;	l_Array[17] = 1.0;
-				
+		*/
+		
+		var l_Z : Float = -10.0;
+		
+		
+		l_Array[0] = 0;
+		l_Array[1] = 0;
+		l_Array[2] = l_Z;
+		
+		l_Array[3] = 1;
+		l_Array[4] = 0.0;
+		l_Array[5] = l_Z;
+		
+		l_Array[6] = 0;
+		l_Array[7] = 1;
+		l_Array[8] = l_Z;
+		
+		
+		/*
+		l_Array[0] = 0;
+		l_Array[1] = 0;
+		l_Array[2] = l_Z;
+		
+		l_Array[3] = 0;
+		l_Array[4] = 1;
+		l_Array[5] = l_Z;
+		
+		l_Array[6] = 1;
+		l_Array[7] = 0;
+		l_Array[8] = l_Z;
+		*/
+		
 		m_Primitive.SetVertexArray( l_Array );
 		
 		if ( Activate() == FAILURE)
 		{
+			CDebug.CONSOLEMSG("Shader activation failure");
 			return FAILURE;
 		}
 		
-		Registers.M0.Identity();
+		//if (m_MatrixCache == null)
+		{
+			m_MatrixCache = new WebGLFloatArray( m_Cameras[_VpId].GetMatrix().m_Buffer );
+		}
 		
-		m_ShdrPrgm.UniformMatrix4fv( "uModelMatrix", Registers.M0);
-		m_ShdrPrgm.UniformMatrix4fv( "uViewProjMatrix", m_Cameras[_VpId].GetMatrix() );
+		m_ShdrPrgm.UniformMatrix4fv( "u_MVPMatrix", m_MatrixCache );
 		
 		Glb.g_SystemJS.GetGL().DrawArrays( CGL.TRIANGLES, 0, m_Primitive.GetNbVertices() );
 		
@@ -119,10 +166,26 @@ class CGlQuad extends C2DQuad
 	
 	public override function Activate() : Result
 	{
-		m_Material.Activate();
-		m_ShdrPrgm.Activate();
+		var l_MatActivation : Result= m_Material.Activate();
+		if(l_MatActivation==FAILURE)
+		{
+			CDebug.CONSOLEMSG("CGLQuad:unable to activate mat");
+			return FAILURE;
+		}
 		
-		m_ShdrPrgm.LinkPrimitive( m_Primitive );
+		var  l_ShdrActivation : Result= m_ShdrPrgm.Activate();
+		if(l_ShdrActivation==FAILURE)
+		{
+			CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
+			return FAILURE;
+		}
+		
+		var  l_PrgmLink : Result = m_ShdrPrgm.LinkPrimitive( m_Primitive );
+		if(l_PrgmLink==FAILURE)
+		{
+			CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
+			return FAILURE;
+		}
 		
 		return SUCCESS;
 	}
@@ -140,4 +203,6 @@ class CGlQuad extends C2DQuad
 	var m_Material : CMaterial;
 	var m_ShdrPrgm : CRscShaderProgram;
 	var m_RenderStates : CRenderStatesJS;
+	
+	var m_MatrixCache : WebGLFloatArray;
 }

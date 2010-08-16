@@ -63,7 +63,7 @@ rsc.CRscMan.prototype.Copy = function(_Rsc) {
 rsc.CRscMan.prototype.Create = function(_Type) {
 	var l_Builder = this.m_Builders.get(_Type);
 	if(l_Builder == null) {
-		haxe.Log.trace("No builder for rsc type : " + _Type,{ fileName : "CRscMan.hx", lineNumber : 38, className : "rsc.CRscMan", methodName : "Create"});
+		kernel.CDebug.CONSOLEMSG("No builder for rsc type : " + _Type,{ fileName : "CRscMan.hx", lineNumber : 38, className : "rsc.CRscMan", methodName : "Create"});
 		return null;
 	}
 	else {
@@ -127,6 +127,9 @@ for(var k in rsc.CRsc.prototype ) renderer.CPrimitive.prototype[k] = rsc.CRsc.pr
 renderer.CPrimitive.prototype.GetType = function() {
 	return renderer.CPrimitive.RSC_ID;
 }
+renderer.CPrimitive.prototype.SetVertexArray = function(_Vertices) {
+	null;
+}
 renderer.CPrimitive.prototype.__class__ = renderer.CPrimitive;
 if(typeof math=='undefined') math = {}
 math.Utils = function() { }
@@ -182,13 +185,13 @@ driver.js.rscbuilders.CRscBuilderDocElem.prototype.Build = function(_Type,_Path)
 	var l_ScriptType = l_Script.type;
 	if(_Type == driver.js.rsc.CRscVertexShader.RSC_ID) {
 		var l_Ret = new driver.js.rsc.CRscVertexShader();
-		kernel.CDebug.CONSOLEMSG("initign vsh :" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 53, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		kernel.CDebug.CONSOLEMSG("Initializing vsh :" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 53, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
 		l_Ret.Initialize(l_Script);
 		return l_Ret;
 	}
 	if(_Type == driver.js.rsc.CRscFragmentShader.RSC_ID) {
 		var l_Ret = new driver.js.rsc.CRscFragmentShader();
-		kernel.CDebug.CONSOLEMSG("initign fsh:" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 61, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		kernel.CDebug.CONSOLEMSG("Initializing fsh:" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 61, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
 		l_Ret.Initialize(l_Script);
 		return l_Ret;
 	}
@@ -475,6 +478,15 @@ driver.js.renderer.CPrimitiveJS = function(p) { if( p === $_ ) return; {
 driver.js.renderer.CPrimitiveJS.__name__ = ["driver","js","renderer","CPrimitiveJS"];
 driver.js.renderer.CPrimitiveJS.__super__ = renderer.CPrimitive;
 for(var k in renderer.CPrimitive.prototype ) driver.js.renderer.CPrimitiveJS.prototype[k] = renderer.CPrimitive.prototype[k];
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerColor = function() {
+	return 4;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerNormal = function() {
+	return 3;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerTexCoord = function() {
+	return 4;
+}
 driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerVtx = function() {
 	return 3;
 }
@@ -485,35 +497,42 @@ driver.js.renderer.CPrimitiveJS.prototype.GetNbVertices = function() {
 	return this.m_NbVertex;
 }
 driver.js.renderer.CPrimitiveJS.prototype.SetIndexArray = function(_Indexes) {
-	null;
+	if(this.m_IdxObject == null) {
+		this.m_IdxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_IdxObject);
+	}
+	this.m_IdxNativeBuf = new WebGLUnsignedByteArray(_Indexes);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_IdxNativeBuf,35044);
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetNormalArray = function(_Normals) {
+	if(this.m_NrmlObject == null) {
+		this.m_NrmlObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_NrmlObject);
+	}
+	this.m_NrmlNativeBuf = new WebGLFloatArray(_Normals);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_NrmlNativeBuf,35044);
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetTexCooArray = function(_Coord) {
+	if(this.m_TexObject == null) {
+		this.m_TexObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_TexObject);
+	}
+	this.m_TexNativeBuf = new WebGLFloatArray(_Coord);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_TexNativeBuf,35044);
 }
 driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
-	this.m_NbTriangles = (function($this) {
-		var $r;
-		var tmp = _Vertices.length / 12;
-		$r = (Std["is"](tmp,Int)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
-		return $r;
-	}(this));
-	this.m_NbVertex = (function($this) {
-		var $r;
-		var tmp = _Vertices.length / 3;
-		$r = (Std["is"](tmp,Int)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
-		return $r;
-	}(this));
+	this.m_NbTriangles = Std["int"](_Vertices.length / 9);
+	this.m_NbVertex = Std["int"](_Vertices.length / 3);
 	if(this.m_VtxObject == null) {
 		this.m_VtxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
 		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_VtxObject);
+		kernel.CDebug.CONSOLEMSG("Bound vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 80, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
 	}
-	this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
-	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
+	if(this.m_VtxNativeBuf == null) {
+		this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
+		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
+		kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 87, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+	}
 }
 driver.js.renderer.CPrimitiveJS.prototype.m_IdxNativeBuf = null;
 driver.js.renderer.CPrimitiveJS.prototype.m_IdxObject = null;
@@ -995,6 +1014,7 @@ driver.js.kernel.CSystemJS.prototype.InitializeRscBuilders = function() {
 	this.GetRscMan().AddBuilder(renderer.CTexture.RSC_ID,this.m_RscJSFactory);
 	this.GetRscMan().AddBuilder(renderer.CViewport.RSC_ID,this.m_RscJSFactory);
 	this.GetRscMan().AddBuilder(renderer.CRenderStates.RSC_ID,this.m_RscJSFactory);
+	this.GetRscMan().AddBuilder(renderer.CPrimitive.RSC_ID,this.m_RscJSFactory);
 	return kernel.Result.SUCCESS;
 }
 driver.js.kernel.CSystemJS.prototype.Inspect = function() {
@@ -1455,6 +1475,32 @@ renderer.C2DQuad = function(p) { if( p === $_ ) return; {
 renderer.C2DQuad.__name__ = ["renderer","C2DQuad"];
 renderer.C2DQuad.__super__ = renderer.CDrawObject;
 for(var k in renderer.CDrawObject.prototype ) renderer.C2DQuad.prototype[k] = renderer.CDrawObject.prototype[k];
+renderer.C2DQuad.prototype.MoveTo = function(_Pos) {
+	var l_V = new math.CV2D(0,0);
+	math.CV2D.Sub(l_V,this.m_Rect.m_BR,this.m_Rect.m_TL);
+	{
+		l_V.x = 0.5 * l_V.x;
+		l_V.y = 0.5 * l_V.y;
+	}
+	math.CV2D.Sub(this.m_Rect.m_TL,_Pos,l_V);
+	math.CV2D.Add(this.m_Rect.m_BR,_Pos,l_V);
+}
+renderer.C2DQuad.prototype.SetSize = function(_Size) {
+	haxe.Log.trace((_Size.x + " ") + _Size.y,{ fileName : "C2DQuad.hx", lineNumber : 37, className : "renderer.C2DQuad", methodName : "SetSize"});
+	var l_CurrentPos = new math.CV2D(0,0);
+	math.CV2D.Add(l_CurrentPos,this.m_Rect.m_TL,this.m_Rect.m_BR);
+	{
+		l_CurrentPos.x = 0.5 * l_CurrentPos.x;
+		l_CurrentPos.y = 0.5 * l_CurrentPos.y;
+	}
+	var l_halfSize = new math.CV2D(0,0);
+	{
+		l_halfSize.x = 0.5 * _Size.x;
+		l_halfSize.y = 0.5 * _Size.y;
+	}
+	math.CV2D.Sub(this.m_Rect.m_TL,l_CurrentPos,l_halfSize);
+	math.CV2D.Add(this.m_Rect.m_BR,l_CurrentPos,l_halfSize);
+}
 renderer.C2DQuad.prototype.m_Rect = null;
 renderer.C2DQuad.prototype.__class__ = renderer.C2DQuad;
 STAGE = { __ename__ : ["STAGE"], __constructs__ : ["STAGE_INIT","STAGE_UPDATE"] }
@@ -1485,6 +1531,14 @@ CMainClient.InitGameJS = function() {
 	l_OrthoCam.SetHeight(1.0);
 	l_OrthoCam.m_Near = 0.1;
 	l_OrthoCam.m_Far = 1000.0;
+	CMainClient.m_Quad = new driver.js.renderer.CGlQuad();
+	CMainClient.m_Quad.Initialize();
+	CMainClient.m_Quad.m_Rect.m_TL.Copy(new math.CV2D(0,0));
+	math.CV2D.Sub(CMainClient.m_Quad.m_Rect.m_TL,CMainClient.m_Quad.m_Rect.m_TL,new math.CV2D(0.5,0.5));
+	CMainClient.m_Quad.m_Rect.m_BR.Copy(new math.CV2D(0,0));
+	math.CV2D.Add(CMainClient.m_Quad.m_Rect.m_BR,CMainClient.m_Quad.m_Rect.m_BR,new math.CV2D(0.5,0.5));
+	CMainClient.m_Quad.SetCamera(renderer.CRenderer.VP_FULLSCREEN,l_OrthoCam);
+	CMainClient.m_Quad.SetVisible(true);
 }
 CMainClient.InitGame = function() {
 	CMainClient.InitGameJS();
@@ -1537,6 +1591,10 @@ math.CV2D.Add = function(_VOut,_V0,_V1) {
 math.CV2D.Sub = function(_VOut,_V0,_V1) {
 	_VOut.x = _V0.x - _V1.x;
 	_VOut.y = _V0.y - _V1.y;
+}
+math.CV2D.Scale = function(_VOut,_a,_V) {
+	_VOut.x = _a * _V.x;
+	_VOut.y = _a * _V.y;
 }
 math.CV2D.prototype.Copy = function(_xy) {
 	this.x = _xy.x;
@@ -1895,46 +1953,52 @@ driver.js.renderer.CGlQuad.__name__ = ["driver","js","renderer","CGlQuad"];
 driver.js.renderer.CGlQuad.__super__ = renderer.C2DQuad;
 for(var k in renderer.C2DQuad.prototype ) driver.js.renderer.CGlQuad.prototype[k] = renderer.C2DQuad.prototype[k];
 driver.js.renderer.CGlQuad.prototype.Activate = function() {
-	this.m_Material.Activate();
-	this.m_ShdrPrgm.Activate();
-	this.m_ShdrPrgm.LinkPrimitive(this.m_Primitive);
+	var l_MatActivation = this.m_Material.Activate();
+	if(l_MatActivation == kernel.Result.FAILURE) {
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate mat",{ fileName : "CGlQuad.hx", lineNumber : 172, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		return kernel.Result.FAILURE;
+	}
+	var l_ShdrActivation = this.m_ShdrPrgm.Activate();
+	if(l_ShdrActivation == kernel.Result.FAILURE) {
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr",{ fileName : "CGlQuad.hx", lineNumber : 179, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		return kernel.Result.FAILURE;
+	}
+	var l_PrgmLink = this.m_ShdrPrgm.LinkPrimitive(this.m_Primitive);
+	if(l_PrgmLink == kernel.Result.FAILURE) {
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to link prim",{ fileName : "CGlQuad.hx", lineNumber : 186, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		return kernel.Result.FAILURE;
+	}
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CGlQuad.prototype.Draw = function(_VpId) {
 	renderer.C2DQuad.prototype.Draw.apply(this,[_VpId]);
 	var l_Vp = kernel.Glb.g_System.m_Renderer.m_Vps[_VpId];
-	kernel.CDebug.ASSERT(l_Vp != null,{ fileName : "CGlQuad.hx", lineNumber : 87, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+	kernel.CDebug.ASSERT(l_Vp != null,{ fileName : "CGlQuad.hx", lineNumber : 99, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
 	var l_Top = math.Utils.RoundNearest(this.m_Rect.m_TL.y * l_Vp.m_h + l_Vp.m_y);
 	var l_Left = math.Utils.RoundNearest((this.m_Rect.m_TL.x * l_Vp.m_VpRatio) * l_Vp.m_w + l_Vp.m_x);
 	var l_Bottom = math.Utils.RoundNearest(this.m_Rect.m_BR.y * l_Vp.m_h + l_Vp.m_y);
 	var l_Right = math.Utils.RoundNearest((this.m_Rect.m_BR.x * l_Vp.m_VpRatio) * l_Vp.m_w + l_Vp.m_x);
 	var l_Array = new Array();
-	l_Array[0] = l_Left;
-	l_Array[1] = l_Top;
-	l_Array[2] = 1.0;
-	l_Array[3] = l_Right;
-	l_Array[4] = l_Top;
-	l_Array[5] = 1.0;
-	l_Array[6] = l_Left;
-	l_Array[7] = l_Bottom;
-	l_Array[8] = 1.0;
-	l_Array[9] = l_Right;
-	l_Array[10] = l_Top;
-	l_Array[11] = 1.0;
-	l_Array[12] = l_Left;
-	l_Array[13] = l_Bottom;
-	l_Array[14] = 1.0;
-	l_Array[15] = l_Right;
-	l_Array[16] = l_Bottom;
-	l_Array[17] = 1.0;
+	var l_Z = 10.0;
+	l_Array[0] = 0;
+	l_Array[1] = 0;
+	l_Array[2] = l_Z;
+	l_Array[3] = 1;
+	l_Array[4] = 0.0;
+	l_Array[5] = l_Z;
+	l_Array[6] = 0;
+	l_Array[7] = 1;
+	l_Array[8] = l_Z;
 	this.m_Primitive.SetVertexArray(l_Array);
 	if(this.Activate() == kernel.Result.FAILURE) {
+		kernel.CDebug.CONSOLEMSG("Shader activation failure",{ fileName : "CGlQuad.hx", lineNumber : 151, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
 		return kernel.Result.FAILURE;
 	}
-	math.Registers.M0.Identity();
-	this.m_ShdrPrgm.UniformMatrix4fv("uModelMatrix",math.Registers.M0);
-	this.m_ShdrPrgm.UniformMatrix4fv("uViewProjMatrix",this.m_Cameras[_VpId].GetMatrix());
-	kernel.Glb.g_SystemJS.m_GlObject.DrawArrays(4,0,this.m_Primitive.GetNbVertices());
+	{
+		this.m_MatrixCache = new WebGLFloatArray(this.m_Cameras[_VpId].GetMatrix().m_Buffer);
+	}
+	this.m_ShdrPrgm.UniformMatrix4fv("u_MVPMatrix",this.m_MatrixCache);
+	kernel.Glb.g_SystemJS.m_GlObject.DrawArrays(4,0,this.m_Primitive.GetNbTriangles());
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CGlQuad.prototype.Initialize = function() {
@@ -1950,10 +2014,10 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 		return $r;
 	}(this));
 	if(this.m_ShdrPrgm != null) {
-		kernel.CDebug.CONSOLEMSG("create gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 55, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("create gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 61, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
 	else {
-		kernel.CDebug.CONSOLEMSG("unable gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 59, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("unable gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 65, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
 	var l_Res = (this.m_ShdrPrgm != null?kernel.Result.SUCCESS:kernel.Result.FAILURE);
 	if(l_Res == kernel.Result.SUCCESS) {
@@ -1973,7 +2037,20 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 		this.m_Material.SetShader(this.m_ShdrPrgm);
 	}
 	else {
-		kernel.CDebug.CONSOLEMSG("Unable to create material",{ fileName : "CGlQuad.hx", lineNumber : 76, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("Unable to create material",{ fileName : "CGlQuad.hx", lineNumber : 82, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+	}
+	this.m_Primitive = (function($this) {
+		var $r;
+		var tmp = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CPrimitiveJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	if(this.m_Primitive == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to create primitive",{ fileName : "CGlQuad.hx", lineNumber : 88, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
 	return l_Res;
 }
@@ -1989,6 +2066,7 @@ driver.js.renderer.CGlQuad.prototype.Update = function() {
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CGlQuad.prototype.m_Material = null;
+driver.js.renderer.CGlQuad.prototype.m_MatrixCache = null;
 driver.js.renderer.CGlQuad.prototype.m_Primitive = null;
 driver.js.renderer.CGlQuad.prototype.m_RenderStates = null;
 driver.js.renderer.CGlQuad.prototype.m_ShdrPrgm = null;
@@ -2064,8 +2142,16 @@ driver.js.rsc.CRscVertexShader.prototype.Compile = function() {
 	l_Gl.ShaderSource(this.m_Object,this.m_Body);
 	l_Gl.CompileShader(this.m_Object);
 	if(!l_Gl.GetShaderParameter(this.m_Object,35713)) {
+		var l_Error = l_Gl.GetShaderInfoLog(this.m_Object);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in vertex shader compile: " + l_Error,{ fileName : "CRscVertexShader.hx", lineNumber : 85, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
+		}
+		else {
+			kernel.CDebug.CONSOLEMSG("Unknown error in vertex shader compile ",{ fileName : "CRscVertexShader.hx", lineNumber : 89, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
+		}
 		return kernel.Result.FAILURE;
 	}
+	kernel.CDebug.CONSOLEMSG("Success in vertex shader compiling.",{ fileName : "CRscVertexShader.hx", lineNumber : 94, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
 	return kernel.Result.SUCCESS;
 }
 driver.js.rsc.CRscVertexShader.prototype.Initialize = function(_Script) {
@@ -2085,7 +2171,7 @@ driver.js.rsc.CRscVertexShader.prototype.Initialize = function(_Script) {
 		this.m_Object = kernel.Glb.g_SystemJS.m_GlObject.CreateShader(35633);
 	}
 	else {
-		haxe.Log.trace("cannot recog Initing vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 63, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
+		haxe.Log.trace("cannot init vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 63, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
 		return kernel.Result.FAILURE;
 	}
 	haxe.Log.trace("Initialize vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 67, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
@@ -2121,6 +2207,9 @@ driver.js.rscbuilders.CRscJSFactory.prototype.Build = function(_Type,_Path) {
 	case renderer.CTexture.RSC_ID:{
 		l_Rsc = new renderer.CTexture();
 	}break;
+	case renderer.CPrimitive.RSC_ID:{
+		l_Rsc = new driver.js.renderer.CPrimitiveJS();
+	}break;
 	case renderer.CRenderStates.RSC_ID:{
 		l_Rsc = new driver.js.renderer.CRenderStatesJS();
 	}break;
@@ -2128,7 +2217,7 @@ driver.js.rscbuilders.CRscJSFactory.prototype.Build = function(_Type,_Path) {
 		l_Rsc = new driver.js.renderer.CViewportJS();
 	}break;
 	default:{
-		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 49, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
+		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 54, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
 		l_Rsc = null;
 	}break;
 	}
@@ -2144,7 +2233,7 @@ for(var k in renderer.CRenderer.prototype ) driver.js.renderer.CRendererJS.proto
 driver.js.renderer.CRendererJS.prototype.BeginScene = function() {
 	var l_FrameCount = (8 * kernel.Glb.g_System.GetFrameCount()) % 255;
 	kernel.Glb.g_SystemJS.m_GlObject.ClearColor(l_FrameCount / 255.0,0,0,1);
-	kernel.Glb.g_SystemJS.m_GlObject.ClearDepth(10000.0);
+	kernel.Glb.g_SystemJS.m_GlObject.ClearDepth(1000.0);
 	kernel.Glb.g_SystemJS.m_GlObject.Clear(16640);
 	renderer.CRenderer.prototype.BeginScene.apply(this,[]);
 	return kernel.Result.SUCCESS;
@@ -2191,30 +2280,37 @@ driver.js.rsc.CRscShaderProgram.prototype.Activate = function() {
 driver.js.rsc.CRscShaderProgram.prototype.BindAttributes = function() {
 	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
 	if((this.m_AttribsMask & 1) != 0) {
-		l_Gl.BindAttributeLocation(this.m_Program,0,"_Vertex");
+		l_Gl.BindAttribLocation(this.m_Program,0,"_Vertex");
 	}
 	if((this.m_AttribsMask & 4) != 0) {
-		l_Gl.BindAttributeLocation(this.m_Program,2,"_Color");
+		l_Gl.BindAttribLocation(this.m_Program,2,"_Color");
 	}
 	if((this.m_AttribsMask & 2) != 0) {
-		l_Gl.BindAttributeLocation(this.m_Program,1,"_Normal");
+		l_Gl.BindAttribLocation(this.m_Program,1,"_Normal");
+	}
+	if((this.m_AttribsMask & 8) != 0) {
+		l_Gl.BindAttribLocation(this.m_Program,3,"_TexCoord");
 	}
 }
 driver.js.rsc.CRscShaderProgram.prototype.Compile = function() {
 	if(this.m_VtxSh != null) {
 		if(this.m_VtxSh.Compile() == kernel.Result.FAILURE) {
+			this.PrintError();
 			return kernel.Result.FAILURE;
 		}
 	}
 	else {
+		kernel.CDebug.CONSOLEMSG("Can't proceed : Vertex shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 315, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
 		return kernel.Result.FAILURE;
 	}
 	if(this.m_FragSh != null) {
 		if(this.m_FragSh.Compile() == kernel.Result.FAILURE) {
+			this.PrintError();
 			return kernel.Result.FAILURE;
 		}
 	}
 	else {
+		kernel.CDebug.CONSOLEMSG("Can't proceed : Fragment shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 329, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
 		return kernel.Result.FAILURE;
 	}
 	this.m_Status = 1;
@@ -2223,12 +2319,19 @@ driver.js.rsc.CRscShaderProgram.prototype.Compile = function() {
 driver.js.rsc.CRscShaderProgram.prototype.CreateAttributeMask = function() {
 	if(this.m_VtxSh.m_Body.lastIndexOf("_Vertex") != -1) {
 		this.m_AttribsMask |= 1;
+		kernel.CDebug.CONSOLEMSG("Found Vertex channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 69, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
 	}
 	if(this.m_VtxSh.m_Body.lastIndexOf("_Color") != -1) {
 		this.m_AttribsMask |= 4;
+		kernel.CDebug.CONSOLEMSG("Found Color channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 75, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
 	}
 	if(this.m_VtxSh.m_Body.lastIndexOf("_Normal") != -1) {
 		this.m_AttribsMask |= 2;
+		kernel.CDebug.CONSOLEMSG("Found Normal channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 81, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
+	}
+	if(this.m_VtxSh.m_Body.lastIndexOf("_TexCoord") != -1) {
+		this.m_AttribsMask |= 8;
+		kernel.CDebug.CONSOLEMSG("Found tex coord.",{ fileName : "CRscShaderProgram.hx", lineNumber : 87, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
 	}
 }
 driver.js.rsc.CRscShaderProgram.prototype.DeclUniform = function(_Name) {
@@ -2236,11 +2339,11 @@ driver.js.rsc.CRscShaderProgram.prototype.DeclUniform = function(_Name) {
 }
 driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	kernel.CDebug.CONSOLEMSG("Creating Shader Program :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 114, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+	kernel.CDebug.CONSOLEMSG("Creating Shader Program :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 160, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
 	this.m_Uniforms = new Hash();
 	var l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscVertexShader.RSC_ID,_Path + ".vsh");
 	if(l_Rsc == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to create vsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 120, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("Unable to create vsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 166, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
 		return kernel.Result.FAILURE;
 	}
 	this.m_VtxSh = (function($this) {
@@ -2255,7 +2358,7 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	}(this));
 	l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscFragmentShader.RSC_ID,_Path + ".fsh");
 	if(l_Rsc == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to create fsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 129, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("Unable to create fsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 175, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
 		return kernel.Result.FAILURE;
 	}
 	this.m_FragSh = (function($this) {
@@ -2276,9 +2379,15 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	var l_Res = this.Compile();
 	if(l_Res == kernel.Result.SUCCESS) {
 		l_Res = this.Link();
+		if(l_Res == kernel.Result.SUCCESS) {
+			kernel.CDebug.CONSOLEMSG("Success linking shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 195, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		}
+		else {
+			kernel.CDebug.CONSOLEMSG("Unable to link shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 199, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		}
 	}
 	else {
-		kernel.CDebug.CONSOLEMSG("Unable to compile shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 150, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("Unable to compile shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 204, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
 	}
 	return ((l_Res == kernel.Result.SUCCESS)?kernel.Result.SUCCESS:kernel.Result.FAILURE);
 }
@@ -2293,7 +2402,7 @@ driver.js.rsc.CRscShaderProgram.prototype.Link = function() {
 	l_Gl.LinkProgram(this.m_Program);
 	if(l_Gl.GetProgramParameter(this.m_Program,35714) == 0) {
 		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
-		haxe.Log.trace("Error in program linking:" + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 218, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
+		kernel.CDebug.CONSOLEMSG("Error in program linking:" + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 294, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
 		return kernel.Result.FAILURE;
 	}
 	this.m_Status = 2;
@@ -2304,6 +2413,38 @@ driver.js.rsc.CRscShaderProgram.prototype.LinkPrimitive = function(_Prim) {
 	if((this.m_AttribsMask & 1) != 0) {
 		l_Gl.EnableVertexAttribArray(0);
 		l_Gl.VertexAttribPointer(0,_Prim.GetFloatPerVtx(),5126,false,0,0);
+		return kernel.Result.SUCCESS;
+	}
+	if((this.m_AttribsMask & 2) != 0) {
+		l_Gl.EnableVertexAttribArray(1);
+		l_Gl.VertexAttribPointer(1,_Prim.GetFloatPerNormal(),5126,false,0,0);
+		return kernel.Result.SUCCESS;
+	}
+	if((this.m_AttribsMask & 4) != 0) {
+		l_Gl.EnableVertexAttribArray(2);
+		l_Gl.VertexAttribPointer(2,_Prim.GetFloatPerColor(),5126,false,0,0);
+		return kernel.Result.SUCCESS;
+	}
+	if((this.m_AttribsMask & 8) != 0) {
+		l_Gl.EnableVertexAttribArray(3);
+		l_Gl.VertexAttribPointer(3,_Prim.GetFloatPerTexCoord(),5126,false,0,0);
+		return kernel.Result.SUCCESS;
+	}
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscShaderProgram.prototype.PrintError = function() {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	if(l_Gl.GetProgramParameter(this.m_Program,35713) == 0) {
+		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 261, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
+		}
+	}
+	if(l_Gl.GetProgramParameter(this.m_Program,35714) == 0) {
+		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in shader program linking: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 270, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
+		}
 	}
 }
 driver.js.rsc.CRscShaderProgram.prototype.Uniform1f = function(_Name,_f0) {
@@ -2321,7 +2462,7 @@ driver.js.rsc.CRscShaderProgram.prototype.UniformMatrix4fv = function(_Name,_m0)
 	}
 	var l_Loc = this.m_Uniforms.get(_Name);
 	if(l_Loc != null) {
-		kernel.Glb.g_SystemJS.m_GlObject.UniformMatrix4f(l_Loc,new WebGLFloatArray(_m0.m_Buffer));
+		kernel.Glb.g_SystemJS.m_GlObject.UniformMatrix4f(l_Loc,_m0);
 	}
 }
 driver.js.rsc.CRscShaderProgram.prototype.m_AttribsMask = null;
@@ -2415,8 +2556,13 @@ driver.js.rsc.CRscFragmentShader.prototype.Compile = function() {
 	l_Gl.ShaderSource(this.m_Object,this.m_Body);
 	l_Gl.CompileShader(this.m_Object);
 	if(!l_Gl.GetShaderParameter(this.m_Object,35713)) {
+		var l_Error = l_Gl.GetShaderInfoLog(this.m_Object);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in fragment shader compile: " + l_Error,{ fileName : "CRscFragmentShader.hx", lineNumber : 85, className : "driver.js.rsc.CRscFragmentShader", methodName : "Compile"});
+		}
 		return kernel.Result.FAILURE;
 	}
+	kernel.CDebug.CONSOLEMSG("Success in fragment shader compiling.",{ fileName : "CRscFragmentShader.hx", lineNumber : 90, className : "driver.js.rsc.CRscFragmentShader", methodName : "Compile"});
 	return kernel.Result.SUCCESS;
 }
 driver.js.rsc.CRscFragmentShader.prototype.Initialize = function(_Script) {
@@ -2439,6 +2585,7 @@ driver.js.rsc.CRscFragmentShader.prototype.Initialize = function(_Script) {
 		haxe.Log.trace("cannot recog Initing vsh",{ fileName : "CRscFragmentShader.hx", lineNumber : 64, className : "driver.js.rsc.CRscFragmentShader", methodName : "Initialize"});
 		return kernel.Result.FAILURE;
 	}
+	kernel.CDebug.CONSOLEMSG("Initialized fsh.",{ fileName : "CRscFragmentShader.hx", lineNumber : 68, className : "driver.js.rsc.CRscFragmentShader", methodName : "Initialize"});
 	return kernel.Result.SUCCESS;
 }
 driver.js.rsc.CRscFragmentShader.prototype.m_Body = null;
@@ -2588,15 +2735,18 @@ driver.js.rsc.CRscVertexShader.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 kernel.Glb.g_SystemJS = new driver.js.kernel.CSystemJS();
 kernel.Glb.g_System = kernel.Glb.g_SystemJS;
 driver.js.rsc.CRscShaderProgram.RSC_ID = rsc.CRscMan.RSC_COUNT++;
-driver.js.rsc.CRscShaderProgram.ATTR_VERTEX = 1;
-driver.js.rsc.CRscShaderProgram.ATTR_NORMAL = 2;
-driver.js.rsc.CRscShaderProgram.ATTR_COLOR = 4;
 driver.js.rsc.CRscShaderProgram.ATTR_VERTEX_INDEX = 0;
 driver.js.rsc.CRscShaderProgram.ATTR_NORMAL_INDEX = 1;
 driver.js.rsc.CRscShaderProgram.ATTR_COLOR_INDEX = 2;
-driver.js.rsc.CRscShaderProgram.ATTR_MAX_INDEX = 3;
+driver.js.rsc.CRscShaderProgram.ATTR_TEXCOORD_INDEX = 3;
+driver.js.rsc.CRscShaderProgram.ATTR_VERTEX = 1;
+driver.js.rsc.CRscShaderProgram.ATTR_NORMAL = 2;
+driver.js.rsc.CRscShaderProgram.ATTR_COLOR = 4;
+driver.js.rsc.CRscShaderProgram.ATTR_TEXCOORD = 8;
+driver.js.rsc.CRscShaderProgram.ATTR_MAX_INDEX = 4;
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_COLOR = "_Color";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_VERTEX = "_Vertex";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_NORMAL = "_Normal";
+driver.js.rsc.CRscShaderProgram.ATTR_NAME_TEXCOORD = "_TexCoord";
 driver.js.rsc.CRscFragmentShader.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 $Main.init = CMainClient.main();

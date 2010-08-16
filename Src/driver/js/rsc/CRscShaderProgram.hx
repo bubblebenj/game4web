@@ -32,21 +32,24 @@ class CRscShaderProgram extends CRscShader
 	public var 			m_Uniforms : Hash< WebGLUniformLocation >;
 	public var 			m_Program :	WebGLProgram; 
 	
-	public static inline var ATTR_VERTEX : Int 	= 1 << 0;
-	public static inline var ATTR_NORMAL : Int 	= 1 << 1;
-	public static inline var ATTR_COLOR  : Int	= 1 << 2;
-	
 	public static inline var ATTR_VERTEX_INDEX : Int 	= 0;
 	public static inline var ATTR_NORMAL_INDEX : Int 	= 1;
 	public static inline var ATTR_COLOR_INDEX  : Int	= 2;
+	public static inline var ATTR_TEXCOORD_INDEX  : Int	= 3;
 	
-	public static inline var ATTR_MAX_INDEX  : Int	= 3;
+	public static inline var ATTR_VERTEX 		: Int 	= 1 << ATTR_VERTEX_INDEX;
+	public static inline var ATTR_NORMAL 		: Int 	= 1 << ATTR_NORMAL_INDEX;
+	public static inline var ATTR_COLOR  		: Int	= 1 << ATTR_COLOR_INDEX;
+	public static inline var ATTR_TEXCOORD 		: Int	= 1 << ATTR_TEXCOORD_INDEX;
+	
+	public static inline var ATTR_MAX_INDEX  : Int	= 4;
 	
 	public static inline var ATTR_NAME_COLOR  	: String	= "_Color";
 	public static inline var ATTR_NAME_VERTEX  	: String	= "_Vertex";
 	public static inline var ATTR_NAME_NORMAL  	: String	= "_Normal";
+	public static inline var ATTR_NAME_TEXCOORD	: String	= "_TexCoord";
 	
-	public var			m_AttribsMask : Int;
+	public var					m_AttribsMask : Int;
 	
 	public function new()
 	{
@@ -63,16 +66,25 @@ class CRscShaderProgram extends CRscShader
 		if( m_VtxSh.m_Body.lastIndexOf( ATTR_NAME_VERTEX ) != -1 )
 		{
 			m_AttribsMask |= ATTR_VERTEX;
+			CDebug.CONSOLEMSG("Found Vertex channel.");
 		}
 		
 		if( m_VtxSh.m_Body.lastIndexOf( ATTR_NAME_COLOR ) != -1)
 		{
 			m_AttribsMask |= ATTR_COLOR;
+			CDebug.CONSOLEMSG("Found Color channel.");
 		}
 		
 		if( m_VtxSh.m_Body.lastIndexOf( ATTR_NAME_NORMAL ) != -1)
 		{
 			m_AttribsMask |= ATTR_NORMAL;
+			CDebug.CONSOLEMSG("Found Normal channel.");
+		}
+		
+		if( m_VtxSh.m_Body.lastIndexOf( ATTR_NAME_TEXCOORD ) != -1)
+		{
+			m_AttribsMask |= ATTR_TEXCOORD;
+			CDebug.CONSOLEMSG("Found tex coord.");
 		}
 	}
 	
@@ -82,21 +94,26 @@ class CRscShaderProgram extends CRscShader
 		
 		if ( m_AttribsMask & ATTR_VERTEX != 0)
 		{
-			l_Gl.BindAttributeLocation( m_Program, ATTR_VERTEX_INDEX, ATTR_NAME_VERTEX);
+			l_Gl.BindAttribLocation( m_Program, ATTR_VERTEX_INDEX, ATTR_NAME_VERTEX);
 		}
 		
 		if ( m_AttribsMask & ATTR_COLOR != 0)
 		{
-			l_Gl.BindAttributeLocation( m_Program, ATTR_COLOR_INDEX, ATTR_NAME_COLOR);
+			l_Gl.BindAttribLocation( m_Program, ATTR_COLOR_INDEX, ATTR_NAME_COLOR);
 		}
 		
 		if ( m_AttribsMask & ATTR_NORMAL != 0)
 		{
-			l_Gl.BindAttributeLocation( m_Program, ATTR_NORMAL_INDEX, ATTR_NAME_NORMAL);
+			l_Gl.BindAttribLocation( m_Program, ATTR_NORMAL_INDEX, ATTR_NAME_NORMAL);
+		}
+		
+		if ( m_AttribsMask & ATTR_TEXCOORD != 0)
+		{
+			l_Gl.BindAttribLocation( m_Program, ATTR_TEXCOORD_INDEX, ATTR_NAME_TEXCOORD);
 		}
 	}
 	
-	public function LinkPrimitive( _Prim : CPrimitiveJS ) : Void
+	public function LinkPrimitive( _Prim : CPrimitiveJS ) : Result
 	{
 		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
 		
@@ -104,7 +121,36 @@ class CRscShaderProgram extends CRscShader
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_VERTEX_INDEX );
 			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, _Prim.GetFloatPerVtx(), CGL.FLOAT, false, 0, 0);
+			
+			return SUCCESS;
 		}
+		
+		if( m_AttribsMask & ATTR_NORMAL!= 0 )
+		{
+			l_Gl.EnableVertexAttribArray( ATTR_NORMAL_INDEX );
+			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, _Prim.GetFloatPerNormal(), CGL.FLOAT, false, 0, 0);
+			
+			return SUCCESS;
+		}
+		
+		if( m_AttribsMask & ATTR_COLOR != 0 )
+		{
+			l_Gl.EnableVertexAttribArray( ATTR_COLOR_INDEX );
+			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, _Prim.GetFloatPerColor(), CGL.FLOAT, false, 0, 0);
+			
+			return SUCCESS;
+		}
+		
+		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
+		{
+			l_Gl.EnableVertexAttribArray( ATTR_TEXCOORD_INDEX );
+			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, _Prim.GetFloatPerTexCoord(), CGL.FLOAT, false, 0, 0);
+			
+			return SUCCESS;
+		}
+	
+		//CDebug.CONSOLEMSG("Unable to find Attrib channel");
+		return SUCCESS;
 	}
 	
 	public function Initialize( _Path ) : Result
@@ -143,7 +189,15 @@ class CRscShaderProgram extends CRscShader
 		var l_Res = Compile();
 		if ( l_Res == SUCCESS )
 		{
-			 l_Res = Link();
+			l_Res = Link();
+			if ( l_Res == SUCCESS )
+			{
+				CDebug.CONSOLEMSG("Success linking shader :" + _Path);
+			}
+			else 
+			{
+				CDebug.CONSOLEMSG("Unable to link shader :" + _Path);
+			}
 		}
 		else 
 		{
@@ -172,7 +226,7 @@ class CRscShaderProgram extends CRscShader
 		
 	}
 	
-	public function UniformMatrix4fv( _Name : String, _m0 : CMatrix44 )
+	public function UniformMatrix4fv( _Name : String, _m0 : WebGLFloatArray )
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{
@@ -182,7 +236,7 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, new WebGLFloatArray( _m0.m_Buffer ) );
+			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, _m0 );
 		}
 	}
 	
@@ -194,6 +248,28 @@ class CRscShaderProgram extends CRscShader
 			l_Gl.UseProgram( m_Program );
 		}
 		return SUCCESS;
+	}
+	
+	public function PrintError() : Void
+	{
+		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
+		if( l_Gl.GetProgramParameter( m_Program, CGL.COMPILE_STATUS ) == 0 )
+		{
+			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
+			if (l_Error != null)
+			{
+				CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error);
+			}
+		}
+		
+		if( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) == 0 )
+		{
+			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
+			if (l_Error != null)
+			{
+				CDebug.CONSOLEMSG("Error in shader program linking: " + l_Error);
+			}
+		}
 	}
 	
 	public override function  Link() : Result 
@@ -215,8 +291,7 @@ class CRscShaderProgram extends CRscShader
 		if( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) == 0)
 		{
 			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
-			trace("Error in program linking:"+l_Error);
-
+			CDebug.CONSOLEMSG("Error in program linking:"+l_Error);
 			return FAILURE;
 		}
 
@@ -226,15 +301,18 @@ class CRscShaderProgram extends CRscShader
 	
 	public override function Compile() : Result
 	{
+		
 		if ( m_VtxSh != null)
 		{
 			if(m_VtxSh.Compile()==FAILURE)
 			{
+				PrintError();
 				return FAILURE;
 			}
 		}
 		else 
 		{
+			CDebug.CONSOLEMSG("Can't proceed : Vertex shader is null");
 			return FAILURE;
 		}
 		
@@ -242,11 +320,13 @@ class CRscShaderProgram extends CRscShader
 		{
 			if ( m_FragSh.Compile() == FAILURE )
 			{
+				PrintError();
 				return FAILURE;
 			}
 		}
 		else 
 		{
+			CDebug.CONSOLEMSG("Can't proceed : Fragment shader is null");
 			return FAILURE;
 		}
 		

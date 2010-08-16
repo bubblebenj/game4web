@@ -60,7 +60,7 @@ class CRscVertexShader extends CRscShader
 		} 
 		else 
 		{
-			trace("cannot recog Initing vsh");
+			trace("cannot init vsh");
 			return FAILURE;
 		}
 		
@@ -79,9 +79,19 @@ class CRscVertexShader extends CRscShader
 		
 		if( !l_Gl.GetShaderParameter( m_Object, CGL.COMPILE_STATUS) ) 
 		{
+			var l_Error = l_Gl.GetShaderInfoLog ( m_Object );
+			if (l_Error != null)
+			{
+				CDebug.CONSOLEMSG("Error in vertex shader compile: " + l_Error);
+			}
+			else 
+			{
+				CDebug.CONSOLEMSG("Unknown error in vertex shader compile " );
+			}
 			return FAILURE;
 		}
 		
+		CDebug.CONSOLEMSG("Success in vertex shader compiling.");
 		return SUCCESS;
 	}
 	

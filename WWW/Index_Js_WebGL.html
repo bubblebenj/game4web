@@ -40,18 +40,23 @@ This text is displayed if your browser does not support HTML5 Canvas.
 </script>
 
 <script id="white.vsh" type="x-shader/x-vertex">
-	uniform mat4 	u_MVPMatrix;
-	attribute vec3 	_Vertex;
+	uniform		mat4	u_MVPMatrix;
+	attribute 	vec3 	_Vertex;
+	
+	varying 	vec3 	v_Vertex;
+
     void main()
     {
-        gl_Position = u_MVPMatrix * _Vertex;
+		//v_Vertex = u_MVPMatrix * _Vertex;
+        gl_Position = u_MVPMatrix *  vec4(_Vertex,1.0);
     }
 </script>
 
 <script id="white.fsh" type="x-shader/x-fragment">
+	varying 	vec3 	v_Vertex;
     void main()
     {
-        gl_FragColor = vec4(1,1,1,1);
+        gl_FragColor = vec4(0.75,0.75,0.75,1.0);
 	}
 </script>
 
