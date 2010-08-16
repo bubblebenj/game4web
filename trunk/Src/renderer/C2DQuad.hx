@@ -19,7 +19,7 @@ class C2DQuad extends CDrawObject
 	public var m_Rect : CRect2D;
 	
 	// 2DQuad will be centered on _Pos position
-	public function MoveTo( _Pos : CV2D ) : Void
+	public function SetPosition( _Pos : CV2D ) : Void
 	{
 		// Get the 2DQuad size
 		var l_V = new CV2D( 0, 0 );

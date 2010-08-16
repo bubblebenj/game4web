@@ -45,17 +45,11 @@ class CSystemAS extends CSystem
 		return SUCCESS;
 	}
 	
+	// Binding type with its factory
 	public function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
-		//GetRscMan().AddBuilder( CRscVertexShader.RSC_ID, 	new CRscBuilderDocElem() );
-		//GetRscMan().AddBuilder( CRscShaderProgram.RSC_ID, 	new CRscBuilderDocElem() );
-		//GetRscMan().AddBuilder( CRscPixelShader.RSC_ID,	 	new CRscBuilderDocElem() );
-		//
-		//GetRscMan().AddBuilder( CMaterial.RSC_ID, 	m_RscJSFactory );
-		//GetRscMan().AddBuilder( CTexture.RSC_ID, 	m_RscJSFactory );
-		//GetRscMan().AddBuilder( CViewport.RSC_ID, 	m_RscJSFactory );
-		//GetRscMan().AddBuilder( CRenderStates.RSC_ID, 	m_RscJSFactory );
+		GetRscMan().AddBuilder( CRscImageAS.RSC_ID, 	new CRscASFactoty() );
 		
 		return SUCCESS;
 	}
