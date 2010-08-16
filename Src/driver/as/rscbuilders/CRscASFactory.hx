@@ -5,6 +5,7 @@
 
 package driver.as.rscbuilders;
 
+import driver.as.rsc.CRscImageAS;
 import kernel.CTypes;
 
 import rsc.CRscBuilder;
@@ -24,10 +25,13 @@ class CRscASFactory extends CRscBuilder
 		
 		switch( _Type )
 		{
+			case CRscImage.RSC_ID:
+			l_Rsc =	new CRscImageAS();
+			l_Rsc.Initialize();
+			
 			default: trace("*_* CRscASFactory :: Error: target type not found : " + _Type ); 
 			l_Rsc = null;
 		}
-		
 		
 		return l_Rsc;
 	}

@@ -7,18 +7,27 @@ import kernel.Glb;
 
 typedef RSC_TYPES = Int;
 
+enum E_STATE
+{
+	INVALID;
+	STREAMING;
+	STREAMED;
+}
+
 class CRsc
 {
-	var m_Ref : Int;
-	var m_Path : String;
-	var m_SingleLoad : Bool;
+	var m_Ref			: Int;
+	var m_Path			: String;
+	var m_SingleLoad	: Bool;
+	var m_State			: STREAMED;
 	
 	
 	public function new()
 	{
-		m_Ref = 0;
-		m_Path = "";
-		m_SingleLoad = false;
+		m_Ref			= 0;
+		m_Path 			= "";
+		m_SingleLoad 	= false;
+		m_State			= STREAMED;
 	}
 	
 	public function Copy( _InRsc : CRsc ) : Void 
