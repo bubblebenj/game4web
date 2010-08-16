@@ -238,17 +238,17 @@ CGL.prototype.DisableVertexAttribArray = function( _Index )
 
 CGL.prototype.BindBuffer = function( _tgt,_buf ) 
 {
-	m_GLContext.BindBuffer( _tgt,_buf );
+	m_GLContext.bindBuffer( _tgt,_buf );
 }
 
 CGL.prototype.VertexAttribPointer = function( _idx,_sz,_type,_nrmlizd,_stride,_offset )
 {
-	m_GLContext.VertexAttribPointer(  _idx,_sz,_type,_nrmlizd,_stride,_offset );
+	m_GLContext.vertexAttribPointer(  _idx,_sz,_type,_nrmlizd,_stride,_offset );
 }
 
 CGL.prototype.BindAttributeLocation  = function (  _Prgm , _Index , _Name  )
 {
-	m_GLContext.BindAttributeLocation(_Prgm,_Index,_Name);
+	m_GLContext.bindAttributeLocation(_Prgm,_Index,_Name);
 }
 
 CGL.prototype.DrawArrays = function( _md, _frst, _cnt)
