@@ -16,15 +16,16 @@ class C2DImage extends CDrawObject
 	
 	public function new()
 	{
-		trace( "\t new Image" );
 		super();
+		m_2DQuad		= new C2DQuad();
+		m_SrcSize		= new CV2D(0,0);
 	}
 	
 	//Set the image of the Sprite
 	public function Load( _PathToImg : String )	: Void
 	{
 		#if DebugInfo
-			trace ("\t [ -- Load( PathToImg : " + _PathToImg + " )");
+			//trace ("\t [ -- Load( PathToImg : " + _PathToImg + " )"); <-- Uncomment to break it
 		#end
 		m_PathToImg		= _PathToImg;
 	}
