@@ -33,8 +33,26 @@ class CRendererAS extends CRenderer
 	
 	public override function BuildViewport() : CViewport
 	{
-		// Needed. inherited function return null
+		// Needed. inherited function returns null
 		return new CViewportAS();
+	}
+	
+	public var m_NbDrawn : Int;
+	// Just copy paste from CRendererJS
+	public override function Render( _VpId : Int) : Result
+	{
+		m_NbDrawn = 0;
+
+		for( _DOs in m_Scene )
+		{
+			if ( 	_DOs != null 
+			&&		_DOs.Draw( _VpId ) == SUCCESS )
+			{
+				m_NbDrawn++;
+			}
+		}
+		
+		return SUCCESS;
 	}
 	
 	public function AddToSceneAS( _Obj : DisplayObject )

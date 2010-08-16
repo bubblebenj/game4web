@@ -5,10 +5,13 @@
 
 package driver.as.renderer;
 
+import driver.as.renderer.C2DQuadAS;
+
 import flash.display.Bitmap;
 import flash.events.Event;
 import flash.display.Loader;
 import flash.net.URLRequest;
+
 import kernel.CTypes;
 import kernel.Glb;
 import math.CV2D;
@@ -17,30 +20,36 @@ import renderer.C2DImage;
 class C2DImageAS extends C2DImage
 {
 	private	var m_ImgContainer	: Loader;
-	private	var m_ImgURL		: URLRequest;
-	private var m_Bitmap		: Bitmap;
+	private var m_2DQuadAS		: C2DQuadAS;
 	
 	public function new()
 	{
+		trace( "new ImageAS" );
 		super();
-		m_DisplayObject;// Sprite();
-		m_ImgContainer		= new Loader();							// 1 - Creation of the loader
+		m_2DQuadAS			= new C2DQuadAS();
+		m_2DQuad			= m_2DQuadAS;
+		
+		// 1 - Creation of the loader
+		m_ImgContainer		= new Loader();									
 		m_ImgContainer.contentLoaderInfo.addEventListener(Event.INIT, onImgLoaded);
 	}
 	
 	//Set the image of the Sprite
-	public function Load( _PathToImg : String )	: Void
+	public override function Load( _PathToImg : String )	: Void
 	{
-		#if DebugInfo
-			trace ("\t [ -- Load( PathToImg : " + _PathToImg + " )");
-		#end	
+		trace( "\t \t [ -- C2DImage.Load( " + _PathToImg );
+		super.Load( _PathToImg );
 		// Loading
-		m_ImgURL				= new URLRequest( _PathToImg );		// 2 - url of the image or swf to load
-		m_ImgContainer.load( m_ImgURL );							// 3 - Loading of the image or swf inside the container
+		// 2 - url of the image or swf to load
+		var l_ImgURL	: URLRequest	= new URLRequest( m_PathToImg );
+		// 3 - Loading of the image or swf inside the container
+		m_ImgContainer.load( l_ImgURL );
+		trace ( "\t \t CEntity.Load -- ] ");
 	}
 	
 	public function onImgLoaded( _Event : Event )	: Void
 	{
+		trace ( "\t \t [ -- C2DImage.onImgLoaded( " + _Event );
 		m_SrcSize =	new CV2D( m_ImgContainer.content.width, m_ImgContainer.content.height);
 		
 		// Seems that only point 1 4 and 5 are necessary to get a correctly scalable image
@@ -64,24 +73,33 @@ class C2DImageAS extends C2DImage
 		// its must perfectly fit inside without scaling because of width = l_ImgLargerSide and height	= l_ImgLargerSide;
 		
 		// Cheat to cast to a bitmap
-		m_Bitmap = cast ( m_ImgContainer.content );
-		m_DisplayObject	= m_Bitmap;
+		var l_Bitmap : Bitmap = cast ( m_ImgContainer.content );
+		m_2DQuadAS.SetDisplayObject( l_Bitmap );
 		
-		//Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-		//m_DisplayObject.addChildAt( m_ImgContainer, 0 );
-		
-		trace ( "Scale X : " + m_DisplayObject.scaleX +" Scale Y : " 	+ m_DisplayObject.scaleY );
-		trace ( "Width : " + m_DisplayObject.width +" Height : " 	+ m_DisplayObject.height );
+		trace ( "Scale X : " + m_2DQuadAS.GetDisplayObject().scaleX +" Scale Y : " 	+ m_2DQuadAS.GetDisplayObject().scaleY );
+		trace ( "Width : " + m_2DQuadAS.GetDisplayObject().width +" Height : " 	+ m_2DQuadAS.GetDisplayObject().height );
 
 		// 5 - Then image can be scale to the size of the container (C2DQuad)
-		FillQuad();
+		SetSize( m_SrcSize );
+		trace ( "\t \t CEntity.onImgLoaded -- ] ");
 	}
 	
-	private override function FillQuad() : Result
+	public override function SetVisible( _Vis : Bool ) : Void 
 	{
-		super.FillQuad();
-		m_DisplayObject.width	= m_Rect.m_BR.x - m_Rect.m_TL.x;
-		m_DisplayObject.height	= m_Rect.m_BR.y - m_Rect.m_TL.y;
-		return SUCCESS;
+		super.SetVisible( _Vis );
+		m_2DQuadAS.SetVisible( _Vis );
+	}
+	
+	public override function MoveTo( _Pos : CV2D ) : Void
+	{
+		m_2DQuadAS.MoveTo( _Pos );
+	}
+	
+	// We suppose that the 2DQuad is already centered
+	public override function SetSize( _Size : CV2D ) : Void
+	{
+			trace ( "\t \t [ -- C2DImageAS.SetSize ( " + _Size.x + " " + _Size.y );
+		m_2DQuadAS.SetSize( _Size );
+			trace ( "\t \t C2DImageAS.SetSize -- ] ");
 	}
 }
