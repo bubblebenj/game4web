@@ -13,6 +13,8 @@ import rsc.CRsc;
 
 enum Z_EQUATION
 {
+	Z_LESSER;
+	Z_LESSER_EQ;
 	Z_GREATER;
 	Z_GREATER_EQ;
 }

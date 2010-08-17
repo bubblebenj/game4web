@@ -43,7 +43,8 @@ class COrthoCamera extends CCamera
 		var l_Top : Float  = m_Pos.y;
 
 		
-		CMatrix44.Ortho(_Out, l_Left, l_Right, l_Bottom, l_Top, m_Pos.z + m_Near, m_Pos.z + m_Far );
+		//CMatrix44.Ortho(_Out, l_Left, l_Right, l_Bottom, l_Top, m_Pos.z + m_Near, m_Pos.z + m_Far );
+		CMatrix44.Ortho(_Out, 0, 1, 0, 1, m_Near,  m_Far );
 		
 		return SUCCESS;
 	}

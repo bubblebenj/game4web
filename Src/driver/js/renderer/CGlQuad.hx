@@ -88,7 +88,57 @@ class CGlQuad extends C2DQuad
 			CDebug.CONSOLEMSG("Unable to create primitive");
 		}
 		
+		m_RenderStates = cast( l_RscMan.Create( CRenderStates.RSC_ID ), CRenderStatesJS );
+		if( m_RenderStates == null )
+		{
+			CDebug.CONSOLEMSG("Unable to create primitive");
+		}
+		
+		CreateData();
 		return l_Res;
+	}
+	
+	public function CreateData()
+	{
+		var l_Array : Array<Float> = new Array<Float>();
+
+		var l_Z : Float = - 10.0;
+		var l_Scale : Float = 0.5;
+		
+		l_Array[0] = 0;
+		l_Array[1] = 0;
+		l_Array[2] = l_Z;
+		
+		l_Array[3] = 1 * l_Scale;
+		l_Array[4] = 0.0;
+		l_Array[5] = l_Z;
+		
+		l_Array[6] = 0;
+		l_Array[7] = 1 * l_Scale;
+		l_Array[8] = l_Z;
+		
+		
+		/*
+		l_Array[0] = 0;
+		l_Array[1] = 0;
+		l_Array[2] = l_Z;
+		
+		l_Array[3] = 0;
+		l_Array[4] = 1 * l_Scale;
+		l_Array[5] = l_Z;
+		
+		l_Array[6] = 1 * l_Scale;
+		l_Array[7] = 0;
+		l_Array[8] = l_Z;
+		*/
+		
+		m_Primitive.SetVertexArray( l_Array );
+		
+		var l_IndexArray : Array<Int> = new Array<Int>();
+		l_IndexArray[0] = 0;
+		l_IndexArray[1] = 1;
+		l_IndexArray[2] = 2;
+		m_Primitive.SetIndexArray(l_IndexArray);
 	}
 
 	public override function Draw( _VpId : Int ) : Result
@@ -103,63 +153,44 @@ class CGlQuad extends C2DQuad
 		var l_Bottom : Float = math.Utils.RoundNearest( m_Rect.m_BR.y * l_Vp.m_h + l_Vp.m_y);
 		var l_Right : Float = math.Utils.RoundNearest( m_Rect.m_BR.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);	
 		
-		var l_Array : Array<Float> = new Array<Float>();
-		
-		/*
-		l_Array[0] = l_Left; 	l_Array[1] = l_Top; 	l_Array[2] = 1.0;
-		l_Array[3] = l_Right; 	l_Array[4] = l_Top; 	l_Array[5] = 1.0;
-		l_Array[6] = l_Left; 	l_Array[7] = l_Bottom; 	l_Array[8] = 1.0;
-		l_Array[9] = l_Right; 	l_Array[10] = l_Top; 	l_Array[11] = 1.0;
-		l_Array[12] = l_Left; 	l_Array[13] = l_Bottom; l_Array[14] = 1.0;
-		l_Array[15] = l_Right; 	l_Array[16] = l_Bottom;	l_Array[17] = 1.0;
-		*/
-		
-		var l_Z : Float = -10.0;
-		
-		
-		l_Array[0] = 0;
-		l_Array[1] = 0;
-		l_Array[2] = l_Z;
-		
-		l_Array[3] = 1;
-		l_Array[4] = 0.0;
-		l_Array[5] = l_Z;
-		
-		l_Array[6] = 0;
-		l_Array[7] = 1;
-		l_Array[8] = l_Z;
-		
-		
-		/*
-		l_Array[0] = 0;
-		l_Array[1] = 0;
-		l_Array[2] = l_Z;
-		
-		l_Array[3] = 0;
-		l_Array[4] = 1;
-		l_Array[5] = l_Z;
-		
-		l_Array[6] = 1;
-		l_Array[7] = 0;
-		l_Array[8] = l_Z;
-		*/
-		
-		m_Primitive.SetVertexArray( l_Array );
-		
 		if ( Activate() == FAILURE)
 		{
 			CDebug.CONSOLEMSG("Shader activation failure");
 			return FAILURE;
 		}
 		
-		//if (m_MatrixCache == null)
+		if (m_MatrixCache == null)
 		{
 			m_MatrixCache = new WebGLFloatArray( m_Cameras[_VpId].GetMatrix().m_Buffer );
+			
+			m_Cameras[_VpId].GetMatrix().Trace();
 		}
 		
-		m_ShdrPrgm.UniformMatrix4fv( "u_MVPMatrix", m_MatrixCache );
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PreSetUniform:" + l_Err);
+		}
 		
-		Glb.g_SystemJS.GetGL().DrawArrays( CGL.TRIANGLES, 0, m_Primitive.GetNbVertices() );
+		m_ShdrPrgm.UniformMatrix4fv( "u_MVPMatrix", false, m_MatrixCache );
+		
+		//Glb.g_SystemJS.GetGL().DrawArrays( CGL.TRIANGLES, 0, m_Primitive.GetNbVertices() );
+		
+		{
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:PreDrawElements:" + l_Err);
+			}
+		}
+		
+		Glb.g_SystemJS.GetGL().DrawElements( CGL.TRIANGLES, m_Primitive.GetNbIndices(), CGL.UNSIGNED_BYTE, 0 );
+		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostDrawElements:" + l_Err);
+		}
 		
 		return SUCCESS;
 	}
@@ -187,14 +218,19 @@ class CGlQuad extends C2DQuad
 			return FAILURE;
 		}
 		
+		var  l_RsActivate : Result = m_RenderStates.Activate();
+		if(l_RsActivate==FAILURE)
+		{
+			CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
+			return FAILURE;
+		}
+		
 		return SUCCESS;
 	}
 	
 	public override function Update() : Result
 	{
 		super.Update();
-		
-		
 		
 		return SUCCESS;
 	}

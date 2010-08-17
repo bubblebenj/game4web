@@ -122,31 +122,33 @@ class CRscShaderProgram extends CRscShader
 			l_Gl.EnableVertexAttribArray( ATTR_VERTEX_INDEX );
 			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, _Prim.GetFloatPerVtx(), CGL.FLOAT, false, 0, 0);
 			
-			return SUCCESS;
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:" + l_Err);
+			}
+			else 
+			{
+				CDebug.CONSOLEMSG("*");
+			}
 		}
 		
 		if( m_AttribsMask & ATTR_NORMAL!= 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_NORMAL_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, _Prim.GetFloatPerNormal(), CGL.FLOAT, false, 0, 0);
-			
-			return SUCCESS;
 		}
 		
 		if( m_AttribsMask & ATTR_COLOR != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_COLOR_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, _Prim.GetFloatPerColor(), CGL.FLOAT, false, 0, 0);
-			
-			return SUCCESS;
 		}
 		
 		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_TEXCOORD_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, _Prim.GetFloatPerTexCoord(), CGL.FLOAT, false, 0, 0);
-			
-			return SUCCESS;
 		}
 	
 		//CDebug.CONSOLEMSG("Unable to find Attrib channel");
@@ -208,7 +210,12 @@ class CRscShaderProgram extends CRscShader
 	
 	public inline function DeclUniform(_Name : String) : Void
 	{
-		m_Uniforms.set(_Name, Glb.g_SystemJS.GetGL().GetUniformLocation( _Name ) );
+		var l_Loc :  WebGLUniformLocation = Glb.g_SystemJS.GetGL().GetUniformLocation( m_Program, _Name );
+		if (l_Loc == null )
+		{
+			CDebug.CONSOLEMSG("Unable to get uniform location: <" + _Name+">");
+		}
+		m_Uniforms.set(_Name, l_Loc );
 	}
 	
 	public function Uniform1f( _Name : String, _f0 : Float )
@@ -226,17 +233,28 @@ class CRscShaderProgram extends CRscShader
 		
 	}
 	
-	public function UniformMatrix4fv( _Name : String, _m0 : WebGLFloatArray )
+	public function UniformMatrix4fv( _Name : String, _Transpose:Bool, _m0 : WebGLFloatArray )
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{
 			DeclUniform(_Name);
+			CDebug.CONSOLEMSG("DeclaredUniformMatrix4fv " + _Name);
 		}
 		
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, _m0 );
+			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, _Transpose,_m0 );
+		}
+		else 
+		{
+			CDebug.CONSOLEMSG("UnableToSetUniformMatrix4fv");
+		}
+		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:postSetUniform4fv:" + l_Err);
 		}
 	}
 	
@@ -245,7 +263,33 @@ class CRscShaderProgram extends CRscShader
 		if( super.Activate() == SUCCESS )
 		{
 			var l_Gl : CGL = Glb.g_SystemJS.GetGL();
+			
+			if ( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) != true )
+			{
+				var l_Error = l_Gl.GetProgramInfoLog ( m_Program );
+				if (l_Error != null)
+				{
+					CDebug.CONSOLEMSG("Error in post shader use program: " + l_Error);
+				}
+			}
+			
+			
 			l_Gl.UseProgram( m_Program );
+			
+			if ( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) != true )
+			{
+				var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
+				if (l_Error != null)
+				{
+					CDebug.CONSOLEMSG("Error in post shader use program: " + l_Error);
+				}
+			}
+			
+			var l_GlError = l_Gl.GetError();
+			if (l_GlError !=0)
+			{
+				CDebug.CONSOLEMSG("Error in shader program use: " + l_GlError);
+			}
 		}
 		return SUCCESS;
 	}
@@ -253,7 +297,7 @@ class CRscShaderProgram extends CRscShader
 	public function PrintError() : Void
 	{
 		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
-		if( l_Gl.GetProgramParameter( m_Program, CGL.COMPILE_STATUS ) == 0 )
+		if( l_Gl.GetProgramParameter( m_Program, CGL.COMPILE_STATUS ) != true )
 		{
 			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
 			if (l_Error != null)
@@ -288,13 +332,16 @@ class CRscShaderProgram extends CRscShader
 		
 		l_Gl.LinkProgram(m_Program);
 		
-		if( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) == 0)
+		CDebug.ASSERT( l_Gl.GetAttribLocation( m_Program, ATTR_NAME_VERTEX ) == ATTR_VERTEX_INDEX );
+		
+		if( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) != true)
 		{
 			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
 			CDebug.CONSOLEMSG("Error in program linking:"+l_Error);
 			return FAILURE;
 		}
 
+		CDebug.CONSOLEMSG("Shader Linked");
 		m_Status = CRscShader.SHADER_STATUS_LINKED;
 		return SUCCESS;
 	}

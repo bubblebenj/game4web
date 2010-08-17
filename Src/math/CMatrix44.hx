@@ -5,6 +5,8 @@
 
 package math;
 
+import kernel.CDebug;
+
 class CMatrix44 
 {	
 	public var m_Buffer : Array<Float>;
@@ -94,6 +96,14 @@ class CMatrix44
 		var l_xmax = l_ymax * _aspect;
 
 		return Frustum( l_xmin, l_xmax, l_ymin, l_ymax, _znear, _zfar);
+	}
+	
+	public function Trace()  : Void
+	{
+		CDebug.CONSOLEMSG( Get(0, 0 ) + "," + Get(0, 1) + "," + Get(0, 2 ) + "," + Get(0, 3 ) +  "\n" );
+		CDebug.CONSOLEMSG( Get(1, 0 ) + "," + Get(1, 1) + "," + Get(1, 2 ) + "," + Get(1, 3 ) +  "\n" );
+		CDebug.CONSOLEMSG( Get(2, 0 ) + "," + Get(2, 1) + "," + Get(2, 2 ) + "," + Get(2, 3 ) +  "\n" );
+		CDebug.CONSOLEMSG( Get(3, 0 ) + "," + Get(3, 1) + "," + Get(3, 2 ) + "," + Get(3, 3 ) +  "\n" );
 	}
 
 	public function Frustum(_left: Float, _right: Float,
@@ -354,11 +364,12 @@ class CMatrix44
 	
 	public static function Ortho( _Out : CMatrix44 , _left : Float, _right : Float, _bottom : Float, _top : Float, _near : Float, _far : Float )
 	{
-		var l_tx = (_left + _right) / (_left - _right);
-		var l_ty = (_top + _bottom) / (_top - _bottom);
-		var l_tz = (_far + _near) / (_far - _near);
+		var l_tx = -(_left + _right) / (_right - _left);
+		var l_ty = -(_top + _bottom) / (_top - _bottom);
+		var l_tz = -(_far + _near) / (_far - _near);
 		
-		_Out.M(0,0, 2 / (_left - _right));
+		_Out.Identity();
+		_Out.M(0,0, 2 / (_right - _left));
 		_Out.M(0,1, 0);
 		_Out.M(0,2, 0);
 		_Out.M(0,3, 0);
@@ -374,6 +385,8 @@ class CMatrix44
 		_Out.M(3,1, l_ty);
 		_Out.M(3,2, l_tz);
 		_Out.M(3,3, 1);
+		
+		//_Out.Identity();
 	}
 
 }
