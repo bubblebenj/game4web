@@ -87,7 +87,7 @@ class CEntity
 	 */
 		public	function SetSprite( _PathToImage : String ) : Result
 		{
-			m_Sprite.Load( _PathToImage );
+			//m_Sprite.Initialize( _PathToImage );
 			return SUCCESS;
 		}
 		
@@ -104,7 +104,7 @@ class CEntity
 		public function SetCoordinate( _Pos : CV2D ) : Void
 		{
 			m_Pos.Copy( _Pos );
-			m_Sprite.MoveTo( _Pos );
+			m_Sprite.SetPosition( _Pos );
 		}
 		
 		public function GetSize()	: CV2D

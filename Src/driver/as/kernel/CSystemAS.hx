@@ -9,6 +9,8 @@ import kernel.CDebug;
 import kernel.CSystem;
 import kernel.CTypes;
 
+import rsc.CRscImage;
+
 import driver.as.renderer.CRendererAS;
 import driver.as.rscbuilders.CRscASFactory;
 
@@ -27,7 +29,7 @@ class CSystemAS extends CSystem
 	{
 		super.Initialize();
 		
-		m_Renderer = new CRendererAS();
+		m_Renderer	= new CRendererAS();
 		
 		m_Renderer.Initialize();
 		
@@ -49,7 +51,7 @@ class CSystemAS extends CSystem
 	public function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
-		GetRscMan().AddBuilder( CRscImageAS.RSC_ID, 	new CRscASFactoty() );
+		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	new CRscASFactory() );
 		
 		return SUCCESS;
 	}

@@ -56,6 +56,16 @@ class CRsc
 		m_Ref++;
 	}
 	
+	public function SetState( _State : E_STATE ) : Void
+	{
+		m_State = _State;
+	}
+	
+	public function GetState() : E_STATE
+	{
+		return m_State;
+	}
+	
 	public function SetSingleLoaded( _OnOff : Bool  ): Void 
 	{
 		m_SingleLoad = _OnOff;
