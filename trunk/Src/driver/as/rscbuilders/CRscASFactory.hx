@@ -10,6 +10,7 @@ import kernel.CTypes;
 
 import rsc.CRscBuilder;
 import rsc.CRsc;
+import rsc.CRscImage;
 
 class CRscASFactory extends CRscBuilder 
 {
@@ -27,7 +28,6 @@ class CRscASFactory extends CRscBuilder
 		{
 			case CRscImage.RSC_ID:
 			l_Rsc =	new CRscImageAS();
-			l_Rsc.Initialize();
 			
 			default: trace("*_* CRscASFactory :: Error: target type not found : " + _Type ); 
 			l_Rsc = null;

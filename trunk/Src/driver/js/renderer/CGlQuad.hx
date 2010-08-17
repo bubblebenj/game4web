@@ -62,7 +62,7 @@ class CGlQuad extends C2DQuad
 		}
 		else 
 		{
-			CDebug.CONSOLEMSG("unable gl quad shader");
+			CDebug.CONSOLEMSG("unable to create gl quad shader");
 		}
 		var l_Res = m_ShdrPrgm != null ? SUCCESS : FAILURE;
 		

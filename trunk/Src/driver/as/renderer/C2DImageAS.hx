@@ -5,26 +5,43 @@
 
 package driver.as.renderer;
 
-import driver.as.renderer.C2DQuadAS;
 import driver.as.rsc.CRscImageAS;
 
-import flash.display.Bitmap;
-import flash.events.Event;
-import flash.display.Loader;
-import flash.net.URLRequest;
-
 import kernel.CTypes;
+import kernel.CDebug;
 import kernel.Glb;
+
 import math.CV2D;
 import renderer.C2DImage;
+import rsc.CRscMan;
+import rsc.CRscImage;
 
 class C2DImageAS extends C2DImage
 {
-	private var m_FlashImage : CRscImageAS;
+	private var m_RscImage : CRscImageAS;
 	
 	public function new()
 	{
 		super();
+		//m_RscImage	= null;
+	}
+	
+	public function Load( _Path )	: Result
+	{
+		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
+		
+		m_RscImage = cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS );
+		if( m_RscImage  != null)
+		{
+			CDebug.CONSOLEMSG("create m_RscImage");
+		}
+		else 
+		{
+			CDebug.CONSOLEMSG("unable m_RscImage");
+		}
+		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
+		
+		return l_Res;
 	}
 	
 	public override function SetVisible( _Vis : Bool ) : Void
@@ -33,19 +50,20 @@ class C2DImageAS extends C2DImage
 		
 		if( m_Visible )
 		{
-			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			Glb.GetRendererAS().AddToSceneAS( m_RscImage.m_FlashImage );
 		}
 		else
 		{
-			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			Glb.GetRendererAS().RemoveFromSceneAS( m_RscImage.m_FlashImage );
 		}
 	}
 	
+	/* Suposed to be centered... a parameter would be great
+	 * to choose between centered or TL position */
 	public override function SetPosition( _Pos : CV2D ) : Void
 	{
-		m_2DQuad.SetPosition( _Pos );
-		m_DisplayObject.x	= m_Rect.m_TL.x;
-		m_DisplayObject.y	= m_Rect.m_TL.y;
+		super.SetPosition( _Pos );
+		m_RscImage.SetPosition( m_Rect.m_TL );
 	}
 	
 	// We suppose that the 2DQuad is already centered
@@ -53,17 +71,14 @@ class C2DImageAS extends C2DImage
 	{
 		super.SetSize( _Size );
 		//resize
-		if ( m_DisplayObject == null )
+		if ( m_RscImage == null )
 		{
-			trace(" /!\\ m_DisplayObject not created yet. Skipping its resizing ");
+			trace(" /!\\ m_RscImage not created yet. Skipping its resizing ");
 		}
 		else
 		{
-			m_DisplayObject.width	= m_Rect.m_BR.x - m_Rect.m_TL.x;
-			m_DisplayObject.height	= m_Rect.m_BR.y - m_Rect.m_TL.y;
-		// move to keep the center right
-			m_DisplayObject.x	= m_Rect.m_TL.x;
-			m_DisplayObject.y	= m_Rect.m_TL.y;
+			m_RscImage.SetSize( _Size );
+			m_RscImage.SetPosition( m_Rect.m_TL );
 		}
 	}
 }

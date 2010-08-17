@@ -72,14 +72,14 @@ class CBeegonMainClient
 	{
 		trace ( " Initialising game .. " );
 		
-		//g_ImageTest	= new C2DImageAS();
-		//g_ImageTest.Load( "./Data/vertical_hexcell1.png" );
-		//
-		g_Avatar	= new CAvatar ();
-		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
+		g_ImageTest	= new C2DImageAS();
+		g_ImageTest.Load( "./Data/vertical_hexcell1.png" );
 		
-		g_Grid 		= new CHexaGrid( 2, 1 );
-		g_Grid.InitCellArray();
+		//g_Avatar	= new CAvatar ();
+		//g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
+		//
+		//g_Grid 		= new CHexaGrid( 2, 1 );
+		//g_Grid.InitCellArray();
 		
 		#if flash10
 			InitGameAS();
@@ -97,31 +97,31 @@ class CBeegonMainClient
 	
 	public static function UpdateGame()
 	{
-		trace( "Update");
+		//trace( "Update");
 		var l_V2D : CV2D = new CV2D( 40, 40 );
 		//g_ImageTest.SetSize( l_V2D );
 		//g_ImageTest.MoveTo( l_V2D );
 		//
-		CV2D.Scale( l_V2D, 4, l_V2D );
-		CV2D.Scale( l_V2D, 0.5, l_V2D );
+		//CV2D.Scale( l_V2D, 4, l_V2D );
+		//CV2D.Scale( l_V2D, 0.5, l_V2D );
 		//g_Avatar.SetSize( l_V2D );
 		
 		var l_Mouse	: CV2D = Glb.g_System.m_Mouse.m_Coordinate;
 		
 		
 		//!\ Need to put it in the renderer.
-		//if ( !g_ImageTest.IsVisible() ) g_ImageTest.SetVisible( true );
-		if ( !g_Avatar.m_Sprite.IsVisible() ) g_Avatar.m_Sprite.SetVisible( true );
+		if ( !g_ImageTest.IsVisible() ) g_ImageTest.SetVisible( true );
+		//if ( !g_Avatar.m_Sprite.IsVisible() ) g_Avatar.m_Sprite.SetVisible( true );
 		
 		//trace( "g_Grid.Draw()");
-		g_Grid.Draw();
+		//g_Grid.Draw();
 		#if DebugInfo
 			/* Mouse
 			 **********/
 			if (m_Cpt > 250)
 			{
-				trace( "g_Avatar.SetCoordinate( l_V2D );");
-				g_Avatar.SetCoordinate( l_V2D );
+				//trace( "g_Avatar.SetCoordinate( l_V2D );");
+				//g_Avatar.SetCoordinate( l_V2D );
 				trace ( "[ " + l_Mouse.x + " ][ " + l_Mouse.y + " ]" ); 	m_Cpt = 0; 
 			}
 			else	m_Cpt++;
