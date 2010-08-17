@@ -19,7 +19,7 @@ class CRsc
 	var m_Ref			: Int;
 	var m_Path			: String;
 	var m_SingleLoad	: Bool;
-	var m_State			: STREAMED;
+	var m_State			: E_STATE;
 	
 	
 	public function new()
