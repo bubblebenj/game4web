@@ -5,6 +5,7 @@ import kernel.CSystem;
 import kernel.Glb;
 import kernel.CTypes;
 
+
 import math.CV2D;
 import math.CV3D;
 import math.Registers;
@@ -17,6 +18,7 @@ import renderer.camera.COrthoCamera;
 
 #if js
 	import driver.js.renderer.CGlQuad;
+	import driver.js.renderer.CGLCube;
 	import CGL;
 #end
 
@@ -31,7 +33,10 @@ class CMainClient
 	static var m_Stage : STAGE;
 	static var m_Quad : C2DQuad;
 	
+	
+	
 	#if js
+	static var m_Cube : CGLCube;
 	public static function InitGameJS()
 	{
 		var l_OrthoCam : COrthoCamera = cast(Glb.g_System.GetRenderer().GetCamera( CRenderer.CAM_ORTHO_0 ), COrthoCamera);
@@ -39,10 +44,10 @@ class CMainClient
 	
 		l_OrthoCam.SetPosition( l_CamPos );
 		
-		l_OrthoCam.SetWidth( 1.0 );
-		l_OrthoCam.SetHeight( 1.0 );
+		l_OrthoCam.SetWidth( 1 );
+		l_OrthoCam.SetHeight( 1 );
 		
-		l_OrthoCam.SetNear( 0.1 );
+		l_OrthoCam.SetNear( 0.01 );
 		l_OrthoCam.SetFar( 1000.0 );
 		
 		
@@ -57,8 +62,12 @@ class CMainClient
 		
 		m_Quad.SetCamera( CRenderer.VP_FULLSCREEN , l_OrthoCam );
 		
-		m_Quad.SetVisible( true );
+		//m_Quad.SetVisible( true );
+		m_Quad.SetVisible( false );
 		
+		m_Cube = new CGLCube();
+		m_Cube.Initialize();
+		m_Cube.SetVisible(true);
 	}
 	#end
 	

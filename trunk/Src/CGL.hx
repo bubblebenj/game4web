@@ -68,6 +68,8 @@ extern class CGL
     public function BlendFunc(sfactor : GLenum , dfactor : GLenum ) : Void;
     public function BlendFuncSeparate(srcRGB : GLenum , dstRGB : GLenum , srcAlpha : GLenum , dstAlpha : GLenum ) : Void;
 
+	public function GetAttribLocation(  _prgm : WebGLProgram,  _Name : DOMString ) : GLint;
+	
 	public function CreateBuffer() : WebGLBuffer;
     public function CreateFramebuffer() : WebGLFramebuffer;
     public function CreateRenderbuffer() : WebGLRenderbuffer;
@@ -93,17 +95,18 @@ extern class CGL
 	public function GetShaderInfoLog( _Shdr : WebGLShader): DOMString ;
 	public function GetProgramInfoLog( _prgm : WebGLProgram): DOMString ;
 	
-	public function GetUniformLocation( _Name : DOMString) : WebGLUniformLocation;
+	public function GetUniformLocation( _prgm : WebGLProgram,_Name : DOMString) : WebGLUniformLocation;
 	public function Uniform3f( _Loc : WebGLUniformLocation , _x:Float, _y:Float, _z:Float) : Void;
 	public function Uniform4f( _Loc : WebGLUniformLocation , _x:Float, _y:Float, _z:Float, _z:Float) : Void;
 	public function Uniform1i( _Loc : WebGLUniformLocation , _x:GLint ) : Void;
 	public function Uniform1f( _Loc : WebGLUniformLocation , _x:Float ) : Void;
-	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Mat : WebGLFloatArray) : Void;
+	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Transpose : Bool, _Mat : WebGLFloatArray) : Void;
 	
 	public function EnableVertexAttribArray( _Index : GLuint ) : Void;
 	public function DisableVertexAttribArray( _Index : GLuint  ) : Void;
 	
 	public function BindBuffer( _tgt : GLenum, _buf : WebGLBuffer ) : Void;
+	public function Flush() : Void;
 	
 	public function BufferData( _tgt : GLenum, _Buffer : Dynamic, _usage : GLenum  ) : Void;
 	public function BufferSubData( _tgt : GLenum,  _Offset : GLsizeiptr,  _Buffer : Dynamic  ) : Void;
@@ -116,8 +119,13 @@ extern class CGL
 	
 	public function DrawArrays( _md : GLenum , _frst : Int, _cnt :Int) : Void;
 	
+	public function DrawElements( _md : GLenum , _cnt : GLsizei, _type :GLenum, _offset : GLsizei) : Void;
+	
 	public function GetSupportedExtensions() : Array<DOMString>;
 	public function GetExtension( _Name : DOMString ) : Dynamic;
+	
+	public function GetError() : GLenum;
+
 	
 	public function GetString( _Name: GLenum )	: DOMString;
 	public function Hint( _Tgt : GLenum, _Mode:GLenum) : Void;

@@ -68,6 +68,11 @@ class CPrimitiveJS extends CPrimitive
 		return m_NbVertex;
 	}
 	
+	public function GetNbIndices() : Int 
+	{
+		return m_NbIndices;
+	}
+	
 	public override function SetVertexArray(  _Vertices : Array< Float > ) : Void
 	{
 		m_NbTriangles =  Std.int(_Vertices.length / 9);
@@ -78,13 +83,25 @@ class CPrimitiveJS extends CPrimitive
 			m_VtxObject = Glb.g_SystemJS.GetGL().CreateBuffer();
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_VtxObject);
 			CDebug.CONSOLEMSG("Bound vertex buffer");
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:PostBindVertexArray:" + l_Err);
+			}
 		}
 		
-		if (m_VtxNativeBuf == null)
+
 		{
 			m_VtxNativeBuf =  new WebGLFloatArray(_Vertices);
 			Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
 			CDebug.CONSOLEMSG("Set vertex buffer");
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err);
+			}
 		}
 	}
 	
@@ -93,12 +110,28 @@ class CPrimitiveJS extends CPrimitive
 		if ( m_IdxObject == null )
 		{
 			m_IdxObject = Glb.g_SystemJS.GetGL().CreateBuffer();
-			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_IdxObject);
+			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ELEMENT_ARRAY_BUFFER, m_IdxObject);
+			CDebug.CONSOLEMSG("bind index buffer");
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:PostBindIndexArray:" + l_Err);
+			}
 		}
 		
+		m_NbIndices = _Indexes.length;
 		m_IdxNativeBuf =  new WebGLUnsignedByteArray( _Indexes );
 		
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_IdxNativeBuf, CGL.STATIC_DRAW );
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, CGL.STATIC_DRAW );
+		
+		CDebug.CONSOLEMSG("Set index buffer");
+		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostSetIndexArray:" + l_Err);
+		}
 	}
 	
 	public function SetTexCooArray(  _Coord : Array< Float > ) : Void

@@ -11,6 +11,7 @@ import math.CMatrix44;
 
 import kernel.Glb;
 import kernel.CTypes;
+import kernel.CDebug;
 
 import renderer.CRenderer;
 import renderer.CViewport;
@@ -38,17 +39,50 @@ class CRendererJS extends CRenderer
 	{
 		var l_FrameCount = ( 8* Glb.g_System.GetFrameCount()) % 255;
 		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PreClear:" + l_Err);
+		}
+		
 		//trace("CRendererJS::begin");
-		Glb.g_SystemJS.GetGL().ClearColor( l_FrameCount/255.0,0,0,1 );
+		Glb.g_SystemJS.GetGL().ClearColor( 255.0,0,0,1 );
 		Glb.g_SystemJS.GetGL().ClearDepth( 1000.0 );
 
-		Glb.g_SystemJS.GetGL().Clear( CGL.COLOR_BUFFER_BIT | CGL.DEPTH_BUFFER_BIT );
+		Glb.g_SystemJS.GetGL().Clear( CGL.COLOR_BUFFER_BIT | CGL.DEPTH_BUFFER_BIT | CGL.STENCIL_BUFFER_BIT);
+		
+		l_Err = Glb.g_SystemJS.GetGL().GetError();
+		
+		if (l_Err != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostClear:" + l_Err);
+		}
 		
 		super.BeginScene();
 		
 		return SUCCESS;
 	}
 
+	public override function EndScene() : Result
+	{
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PreFlush:" + l_Err);
+		}
+		
+		Glb.g_SystemJS.GetGL().Flush();
+		
+		l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostFlush:" + l_Err);
+		}
+		
+		return SUCCESS;
+	}
+	
 	public override function BuildViewport() : CViewport
 	{
 		return new CViewportJS();

@@ -1,559 +1,5 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof rsc=='undefined') rsc = {}
-rsc.CRsc = function(p) { if( p === $_ ) return; {
-	this.m_Ref = 0;
-	this.m_Path = "";
-	this.m_SingleLoad = false;
-}}
-rsc.CRsc.__name__ = ["rsc","CRsc"];
-rsc.CRsc.prototype.AddRef = function() {
-	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 46, className : "rsc.CRsc", methodName : "AddRef"});
-	this.m_Ref++;
-}
-rsc.CRsc.prototype.Copy = function(_InRsc) {
-	kernel.CDebug.ASSERT(this.GetType() == _InRsc.GetType(),{ fileName : "CRsc.hx", lineNumber : 26, className : "rsc.CRsc", methodName : "Copy"});
-}
-rsc.CRsc.prototype.GetPath = function() {
-	return this.m_Path;
-}
-rsc.CRsc.prototype.GetType = function() {
-	return -1;
-}
-rsc.CRsc.prototype.IsSingleLoaded = function() {
-	return this.m_SingleLoad;
-}
-rsc.CRsc.prototype.Release = function() {
-	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 62, className : "rsc.CRsc", methodName : "Release"});
-	this.m_Ref--;
-	if(this.m_Ref == 0) {
-		kernel.Glb.g_System.GetRscMan().ForceDelete(this);
-	}
-}
-rsc.CRsc.prototype.SetPath = function(_Path) {
-	this.m_Path = ((_Path != null)?_Path.toLowerCase():null);
-}
-rsc.CRsc.prototype.SetSingleLoaded = function(_OnOff) {
-	this.m_SingleLoad = _OnOff;
-}
-rsc.CRsc.prototype.m_Path = null;
-rsc.CRsc.prototype.m_Ref = null;
-rsc.CRsc.prototype.m_SingleLoad = null;
-rsc.CRsc.prototype.__class__ = rsc.CRsc;
-rsc.CRscMan = function(p) { if( p === $_ ) return; {
-	this.m_Repository = null;
-	this.m_Builders = null;
-}}
-rsc.CRscMan.__name__ = ["rsc","CRscMan"];
-rsc.CRscMan.prototype.AddBuilder = function(_Type,_Builder) {
-	kernel.CDebug.ASSERT(_Builder != null,{ fileName : "CRscMan.hx", lineNumber : 28, className : "rsc.CRscMan", methodName : "AddBuilder"});
-	this.m_Builders.set(_Type,_Builder);
-	return kernel.Result.SUCCESS;
-}
-rsc.CRscMan.prototype.Copy = function(_Rsc) {
-	kernel.CDebug.ASSERT(this.m_Builders.get(_Rsc.GetType()) != null,{ fileName : "CRscMan.hx", lineNumber : 58, className : "rsc.CRscMan", methodName : "Copy"});
-	var l_Rsc = this.m_Builders.get(_Rsc.GetType()).Build(_Rsc.GetType(),null);
-	if(l_Rsc != null) {
-		l_Rsc.AddRef();
-		l_Rsc.SetPath(null);
-		l_Rsc.SetSingleLoaded(true);
-	}
-	l_Rsc.Copy(_Rsc);
-	return l_Rsc;
-}
-rsc.CRscMan.prototype.Create = function(_Type) {
-	var l_Builder = this.m_Builders.get(_Type);
-	if(l_Builder == null) {
-		kernel.CDebug.CONSOLEMSG("No builder for rsc type : " + _Type,{ fileName : "CRscMan.hx", lineNumber : 38, className : "rsc.CRscMan", methodName : "Create"});
-		return null;
-	}
-	else {
-		var l_Rsc = l_Builder.Build(_Type,null);
-		if(l_Rsc != null) {
-			l_Rsc.AddRef();
-			l_Rsc.SetPath(null);
-			l_Rsc.SetSingleLoaded(true);
-			return l_Rsc;
-		}
-	}
-	return null;
-}
-rsc.CRscMan.prototype.ForceDelete = function(_R) {
-	this.m_Repository.set(_R.GetPath(),null);
-}
-rsc.CRscMan.prototype.Initialize = function() {
-	this.m_Repository = new Hash();
-	this.m_Builders = new IntHash();
-	return kernel.Result.SUCCESS;
-}
-rsc.CRscMan.prototype.Load = function(_Type,_Path,_SingleLoad) {
-	kernel.CDebug.ASSERT(_Path != null,{ fileName : "CRscMan.hx", lineNumber : 74, className : "rsc.CRscMan", methodName : "Load"});
-	if(_SingleLoad != null && _SingleLoad != true && _Path != null) {
-		var l_CandRsc = this.m_Repository.get(_Path);
-		if(l_CandRsc != null && !l_CandRsc.IsSingleLoaded()) {
-			l_CandRsc.AddRef();
-			return l_CandRsc;
-		}
-	}
-	var l_Builder = this.m_Builders.get(_Type);
-	if(l_Builder == null) {
-		haxe.Log.trace(((("No builder for rsc: " + _Type) + "(") + _Path) + ")",{ fileName : "CRscMan.hx", lineNumber : 89, className : "rsc.CRscMan", methodName : "Load"});
-		return null;
-	}
-	else {
-		var l_Rsc = l_Builder.Build(_Type,_Path);
-		if(l_Rsc != null) {
-			l_Rsc.AddRef();
-			l_Rsc.SetPath(_Path);
-			l_Rsc.SetSingleLoaded(((_SingleLoad == null)?false:_SingleLoad));
-		}
-		return l_Rsc;
-	}
-}
-rsc.CRscMan.prototype.Shut = function() {
-	this.m_Repository = null;
-	this.m_Builders = null;
-	return kernel.Result.SUCCESS;
-}
-rsc.CRscMan.prototype.m_Builders = null;
-rsc.CRscMan.prototype.m_Repository = null;
-rsc.CRscMan.prototype.__class__ = rsc.CRscMan;
-if(typeof renderer=='undefined') renderer = {}
-renderer.CPrimitive = function(p) { if( p === $_ ) return; {
-	rsc.CRsc.apply(this,[]);
-}}
-renderer.CPrimitive.__name__ = ["renderer","CPrimitive"];
-renderer.CPrimitive.__super__ = rsc.CRsc;
-for(var k in rsc.CRsc.prototype ) renderer.CPrimitive.prototype[k] = rsc.CRsc.prototype[k];
-renderer.CPrimitive.prototype.GetType = function() {
-	return renderer.CPrimitive.RSC_ID;
-}
-renderer.CPrimitive.prototype.SetVertexArray = function(_Vertices) {
-	null;
-}
-renderer.CPrimitive.prototype.__class__ = renderer.CPrimitive;
 if(typeof math=='undefined') math = {}
-math.Utils = function() { }
-math.Utils.__name__ = ["math","Utils"];
-math.Utils.RoundNearest = function(_F0) {
-	if(_F0 < 0) {
-		return Std["int"](_F0 - 0.5);
-	}
-	else {
-		return Std["int"](_F0 + 0.5);
-	}
-}
-math.Utils.RoundNearestF = function(_F0) {
-	if(_F0 < 0) {
-		return Std["int"](_F0 - 0.5);
-	}
-	else {
-		return Std["int"](_F0 + 0.5);
-	}
-}
-math.Utils.prototype.__class__ = math.Utils;
-rsc.CRscBuilder = function(p) { if( p === $_ ) return; {
-	null;
-}}
-rsc.CRscBuilder.__name__ = ["rsc","CRscBuilder"];
-rsc.CRscBuilder.prototype.Build = function(_Type,_Path) {
-	return null;
-}
-rsc.CRscBuilder.prototype.__class__ = rsc.CRscBuilder;
-if(typeof driver=='undefined') driver = {}
-if(!driver.js) driver.js = {}
-if(!driver.js.rscbuilders) driver.js.rscbuilders = {}
-driver.js.rscbuilders.CRscBuilderDocElem = function(p) { if( p === $_ ) return; {
-	rsc.CRscBuilder.apply(this,[]);
-}}
-driver.js.rscbuilders.CRscBuilderDocElem.__name__ = ["driver","js","rscbuilders","CRscBuilderDocElem"];
-driver.js.rscbuilders.CRscBuilderDocElem.__super__ = rsc.CRscBuilder;
-for(var k in rsc.CRscBuilder.prototype ) driver.js.rscbuilders.CRscBuilderDocElem.prototype[k] = rsc.CRscBuilder.prototype[k];
-driver.js.rscbuilders.CRscBuilderDocElem.prototype.Build = function(_Type,_Path) {
-	if(_Type == driver.js.rsc.CRscShaderProgram.RSC_ID) {
-		var l_Ret = new driver.js.rsc.CRscShaderProgram();
-		l_Ret.Initialize(_Path);
-		if(l_Ret == null) {
-			kernel.CDebug.CONSOLEMSG("Unable to create shader prgm ",{ fileName : "CRscBuilderDocElem.hx", lineNumber : 35, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
-		}
-		return l_Ret;
-	}
-	var l_Script = js.Lib.document.getElementById(_Path);
-	if(!l_Script) {
-		kernel.CDebug.CONSOLEMSG((("*_* Error: script " + _Path) + " not found for type : ") + _Type,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 44, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
-		return null;
-	}
-	var l_ScriptType = l_Script.type;
-	if(_Type == driver.js.rsc.CRscVertexShader.RSC_ID) {
-		var l_Ret = new driver.js.rsc.CRscVertexShader();
-		kernel.CDebug.CONSOLEMSG("Initializing vsh :" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 53, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
-		l_Ret.Initialize(l_Script);
-		return l_Ret;
-	}
-	if(_Type == driver.js.rsc.CRscFragmentShader.RSC_ID) {
-		var l_Ret = new driver.js.rsc.CRscFragmentShader();
-		kernel.CDebug.CONSOLEMSG("Initializing fsh:" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 61, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
-		l_Ret.Initialize(l_Script);
-		return l_Ret;
-	}
-	haxe.Log.trace("*_* Error: target type not found : " + _Type,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 66, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
-	return null;
-}
-driver.js.rscbuilders.CRscBuilderDocElem.prototype.m_Path = null;
-driver.js.rscbuilders.CRscBuilderDocElem.prototype.__class__ = driver.js.rscbuilders.CRscBuilderDocElem;
-if(!renderer.camera) renderer.camera = {}
-renderer.camera.CCamera = function(p) { if( p === $_ ) return; {
-	this.m_Near = 0.0001;
-	this.m_Far = 1000.0;
-	this.m_Fov = ((3.1415926535897932384626433 * 2.0) / 360.0) * 54.4;
-	this.m_AspectRatio = 4.0 / 3.0;
-	this.m_Up = new math.CV3D(0,1,0);
-	this.m_Pos = new math.CV3D(0,0,5);
-	this.m_Dir = new math.CV3D(0,0,-1);
-	this.m_VPMatrix = new math.CMatrix44();
-}}
-renderer.camera.CCamera.__name__ = ["renderer","camera","CCamera"];
-renderer.camera.CCamera.prototype.BuildMatrix = function(_Out) {
-	return kernel.Result.SUCCESS;
-}
-renderer.camera.CCamera.prototype.GetFar = function() {
-	return this.m_Near;
-}
-renderer.camera.CCamera.prototype.GetMatrix = function() {
-	return this.m_VPMatrix;
-}
-renderer.camera.CCamera.prototype.GetNear = function() {
-	return this.m_Far;
-}
-renderer.camera.CCamera.prototype.GetPosition = function() {
-	return this.m_Pos;
-}
-renderer.camera.CCamera.prototype.SetFar = function(_Far) {
-	this.m_Far = _Far;
-}
-renderer.camera.CCamera.prototype.SetNear = function(_Near) {
-	this.m_Near = _Near;
-}
-renderer.camera.CCamera.prototype.SetPosition = function(_Pos) {
-	this.m_Pos.Copy(_Pos);
-}
-renderer.camera.CCamera.prototype.SetUp = function(_Up) {
-	this.m_Up.Copy(_Up);
-}
-renderer.camera.CCamera.prototype.Update = function() {
-	return this.BuildMatrix(this.m_VPMatrix);
-}
-renderer.camera.CCamera.prototype.m_AspectRatio = null;
-renderer.camera.CCamera.prototype.m_Dir = null;
-renderer.camera.CCamera.prototype.m_Far = null;
-renderer.camera.CCamera.prototype.m_Fov = null;
-renderer.camera.CCamera.prototype.m_Near = null;
-renderer.camera.CCamera.prototype.m_Pos = null;
-renderer.camera.CCamera.prototype.m_Up = null;
-renderer.camera.CCamera.prototype.m_VPMatrix = null;
-renderer.camera.CCamera.prototype.__class__ = renderer.camera.CCamera;
-renderer.camera.CPerspectiveCamera = function(p) { if( p === $_ ) return; {
-	this.m_Projection = new math.CMatrix44();
-	this.m_View = new math.CMatrix44();
-	renderer.camera.CCamera.apply(this,[]);
-}}
-renderer.camera.CPerspectiveCamera.__name__ = ["renderer","camera","CPerspectiveCamera"];
-renderer.camera.CPerspectiveCamera.__super__ = renderer.camera.CCamera;
-for(var k in renderer.camera.CCamera.prototype ) renderer.camera.CPerspectiveCamera.prototype[k] = renderer.camera.CCamera.prototype[k];
-renderer.camera.CPerspectiveCamera.prototype.BuildMatrix = function(_Out) {
-	math.CV3D.Add(math.Registers.V0,this.m_Pos,this.m_Dir);
-	this.m_Projection.Identity();
-	this.m_Projection.Perspective(this.m_Fov,this.m_AspectRatio,this.m_Near,this.m_Far);
-	this.m_View.Identity();
-	this.m_View.LookAt(this.m_Pos.x,this.m_Pos.y,this.m_Pos.z,math.Registers.V0.x,math.Registers.V0.y,math.Registers.V0.z,this.m_Up.x,this.m_Up.y,this.m_Up.z);
-	math.CMatrix44.Mult(_Out,this.m_View,this.m_Projection);
-	return kernel.Result.SUCCESS;
-}
-renderer.camera.CPerspectiveCamera.prototype.SetDirection = function(_Dir) {
-	this.m_Dir.Copy(_Dir);
-}
-renderer.camera.CPerspectiveCamera.prototype.SetFov = function(_Fov) {
-	this.m_Fov = _Fov;
-}
-renderer.camera.CPerspectiveCamera.prototype.m_Projection = null;
-renderer.camera.CPerspectiveCamera.prototype.m_View = null;
-renderer.camera.CPerspectiveCamera.prototype.__class__ = renderer.camera.CPerspectiveCamera;
-renderer.CRscShader = function(p) { if( p === $_ ) return; {
-	rsc.CRsc.apply(this,[]);
-}}
-renderer.CRscShader.__name__ = ["renderer","CRscShader"];
-renderer.CRscShader.__super__ = rsc.CRsc;
-for(var k in rsc.CRsc.prototype ) renderer.CRscShader.prototype[k] = rsc.CRsc.prototype[k];
-renderer.CRscShader.prototype.Activate = function() {
-	if(this.m_Status == 0) {
-		if(this.Compile() == kernel.Result.FAILURE) {
-			return kernel.Result.FAILURE;
-		}
-		if(this.Link() == kernel.Result.FAILURE) {
-			return kernel.Result.FAILURE;
-		}
-	}
-	return kernel.Result.SUCCESS;
-}
-renderer.CRscShader.prototype.Compile = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CRscShader.prototype.Link = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CRscShader.prototype.m_Status = null;
-renderer.CRscShader.prototype.__class__ = renderer.CRscShader;
-renderer.CViewport = function(p) { if( p === $_ ) return; {
-	this.m_x = 0;
-	this.m_y = 0;
-	this.m_h = 0;
-	this.m_w = 0;
-	this.m_VpRatio = 1;
-	rsc.CRsc.apply(this,[]);
-}}
-renderer.CViewport.__name__ = ["renderer","CViewport"];
-renderer.CViewport.__super__ = rsc.CRsc;
-for(var k in rsc.CRsc.prototype ) renderer.CViewport.prototype[k] = rsc.CRsc.prototype[k];
-renderer.CViewport.prototype.Activate = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CViewport.prototype.ComputeRatio = function() {
-	this.m_VpRatio = 1;
-}
-renderer.CViewport.prototype.GetType = function() {
-	return renderer.CViewport.RSC_ID;
-}
-renderer.CViewport.prototype.GetVpRatio = function() {
-	return this.m_VpRatio;
-}
-renderer.CViewport.prototype.Initialize = function(_x,_y,_h,_w) {
-	this.m_x = _x;
-	this.m_y = _y;
-	this.m_h = _h;
-	this.m_w = _w;
-}
-renderer.CViewport.prototype.m_VpRatio = null;
-renderer.CViewport.prototype.m_h = null;
-renderer.CViewport.prototype.m_w = null;
-renderer.CViewport.prototype.m_x = null;
-renderer.CViewport.prototype.m_y = null;
-renderer.CViewport.prototype.__class__ = renderer.CViewport;
-if(!driver.js.renderer) driver.js.renderer = {}
-driver.js.renderer.CViewportJS = function(p) { if( p === $_ ) return; {
-	renderer.CViewport.apply(this,[]);
-}}
-driver.js.renderer.CViewportJS.__name__ = ["driver","js","renderer","CViewportJS"];
-driver.js.renderer.CViewportJS.__super__ = renderer.CViewport;
-for(var k in renderer.CViewport.prototype ) driver.js.renderer.CViewportJS.prototype[k] = renderer.CViewport.prototype[k];
-driver.js.renderer.CViewportJS.prototype.Activate = function() {
-	kernel.Glb.g_SystemJS.m_GlObject.Viewport(this.m_x * kernel.Glb.g_System.m_Display.m_Width,this.m_y * kernel.Glb.g_System.m_Display.m_Height,this.m_w * kernel.Glb.g_System.m_Display.m_Width,this.m_h * kernel.Glb.g_System.m_Display.m_Height);
-	return kernel.Result.SUCCESS;
-}
-driver.js.renderer.CViewportJS.prototype.__class__ = driver.js.renderer.CViewportJS;
-renderer.CTexture = function(p) { if( p === $_ ) return; {
-	rsc.CRsc.apply(this,[]);
-}}
-renderer.CTexture.__name__ = ["renderer","CTexture"];
-renderer.CTexture.__super__ = rsc.CRsc;
-for(var k in rsc.CRsc.prototype ) renderer.CTexture.prototype[k] = rsc.CRsc.prototype[k];
-renderer.CTexture.prototype.Activate = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CTexture.prototype.GetType = function() {
-	return renderer.CTexture.RSC_ID;
-}
-renderer.CTexture.prototype.__class__ = renderer.CTexture;
-math.CV3D = function(_x,_y,_z) { if( _x === $_ ) return; {
-	this.x = _x;
-	this.y = _y;
-	this.z = _z;
-}}
-math.CV3D.__name__ = ["math","CV3D"];
-math.CV3D.Add = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x + _V1.x;
-	_VOut.y = _V0.y + _V1.y;
-	_VOut.z = _V0.z + _V1.z;
-}
-math.CV3D.Sub = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x - _V1.x;
-	_VOut.y = _V0.y - _V1.y;
-	_VOut.z = _V0.z - _V1.z;
-}
-math.CV3D.Normalize = function(_InOut) {
-	var l_InvLen = 1.0 / Math.sqrt((_InOut.x * _InOut.x + _InOut.y * _InOut.y) + _InOut.z * _InOut.z);
-	_InOut.x *= l_InvLen;
-	_InOut.y *= l_InvLen;
-	_InOut.z *= l_InvLen;
-}
-math.CV3D.prototype.Copy = function(_V) {
-	this.x = _V.x;
-	this.y = _V.y;
-	this.z = _V.z;
-}
-math.CV3D.prototype.Norm = function() {
-	return Math.sqrt((this.x * this.x + this.y * this.y) + this.z * this.z);
-}
-math.CV3D.prototype.Norm2 = function() {
-	return (this.x * this.x + this.y * this.y) + this.z * this.z;
-}
-math.CV3D.prototype.Set = function(_x,_y,_z) {
-	this.x = _x;
-	this.y = _y;
-	this.z = _z;
-}
-math.CV3D.prototype.x = null;
-math.CV3D.prototype.y = null;
-math.CV3D.prototype.z = null;
-math.CV3D.prototype.__class__ = math.CV3D;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
-}
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-renderer.MAT_BLEND_MODE = { __ename__ : ["renderer","MAT_BLEND_MODE"], __constructs__ : ["MBM_ADD","MBM_SUB","MBM_BLEND","MBM_OPAQUE"] }
-renderer.MAT_BLEND_MODE.MBM_ADD = ["MBM_ADD",0];
-renderer.MAT_BLEND_MODE.MBM_ADD.toString = $estr;
-renderer.MAT_BLEND_MODE.MBM_ADD.__enum__ = renderer.MAT_BLEND_MODE;
-renderer.MAT_BLEND_MODE.MBM_BLEND = ["MBM_BLEND",2];
-renderer.MAT_BLEND_MODE.MBM_BLEND.toString = $estr;
-renderer.MAT_BLEND_MODE.MBM_BLEND.__enum__ = renderer.MAT_BLEND_MODE;
-renderer.MAT_BLEND_MODE.MBM_OPAQUE = ["MBM_OPAQUE",3];
-renderer.MAT_BLEND_MODE.MBM_OPAQUE.toString = $estr;
-renderer.MAT_BLEND_MODE.MBM_OPAQUE.__enum__ = renderer.MAT_BLEND_MODE;
-renderer.MAT_BLEND_MODE.MBM_SUB = ["MBM_SUB",1];
-renderer.MAT_BLEND_MODE.MBM_SUB.toString = $estr;
-renderer.MAT_BLEND_MODE.MBM_SUB.__enum__ = renderer.MAT_BLEND_MODE;
-renderer.CMaterial = function(p) { if( p === $_ ) return; {
-	rsc.CRsc.apply(this,[]);
-	this.m_Mode = renderer.MAT_BLEND_MODE.MBM_OPAQUE;
-	this.m_Alpha = 1;
-}}
-renderer.CMaterial.__name__ = ["renderer","CMaterial"];
-renderer.CMaterial.__super__ = rsc.CRsc;
-for(var k in rsc.CRsc.prototype ) renderer.CMaterial.prototype[k] = rsc.CRsc.prototype[k];
-renderer.CMaterial.prototype.Activate = function() {
-	if(this.m_Shader.Activate() == kernel.Result.FAILURE) {
-		return kernel.Result.FAILURE;
-	}
-	return kernel.Result.SUCCESS;
-}
-renderer.CMaterial.prototype.GetType = function() {
-	return renderer.CMaterial.RSC_ID;
-}
-renderer.CMaterial.prototype.SetBlendMode = function(_Mode) {
-	this.m_Mode = _Mode;
-}
-renderer.CMaterial.prototype.SetShader = function(_Sh) {
-	if(this.m_Shader != null) {
-		this.m_Shader.Release();
-		this.m_Shader = null;
-	}
-	if(_Sh != null) {
-		_Sh.AddRef();
-	}
-	this.m_Shader = _Sh;
-}
-renderer.CMaterial.prototype.m_Alpha = null;
-renderer.CMaterial.prototype.m_Mode = null;
-renderer.CMaterial.prototype.m_Shader = null;
-renderer.CMaterial.prototype.m_Textures = null;
-renderer.CMaterial.prototype.__class__ = renderer.CMaterial;
-driver.js.renderer.CPrimitiveJS = function(p) { if( p === $_ ) return; {
-	renderer.CPrimitive.apply(this,[]);
-	this.m_NbIndices = 0;
-	this.m_NbVertex = 0;
-	this.m_NrmlObject = null;
-	this.m_TexObject = null;
-	this.m_VtxObject = null;
-	this.m_IdxObject = null;
-	this.m_NrmlNativeBuf = null;
-	this.m_TexNativeBuf = null;
-	this.m_VtxNativeBuf = null;
-	this.m_IdxNativeBuf = null;
-}}
-driver.js.renderer.CPrimitiveJS.__name__ = ["driver","js","renderer","CPrimitiveJS"];
-driver.js.renderer.CPrimitiveJS.__super__ = renderer.CPrimitive;
-for(var k in renderer.CPrimitive.prototype ) driver.js.renderer.CPrimitiveJS.prototype[k] = renderer.CPrimitive.prototype[k];
-driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerColor = function() {
-	return 4;
-}
-driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerNormal = function() {
-	return 3;
-}
-driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerTexCoord = function() {
-	return 4;
-}
-driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerVtx = function() {
-	return 3;
-}
-driver.js.renderer.CPrimitiveJS.prototype.GetNbTriangles = function() {
-	return this.m_NbTriangles;
-}
-driver.js.renderer.CPrimitiveJS.prototype.GetNbVertices = function() {
-	return this.m_NbVertex;
-}
-driver.js.renderer.CPrimitiveJS.prototype.SetIndexArray = function(_Indexes) {
-	if(this.m_IdxObject == null) {
-		this.m_IdxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
-		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_IdxObject);
-	}
-	this.m_IdxNativeBuf = new WebGLUnsignedByteArray(_Indexes);
-	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_IdxNativeBuf,35044);
-}
-driver.js.renderer.CPrimitiveJS.prototype.SetNormalArray = function(_Normals) {
-	if(this.m_NrmlObject == null) {
-		this.m_NrmlObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
-		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_NrmlObject);
-	}
-	this.m_NrmlNativeBuf = new WebGLFloatArray(_Normals);
-	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_NrmlNativeBuf,35044);
-}
-driver.js.renderer.CPrimitiveJS.prototype.SetTexCooArray = function(_Coord) {
-	if(this.m_TexObject == null) {
-		this.m_TexObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
-		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_TexObject);
-	}
-	this.m_TexNativeBuf = new WebGLFloatArray(_Coord);
-	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_TexNativeBuf,35044);
-}
-driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
-	this.m_NbTriangles = Std["int"](_Vertices.length / 9);
-	this.m_NbVertex = Std["int"](_Vertices.length / 3);
-	if(this.m_VtxObject == null) {
-		this.m_VtxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
-		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_VtxObject);
-		kernel.CDebug.CONSOLEMSG("Bound vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 80, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
-	}
-	if(this.m_VtxNativeBuf == null) {
-		this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
-		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
-		kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 87, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
-	}
-}
-driver.js.renderer.CPrimitiveJS.prototype.m_IdxNativeBuf = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_IdxObject = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_NbIndices = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_NbTriangles = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_NbVertex = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_NrmlNativeBuf = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_NrmlObject = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_TexNativeBuf = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_TexObject = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_VtxNativeBuf = null;
-driver.js.renderer.CPrimitiveJS.prototype.m_VtxObject = null;
-driver.js.renderer.CPrimitiveJS.prototype.__class__ = driver.js.renderer.CPrimitiveJS;
-math.CRect2D = function(p) { if( p === $_ ) return; {
-	this.m_TL = new math.CV2D(0,0);
-	this.m_BR = new math.CV2D(0,0);
-}}
-math.CRect2D.__name__ = ["math","CRect2D"];
-math.CRect2D.prototype.m_BR = null;
-math.CRect2D.prototype.m_TL = null;
-math.CRect2D.prototype.__class__ = math.CRect2D;
 math.CMatrix44 = function(p) { if( p === $_ ) return; {
 	this.m_Buffer = new Array();
 	{
@@ -602,10 +48,17 @@ math.CMatrix44.Det33 = function(a1,a2,a3,b1,b2,b3,c1,c2,c3) {
 	return (a1 * (b2 * c3 - b3 * c2) - b1 * (a2 * c3 - a3 * c2)) + c1 * (a2 * b3 - a3 * b2);
 }
 math.CMatrix44.Ortho = function(_Out,_left,_right,_bottom,_top,_near,_far) {
-	var l_tx = (_left + _right) / (_left - _right);
-	var l_ty = (_top + _bottom) / (_top - _bottom);
-	var l_tz = (_far + _near) / (_far - _near);
-	_Out.m_Buffer[0] = 2 / (_left - _right);
+	var l_tx = -(_left + _right) / (_right - _left);
+	var l_ty = -(_top + _bottom) / (_top - _bottom);
+	var l_tz = -(_far + _near) / (_far - _near);
+	{
+		_Out.Zero();
+		_Out.m_Buffer[0] = 1;
+		_Out.m_Buffer[5] = 1;
+		_Out.m_Buffer[10] = 1;
+		_Out.m_Buffer[15] = 1;
+	}
+	_Out.m_Buffer[0] = 2 / (_right - _left);
 	_Out.m_Buffer[1] = 0;
 	_Out.m_Buffer[2] = 0;
 	_Out.m_Buffer[3] = 0;
@@ -818,6 +271,12 @@ math.CMatrix44.prototype.Set = function(_00,_01,_02,_03,_10,_11,_12,_13,_20,_21,
 	this.m_Buffer[14] = _32;
 	this.m_Buffer[15] = _33;
 }
+math.CMatrix44.prototype.Trace = function() {
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[0] + ",") + this.m_Buffer[1]) + ",") + this.m_Buffer[2]) + ",") + this.m_Buffer[3]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 103, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[4] + ",") + this.m_Buffer[5]) + ",") + this.m_Buffer[6]) + ",") + this.m_Buffer[7]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 104, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[8] + ",") + this.m_Buffer[9]) + ",") + this.m_Buffer[10]) + ",") + this.m_Buffer[11]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 105, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[12] + ",") + this.m_Buffer[13]) + ",") + this.m_Buffer[14]) + ",") + this.m_Buffer[15]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 106, className : "math.CMatrix44", methodName : "Trace"});
+}
 math.CMatrix44.prototype.Translation = function(_x,_y,_z) {
 	{
 		this.Zero();
@@ -839,44 +298,556 @@ math.CMatrix44.prototype.Zero = function() {
 }
 math.CMatrix44.prototype.m_Buffer = null;
 math.CMatrix44.prototype.__class__ = math.CMatrix44;
+math.CV3D = function(_x,_y,_z) { if( _x === $_ ) return; {
+	this.x = _x;
+	this.y = _y;
+	this.z = _z;
+}}
+math.CV3D.__name__ = ["math","CV3D"];
+math.CV3D.Add = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x + _V1.x;
+	_VOut.y = _V0.y + _V1.y;
+	_VOut.z = _V0.z + _V1.z;
+}
+math.CV3D.Sub = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x - _V1.x;
+	_VOut.y = _V0.y - _V1.y;
+	_VOut.z = _V0.z - _V1.z;
+}
+math.CV3D.Normalize = function(_InOut) {
+	var l_InvLen = 1.0 / Math.sqrt((_InOut.x * _InOut.x + _InOut.y * _InOut.y) + _InOut.z * _InOut.z);
+	_InOut.x *= l_InvLen;
+	_InOut.y *= l_InvLen;
+	_InOut.z *= l_InvLen;
+}
+math.CV3D.prototype.Copy = function(_V) {
+	this.x = _V.x;
+	this.y = _V.y;
+	this.z = _V.z;
+}
+math.CV3D.prototype.Norm = function() {
+	return Math.sqrt((this.x * this.x + this.y * this.y) + this.z * this.z);
+}
+math.CV3D.prototype.Norm2 = function() {
+	return (this.x * this.x + this.y * this.y) + this.z * this.z;
+}
+math.CV3D.prototype.Set = function(_x,_y,_z) {
+	this.x = _x;
+	this.y = _y;
+	this.z = _z;
+}
+math.CV3D.prototype.x = null;
+math.CV3D.prototype.y = null;
+math.CV3D.prototype.z = null;
+math.CV3D.prototype.__class__ = math.CV3D;
 math.Registers = function() { }
 math.Registers.__name__ = ["math","Registers"];
 math.Registers.prototype.__class__ = math.Registers;
-StringBuf = function(p) { if( p === $_ ) return; {
-	this.b = new Array();
+if(typeof rsc=='undefined') rsc = {}
+rsc.CRsc = function(p) { if( p === $_ ) return; {
+	this.m_Ref = 0;
+	this.m_Path = "";
+	this.m_SingleLoad = false;
 }}
-StringBuf.__name__ = ["StringBuf"];
-StringBuf.prototype.add = function(x) {
-	this.b[this.b.length] = x;
+rsc.CRsc.__name__ = ["rsc","CRsc"];
+rsc.CRsc.prototype.AddRef = function() {
+	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 46, className : "rsc.CRsc", methodName : "AddRef"});
+	this.m_Ref++;
 }
-StringBuf.prototype.addChar = function(c) {
-	this.b[this.b.length] = String.fromCharCode(c);
+rsc.CRsc.prototype.Copy = function(_InRsc) {
+	kernel.CDebug.ASSERT(this.GetType() == _InRsc.GetType(),{ fileName : "CRsc.hx", lineNumber : 26, className : "rsc.CRsc", methodName : "Copy"});
 }
-StringBuf.prototype.addSub = function(s,pos,len) {
-	this.b[this.b.length] = s.substr(pos,len);
+rsc.CRsc.prototype.GetPath = function() {
+	return this.m_Path;
 }
-StringBuf.prototype.b = null;
-StringBuf.prototype.toString = function() {
-	return this.b.join("");
+rsc.CRsc.prototype.GetType = function() {
+	return -1;
 }
-StringBuf.prototype.__class__ = StringBuf;
-if(typeof kernel=='undefined') kernel = {}
-kernel.Result = { __ename__ : ["kernel","Result"], __constructs__ : ["SUCCESS","FAILURE"] }
-kernel.Result.FAILURE = ["FAILURE",1];
-kernel.Result.FAILURE.toString = $estr;
-kernel.Result.FAILURE.__enum__ = kernel.Result;
-kernel.Result.SUCCESS = ["SUCCESS",0];
-kernel.Result.SUCCESS.toString = $estr;
-kernel.Result.SUCCESS.__enum__ = kernel.Result;
-kernel.Delegate = function() { }
-kernel.Delegate.__name__ = ["kernel","Delegate"];
-kernel.Delegate.prototype.Apply = function() {
+rsc.CRsc.prototype.IsSingleLoaded = function() {
+	return this.m_SingleLoad;
+}
+rsc.CRsc.prototype.Release = function() {
+	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 62, className : "rsc.CRsc", methodName : "Release"});
+	this.m_Ref--;
+	if(this.m_Ref == 0) {
+		kernel.Glb.g_System.GetRscMan().ForceDelete(this);
+	}
+}
+rsc.CRsc.prototype.SetPath = function(_Path) {
+	this.m_Path = ((_Path != null)?_Path.toLowerCase():null);
+}
+rsc.CRsc.prototype.SetSingleLoaded = function(_OnOff) {
+	this.m_SingleLoad = _OnOff;
+}
+rsc.CRsc.prototype.m_Path = null;
+rsc.CRsc.prototype.m_Ref = null;
+rsc.CRsc.prototype.m_SingleLoad = null;
+rsc.CRsc.prototype.__class__ = rsc.CRsc;
+rsc.CRscMan = function(p) { if( p === $_ ) return; {
+	this.m_Repository = null;
+	this.m_Builders = null;
+}}
+rsc.CRscMan.__name__ = ["rsc","CRscMan"];
+rsc.CRscMan.prototype.AddBuilder = function(_Type,_Builder) {
+	kernel.CDebug.ASSERT(_Builder != null,{ fileName : "CRscMan.hx", lineNumber : 28, className : "rsc.CRscMan", methodName : "AddBuilder"});
+	this.m_Builders.set(_Type,_Builder);
 	return kernel.Result.SUCCESS;
 }
-kernel.Delegate.prototype.__class__ = kernel.Delegate;
+rsc.CRscMan.prototype.Copy = function(_Rsc) {
+	kernel.CDebug.ASSERT(this.m_Builders.get(_Rsc.GetType()) != null,{ fileName : "CRscMan.hx", lineNumber : 58, className : "rsc.CRscMan", methodName : "Copy"});
+	var l_Rsc = this.m_Builders.get(_Rsc.GetType()).Build(_Rsc.GetType(),null);
+	if(l_Rsc != null) {
+		l_Rsc.AddRef();
+		l_Rsc.SetPath(null);
+		l_Rsc.SetSingleLoaded(true);
+	}
+	l_Rsc.Copy(_Rsc);
+	return l_Rsc;
+}
+rsc.CRscMan.prototype.Create = function(_Type) {
+	var l_Builder = this.m_Builders.get(_Type);
+	if(l_Builder == null) {
+		kernel.CDebug.CONSOLEMSG("No builder for rsc type : " + _Type,{ fileName : "CRscMan.hx", lineNumber : 38, className : "rsc.CRscMan", methodName : "Create"});
+		return null;
+	}
+	else {
+		var l_Rsc = l_Builder.Build(_Type,null);
+		if(l_Rsc != null) {
+			l_Rsc.AddRef();
+			l_Rsc.SetPath(null);
+			l_Rsc.SetSingleLoaded(true);
+			return l_Rsc;
+		}
+	}
+	return null;
+}
+rsc.CRscMan.prototype.ForceDelete = function(_R) {
+	this.m_Repository.set(_R.GetPath(),null);
+}
+rsc.CRscMan.prototype.Initialize = function() {
+	this.m_Repository = new Hash();
+	this.m_Builders = new IntHash();
+	return kernel.Result.SUCCESS;
+}
+rsc.CRscMan.prototype.Load = function(_Type,_Path,_SingleLoad) {
+	kernel.CDebug.ASSERT(_Path != null,{ fileName : "CRscMan.hx", lineNumber : 74, className : "rsc.CRscMan", methodName : "Load"});
+	if(_SingleLoad != null && _SingleLoad != true && _Path != null) {
+		var l_CandRsc = this.m_Repository.get(_Path);
+		if(l_CandRsc != null && !l_CandRsc.IsSingleLoaded()) {
+			l_CandRsc.AddRef();
+			return l_CandRsc;
+		}
+	}
+	var l_Builder = this.m_Builders.get(_Type);
+	if(l_Builder == null) {
+		haxe.Log.trace(((("No builder for rsc: " + _Type) + "(") + _Path) + ")",{ fileName : "CRscMan.hx", lineNumber : 89, className : "rsc.CRscMan", methodName : "Load"});
+		return null;
+	}
+	else {
+		var l_Rsc = l_Builder.Build(_Type,_Path);
+		if(l_Rsc != null) {
+			l_Rsc.AddRef();
+			l_Rsc.SetPath(_Path);
+			l_Rsc.SetSingleLoaded(((_SingleLoad == null)?false:_SingleLoad));
+		}
+		return l_Rsc;
+	}
+}
+rsc.CRscMan.prototype.Shut = function() {
+	this.m_Repository = null;
+	this.m_Builders = null;
+	return kernel.Result.SUCCESS;
+}
+rsc.CRscMan.prototype.m_Builders = null;
+rsc.CRscMan.prototype.m_Repository = null;
+rsc.CRscMan.prototype.__class__ = rsc.CRscMan;
+if(typeof renderer=='undefined') renderer = {}
+renderer.CViewport = function(p) { if( p === $_ ) return; {
+	this.m_x = 0;
+	this.m_y = 0;
+	this.m_h = 0;
+	this.m_w = 0;
+	this.m_VpRatio = 1;
+	rsc.CRsc.apply(this,[]);
+}}
+renderer.CViewport.__name__ = ["renderer","CViewport"];
+renderer.CViewport.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) renderer.CViewport.prototype[k] = rsc.CRsc.prototype[k];
+renderer.CViewport.prototype.Activate = function() {
+	return kernel.Result.SUCCESS;
+}
+renderer.CViewport.prototype.ComputeRatio = function() {
+	this.m_VpRatio = 1;
+}
+renderer.CViewport.prototype.GetType = function() {
+	return renderer.CViewport.RSC_ID;
+}
+renderer.CViewport.prototype.GetVpRatio = function() {
+	return this.m_VpRatio;
+}
+renderer.CViewport.prototype.Initialize = function(_x,_y,_h,_w) {
+	this.m_x = _x;
+	this.m_y = _y;
+	this.m_h = _h;
+	this.m_w = _w;
+}
+renderer.CViewport.prototype.m_VpRatio = null;
+renderer.CViewport.prototype.m_h = null;
+renderer.CViewport.prototype.m_w = null;
+renderer.CViewport.prototype.m_x = null;
+renderer.CViewport.prototype.m_y = null;
+renderer.CViewport.prototype.__class__ = renderer.CViewport;
+renderer.CMaterial = function(p) { if( p === $_ ) return; {
+	rsc.CRsc.apply(this,[]);
+	this.m_Mode = renderer.MAT_BLEND_MODE.MBM_OPAQUE;
+	this.m_Alpha = 1;
+}}
+renderer.CMaterial.__name__ = ["renderer","CMaterial"];
+renderer.CMaterial.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) renderer.CMaterial.prototype[k] = rsc.CRsc.prototype[k];
+renderer.CMaterial.prototype.Activate = function() {
+	if(this.m_Shader.Activate() == kernel.Result.FAILURE) {
+		return kernel.Result.FAILURE;
+	}
+	return kernel.Result.SUCCESS;
+}
+renderer.CMaterial.prototype.GetType = function() {
+	return renderer.CMaterial.RSC_ID;
+}
+renderer.CMaterial.prototype.SetBlendMode = function(_Mode) {
+	this.m_Mode = _Mode;
+}
+renderer.CMaterial.prototype.SetShader = function(_Sh) {
+	if(this.m_Shader != null) {
+		this.m_Shader.Release();
+		this.m_Shader = null;
+	}
+	if(_Sh != null) {
+		_Sh.AddRef();
+	}
+	this.m_Shader = _Sh;
+}
+renderer.CMaterial.prototype.m_Alpha = null;
+renderer.CMaterial.prototype.m_Mode = null;
+renderer.CMaterial.prototype.m_Shader = null;
+renderer.CMaterial.prototype.m_Textures = null;
+renderer.CMaterial.prototype.__class__ = renderer.CMaterial;
+if(typeof driver=='undefined') driver = {}
+if(!driver.js) driver.js = {}
+if(!driver.js.renderer) driver.js.renderer = {}
+driver.js.renderer.CMaterialJS = function(p) { if( p === $_ ) return; {
+	renderer.CMaterial.apply(this,[]);
+}}
+driver.js.renderer.CMaterialJS.__name__ = ["driver","js","renderer","CMaterialJS"];
+driver.js.renderer.CMaterialJS.__super__ = renderer.CMaterial;
+for(var k in renderer.CMaterial.prototype ) driver.js.renderer.CMaterialJS.prototype[k] = renderer.CMaterial.prototype[k];
+driver.js.renderer.CMaterialJS.prototype.Activate = function() {
+	var l_GL = kernel.Glb.g_SystemJS.m_GlObject;
+	var $e = (this.m_Mode);
+	switch( $e[1] ) {
+	case 3:
+	{
+		l_GL.Disable(3042);
+	}break;
+	case 0:
+	{
+		l_GL.BlendEquation(32774);
+		l_GL.Enable(3042);
+		l_GL.BlendFunc(770,1);
+		l_GL.Enable(3042);
+	}break;
+	case 1:
+	{
+		l_GL.BlendEquation(32778);
+		l_GL.Enable(3042);
+		l_GL.BlendFunc(770,1);
+		l_GL.Enable(3042);
+	}break;
+	case 2:
+	{
+		l_GL.BlendEquation(32774);
+		l_GL.Enable(3042);
+		l_GL.BlendFunc(770,771);
+		l_GL.Enable(3042);
+	}break;
+	}
+	return renderer.CMaterial.prototype.Activate.apply(this,[]);
+}
+driver.js.renderer.CMaterialJS.prototype.__class__ = driver.js.renderer.CMaterialJS;
+List = function(p) { if( p === $_ ) return; {
+	this.length = 0;
+}}
+List.__name__ = ["List"];
+List.prototype.add = function(item) {
+	var x = [item];
+	if(this.h == null) this.h = x;
+	else this.q[1] = x;
+	this.q = x;
+	this.length++;
+}
+List.prototype.clear = function() {
+	this.h = null;
+	this.q = null;
+	this.length = 0;
+}
+List.prototype.filter = function(f) {
+	var l2 = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		if(f(v)) l2.add(v);
+	}
+	return l2;
+}
+List.prototype.first = function() {
+	return (this.h == null?null:this.h[0]);
+}
+List.prototype.h = null;
+List.prototype.isEmpty = function() {
+	return (this.h == null);
+}
+List.prototype.iterator = function() {
+	return { h : this.h, hasNext : function() {
+		return (this.h != null);
+	}, next : function() {
+		if(this.h == null) return null;
+		var x = this.h[0];
+		this.h = this.h[1];
+		return x;
+	}}
+}
+List.prototype.join = function(sep) {
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = sep;
+		s.b[s.b.length] = l[0];
+		l = l[1];
+	}
+	return s.b.join("");
+}
+List.prototype.last = function() {
+	return (this.q == null?null:this.q[0]);
+}
+List.prototype.length = null;
+List.prototype.map = function(f) {
+	var b = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		b.add(f(v));
+	}
+	return b;
+}
+List.prototype.pop = function() {
+	if(this.h == null) return null;
+	var x = this.h[0];
+	this.h = this.h[1];
+	if(this.h == null) this.q = null;
+	this.length--;
+	return x;
+}
+List.prototype.push = function(item) {
+	var x = [item,this.h];
+	this.h = x;
+	if(this.q == null) this.q = x;
+	this.length++;
+}
+List.prototype.q = null;
+List.prototype.remove = function(v) {
+	var prev = null;
+	var l = this.h;
+	while(l != null) {
+		if(l[0] == v) {
+			if(prev == null) this.h = l[1];
+			else prev[1] = l[1];
+			if(this.q == l) this.q = prev;
+			this.length--;
+			return true;
+		}
+		prev = l;
+		l = l[1];
+	}
+	return false;
+}
+List.prototype.toString = function() {
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	s.b[s.b.length] = "{";
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = ", ";
+		s.b[s.b.length] = Std.string(l[0]);
+		l = l[1];
+	}
+	s.b[s.b.length] = "}";
+	return s.b.join("");
+}
+List.prototype.__class__ = List;
+if(typeof kernel=='undefined') kernel = {}
+kernel.CDebug = function() { }
+kernel.CDebug.__name__ = ["kernel","CDebug"];
+kernel.CDebug.ASSERT = function(_Obj,pos) {
+	if(!_Obj) {
+		haxe.Log.trace((("Assert in " + pos.className) + "::") + pos.methodName,pos);
+	}
+}
+kernel.CDebug.CONSOLEMSG = function(_Msg,pos) {
+	haxe.Log.trace(_Msg,{ fileName : "CDebug.hx", lineNumber : 15, className : "kernel.CDebug", methodName : "CONSOLEMSG"});
+}
+kernel.CDebug.prototype.__class__ = kernel.CDebug;
+renderer.MAT_BLEND_MODE = { __ename__ : ["renderer","MAT_BLEND_MODE"], __constructs__ : ["MBM_ADD","MBM_SUB","MBM_BLEND","MBM_OPAQUE"] }
+renderer.MAT_BLEND_MODE.MBM_ADD = ["MBM_ADD",0];
+renderer.MAT_BLEND_MODE.MBM_ADD.toString = $estr;
+renderer.MAT_BLEND_MODE.MBM_ADD.__enum__ = renderer.MAT_BLEND_MODE;
+renderer.MAT_BLEND_MODE.MBM_BLEND = ["MBM_BLEND",2];
+renderer.MAT_BLEND_MODE.MBM_BLEND.toString = $estr;
+renderer.MAT_BLEND_MODE.MBM_BLEND.__enum__ = renderer.MAT_BLEND_MODE;
+renderer.MAT_BLEND_MODE.MBM_OPAQUE = ["MBM_OPAQUE",3];
+renderer.MAT_BLEND_MODE.MBM_OPAQUE.toString = $estr;
+renderer.MAT_BLEND_MODE.MBM_OPAQUE.__enum__ = renderer.MAT_BLEND_MODE;
+renderer.MAT_BLEND_MODE.MBM_SUB = ["MBM_SUB",1];
+renderer.MAT_BLEND_MODE.MBM_SUB.toString = $estr;
+renderer.MAT_BLEND_MODE.MBM_SUB.__enum__ = renderer.MAT_BLEND_MODE;
+if(typeof haxe=='undefined') haxe = {}
+haxe.TimerQueue = function(delay) { if( delay === $_ ) return; {
+	this.delay = (delay == null?1:delay);
+	this.q = new Array();
+}}
+haxe.TimerQueue.__name__ = ["haxe","TimerQueue"];
+haxe.TimerQueue.prototype.add = function(f) {
+	this.q.push(f);
+	if(this.t == null) {
+		this.t = new haxe.Timer(this.delay);
+		this.t.run = $closure(this,"process");
+	}
+}
+haxe.TimerQueue.prototype.delay = null;
+haxe.TimerQueue.prototype.process = function() {
+	var f = this.q.shift();
+	if(f == null) {
+		this.t.stop();
+		this.t = null;
+		return;
+	}
+	f();
+}
+haxe.TimerQueue.prototype.q = null;
+haxe.TimerQueue.prototype.t = null;
+haxe.TimerQueue.prototype.__class__ = haxe.TimerQueue;
 math.Constants = function() { }
 math.Constants.__name__ = ["math","Constants"];
 math.Constants.prototype.__class__ = math.Constants;
+if(!renderer.camera) renderer.camera = {}
+renderer.camera.CCamera = function(p) { if( p === $_ ) return; {
+	this.m_Near = 0.0001;
+	this.m_Far = 1000.0;
+	this.m_Fov = ((3.1415926535897932384626433 * 2.0) / 360.0) * 54.4;
+	this.m_AspectRatio = 4.0 / 3.0;
+	this.m_Up = new math.CV3D(0,1,0);
+	this.m_Pos = new math.CV3D(0,0,5);
+	this.m_Dir = new math.CV3D(0,0,-1);
+	this.m_VPMatrix = new math.CMatrix44();
+}}
+renderer.camera.CCamera.__name__ = ["renderer","camera","CCamera"];
+renderer.camera.CCamera.prototype.BuildMatrix = function(_Out) {
+	return kernel.Result.SUCCESS;
+}
+renderer.camera.CCamera.prototype.GetFar = function() {
+	return this.m_Near;
+}
+renderer.camera.CCamera.prototype.GetMatrix = function() {
+	return this.m_VPMatrix;
+}
+renderer.camera.CCamera.prototype.GetNear = function() {
+	return this.m_Far;
+}
+renderer.camera.CCamera.prototype.GetPosition = function() {
+	return this.m_Pos;
+}
+renderer.camera.CCamera.prototype.SetFar = function(_Far) {
+	this.m_Far = _Far;
+}
+renderer.camera.CCamera.prototype.SetNear = function(_Near) {
+	this.m_Near = _Near;
+}
+renderer.camera.CCamera.prototype.SetPosition = function(_Pos) {
+	this.m_Pos.Copy(_Pos);
+}
+renderer.camera.CCamera.prototype.SetUp = function(_Up) {
+	this.m_Up.Copy(_Up);
+}
+renderer.camera.CCamera.prototype.Update = function() {
+	return this.BuildMatrix(this.m_VPMatrix);
+}
+renderer.camera.CCamera.prototype.m_AspectRatio = null;
+renderer.camera.CCamera.prototype.m_Dir = null;
+renderer.camera.CCamera.prototype.m_Far = null;
+renderer.camera.CCamera.prototype.m_Fov = null;
+renderer.camera.CCamera.prototype.m_Near = null;
+renderer.camera.CCamera.prototype.m_Pos = null;
+renderer.camera.CCamera.prototype.m_Up = null;
+renderer.camera.CCamera.prototype.m_VPMatrix = null;
+renderer.camera.CCamera.prototype.__class__ = renderer.camera.CCamera;
+renderer.CPrimitive = function(p) { if( p === $_ ) return; {
+	rsc.CRsc.apply(this,[]);
+}}
+renderer.CPrimitive.__name__ = ["renderer","CPrimitive"];
+renderer.CPrimitive.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) renderer.CPrimitive.prototype[k] = rsc.CRsc.prototype[k];
+renderer.CPrimitive.prototype.GetType = function() {
+	return renderer.CPrimitive.RSC_ID;
+}
+renderer.CPrimitive.prototype.SetVertexArray = function(_Vertices) {
+	null;
+}
+renderer.CPrimitive.prototype.__class__ = renderer.CPrimitive;
+rsc.CRscBuilder = function(p) { if( p === $_ ) return; {
+	null;
+}}
+rsc.CRscBuilder.__name__ = ["rsc","CRscBuilder"];
+rsc.CRscBuilder.prototype.Build = function(_Type,_Path) {
+	return null;
+}
+rsc.CRscBuilder.prototype.__class__ = rsc.CRscBuilder;
+if(!driver.js.rscbuilders) driver.js.rscbuilders = {}
+driver.js.rscbuilders.CRscJSFactory = function(p) { if( p === $_ ) return; {
+	rsc.CRscBuilder.apply(this,[]);
+}}
+driver.js.rscbuilders.CRscJSFactory.__name__ = ["driver","js","rscbuilders","CRscJSFactory"];
+driver.js.rscbuilders.CRscJSFactory.__super__ = rsc.CRscBuilder;
+for(var k in rsc.CRscBuilder.prototype ) driver.js.rscbuilders.CRscJSFactory.prototype[k] = rsc.CRscBuilder.prototype[k];
+driver.js.rscbuilders.CRscJSFactory.prototype.Build = function(_Type,_Path) {
+	var l_Rsc = null;
+	switch(_Type) {
+	case renderer.CMaterial.RSC_ID:{
+		l_Rsc = new driver.js.renderer.CMaterialJS();
+	}break;
+	case renderer.CTexture.RSC_ID:{
+		l_Rsc = new renderer.CTexture();
+	}break;
+	case renderer.CPrimitive.RSC_ID:{
+		l_Rsc = new driver.js.renderer.CPrimitiveJS();
+	}break;
+	case renderer.CRenderStates.RSC_ID:{
+		l_Rsc = new driver.js.renderer.CRenderStatesJS();
+	}break;
+	case renderer.CViewport.RSC_ID:{
+		l_Rsc = new driver.js.renderer.CViewportJS();
+	}break;
+	default:{
+		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 54, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
+		l_Rsc = null;
+	}break;
+	}
+	return l_Rsc;
+}
+driver.js.rscbuilders.CRscJSFactory.prototype.__class__ = driver.js.rscbuilders.CRscJSFactory;
 kernel.CSystem = function(p) { if( p === $_ ) return; {
 	this.m_FrameTime = 0;
 	this.m_GameTime = 0;
@@ -1040,77 +1011,56 @@ driver.js.kernel.CSystemJS.prototype.Inspect = function() {
 driver.js.kernel.CSystemJS.prototype.m_GlObject = null;
 driver.js.kernel.CSystemJS.prototype.m_RscJSFactory = null;
 driver.js.kernel.CSystemJS.prototype.__class__ = driver.js.kernel.CSystemJS;
-driver.js.renderer.CMaterialJS = function(p) { if( p === $_ ) return; {
-	renderer.CMaterial.apply(this,[]);
+renderer.CRscShader = function(p) { if( p === $_ ) return; {
+	rsc.CRsc.apply(this,[]);
 }}
-driver.js.renderer.CMaterialJS.__name__ = ["driver","js","renderer","CMaterialJS"];
-driver.js.renderer.CMaterialJS.__super__ = renderer.CMaterial;
-for(var k in renderer.CMaterial.prototype ) driver.js.renderer.CMaterialJS.prototype[k] = renderer.CMaterial.prototype[k];
-driver.js.renderer.CMaterialJS.prototype.Activate = function() {
-	var l_GL = kernel.Glb.g_SystemJS.m_GlObject;
-	var $e = (this.m_Mode);
-	switch( $e[1] ) {
-	case 3:
-	{
-		l_GL.Disable(3042);
-	}break;
-	case 0:
-	{
-		l_GL.BlendEquation(32774);
-		l_GL.Enable(3042);
-		l_GL.BlendFunc(770,1);
-		l_GL.Enable(3042);
-	}break;
-	case 1:
-	{
-		l_GL.BlendEquation(32778);
-		l_GL.Enable(3042);
-		l_GL.BlendFunc(770,1);
-		l_GL.Enable(3042);
-	}break;
-	case 2:
-	{
-		l_GL.BlendEquation(32774);
-		l_GL.Enable(3042);
-		l_GL.BlendFunc(770,771);
-		l_GL.Enable(3042);
-	}break;
+renderer.CRscShader.__name__ = ["renderer","CRscShader"];
+renderer.CRscShader.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) renderer.CRscShader.prototype[k] = rsc.CRsc.prototype[k];
+renderer.CRscShader.prototype.Activate = function() {
+	if(this.m_Status == 0) {
+		if(this.Compile() == kernel.Result.FAILURE) {
+			return kernel.Result.FAILURE;
+		}
+		if(this.Link() == kernel.Result.FAILURE) {
+			return kernel.Result.FAILURE;
+		}
 	}
-	return renderer.CMaterial.prototype.Activate.apply(this,[]);
-}
-driver.js.renderer.CMaterialJS.prototype.__class__ = driver.js.renderer.CMaterialJS;
-renderer.camera.COrthoCamera = function(p) { if( p === $_ ) return; {
-	renderer.camera.CCamera.apply(this,[]);
-	this.m_Height = 0;
-	this.m_Width = 0;
-}}
-renderer.camera.COrthoCamera.__name__ = ["renderer","camera","COrthoCamera"];
-renderer.camera.COrthoCamera.__super__ = renderer.camera.CCamera;
-for(var k in renderer.camera.CCamera.prototype ) renderer.camera.COrthoCamera.prototype[k] = renderer.camera.CCamera.prototype[k];
-renderer.camera.COrthoCamera.prototype.BuildMatrix = function(_Out) {
-	var l_Left = this.m_Pos.x;
-	var l_Right = this.m_Pos.x + this.m_Width;
-	var l_Bottom = this.m_Pos.y + this.m_Height;
-	var l_Top = this.m_Pos.y;
-	math.CMatrix44.Ortho(_Out,l_Left,l_Right,l_Bottom,l_Top,this.m_Pos.z + this.m_Near,this.m_Pos.z + this.m_Far);
 	return kernel.Result.SUCCESS;
 }
-renderer.camera.COrthoCamera.prototype.SetHeight = function(_H) {
-	this.m_Height = _H;
+renderer.CRscShader.prototype.Compile = function() {
+	return kernel.Result.SUCCESS;
 }
-renderer.camera.COrthoCamera.prototype.SetWidth = function(_W) {
-	this.m_Width = _W;
+renderer.CRscShader.prototype.Link = function() {
+	return kernel.Result.SUCCESS;
 }
-renderer.camera.COrthoCamera.prototype.m_Height = null;
-renderer.camera.COrthoCamera.prototype.m_Width = null;
-renderer.camera.COrthoCamera.prototype.__class__ = renderer.camera.COrthoCamera;
-renderer.Z_EQUATION = { __ename__ : ["renderer","Z_EQUATION"], __constructs__ : ["Z_GREATER","Z_GREATER_EQ"] }
-renderer.Z_EQUATION.Z_GREATER = ["Z_GREATER",0];
+renderer.CRscShader.prototype.m_Status = null;
+renderer.CRscShader.prototype.__class__ = renderer.CRscShader;
+kernel.Glb = function() { }
+kernel.Glb.__name__ = ["kernel","Glb"];
+kernel.Glb.GetRenderer = function() {
+	return kernel.Glb.g_System.m_Renderer;
+}
+kernel.Glb.GetSystem = function() {
+	return kernel.Glb.g_System;
+}
+kernel.Glb.StaticUpdate = function() {
+	kernel.Glb.g_System.Update();
+}
+kernel.Glb.prototype.__class__ = kernel.Glb;
+renderer.Z_EQUATION = { __ename__ : ["renderer","Z_EQUATION"], __constructs__ : ["Z_LESSER","Z_LESSER_EQ","Z_GREATER","Z_GREATER_EQ"] }
+renderer.Z_EQUATION.Z_GREATER = ["Z_GREATER",2];
 renderer.Z_EQUATION.Z_GREATER.toString = $estr;
 renderer.Z_EQUATION.Z_GREATER.__enum__ = renderer.Z_EQUATION;
-renderer.Z_EQUATION.Z_GREATER_EQ = ["Z_GREATER_EQ",1];
+renderer.Z_EQUATION.Z_GREATER_EQ = ["Z_GREATER_EQ",3];
 renderer.Z_EQUATION.Z_GREATER_EQ.toString = $estr;
 renderer.Z_EQUATION.Z_GREATER_EQ.__enum__ = renderer.Z_EQUATION;
+renderer.Z_EQUATION.Z_LESSER = ["Z_LESSER",0];
+renderer.Z_EQUATION.Z_LESSER.toString = $estr;
+renderer.Z_EQUATION.Z_LESSER.__enum__ = renderer.Z_EQUATION;
+renderer.Z_EQUATION.Z_LESSER_EQ = ["Z_LESSER_EQ",1];
+renderer.Z_EQUATION.Z_LESSER_EQ.toString = $estr;
+renderer.Z_EQUATION.Z_LESSER_EQ.__enum__ = renderer.Z_EQUATION;
 renderer.CRenderStates = function(p) { if( p === $_ ) return; {
 	rsc.CRsc.apply(this,[]);
 	this.m_ZRead = true;
@@ -1158,17 +1108,14 @@ renderer.CRenderStates.prototype.m_ZEq = null;
 renderer.CRenderStates.prototype.m_ZRead = null;
 renderer.CRenderStates.prototype.m_ZWrite = null;
 renderer.CRenderStates.prototype.__class__ = renderer.CRenderStates;
-kernel.CDebug = function() { }
-kernel.CDebug.__name__ = ["kernel","CDebug"];
-kernel.CDebug.ASSERT = function(_Obj,pos) {
-	if(!_Obj) {
-		haxe.Log.trace((("Assert in " + pos.className) + "::") + pos.methodName,pos);
-	}
-}
-kernel.CDebug.CONSOLEMSG = function(_Msg,pos) {
-	haxe.Log.trace(_Msg,{ fileName : "CDebug.hx", lineNumber : 15, className : "kernel.CDebug", methodName : "CONSOLEMSG"});
-}
-kernel.CDebug.prototype.__class__ = kernel.CDebug;
+math.CRect2D = function(p) { if( p === $_ ) return; {
+	this.m_TL = new math.CV2D(0,0);
+	this.m_BR = new math.CV2D(0,0);
+}}
+math.CRect2D.__name__ = ["math","CRect2D"];
+math.CRect2D.prototype.m_BR = null;
+math.CRect2D.prototype.m_TL = null;
+math.CRect2D.prototype.__class__ = math.CRect2D;
 IntIter = function(min,max) { if( min === $_ ) return; {
 	this.min = min;
 	this.max = max;
@@ -1183,447 +1130,96 @@ IntIter.prototype.next = function() {
 	return this.min++;
 }
 IntIter.prototype.__class__ = IntIter;
-haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
-	this.id = haxe.Timer.arr.length;
-	haxe.Timer.arr[this.id] = this;
-	this.timerId = window.setInterval(("haxe.Timer.arr[" + this.id) + "].run();",time_ms);
-}}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	}
-	return t;
-}
-haxe.Timer.stamp = function() {
-	return Date.now().getTime() / 1000;
-}
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.run = function() {
-	null;
-}
-haxe.Timer.prototype.stop = function() {
-	if(this.id == null) return;
-	window.clearInterval(this.timerId);
-	haxe.Timer.arr[this.id] = null;
-	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
-		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
-	}
-	this.id = null;
-}
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.__class__ = haxe.Timer;
-driver.js.kernel.CTypesJS = function() { }
-driver.js.kernel.CTypesJS.__name__ = ["driver","js","kernel","CTypesJS"];
-driver.js.kernel.CTypesJS.prototype.__class__ = driver.js.kernel.CTypesJS;
-haxe.TimerQueue = function(delay) { if( delay === $_ ) return; {
-	this.delay = (delay == null?1:delay);
-	this.q = new Array();
-}}
-haxe.TimerQueue.__name__ = ["haxe","TimerQueue"];
-haxe.TimerQueue.prototype.add = function(f) {
-	this.q.push(f);
-	if(this.t == null) {
-		this.t = new haxe.Timer(this.delay);
-		this.t.run = $closure(this,"process");
-	}
-}
-haxe.TimerQueue.prototype.delay = null;
-haxe.TimerQueue.prototype.process = function() {
-	var f = this.q.shift();
-	if(f == null) {
-		this.t.stop();
-		this.t = null;
-		return;
-	}
-	f();
-}
-haxe.TimerQueue.prototype.q = null;
-haxe.TimerQueue.prototype.t = null;
-haxe.TimerQueue.prototype.__class__ = haxe.TimerQueue;
-Std = function() { }
-Std.__name__ = ["Std"];
-Std["is"] = function(v,t) {
-	return js.Boot.__instanceof(v,t);
-}
-Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
-}
-Std["int"] = function(x) {
-	if(x < 0) return Math.ceil(x);
-	return Math.floor(x);
-}
-Std.parseInt = function(x) {
-	var v = parseInt(x);
-	if(Math.isNaN(v)) return null;
-	return v;
-}
-Std.parseFloat = function(x) {
-	return parseFloat(x);
-}
-Std.random = function(x) {
-	return Math.floor(Math.random() * x);
-}
-Std.prototype.__class__ = Std;
-driver.js.renderer.CRenderStatesJS = function(p) { if( p === $_ ) return; {
-	renderer.CRenderStates.apply(this,[]);
-}}
-driver.js.renderer.CRenderStatesJS.__name__ = ["driver","js","renderer","CRenderStatesJS"];
-driver.js.renderer.CRenderStatesJS.__super__ = renderer.CRenderStates;
-for(var k in renderer.CRenderStates.prototype ) driver.js.renderer.CRenderStatesJS.prototype[k] = renderer.CRenderStates.prototype[k];
-driver.js.renderer.CRenderStatesJS.prototype.Activate = function() {
-	var l_GL = kernel.Glb.g_SystemJS.m_GlObject;
-	var $e = (this.m_ZEq);
-	switch( $e[1] ) {
-	case 0:
-	{
-		l_GL.DepthFunc(516);
-	}break;
-	case 1:
-	{
-		l_GL.DepthFunc(518);
-	}break;
-	}
-	if(this.m_ZRead) {
-		l_GL.Enable(2929);
-	}
-	else {
-		l_GL.Disable(2929);
-	}
-	l_GL.DepthMask((this.m_ZWrite?true:false));
-	return kernel.Result.SUCCESS;
-}
-driver.js.renderer.CRenderStatesJS.prototype.__class__ = driver.js.renderer.CRenderStatesJS;
-List = function(p) { if( p === $_ ) return; {
-	this.length = 0;
-}}
-List.__name__ = ["List"];
-List.prototype.add = function(item) {
-	var x = [item];
-	if(this.h == null) this.h = x;
-	else this.q[1] = x;
-	this.q = x;
-	this.length++;
-}
-List.prototype.clear = function() {
-	this.h = null;
-	this.q = null;
-	this.length = 0;
-}
-List.prototype.filter = function(f) {
-	var l2 = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		if(f(v)) l2.add(v);
-	}
-	return l2;
-}
-List.prototype.first = function() {
-	return (this.h == null?null:this.h[0]);
-}
-List.prototype.h = null;
-List.prototype.isEmpty = function() {
-	return (this.h == null);
-}
-List.prototype.iterator = function() {
-	return { h : this.h, hasNext : function() {
-		return (this.h != null);
-	}, next : function() {
-		if(this.h == null) return null;
-		var x = this.h[0];
-		this.h = this.h[1];
-		return x;
-	}}
-}
-List.prototype.join = function(sep) {
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = sep;
-		s.b[s.b.length] = l[0];
-		l = l[1];
-	}
-	return s.b.join("");
-}
-List.prototype.last = function() {
-	return (this.q == null?null:this.q[0]);
-}
-List.prototype.length = null;
-List.prototype.map = function(f) {
-	var b = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		b.add(f(v));
-	}
-	return b;
-}
-List.prototype.pop = function() {
-	if(this.h == null) return null;
-	var x = this.h[0];
-	this.h = this.h[1];
-	if(this.h == null) this.q = null;
-	this.length--;
-	return x;
-}
-List.prototype.push = function(item) {
-	var x = [item,this.h];
-	this.h = x;
-	if(this.q == null) this.q = x;
-	this.length++;
-}
-List.prototype.q = null;
-List.prototype.remove = function(v) {
-	var prev = null;
-	var l = this.h;
-	while(l != null) {
-		if(l[0] == v) {
-			if(prev == null) this.h = l[1];
-			else prev[1] = l[1];
-			if(this.q == l) this.q = prev;
-			this.length--;
-			return true;
-		}
-		prev = l;
-		l = l[1];
-	}
-	return false;
-}
-List.prototype.toString = function() {
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	s.b[s.b.length] = "{";
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = ", ";
-		s.b[s.b.length] = Std.string(l[0]);
-		l = l[1];
-	}
-	s.b[s.b.length] = "}";
-	return s.b.join("");
-}
-List.prototype.__class__ = List;
-kernel.CDisplay = function(p) { if( p === $_ ) return; {
-	this.m_Width = 0;
+renderer.camera.COrthoCamera = function(p) { if( p === $_ ) return; {
+	renderer.camera.CCamera.apply(this,[]);
 	this.m_Height = 0;
+	this.m_Width = 0;
 }}
-kernel.CDisplay.__name__ = ["kernel","CDisplay"];
-kernel.CDisplay.prototype.m_Height = null;
-kernel.CDisplay.prototype.m_Width = null;
-kernel.CDisplay.prototype.__class__ = kernel.CDisplay;
-renderer.CDrawObject = function(p) { if( p === $_ ) return; {
-	this.m_VpMask = -2147483648 - 1;
-	this.m_Visible = false;
-	this.m_Transfo = new math.CMatrix44();
-	this.m_Transfo.Identity();
-	this.m_Cameras = new Array();
+renderer.camera.COrthoCamera.__name__ = ["renderer","camera","COrthoCamera"];
+renderer.camera.COrthoCamera.__super__ = renderer.camera.CCamera;
+for(var k in renderer.camera.CCamera.prototype ) renderer.camera.COrthoCamera.prototype[k] = renderer.camera.CCamera.prototype[k];
+renderer.camera.COrthoCamera.prototype.BuildMatrix = function(_Out) {
+	var l_Left = this.m_Pos.x;
+	var l_Right = this.m_Pos.x + this.m_Width;
+	var l_Bottom = this.m_Pos.y + this.m_Height;
+	var l_Top = this.m_Pos.y;
+	math.CMatrix44.Ortho(_Out,0,1,0,1,this.m_Near,this.m_Far);
+	return kernel.Result.SUCCESS;
+}
+renderer.camera.COrthoCamera.prototype.SetHeight = function(_H) {
+	this.m_Height = _H;
+}
+renderer.camera.COrthoCamera.prototype.SetWidth = function(_W) {
+	this.m_Width = _W;
+}
+renderer.camera.COrthoCamera.prototype.m_Height = null;
+renderer.camera.COrthoCamera.prototype.m_Width = null;
+renderer.camera.COrthoCamera.prototype.__class__ = renderer.camera.COrthoCamera;
+driver.js.rscbuilders.CRscBuilderDocElem = function(p) { if( p === $_ ) return; {
+	rsc.CRscBuilder.apply(this,[]);
 }}
-renderer.CDrawObject.__name__ = ["renderer","CDrawObject"];
-renderer.CDrawObject.prototype.Activate = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CDrawObject.prototype.Draw = function(_Vp) {
-	return kernel.Result.SUCCESS;
-}
-renderer.CDrawObject.prototype.Initialize = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CDrawObject.prototype.IsVisible = function() {
-	return this.m_Visible;
-}
-renderer.CDrawObject.prototype.SetCamera = function(_VpIndex,_Cam) {
-	if(_VpIndex < 0 || _VpIndex >= renderer.CRenderer.VP_MAX) {
-		return kernel.Result.FAILURE;
+driver.js.rscbuilders.CRscBuilderDocElem.__name__ = ["driver","js","rscbuilders","CRscBuilderDocElem"];
+driver.js.rscbuilders.CRscBuilderDocElem.__super__ = rsc.CRscBuilder;
+for(var k in rsc.CRscBuilder.prototype ) driver.js.rscbuilders.CRscBuilderDocElem.prototype[k] = rsc.CRscBuilder.prototype[k];
+driver.js.rscbuilders.CRscBuilderDocElem.prototype.Build = function(_Type,_Path) {
+	if(_Type == driver.js.rsc.CRscShaderProgram.RSC_ID) {
+		var l_Ret = new driver.js.rsc.CRscShaderProgram();
+		l_Ret.Initialize(_Path);
+		if(l_Ret == null) {
+			kernel.CDebug.CONSOLEMSG("Unable to create shader prgm ",{ fileName : "CRscBuilderDocElem.hx", lineNumber : 35, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		}
+		return l_Ret;
 	}
-	this.m_Cameras[_VpIndex] = _Cam;
-	return kernel.Result.SUCCESS;
-}
-renderer.CDrawObject.prototype.SetTransfo = function(_Transfo) {
-	this.m_Transfo.Copy(_Transfo);
-}
-renderer.CDrawObject.prototype.SetVisible = function(_Vis) {
-	this.m_Visible = _Vis;
-	if(this.m_Visible) {
-		kernel.Glb.g_System.m_Renderer.AddToScene(this);
+	var l_Script = js.Lib.document.getElementById(_Path);
+	if(!l_Script) {
+		kernel.CDebug.CONSOLEMSG((("*_* Error: script " + _Path) + " not found for type : ") + _Type,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 44, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		return null;
 	}
-	else {
-		kernel.Glb.g_System.m_Renderer.RemoveFromScene(this);
+	var l_ScriptType = l_Script.type;
+	if(_Type == driver.js.rsc.CRscVertexShader.RSC_ID) {
+		var l_Ret = new driver.js.rsc.CRscVertexShader();
+		kernel.CDebug.CONSOLEMSG("Initializing vsh :" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 53, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		l_Ret.Initialize(l_Script);
+		return l_Ret;
 	}
+	if(_Type == driver.js.rsc.CRscFragmentShader.RSC_ID) {
+		var l_Ret = new driver.js.rsc.CRscFragmentShader();
+		kernel.CDebug.CONSOLEMSG("Initializing fsh:" + _Path,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 61, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+		l_Ret.Initialize(l_Script);
+		return l_Ret;
+	}
+	haxe.Log.trace("*_* Error: target type not found : " + _Type,{ fileName : "CRscBuilderDocElem.hx", lineNumber : 66, className : "driver.js.rscbuilders.CRscBuilderDocElem", methodName : "Build"});
+	return null;
 }
-renderer.CDrawObject.prototype.Update = function() {
-	return kernel.Result.SUCCESS;
-}
-renderer.CDrawObject.prototype.m_Cameras = null;
-renderer.CDrawObject.prototype.m_Transfo = null;
-renderer.CDrawObject.prototype.m_Visible = null;
-renderer.CDrawObject.prototype.m_VpMask = null;
-renderer.CDrawObject.prototype.__class__ = renderer.CDrawObject;
-renderer.C2DQuad = function(p) { if( p === $_ ) return; {
-	renderer.CDrawObject.apply(this,[]);
-	this.m_Rect = new math.CRect2D();
+driver.js.rscbuilders.CRscBuilderDocElem.prototype.m_Path = null;
+driver.js.rscbuilders.CRscBuilderDocElem.prototype.__class__ = driver.js.rscbuilders.CRscBuilderDocElem;
+renderer.camera.CPerspectiveCamera = function(p) { if( p === $_ ) return; {
+	this.m_Projection = new math.CMatrix44();
+	this.m_View = new math.CMatrix44();
+	renderer.camera.CCamera.apply(this,[]);
 }}
-renderer.C2DQuad.__name__ = ["renderer","C2DQuad"];
-renderer.C2DQuad.__super__ = renderer.CDrawObject;
-for(var k in renderer.CDrawObject.prototype ) renderer.C2DQuad.prototype[k] = renderer.CDrawObject.prototype[k];
-renderer.C2DQuad.prototype.MoveTo = function(_Pos) {
-	var l_V = new math.CV2D(0,0);
-	math.CV2D.Sub(l_V,this.m_Rect.m_BR,this.m_Rect.m_TL);
-	{
-		l_V.x = 0.5 * l_V.x;
-		l_V.y = 0.5 * l_V.y;
-	}
-	math.CV2D.Sub(this.m_Rect.m_TL,_Pos,l_V);
-	math.CV2D.Add(this.m_Rect.m_BR,_Pos,l_V);
-}
-renderer.C2DQuad.prototype.SetSize = function(_Size) {
-	haxe.Log.trace((_Size.x + " ") + _Size.y,{ fileName : "C2DQuad.hx", lineNumber : 37, className : "renderer.C2DQuad", methodName : "SetSize"});
-	var l_CurrentPos = new math.CV2D(0,0);
-	math.CV2D.Add(l_CurrentPos,this.m_Rect.m_TL,this.m_Rect.m_BR);
-	{
-		l_CurrentPos.x = 0.5 * l_CurrentPos.x;
-		l_CurrentPos.y = 0.5 * l_CurrentPos.y;
-	}
-	var l_halfSize = new math.CV2D(0,0);
-	{
-		l_halfSize.x = 0.5 * _Size.x;
-		l_halfSize.y = 0.5 * _Size.y;
-	}
-	math.CV2D.Sub(this.m_Rect.m_TL,l_CurrentPos,l_halfSize);
-	math.CV2D.Add(this.m_Rect.m_BR,l_CurrentPos,l_halfSize);
-}
-renderer.C2DQuad.prototype.m_Rect = null;
-renderer.C2DQuad.prototype.__class__ = renderer.C2DQuad;
-STAGE = { __ename__ : ["STAGE"], __constructs__ : ["STAGE_INIT","STAGE_UPDATE"] }
-STAGE.STAGE_INIT = ["STAGE_INIT",0];
-STAGE.STAGE_INIT.toString = $estr;
-STAGE.STAGE_INIT.__enum__ = STAGE;
-STAGE.STAGE_UPDATE = ["STAGE_UPDATE",1];
-STAGE.STAGE_UPDATE.toString = $estr;
-STAGE.STAGE_UPDATE.__enum__ = STAGE;
-CMainClient = function() { }
-CMainClient.__name__ = ["CMainClient"];
-CMainClient.m_Stage = null;
-CMainClient.m_Quad = null;
-CMainClient.InitGameJS = function() {
-	var l_OrthoCam = (function($this) {
-		var $r;
-		var tmp = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
-		$r = (Std["is"](tmp,renderer.camera.COrthoCamera)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
-		return $r;
-	}(this));
-	var l_CamPos = new math.CV3D(0,0,-1);
-	l_OrthoCam.SetPosition(l_CamPos);
-	l_OrthoCam.SetWidth(1.0);
-	l_OrthoCam.SetHeight(1.0);
-	l_OrthoCam.m_Near = 0.1;
-	l_OrthoCam.m_Far = 1000.0;
-	CMainClient.m_Quad = new driver.js.renderer.CGlQuad();
-	CMainClient.m_Quad.Initialize();
-	CMainClient.m_Quad.m_Rect.m_TL.Copy(new math.CV2D(0,0));
-	math.CV2D.Sub(CMainClient.m_Quad.m_Rect.m_TL,CMainClient.m_Quad.m_Rect.m_TL,new math.CV2D(0.5,0.5));
-	CMainClient.m_Quad.m_Rect.m_BR.Copy(new math.CV2D(0,0));
-	math.CV2D.Add(CMainClient.m_Quad.m_Rect.m_BR,CMainClient.m_Quad.m_Rect.m_BR,new math.CV2D(0.5,0.5));
-	CMainClient.m_Quad.SetCamera(renderer.CRenderer.VP_FULLSCREEN,l_OrthoCam);
-	CMainClient.m_Quad.SetVisible(true);
-}
-CMainClient.InitGame = function() {
-	CMainClient.InitGameJS();
-}
-CMainClient.UpdateGame = function() {
-	null;
-}
-CMainClient.UpdateCallback = function() {
-	var $e = (CMainClient.m_Stage);
-	switch( $e[1] ) {
-	case 0:
-	{
-		CMainClient.InitGame();
-		CMainClient.m_Stage = STAGE.STAGE_UPDATE;
-	}break;
-	case 1:
-	{
-		CMainClient.UpdateGame();
-	}break;
-	}
+renderer.camera.CPerspectiveCamera.__name__ = ["renderer","camera","CPerspectiveCamera"];
+renderer.camera.CPerspectiveCamera.__super__ = renderer.camera.CCamera;
+for(var k in renderer.camera.CCamera.prototype ) renderer.camera.CPerspectiveCamera.prototype[k] = renderer.camera.CCamera.prototype[k];
+renderer.camera.CPerspectiveCamera.prototype.BuildMatrix = function(_Out) {
+	math.CV3D.Add(math.Registers.V0,this.m_Pos,this.m_Dir);
+	this.m_Projection.Identity();
+	this.m_Projection.Perspective(this.m_Fov,this.m_AspectRatio,this.m_Near,this.m_Far);
+	this.m_View.Identity();
+	this.m_View.LookAt(this.m_Pos.x,this.m_Pos.y,this.m_Pos.z,math.Registers.V0.x,math.Registers.V0.y,math.Registers.V0.z,this.m_Up.x,this.m_Up.y,this.m_Up.z);
+	math.CMatrix44.Mult(_Out,this.m_View,this.m_Projection);
 	return kernel.Result.SUCCESS;
 }
-CMainClient.RenderCallback = function() {
-	return kernel.Result.SUCCESS;
+renderer.camera.CPerspectiveCamera.prototype.SetDirection = function(_Dir) {
+	this.m_Dir.Copy(_Dir);
 }
-CMainClient.main = function() {
-	CMainClient.m_Stage = STAGE.STAGE_INIT;
-	if(kernel.Glb.g_System == null) {
-		haxe.Log.trace("no g_system",{ fileName : "CMainClient.hx", lineNumber : 104, className : "CMainClient", methodName : "main"});
-	}
-	else {
-		haxe.Log.trace("system init",{ fileName : "CMainClient.hx", lineNumber : 108, className : "CMainClient", methodName : "main"});
-		kernel.Glb.g_System.Initialize();
-		haxe.Log.trace("main loop",{ fileName : "CMainClient.hx", lineNumber : 110, className : "CMainClient", methodName : "main"});
-		kernel.Glb.g_System.MainLoop();
-		kernel.Glb.g_System.m_BeforeUpdate = $closure(CMainClient,"UpdateCallback");
-		kernel.Glb.g_System.m_BeforeDraw = $closure(CMainClient,"RenderCallback");
-	}
+renderer.camera.CPerspectiveCamera.prototype.SetFov = function(_Fov) {
+	this.m_Fov = _Fov;
 }
-CMainClient.prototype.__class__ = CMainClient;
-math.CV2D = function(_x,_y) { if( _x === $_ ) return; {
-	this.x = _x;
-	this.y = _y;
-}}
-math.CV2D.__name__ = ["math","CV2D"];
-math.CV2D.Add = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x + _V1.x;
-	_VOut.y = _V0.y + _V1.y;
-}
-math.CV2D.Sub = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x - _V1.x;
-	_VOut.y = _V0.y - _V1.y;
-}
-math.CV2D.Scale = function(_VOut,_a,_V) {
-	_VOut.x = _a * _V.x;
-	_VOut.y = _a * _V.y;
-}
-math.CV2D.prototype.Copy = function(_xy) {
-	this.x = _xy.x;
-	this.y = _xy.y;
-}
-math.CV2D.prototype.Set = function(_x,_y) {
-	this.x = _x;
-	this.y = _y;
-}
-math.CV2D.prototype.x = null;
-math.CV2D.prototype.y = null;
-math.CV2D.prototype.__class__ = math.CV2D;
+renderer.camera.CPerspectiveCamera.prototype.m_Projection = null;
+renderer.camera.CPerspectiveCamera.prototype.m_View = null;
+renderer.camera.CPerspectiveCamera.prototype.__class__ = renderer.camera.CPerspectiveCamera;
 if(typeof js=='undefined') js = {}
-js.Lib = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.isIE = null;
-js.Lib.isOpera = null;
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.alert = function(v) {
-	alert(js.Boot.__string_rec(v,""));
-}
-js.Lib.eval = function(code) {
-	return eval(code);
-}
-js.Lib.setErrorHandler = function(f) {
-	js.Lib.onerror = f;
-}
-js.Lib.prototype.__class__ = js.Lib;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -1834,6 +1430,600 @@ js.Boot.__init = function() {
 	$closure = js.Boot.__closure;
 }
 js.Boot.prototype.__class__ = js.Boot;
+haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
+	this.id = haxe.Timer.arr.length;
+	haxe.Timer.arr[this.id] = this;
+	this.timerId = window.setInterval(("haxe.Timer.arr[" + this.id) + "].run();",time_ms);
+}}
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	}
+	return t;
+}
+haxe.Timer.stamp = function() {
+	return Date.now().getTime() / 1000;
+}
+haxe.Timer.prototype.id = null;
+haxe.Timer.prototype.run = function() {
+	null;
+}
+haxe.Timer.prototype.stop = function() {
+	if(this.id == null) return;
+	window.clearInterval(this.timerId);
+	haxe.Timer.arr[this.id] = null;
+	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
+		var p = this.id - 1;
+		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
+		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
+	}
+	this.id = null;
+}
+haxe.Timer.prototype.timerId = null;
+haxe.Timer.prototype.__class__ = haxe.Timer;
+IntHash = function(p) { if( p === $_ ) return; {
+	this.h = {}
+	if(this.h.__proto__ != null) {
+		this.h.__proto__ = null;
+		delete(this.h.__proto__);
+	}
+	else null;
+}}
+IntHash.__name__ = ["IntHash"];
+IntHash.prototype.exists = function(key) {
+	return this.h[key] != null;
+}
+IntHash.prototype.get = function(key) {
+	return this.h[key];
+}
+IntHash.prototype.h = null;
+IntHash.prototype.iterator = function() {
+	return { ref : this.h, it : this.keys(), hasNext : function() {
+		return this.it.hasNext();
+	}, next : function() {
+		var i = this.it.next();
+		return this.ref[i];
+	}}
+}
+IntHash.prototype.keys = function() {
+	var a = new Array();
+	
+			for( x in this.h )
+				a.push(x);
+		;
+	return a.iterator();
+}
+IntHash.prototype.remove = function(key) {
+	if(this.h[key] == null) return false;
+	delete(this.h[key]);
+	return true;
+}
+IntHash.prototype.set = function(key,value) {
+	this.h[key] = value;
+}
+IntHash.prototype.toString = function() {
+	var s = new StringBuf();
+	s.b[s.b.length] = "{";
+	var it = this.keys();
+	{ var $it2 = it;
+	while( $it2.hasNext() ) { var i = $it2.next();
+	{
+		s.b[s.b.length] = i;
+		s.b[s.b.length] = " => ";
+		s.b[s.b.length] = Std.string(this.get(i));
+		if(it.hasNext()) s.b[s.b.length] = ", ";
+	}
+	}}
+	s.b[s.b.length] = "}";
+	return s.b.join("");
+}
+IntHash.prototype.__class__ = IntHash;
+kernel.CDisplay = function(p) { if( p === $_ ) return; {
+	this.m_Width = 0;
+	this.m_Height = 0;
+}}
+kernel.CDisplay.__name__ = ["kernel","CDisplay"];
+kernel.CDisplay.prototype.m_Height = null;
+kernel.CDisplay.prototype.m_Width = null;
+kernel.CDisplay.prototype.__class__ = kernel.CDisplay;
+kernel.Result = { __ename__ : ["kernel","Result"], __constructs__ : ["SUCCESS","FAILURE"] }
+kernel.Result.FAILURE = ["FAILURE",1];
+kernel.Result.FAILURE.toString = $estr;
+kernel.Result.FAILURE.__enum__ = kernel.Result;
+kernel.Result.SUCCESS = ["SUCCESS",0];
+kernel.Result.SUCCESS.toString = $estr;
+kernel.Result.SUCCESS.__enum__ = kernel.Result;
+kernel.Delegate = function() { }
+kernel.Delegate.__name__ = ["kernel","Delegate"];
+kernel.Delegate.prototype.Apply = function() {
+	return kernel.Result.SUCCESS;
+}
+kernel.Delegate.prototype.__class__ = kernel.Delegate;
+renderer.CDrawObject = function(p) { if( p === $_ ) return; {
+	this.m_VpMask = -2147483648 - 1;
+	this.m_Visible = false;
+	this.m_Transfo = new math.CMatrix44();
+	this.m_Transfo.Identity();
+	this.m_Cameras = new Array();
+}}
+renderer.CDrawObject.__name__ = ["renderer","CDrawObject"];
+renderer.CDrawObject.prototype.Activate = function() {
+	return kernel.Result.SUCCESS;
+}
+renderer.CDrawObject.prototype.Draw = function(_Vp) {
+	return kernel.Result.SUCCESS;
+}
+renderer.CDrawObject.prototype.Initialize = function() {
+	return kernel.Result.SUCCESS;
+}
+renderer.CDrawObject.prototype.IsVisible = function() {
+	return this.m_Visible;
+}
+renderer.CDrawObject.prototype.SetCamera = function(_VpIndex,_Cam) {
+	if(_VpIndex < 0 || _VpIndex >= renderer.CRenderer.VP_MAX) {
+		return kernel.Result.FAILURE;
+	}
+	this.m_Cameras[_VpIndex] = _Cam;
+	return kernel.Result.SUCCESS;
+}
+renderer.CDrawObject.prototype.SetTransfo = function(_Transfo) {
+	this.m_Transfo.Copy(_Transfo);
+}
+renderer.CDrawObject.prototype.SetVisible = function(_Vis) {
+	this.m_Visible = _Vis;
+	if(this.m_Visible) {
+		kernel.Glb.g_System.m_Renderer.AddToScene(this);
+	}
+	else {
+		kernel.Glb.g_System.m_Renderer.RemoveFromScene(this);
+	}
+}
+renderer.CDrawObject.prototype.Update = function() {
+	return kernel.Result.SUCCESS;
+}
+renderer.CDrawObject.prototype.m_Cameras = null;
+renderer.CDrawObject.prototype.m_Transfo = null;
+renderer.CDrawObject.prototype.m_Visible = null;
+renderer.CDrawObject.prototype.m_VpMask = null;
+renderer.CDrawObject.prototype.__class__ = renderer.CDrawObject;
+renderer.C2DQuad = function(p) { if( p === $_ ) return; {
+	renderer.CDrawObject.apply(this,[]);
+	this.m_Rect = new math.CRect2D();
+}}
+renderer.C2DQuad.__name__ = ["renderer","C2DQuad"];
+renderer.C2DQuad.__super__ = renderer.CDrawObject;
+for(var k in renderer.CDrawObject.prototype ) renderer.C2DQuad.prototype[k] = renderer.CDrawObject.prototype[k];
+renderer.C2DQuad.prototype.MoveTo = function(_Pos) {
+	var l_V = new math.CV2D(0,0);
+	math.CV2D.Sub(l_V,this.m_Rect.m_BR,this.m_Rect.m_TL);
+	{
+		l_V.x = 0.5 * l_V.x;
+		l_V.y = 0.5 * l_V.y;
+	}
+	math.CV2D.Sub(this.m_Rect.m_TL,_Pos,l_V);
+	math.CV2D.Add(this.m_Rect.m_BR,_Pos,l_V);
+}
+renderer.C2DQuad.prototype.SetSize = function(_Size) {
+	var l_CurrentPos = new math.CV2D(0,0);
+	math.CV2D.Add(l_CurrentPos,this.m_Rect.m_TL,this.m_Rect.m_BR);
+	{
+		l_CurrentPos.x = 0.5 * l_CurrentPos.x;
+		l_CurrentPos.y = 0.5 * l_CurrentPos.y;
+	}
+	var l_halfSize = new math.CV2D(0,0);
+	{
+		l_halfSize.x = 0.5 * _Size.x;
+		l_halfSize.y = 0.5 * _Size.y;
+	}
+	math.CV2D.Sub(this.m_Rect.m_TL,l_CurrentPos,l_halfSize);
+	math.CV2D.Add(this.m_Rect.m_BR,l_CurrentPos,l_halfSize);
+}
+renderer.C2DQuad.prototype.m_Rect = null;
+renderer.C2DQuad.prototype.__class__ = renderer.C2DQuad;
+driver.js.renderer.CGLCube = function(p) { if( p === $_ ) return; {
+	renderer.CDrawObject.apply(this,[]);
+	this.m_MatrixCache = null;
+}}
+driver.js.renderer.CGLCube.__name__ = ["driver","js","renderer","CGLCube"];
+driver.js.renderer.CGLCube.__super__ = renderer.CDrawObject;
+for(var k in renderer.CDrawObject.prototype ) driver.js.renderer.CGLCube.prototype[k] = renderer.CDrawObject.prototype[k];
+driver.js.renderer.CGLCube.prototype.Draw = function(_Vp) {
+	this.m_Matrix = new math.CMatrix44();
+	this.m_Matrix.Identity();
+	math.CMatrix44.Ortho(this.m_Matrix,0,1,0,1,0.01,100);
+	var l_Trans = new math.CMatrix44();
+	{
+		l_Trans.Zero();
+		l_Trans.m_Buffer[0] = 1;
+		l_Trans.m_Buffer[5] = 1;
+		l_Trans.m_Buffer[10] = 1;
+		l_Trans.m_Buffer[15] = 1;
+	}
+	var l_MVP = new math.CMatrix44();
+	{
+		l_MVP.Zero();
+		l_MVP.m_Buffer[0] = 1;
+		l_MVP.m_Buffer[5] = 1;
+		l_MVP.m_Buffer[10] = 1;
+		l_MVP.m_Buffer[15] = 1;
+	}
+	math.CMatrix44.Mult(l_MVP,this.m_Matrix,l_Trans);
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PreActivate:" + l_Err,{ fileName : "CGLCube.hx", lineNumber : 83, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
+	}
+	this.m_RS.Activate();
+	kernel.Glb.g_SystemJS.m_GlObject.Disable(2884);
+	this.m_ShdrPrgm.Activate();
+	var l_vertices = [1.0,1.0,5.5,0.0,1.0,5.5,1.0,0.0,5.5,0.0,0.0,5.5];
+	this.m_Primitive.SetVertexArray(l_vertices);
+	this.m_ShdrPrgm.LinkPrimitive(this.m_Primitive);
+	this.m_MatrixCache = new WebGLFloatArray(l_MVP.m_Buffer);
+	var l_Err1 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err1 != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PreSetUniform:" + l_Err1,{ fileName : "CGLCube.hx", lineNumber : 107, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
+	}
+	this.m_ShdrPrgm.UniformMatrix4fv("u_MVPMatrix",false,this.m_MatrixCache);
+	this.m_Matrix.Trace();
+	kernel.Glb.g_SystemJS.m_GlObject.DrawArrays(5,0,4);
+	var l_Err2 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err2 != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostDraw:" + l_Err2,{ fileName : "CGLCube.hx", lineNumber : 117, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
+	}
+	return kernel.Result.SUCCESS;
+}
+driver.js.renderer.CGLCube.prototype.Initialize = function() {
+	var l_RscMan = kernel.Glb.g_System.GetRscMan();
+	this.m_RS = (function($this) {
+		var $r;
+		var tmp = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CRenderStatesJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	if(this.m_RS == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to createrender states",{ fileName : "CGLCube.hx", lineNumber : 49, className : "driver.js.renderer.CGLCube", methodName : "Initialize"});
+	}
+	this.m_Primitive = (function($this) {
+		var $r;
+		var tmp = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CPrimitiveJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	if(this.m_Primitive == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to create primitive",{ fileName : "CGLCube.hx", lineNumber : 55, className : "driver.js.renderer.CGLCube", methodName : "Initialize"});
+	}
+	this.m_ShdrPrgm = (function($this) {
+		var $r;
+		var tmp = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
+		$r = (Std["is"](tmp,driver.js.rsc.CRscShaderProgram)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	this.m_ShdrPrgm.Compile();
+	return kernel.Result.SUCCESS;
+}
+driver.js.renderer.CGLCube.prototype.m_Matrix = null;
+driver.js.renderer.CGLCube.prototype.m_MatrixCache = null;
+driver.js.renderer.CGLCube.prototype.m_Primitive = null;
+driver.js.renderer.CGLCube.prototype.m_RS = null;
+driver.js.renderer.CGLCube.prototype.m_ShdrPrgm = null;
+driver.js.renderer.CGLCube.prototype.__class__ = driver.js.renderer.CGLCube;
+StringBuf = function(p) { if( p === $_ ) return; {
+	this.b = new Array();
+}}
+StringBuf.__name__ = ["StringBuf"];
+StringBuf.prototype.add = function(x) {
+	this.b[this.b.length] = x;
+}
+StringBuf.prototype.addChar = function(c) {
+	this.b[this.b.length] = String.fromCharCode(c);
+}
+StringBuf.prototype.addSub = function(s,pos,len) {
+	this.b[this.b.length] = s.substr(pos,len);
+}
+StringBuf.prototype.b = null;
+StringBuf.prototype.toString = function() {
+	return this.b.join("");
+}
+StringBuf.prototype.__class__ = StringBuf;
+if(!driver.js.rsc) driver.js.rsc = {}
+driver.js.rsc.CRscShaderProgram = function(p) { if( p === $_ ) return; {
+	renderer.CRscShader.apply(this,[]);
+	this.m_AttribsMask = 0;
+	this.m_VtxSh = null;
+	this.m_FragSh = null;
+	this.m_Uniforms = null;
+}}
+driver.js.rsc.CRscShaderProgram.__name__ = ["driver","js","rsc","CRscShaderProgram"];
+driver.js.rsc.CRscShaderProgram.__super__ = renderer.CRscShader;
+for(var k in renderer.CRscShader.prototype ) driver.js.rsc.CRscShaderProgram.prototype[k] = renderer.CRscShader.prototype[k];
+driver.js.rsc.CRscShaderProgram.prototype.Activate = function() {
+	if(renderer.CRscShader.prototype.Activate.apply(this,[]) == kernel.Result.SUCCESS) {
+		var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+		if(l_Gl.GetProgramParameter(this.m_Program,35714) != true) {
+			var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+			if(l_Error != null) {
+				kernel.CDebug.CONSOLEMSG("Error in post shader use program: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 272, className : "driver.js.rsc.CRscShaderProgram", methodName : "Activate"});
+			}
+		}
+		l_Gl.UseProgram(this.m_Program);
+		if(l_Gl.GetProgramParameter(this.m_Program,35714) != true) {
+			var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+			if(l_Error != null) {
+				kernel.CDebug.CONSOLEMSG("Error in post shader use program: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 284, className : "driver.js.rsc.CRscShaderProgram", methodName : "Activate"});
+			}
+		}
+		var l_GlError = l_Gl.GetError();
+		if(l_GlError != 0) {
+			kernel.CDebug.CONSOLEMSG("Error in shader program use: " + l_GlError,{ fileName : "CRscShaderProgram.hx", lineNumber : 291, className : "driver.js.rsc.CRscShaderProgram", methodName : "Activate"});
+		}
+	}
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscShaderProgram.prototype.BindAttributes = function() {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	if((this.m_AttribsMask & 1) != 0) {
+		l_Gl.BindAttribLocation(this.m_Program,0,"_Vertex");
+	}
+	if((this.m_AttribsMask & 4) != 0) {
+		l_Gl.BindAttribLocation(this.m_Program,2,"_Color");
+	}
+	if((this.m_AttribsMask & 2) != 0) {
+		l_Gl.BindAttribLocation(this.m_Program,1,"_Normal");
+	}
+	if((this.m_AttribsMask & 8) != 0) {
+		l_Gl.BindAttribLocation(this.m_Program,3,"_TexCoord");
+	}
+}
+driver.js.rsc.CRscShaderProgram.prototype.Compile = function() {
+	if(this.m_VtxSh != null) {
+		if(this.m_VtxSh.Compile() == kernel.Result.FAILURE) {
+			this.PrintError();
+			return kernel.Result.FAILURE;
+		}
+	}
+	else {
+		kernel.CDebug.CONSOLEMSG("Can't proceed : Vertex shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 362, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
+		return kernel.Result.FAILURE;
+	}
+	if(this.m_FragSh != null) {
+		if(this.m_FragSh.Compile() == kernel.Result.FAILURE) {
+			this.PrintError();
+			return kernel.Result.FAILURE;
+		}
+	}
+	else {
+		kernel.CDebug.CONSOLEMSG("Can't proceed : Fragment shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 376, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
+		return kernel.Result.FAILURE;
+	}
+	this.m_Status = 1;
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscShaderProgram.prototype.CreateAttributeMask = function() {
+	if(this.m_VtxSh.m_Body.lastIndexOf("_Vertex") != -1) {
+		this.m_AttribsMask |= 1;
+		kernel.CDebug.CONSOLEMSG("Found Vertex channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 69, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
+	}
+	if(this.m_VtxSh.m_Body.lastIndexOf("_Color") != -1) {
+		this.m_AttribsMask |= 4;
+		kernel.CDebug.CONSOLEMSG("Found Color channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 75, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
+	}
+	if(this.m_VtxSh.m_Body.lastIndexOf("_Normal") != -1) {
+		this.m_AttribsMask |= 2;
+		kernel.CDebug.CONSOLEMSG("Found Normal channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 81, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
+	}
+	if(this.m_VtxSh.m_Body.lastIndexOf("_TexCoord") != -1) {
+		this.m_AttribsMask |= 8;
+		kernel.CDebug.CONSOLEMSG("Found tex coord.",{ fileName : "CRscShaderProgram.hx", lineNumber : 87, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
+	}
+}
+driver.js.rsc.CRscShaderProgram.prototype.DeclUniform = function(_Name) {
+	var l_Loc = kernel.Glb.g_SystemJS.m_GlObject.GetUniformLocation(this.m_Program,_Name);
+	if(l_Loc == null) {
+		kernel.CDebug.CONSOLEMSG(("Unable to get uniform location: <" + _Name) + ">",{ fileName : "CRscShaderProgram.hx", lineNumber : 216, className : "driver.js.rsc.CRscShaderProgram", methodName : "DeclUniform"});
+	}
+	this.m_Uniforms.set(_Name,l_Loc);
+}
+driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	kernel.CDebug.CONSOLEMSG("Creating Shader Program :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 162, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+	this.m_Uniforms = new Hash();
+	var l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscVertexShader.RSC_ID,_Path + ".vsh");
+	if(l_Rsc == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to create vsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 168, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		return kernel.Result.FAILURE;
+	}
+	this.m_VtxSh = (function($this) {
+		var $r;
+		var tmp = l_Rsc;
+		$r = (Std["is"](tmp,driver.js.rsc.CRscVertexShader)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscFragmentShader.RSC_ID,_Path + ".fsh");
+	if(l_Rsc == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to create fsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 177, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		return kernel.Result.FAILURE;
+	}
+	this.m_FragSh = (function($this) {
+		var $r;
+		var tmp = l_Rsc;
+		$r = (Std["is"](tmp,driver.js.rsc.CRscFragmentShader)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	this.m_Program = l_Gl.CreateProgram();
+	if(this.m_Program == null) {
+		return kernel.Result.FAILURE;
+	}
+	this.CreateAttributeMask();
+	var l_Res = this.Compile();
+	if(l_Res == kernel.Result.SUCCESS) {
+		l_Res = this.Link();
+		if(l_Res == kernel.Result.SUCCESS) {
+			kernel.CDebug.CONSOLEMSG("Success linking shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 197, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		}
+		else {
+			kernel.CDebug.CONSOLEMSG("Unable to link shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 201, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+		}
+	}
+	else {
+		kernel.CDebug.CONSOLEMSG("Unable to compile shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 206, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
+	}
+	return ((l_Res == kernel.Result.SUCCESS)?kernel.Result.SUCCESS:kernel.Result.FAILURE);
+}
+driver.js.rsc.CRscShaderProgram.prototype.Link = function() {
+	if(this.m_Status >= 2) {
+		return kernel.Result.SUCCESS;
+	}
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	l_Gl.AttachShader(this.m_Program,this.m_VtxSh.m_Object);
+	l_Gl.AttachShader(this.m_Program,this.m_FragSh.m_Object);
+	this.BindAttributes();
+	l_Gl.LinkProgram(this.m_Program);
+	kernel.CDebug.ASSERT(l_Gl.GetAttribLocation(this.m_Program,"_Vertex") == 0,{ fileName : "CRscShaderProgram.hx", lineNumber : 335, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
+	if(l_Gl.GetProgramParameter(this.m_Program,35714) != true) {
+		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+		kernel.CDebug.CONSOLEMSG("Error in program linking:" + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 340, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
+		return kernel.Result.FAILURE;
+	}
+	kernel.CDebug.CONSOLEMSG("Shader Linked",{ fileName : "CRscShaderProgram.hx", lineNumber : 344, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
+	this.m_Status = 2;
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscShaderProgram.prototype.LinkPrimitive = function(_Prim) {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	if((this.m_AttribsMask & 1) != 0) {
+		l_Gl.EnableVertexAttribArray(0);
+		l_Gl.VertexAttribPointer(0,_Prim.GetFloatPerVtx(),5126,false,0,0);
+		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+		if(l_Err != 0) {
+			kernel.CDebug.CONSOLEMSG("GlError:VertexAttribPointer:" + l_Err,{ fileName : "CRscShaderProgram.hx", lineNumber : 128, className : "driver.js.rsc.CRscShaderProgram", methodName : "LinkPrimitive"});
+		}
+		else {
+			kernel.CDebug.CONSOLEMSG("*",{ fileName : "CRscShaderProgram.hx", lineNumber : 132, className : "driver.js.rsc.CRscShaderProgram", methodName : "LinkPrimitive"});
+		}
+	}
+	if((this.m_AttribsMask & 2) != 0) {
+		l_Gl.EnableVertexAttribArray(1);
+		l_Gl.VertexAttribPointer(1,_Prim.GetFloatPerNormal(),5126,false,0,0);
+	}
+	if((this.m_AttribsMask & 4) != 0) {
+		l_Gl.EnableVertexAttribArray(2);
+		l_Gl.VertexAttribPointer(2,_Prim.GetFloatPerColor(),5126,false,0,0);
+	}
+	if((this.m_AttribsMask & 8) != 0) {
+		l_Gl.EnableVertexAttribArray(3);
+		l_Gl.VertexAttribPointer(3,_Prim.GetFloatPerTexCoord(),5126,false,0,0);
+	}
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscShaderProgram.prototype.PrintError = function() {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	if(l_Gl.GetProgramParameter(this.m_Program,35713) != true) {
+		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 305, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
+		}
+	}
+	if(l_Gl.GetProgramParameter(this.m_Program,35714) == 0) {
+		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in shader program linking: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 314, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
+		}
+	}
+}
+driver.js.rsc.CRscShaderProgram.prototype.Uniform1f = function(_Name,_f0) {
+	if(!this.m_Uniforms.exists(_Name)) {
+		this.DeclUniform(_Name);
+	}
+	var l_Loc = this.m_Uniforms.get(_Name);
+	if(l_Loc != null) {
+		kernel.Glb.g_SystemJS.m_GlObject.Uniform1f(l_Loc,_f0);
+	}
+}
+driver.js.rsc.CRscShaderProgram.prototype.UniformMatrix4fv = function(_Name,_Transpose,_m0) {
+	if(!this.m_Uniforms.exists(_Name)) {
+		this.DeclUniform(_Name);
+		kernel.CDebug.CONSOLEMSG("DeclaredUniformMatrix4fv " + _Name,{ fileName : "CRscShaderProgram.hx", lineNumber : 241, className : "driver.js.rsc.CRscShaderProgram", methodName : "UniformMatrix4fv"});
+	}
+	var l_Loc = this.m_Uniforms.get(_Name);
+	if(l_Loc != null) {
+		kernel.Glb.g_SystemJS.m_GlObject.UniformMatrix4f(l_Loc,_Transpose,_m0);
+	}
+	else {
+		kernel.CDebug.CONSOLEMSG("UnableToSetUniformMatrix4fv",{ fileName : "CRscShaderProgram.hx", lineNumber : 251, className : "driver.js.rsc.CRscShaderProgram", methodName : "UniformMatrix4fv"});
+	}
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:postSetUniform4fv:" + l_Err,{ fileName : "CRscShaderProgram.hx", lineNumber : 257, className : "driver.js.rsc.CRscShaderProgram", methodName : "UniformMatrix4fv"});
+	}
+}
+driver.js.rsc.CRscShaderProgram.prototype.m_AttribsMask = null;
+driver.js.rsc.CRscShaderProgram.prototype.m_FragSh = null;
+driver.js.rsc.CRscShaderProgram.prototype.m_Program = null;
+driver.js.rsc.CRscShaderProgram.prototype.m_Uniforms = null;
+driver.js.rsc.CRscShaderProgram.prototype.m_VtxSh = null;
+driver.js.rsc.CRscShaderProgram.prototype.__class__ = driver.js.rsc.CRscShaderProgram;
+driver.js.renderer.CViewportJS = function(p) { if( p === $_ ) return; {
+	renderer.CViewport.apply(this,[]);
+}}
+driver.js.renderer.CViewportJS.__name__ = ["driver","js","renderer","CViewportJS"];
+driver.js.renderer.CViewportJS.__super__ = renderer.CViewport;
+for(var k in renderer.CViewport.prototype ) driver.js.renderer.CViewportJS.prototype[k] = renderer.CViewport.prototype[k];
+driver.js.renderer.CViewportJS.prototype.Activate = function() {
+	kernel.Glb.g_SystemJS.m_GlObject.Viewport(this.m_x * kernel.Glb.g_System.m_Display.m_Width,this.m_y * kernel.Glb.g_System.m_Display.m_Height,this.m_w * kernel.Glb.g_System.m_Display.m_Width,this.m_h * kernel.Glb.g_System.m_Display.m_Height);
+	return kernel.Result.SUCCESS;
+}
+driver.js.renderer.CViewportJS.prototype.__class__ = driver.js.renderer.CViewportJS;
+math.CV2D = function(_x,_y) { if( _x === $_ ) return; {
+	this.x = _x;
+	this.y = _y;
+}}
+math.CV2D.__name__ = ["math","CV2D"];
+math.CV2D.Add = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x + _V1.x;
+	_VOut.y = _V0.y + _V1.y;
+}
+math.CV2D.Sub = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x - _V1.x;
+	_VOut.y = _V0.y - _V1.y;
+}
+math.CV2D.Scale = function(_VOut,_a,_V) {
+	_VOut.x = _a * _V.x;
+	_VOut.y = _a * _V.y;
+}
+math.CV2D.prototype.Copy = function(_xy) {
+	this.x = _xy.x;
+	this.y = _xy.y;
+}
+math.CV2D.prototype.Set = function(_x,_y) {
+	this.x = _x;
+	this.y = _y;
+}
+math.CV2D.prototype.x = null;
+math.CV2D.prototype.y = null;
+math.CV2D.prototype.__class__ = math.CV2D;
 renderer.CRenderer = function(p) { if( p === $_ ) return; {
 	this.m_Vps = new Array();
 	{
@@ -1869,14 +2059,14 @@ renderer.CRenderer.prototype.BeginScene = function() {
 		}
 	}
 	this.m_BackScene.clear();
-	{ var $it2 = this.m_Scene.iterator();
-	while( $it2.hasNext() ) { var l_do = $it2.next();
+	{ var $it3 = this.m_Scene.iterator();
+	while( $it3.hasNext() ) { var l_do = $it3.next();
 	{
 		this.m_BackScene.push(l_do);
 	}
 	}}
-	{ var $it3 = this.m_BackScene.iterator();
-	while( $it3.hasNext() ) { var l_do = $it3.next();
+	{ var $it4 = this.m_BackScene.iterator();
+	while( $it4.hasNext() ) { var l_do = $it4.next();
 	{
 		l_do.Update();
 	}
@@ -1955,50 +2145,78 @@ for(var k in renderer.C2DQuad.prototype ) driver.js.renderer.CGlQuad.prototype[k
 driver.js.renderer.CGlQuad.prototype.Activate = function() {
 	var l_MatActivation = this.m_Material.Activate();
 	if(l_MatActivation == kernel.Result.FAILURE) {
-		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate mat",{ fileName : "CGlQuad.hx", lineNumber : 172, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate mat",{ fileName : "CGlQuad.hx", lineNumber : 203, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
 		return kernel.Result.FAILURE;
 	}
 	var l_ShdrActivation = this.m_ShdrPrgm.Activate();
 	if(l_ShdrActivation == kernel.Result.FAILURE) {
-		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr",{ fileName : "CGlQuad.hx", lineNumber : 179, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr",{ fileName : "CGlQuad.hx", lineNumber : 210, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
 		return kernel.Result.FAILURE;
 	}
 	var l_PrgmLink = this.m_ShdrPrgm.LinkPrimitive(this.m_Primitive);
 	if(l_PrgmLink == kernel.Result.FAILURE) {
-		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to link prim",{ fileName : "CGlQuad.hx", lineNumber : 186, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to link prim",{ fileName : "CGlQuad.hx", lineNumber : 217, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
+		return kernel.Result.FAILURE;
+	}
+	var l_RsActivate = this.m_RenderStates.Activate();
+	if(l_RsActivate == kernel.Result.FAILURE) {
+		kernel.CDebug.CONSOLEMSG("CGLQuad:unable to activate rs",{ fileName : "CGlQuad.hx", lineNumber : 224, className : "driver.js.renderer.CGlQuad", methodName : "Activate"});
 		return kernel.Result.FAILURE;
 	}
 	return kernel.Result.SUCCESS;
 }
+driver.js.renderer.CGlQuad.prototype.CreateData = function() {
+	var l_Array = new Array();
+	var l_Z = -10.;
+	var l_Scale = 0.5;
+	l_Array[0] = 0;
+	l_Array[1] = 0;
+	l_Array[2] = l_Z;
+	l_Array[3] = l_Scale;
+	l_Array[4] = 0.0;
+	l_Array[5] = l_Z;
+	l_Array[6] = 0;
+	l_Array[7] = l_Scale;
+	l_Array[8] = l_Z;
+	this.m_Primitive.SetVertexArray(l_Array);
+	var l_IndexArray = new Array();
+	l_IndexArray[0] = 0;
+	l_IndexArray[1] = 1;
+	l_IndexArray[2] = 2;
+	this.m_Primitive.SetIndexArray(l_IndexArray);
+}
 driver.js.renderer.CGlQuad.prototype.Draw = function(_VpId) {
 	renderer.C2DQuad.prototype.Draw.apply(this,[_VpId]);
 	var l_Vp = kernel.Glb.g_System.m_Renderer.m_Vps[_VpId];
-	kernel.CDebug.ASSERT(l_Vp != null,{ fileName : "CGlQuad.hx", lineNumber : 99, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+	kernel.CDebug.ASSERT(l_Vp != null,{ fileName : "CGlQuad.hx", lineNumber : 149, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
 	var l_Top = math.Utils.RoundNearest(this.m_Rect.m_TL.y * l_Vp.m_h + l_Vp.m_y);
 	var l_Left = math.Utils.RoundNearest((this.m_Rect.m_TL.x * l_Vp.m_VpRatio) * l_Vp.m_w + l_Vp.m_x);
 	var l_Bottom = math.Utils.RoundNearest(this.m_Rect.m_BR.y * l_Vp.m_h + l_Vp.m_y);
 	var l_Right = math.Utils.RoundNearest((this.m_Rect.m_BR.x * l_Vp.m_VpRatio) * l_Vp.m_w + l_Vp.m_x);
-	var l_Array = new Array();
-	var l_Z = 10.0;
-	l_Array[0] = 0;
-	l_Array[1] = 0;
-	l_Array[2] = l_Z;
-	l_Array[3] = 1;
-	l_Array[4] = 0.0;
-	l_Array[5] = l_Z;
-	l_Array[6] = 0;
-	l_Array[7] = 1;
-	l_Array[8] = l_Z;
-	this.m_Primitive.SetVertexArray(l_Array);
 	if(this.Activate() == kernel.Result.FAILURE) {
-		kernel.CDebug.CONSOLEMSG("Shader activation failure",{ fileName : "CGlQuad.hx", lineNumber : 151, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+		kernel.CDebug.CONSOLEMSG("Shader activation failure",{ fileName : "CGlQuad.hx", lineNumber : 158, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
 		return kernel.Result.FAILURE;
 	}
-	{
+	if(this.m_MatrixCache == null) {
 		this.m_MatrixCache = new WebGLFloatArray(this.m_Cameras[_VpId].GetMatrix().m_Buffer);
+		this.m_Cameras[_VpId].GetMatrix().Trace();
 	}
-	this.m_ShdrPrgm.UniformMatrix4fv("u_MVPMatrix",this.m_MatrixCache);
-	kernel.Glb.g_SystemJS.m_GlObject.DrawArrays(4,0,this.m_Primitive.GetNbTriangles());
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PreSetUniform:" + l_Err,{ fileName : "CGlQuad.hx", lineNumber : 172, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+	}
+	this.m_ShdrPrgm.UniformMatrix4fv("u_MVPMatrix",false,this.m_MatrixCache);
+	{
+		var l_Err1 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+		if(l_Err1 != 0) {
+			kernel.CDebug.CONSOLEMSG("GlError:PreDrawElements:" + l_Err1,{ fileName : "CGlQuad.hx", lineNumber : 183, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+		}
+	}
+	kernel.Glb.g_SystemJS.m_GlObject.DrawElements(4,this.m_Primitive.GetNbIndices(),5121,0);
+	var l_Err1 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err1 != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostDrawElements:" + l_Err1,{ fileName : "CGlQuad.hx", lineNumber : 192, className : "driver.js.renderer.CGlQuad", methodName : "Draw"});
+	}
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CGlQuad.prototype.Initialize = function() {
@@ -2052,6 +2270,20 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	if(this.m_Primitive == null) {
 		kernel.CDebug.CONSOLEMSG("Unable to create primitive",{ fileName : "CGlQuad.hx", lineNumber : 88, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
+	this.m_RenderStates = (function($this) {
+		var $r;
+		var tmp = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CRenderStatesJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	if(this.m_RenderStates == null) {
+		kernel.CDebug.CONSOLEMSG("Unable to create primitive",{ fileName : "CGlQuad.hx", lineNumber : 94, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+	}
+	this.CreateData();
 	return l_Res;
 }
 driver.js.renderer.CGlQuad.prototype.Shut = function() {
@@ -2071,159 +2303,6 @@ driver.js.renderer.CGlQuad.prototype.m_Primitive = null;
 driver.js.renderer.CGlQuad.prototype.m_RenderStates = null;
 driver.js.renderer.CGlQuad.prototype.m_ShdrPrgm = null;
 driver.js.renderer.CGlQuad.prototype.__class__ = driver.js.renderer.CGlQuad;
-IntHash = function(p) { if( p === $_ ) return; {
-	this.h = {}
-	if(this.h.__proto__ != null) {
-		this.h.__proto__ = null;
-		delete(this.h.__proto__);
-	}
-	else null;
-}}
-IntHash.__name__ = ["IntHash"];
-IntHash.prototype.exists = function(key) {
-	return this.h[key] != null;
-}
-IntHash.prototype.get = function(key) {
-	return this.h[key];
-}
-IntHash.prototype.h = null;
-IntHash.prototype.iterator = function() {
-	return { ref : this.h, it : this.keys(), hasNext : function() {
-		return this.it.hasNext();
-	}, next : function() {
-		var i = this.it.next();
-		return this.ref[i];
-	}}
-}
-IntHash.prototype.keys = function() {
-	var a = new Array();
-	
-			for( x in this.h )
-				a.push(x);
-		;
-	return a.iterator();
-}
-IntHash.prototype.remove = function(key) {
-	if(this.h[key] == null) return false;
-	delete(this.h[key]);
-	return true;
-}
-IntHash.prototype.set = function(key,value) {
-	this.h[key] = value;
-}
-IntHash.prototype.toString = function() {
-	var s = new StringBuf();
-	s.b[s.b.length] = "{";
-	var it = this.keys();
-	{ var $it4 = it;
-	while( $it4.hasNext() ) { var i = $it4.next();
-	{
-		s.b[s.b.length] = i;
-		s.b[s.b.length] = " => ";
-		s.b[s.b.length] = Std.string(this.get(i));
-		if(it.hasNext()) s.b[s.b.length] = ", ";
-	}
-	}}
-	s.b[s.b.length] = "}";
-	return s.b.join("");
-}
-IntHash.prototype.__class__ = IntHash;
-if(!driver.js.rsc) driver.js.rsc = {}
-driver.js.rsc.CRscVertexShader = function(p) { if( p === $_ ) return; {
-	renderer.CRscShader.apply(this,[]);
-	this.m_Object = null;
-	this.m_Body = "";
-}}
-driver.js.rsc.CRscVertexShader.__name__ = ["driver","js","rsc","CRscVertexShader"];
-driver.js.rsc.CRscVertexShader.__super__ = renderer.CRscShader;
-for(var k in renderer.CRscShader.prototype ) driver.js.rsc.CRscVertexShader.prototype[k] = renderer.CRscShader.prototype[k];
-driver.js.rsc.CRscVertexShader.prototype.Compile = function() {
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	l_Gl.ShaderSource(this.m_Object,this.m_Body);
-	l_Gl.CompileShader(this.m_Object);
-	if(!l_Gl.GetShaderParameter(this.m_Object,35713)) {
-		var l_Error = l_Gl.GetShaderInfoLog(this.m_Object);
-		if(l_Error != null) {
-			kernel.CDebug.CONSOLEMSG("Error in vertex shader compile: " + l_Error,{ fileName : "CRscVertexShader.hx", lineNumber : 85, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
-		}
-		else {
-			kernel.CDebug.CONSOLEMSG("Unknown error in vertex shader compile ",{ fileName : "CRscVertexShader.hx", lineNumber : 89, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
-		}
-		return kernel.Result.FAILURE;
-	}
-	kernel.CDebug.CONSOLEMSG("Success in vertex shader compiling.",{ fileName : "CRscVertexShader.hx", lineNumber : 94, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
-	return kernel.Result.SUCCESS;
-}
-driver.js.rsc.CRscVertexShader.prototype.Initialize = function(_Script) {
-	var l_Body = _Script.firstChild;
-	var l_Prev = null;
-	while(l_Body != null) {
-		l_Prev = l_Body;
-		l_Body = l_Body.nextSibling;
-	}
-	this.m_Body = l_Prev.nodeValue;
-	haxe.Log.trace("CRVS::ShaderBody " + this.m_Body,{ fileName : "CRscVertexShader.hx", lineNumber : 50, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
-	if(_Script.getAttribute("type") == "x-shader/x-fragment") {
-		haxe.Log.trace("Initialize vsh , but received fsh",{ fileName : "CRscVertexShader.hx", lineNumber : 54, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
-		return kernel.Result.FAILURE;
-	}
-	else if(_Script.getAttribute("type") == "x-shader/x-vertex") {
-		this.m_Object = kernel.Glb.g_SystemJS.m_GlObject.CreateShader(35633);
-	}
-	else {
-		haxe.Log.trace("cannot init vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 63, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
-		return kernel.Result.FAILURE;
-	}
-	haxe.Log.trace("Initialize vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 67, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
-	return kernel.Result.SUCCESS;
-}
-driver.js.rsc.CRscVertexShader.prototype.m_Body = null;
-driver.js.rsc.CRscVertexShader.prototype.m_Object = null;
-driver.js.rsc.CRscVertexShader.prototype.__class__ = driver.js.rsc.CRscVertexShader;
-kernel.Glb = function() { }
-kernel.Glb.__name__ = ["kernel","Glb"];
-kernel.Glb.GetRenderer = function() {
-	return kernel.Glb.g_System.m_Renderer;
-}
-kernel.Glb.GetSystem = function() {
-	return kernel.Glb.g_System;
-}
-kernel.Glb.StaticUpdate = function() {
-	kernel.Glb.g_System.Update();
-}
-kernel.Glb.prototype.__class__ = kernel.Glb;
-driver.js.rscbuilders.CRscJSFactory = function(p) { if( p === $_ ) return; {
-	rsc.CRscBuilder.apply(this,[]);
-}}
-driver.js.rscbuilders.CRscJSFactory.__name__ = ["driver","js","rscbuilders","CRscJSFactory"];
-driver.js.rscbuilders.CRscJSFactory.__super__ = rsc.CRscBuilder;
-for(var k in rsc.CRscBuilder.prototype ) driver.js.rscbuilders.CRscJSFactory.prototype[k] = rsc.CRscBuilder.prototype[k];
-driver.js.rscbuilders.CRscJSFactory.prototype.Build = function(_Type,_Path) {
-	var l_Rsc = null;
-	switch(_Type) {
-	case renderer.CMaterial.RSC_ID:{
-		l_Rsc = new driver.js.renderer.CMaterialJS();
-	}break;
-	case renderer.CTexture.RSC_ID:{
-		l_Rsc = new renderer.CTexture();
-	}break;
-	case renderer.CPrimitive.RSC_ID:{
-		l_Rsc = new driver.js.renderer.CPrimitiveJS();
-	}break;
-	case renderer.CRenderStates.RSC_ID:{
-		l_Rsc = new driver.js.renderer.CRenderStatesJS();
-	}break;
-	case renderer.CViewport.RSC_ID:{
-		l_Rsc = new driver.js.renderer.CViewportJS();
-	}break;
-	default:{
-		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 54, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
-		l_Rsc = null;
-	}break;
-	}
-	return l_Rsc;
-}
-driver.js.rscbuilders.CRscJSFactory.prototype.__class__ = driver.js.rscbuilders.CRscJSFactory;
 driver.js.renderer.CRendererJS = function(p) { if( p === $_ ) return; {
 	renderer.CRenderer.apply(this,[]);
 }}
@@ -2232,18 +2311,38 @@ driver.js.renderer.CRendererJS.__super__ = renderer.CRenderer;
 for(var k in renderer.CRenderer.prototype ) driver.js.renderer.CRendererJS.prototype[k] = renderer.CRenderer.prototype[k];
 driver.js.renderer.CRendererJS.prototype.BeginScene = function() {
 	var l_FrameCount = (8 * kernel.Glb.g_System.GetFrameCount()) % 255;
-	kernel.Glb.g_SystemJS.m_GlObject.ClearColor(l_FrameCount / 255.0,0,0,1);
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PreClear:" + l_Err,{ fileName : "CRendererJS.hx", lineNumber : 46, className : "driver.js.renderer.CRendererJS", methodName : "BeginScene"});
+	}
+	kernel.Glb.g_SystemJS.m_GlObject.ClearColor(255.0,0,0,1);
 	kernel.Glb.g_SystemJS.m_GlObject.ClearDepth(1000.0);
-	kernel.Glb.g_SystemJS.m_GlObject.Clear(16640);
+	kernel.Glb.g_SystemJS.m_GlObject.Clear(17664);
+	l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostClear:" + l_Err,{ fileName : "CRendererJS.hx", lineNumber : 59, className : "driver.js.renderer.CRendererJS", methodName : "BeginScene"});
+	}
 	renderer.CRenderer.prototype.BeginScene.apply(this,[]);
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CRendererJS.prototype.BuildViewport = function() {
 	return new driver.js.renderer.CViewportJS();
 }
+driver.js.renderer.CRendererJS.prototype.EndScene = function() {
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PreFlush:" + l_Err,{ fileName : "CRendererJS.hx", lineNumber : 72, className : "driver.js.renderer.CRendererJS", methodName : "EndScene"});
+	}
+	kernel.Glb.g_SystemJS.m_GlObject.Flush();
+	l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostFlush:" + l_Err,{ fileName : "CRendererJS.hx", lineNumber : 80, className : "driver.js.renderer.CRendererJS", methodName : "EndScene"});
+	}
+	return kernel.Result.SUCCESS;
+}
 driver.js.renderer.CRendererJS.prototype.Initialize = function() {
 	renderer.CRenderer.prototype.Initialize.apply(this,[]);
-	haxe.Log.trace("CRendererJS::init",{ fileName : "CRendererJS.hx", lineNumber : 33, className : "driver.js.renderer.CRendererJS", methodName : "Initialize"});
+	haxe.Log.trace("CRendererJS::init",{ fileName : "CRendererJS.hx", lineNumber : 34, className : "driver.js.renderer.CRendererJS", methodName : "Initialize"});
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CRendererJS.prototype.Render = function(_VpId) {
@@ -2260,217 +2359,15 @@ driver.js.renderer.CRendererJS.prototype.Render = function(_VpId) {
 }
 driver.js.renderer.CRendererJS.prototype.m_NbDrawn = null;
 driver.js.renderer.CRendererJS.prototype.__class__ = driver.js.renderer.CRendererJS;
-driver.js.rsc.CRscShaderProgram = function(p) { if( p === $_ ) return; {
-	renderer.CRscShader.apply(this,[]);
-	this.m_AttribsMask = 0;
-	this.m_VtxSh = null;
-	this.m_FragSh = null;
-	this.m_Uniforms = null;
-}}
-driver.js.rsc.CRscShaderProgram.__name__ = ["driver","js","rsc","CRscShaderProgram"];
-driver.js.rsc.CRscShaderProgram.__super__ = renderer.CRscShader;
-for(var k in renderer.CRscShader.prototype ) driver.js.rsc.CRscShaderProgram.prototype[k] = renderer.CRscShader.prototype[k];
-driver.js.rsc.CRscShaderProgram.prototype.Activate = function() {
-	if(renderer.CRscShader.prototype.Activate.apply(this,[]) == kernel.Result.SUCCESS) {
-		var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-		l_Gl.UseProgram(this.m_Program);
-	}
-	return kernel.Result.SUCCESS;
+haxe.Log = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	js.Boot.__trace(v,infos);
 }
-driver.js.rsc.CRscShaderProgram.prototype.BindAttributes = function() {
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	if((this.m_AttribsMask & 1) != 0) {
-		l_Gl.BindAttribLocation(this.m_Program,0,"_Vertex");
-	}
-	if((this.m_AttribsMask & 4) != 0) {
-		l_Gl.BindAttribLocation(this.m_Program,2,"_Color");
-	}
-	if((this.m_AttribsMask & 2) != 0) {
-		l_Gl.BindAttribLocation(this.m_Program,1,"_Normal");
-	}
-	if((this.m_AttribsMask & 8) != 0) {
-		l_Gl.BindAttribLocation(this.m_Program,3,"_TexCoord");
-	}
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
 }
-driver.js.rsc.CRscShaderProgram.prototype.Compile = function() {
-	if(this.m_VtxSh != null) {
-		if(this.m_VtxSh.Compile() == kernel.Result.FAILURE) {
-			this.PrintError();
-			return kernel.Result.FAILURE;
-		}
-	}
-	else {
-		kernel.CDebug.CONSOLEMSG("Can't proceed : Vertex shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 315, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
-		return kernel.Result.FAILURE;
-	}
-	if(this.m_FragSh != null) {
-		if(this.m_FragSh.Compile() == kernel.Result.FAILURE) {
-			this.PrintError();
-			return kernel.Result.FAILURE;
-		}
-	}
-	else {
-		kernel.CDebug.CONSOLEMSG("Can't proceed : Fragment shader is null",{ fileName : "CRscShaderProgram.hx", lineNumber : 329, className : "driver.js.rsc.CRscShaderProgram", methodName : "Compile"});
-		return kernel.Result.FAILURE;
-	}
-	this.m_Status = 1;
-	return kernel.Result.SUCCESS;
-}
-driver.js.rsc.CRscShaderProgram.prototype.CreateAttributeMask = function() {
-	if(this.m_VtxSh.m_Body.lastIndexOf("_Vertex") != -1) {
-		this.m_AttribsMask |= 1;
-		kernel.CDebug.CONSOLEMSG("Found Vertex channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 69, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
-	}
-	if(this.m_VtxSh.m_Body.lastIndexOf("_Color") != -1) {
-		this.m_AttribsMask |= 4;
-		kernel.CDebug.CONSOLEMSG("Found Color channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 75, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
-	}
-	if(this.m_VtxSh.m_Body.lastIndexOf("_Normal") != -1) {
-		this.m_AttribsMask |= 2;
-		kernel.CDebug.CONSOLEMSG("Found Normal channel.",{ fileName : "CRscShaderProgram.hx", lineNumber : 81, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
-	}
-	if(this.m_VtxSh.m_Body.lastIndexOf("_TexCoord") != -1) {
-		this.m_AttribsMask |= 8;
-		kernel.CDebug.CONSOLEMSG("Found tex coord.",{ fileName : "CRscShaderProgram.hx", lineNumber : 87, className : "driver.js.rsc.CRscShaderProgram", methodName : "CreateAttributeMask"});
-	}
-}
-driver.js.rsc.CRscShaderProgram.prototype.DeclUniform = function(_Name) {
-	this.m_Uniforms.set(_Name,kernel.Glb.g_SystemJS.m_GlObject.GetUniformLocation(_Name));
-}
-driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	kernel.CDebug.CONSOLEMSG("Creating Shader Program :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 160, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-	this.m_Uniforms = new Hash();
-	var l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscVertexShader.RSC_ID,_Path + ".vsh");
-	if(l_Rsc == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to create vsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 166, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-		return kernel.Result.FAILURE;
-	}
-	this.m_VtxSh = (function($this) {
-		var $r;
-		var tmp = l_Rsc;
-		$r = (Std["is"](tmp,driver.js.rsc.CRscVertexShader)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
-		return $r;
-	}(this));
-	l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscFragmentShader.RSC_ID,_Path + ".fsh");
-	if(l_Rsc == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to create fsh resource :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 175, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-		return kernel.Result.FAILURE;
-	}
-	this.m_FragSh = (function($this) {
-		var $r;
-		var tmp = l_Rsc;
-		$r = (Std["is"](tmp,driver.js.rsc.CRscFragmentShader)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
-		return $r;
-	}(this));
-	this.m_Program = l_Gl.CreateProgram();
-	if(this.m_Program == null) {
-		return kernel.Result.FAILURE;
-	}
-	this.CreateAttributeMask();
-	var l_Res = this.Compile();
-	if(l_Res == kernel.Result.SUCCESS) {
-		l_Res = this.Link();
-		if(l_Res == kernel.Result.SUCCESS) {
-			kernel.CDebug.CONSOLEMSG("Success linking shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 195, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-		}
-		else {
-			kernel.CDebug.CONSOLEMSG("Unable to link shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 199, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-		}
-	}
-	else {
-		kernel.CDebug.CONSOLEMSG("Unable to compile shader :" + _Path,{ fileName : "CRscShaderProgram.hx", lineNumber : 204, className : "driver.js.rsc.CRscShaderProgram", methodName : "Initialize"});
-	}
-	return ((l_Res == kernel.Result.SUCCESS)?kernel.Result.SUCCESS:kernel.Result.FAILURE);
-}
-driver.js.rsc.CRscShaderProgram.prototype.Link = function() {
-	if(this.m_Status >= 2) {
-		return kernel.Result.SUCCESS;
-	}
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	l_Gl.AttachShader(this.m_Program,this.m_VtxSh.m_Object);
-	l_Gl.AttachShader(this.m_Program,this.m_FragSh.m_Object);
-	this.BindAttributes();
-	l_Gl.LinkProgram(this.m_Program);
-	if(l_Gl.GetProgramParameter(this.m_Program,35714) == 0) {
-		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
-		kernel.CDebug.CONSOLEMSG("Error in program linking:" + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 294, className : "driver.js.rsc.CRscShaderProgram", methodName : "Link"});
-		return kernel.Result.FAILURE;
-	}
-	this.m_Status = 2;
-	return kernel.Result.SUCCESS;
-}
-driver.js.rsc.CRscShaderProgram.prototype.LinkPrimitive = function(_Prim) {
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	if((this.m_AttribsMask & 1) != 0) {
-		l_Gl.EnableVertexAttribArray(0);
-		l_Gl.VertexAttribPointer(0,_Prim.GetFloatPerVtx(),5126,false,0,0);
-		return kernel.Result.SUCCESS;
-	}
-	if((this.m_AttribsMask & 2) != 0) {
-		l_Gl.EnableVertexAttribArray(1);
-		l_Gl.VertexAttribPointer(1,_Prim.GetFloatPerNormal(),5126,false,0,0);
-		return kernel.Result.SUCCESS;
-	}
-	if((this.m_AttribsMask & 4) != 0) {
-		l_Gl.EnableVertexAttribArray(2);
-		l_Gl.VertexAttribPointer(2,_Prim.GetFloatPerColor(),5126,false,0,0);
-		return kernel.Result.SUCCESS;
-	}
-	if((this.m_AttribsMask & 8) != 0) {
-		l_Gl.EnableVertexAttribArray(3);
-		l_Gl.VertexAttribPointer(3,_Prim.GetFloatPerTexCoord(),5126,false,0,0);
-		return kernel.Result.SUCCESS;
-	}
-	return kernel.Result.SUCCESS;
-}
-driver.js.rsc.CRscShaderProgram.prototype.PrintError = function() {
-	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
-	if(l_Gl.GetProgramParameter(this.m_Program,35713) == 0) {
-		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
-		if(l_Error != null) {
-			kernel.CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 261, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
-		}
-	}
-	if(l_Gl.GetProgramParameter(this.m_Program,35714) == 0) {
-		var l_Error = l_Gl.GetProgramInfoLog(this.m_Program);
-		if(l_Error != null) {
-			kernel.CDebug.CONSOLEMSG("Error in shader program linking: " + l_Error,{ fileName : "CRscShaderProgram.hx", lineNumber : 270, className : "driver.js.rsc.CRscShaderProgram", methodName : "PrintError"});
-		}
-	}
-}
-driver.js.rsc.CRscShaderProgram.prototype.Uniform1f = function(_Name,_f0) {
-	if(!this.m_Uniforms.exists(_Name)) {
-		this.m_Uniforms.set(_Name,kernel.Glb.g_SystemJS.m_GlObject.GetUniformLocation(_Name));
-	}
-	var l_Loc = this.m_Uniforms.get(_Name);
-	if(l_Loc != null) {
-		kernel.Glb.g_SystemJS.m_GlObject.Uniform1f(l_Loc,_f0);
-	}
-}
-driver.js.rsc.CRscShaderProgram.prototype.UniformMatrix4fv = function(_Name,_m0) {
-	if(!this.m_Uniforms.exists(_Name)) {
-		this.m_Uniforms.set(_Name,kernel.Glb.g_SystemJS.m_GlObject.GetUniformLocation(_Name));
-	}
-	var l_Loc = this.m_Uniforms.get(_Name);
-	if(l_Loc != null) {
-		kernel.Glb.g_SystemJS.m_GlObject.UniformMatrix4f(l_Loc,_m0);
-	}
-}
-driver.js.rsc.CRscShaderProgram.prototype.m_AttribsMask = null;
-driver.js.rsc.CRscShaderProgram.prototype.m_FragSh = null;
-driver.js.rsc.CRscShaderProgram.prototype.m_Program = null;
-driver.js.rsc.CRscShaderProgram.prototype.m_Uniforms = null;
-driver.js.rsc.CRscShaderProgram.prototype.m_VtxSh = null;
-driver.js.rsc.CRscShaderProgram.prototype.__class__ = driver.js.rsc.CRscShaderProgram;
+haxe.Log.prototype.__class__ = haxe.Log;
 Hash = function(p) { if( p === $_ ) return; {
 	this.h = {}
 	if(this.h.__proto__ != null) {
@@ -2543,6 +2440,342 @@ Hash.prototype.toString = function() {
 	return s.b.join("");
 }
 Hash.prototype.__class__ = Hash;
+STAGE = { __ename__ : ["STAGE"], __constructs__ : ["STAGE_INIT","STAGE_UPDATE"] }
+STAGE.STAGE_INIT = ["STAGE_INIT",0];
+STAGE.STAGE_INIT.toString = $estr;
+STAGE.STAGE_INIT.__enum__ = STAGE;
+STAGE.STAGE_UPDATE = ["STAGE_UPDATE",1];
+STAGE.STAGE_UPDATE.toString = $estr;
+STAGE.STAGE_UPDATE.__enum__ = STAGE;
+CMainClient = function() { }
+CMainClient.__name__ = ["CMainClient"];
+CMainClient.m_Stage = null;
+CMainClient.m_Quad = null;
+CMainClient.m_Cube = null;
+CMainClient.InitGameJS = function() {
+	var l_OrthoCam = (function($this) {
+		var $r;
+		var tmp = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
+		$r = (Std["is"](tmp,renderer.camera.COrthoCamera)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
+		return $r;
+	}(this));
+	var l_CamPos = new math.CV3D(0,0,-1);
+	l_OrthoCam.SetPosition(l_CamPos);
+	l_OrthoCam.SetWidth(1);
+	l_OrthoCam.SetHeight(1);
+	l_OrthoCam.m_Near = 0.01;
+	l_OrthoCam.m_Far = 1000.0;
+	CMainClient.m_Quad = new driver.js.renderer.CGlQuad();
+	CMainClient.m_Quad.Initialize();
+	CMainClient.m_Quad.m_Rect.m_TL.Copy(new math.CV2D(0,0));
+	math.CV2D.Sub(CMainClient.m_Quad.m_Rect.m_TL,CMainClient.m_Quad.m_Rect.m_TL,new math.CV2D(0.5,0.5));
+	CMainClient.m_Quad.m_Rect.m_BR.Copy(new math.CV2D(0,0));
+	math.CV2D.Add(CMainClient.m_Quad.m_Rect.m_BR,CMainClient.m_Quad.m_Rect.m_BR,new math.CV2D(0.5,0.5));
+	CMainClient.m_Quad.SetCamera(renderer.CRenderer.VP_FULLSCREEN,l_OrthoCam);
+	CMainClient.m_Quad.SetVisible(false);
+	CMainClient.m_Cube = new driver.js.renderer.CGLCube();
+	CMainClient.m_Cube.Initialize();
+	CMainClient.m_Cube.SetVisible(true);
+}
+CMainClient.InitGame = function() {
+	CMainClient.InitGameJS();
+}
+CMainClient.UpdateGame = function() {
+	null;
+}
+CMainClient.UpdateCallback = function() {
+	var $e = (CMainClient.m_Stage);
+	switch( $e[1] ) {
+	case 0:
+	{
+		CMainClient.InitGame();
+		CMainClient.m_Stage = STAGE.STAGE_UPDATE;
+	}break;
+	case 1:
+	{
+		CMainClient.UpdateGame();
+	}break;
+	}
+	return kernel.Result.SUCCESS;
+}
+CMainClient.RenderCallback = function() {
+	return kernel.Result.SUCCESS;
+}
+CMainClient.main = function() {
+	CMainClient.m_Stage = STAGE.STAGE_INIT;
+	if(kernel.Glb.g_System == null) {
+		haxe.Log.trace("no g_system",{ fileName : "CMainClient.hx", lineNumber : 113, className : "CMainClient", methodName : "main"});
+	}
+	else {
+		haxe.Log.trace("system init",{ fileName : "CMainClient.hx", lineNumber : 117, className : "CMainClient", methodName : "main"});
+		kernel.Glb.g_System.Initialize();
+		haxe.Log.trace("main loop",{ fileName : "CMainClient.hx", lineNumber : 119, className : "CMainClient", methodName : "main"});
+		kernel.Glb.g_System.MainLoop();
+		kernel.Glb.g_System.m_BeforeUpdate = $closure(CMainClient,"UpdateCallback");
+		kernel.Glb.g_System.m_BeforeDraw = $closure(CMainClient,"RenderCallback");
+	}
+}
+CMainClient.prototype.__class__ = CMainClient;
+Std = function() { }
+Std.__name__ = ["Std"];
+Std["is"] = function(v,t) {
+	return js.Boot.__instanceof(v,t);
+}
+Std.string = function(s) {
+	return js.Boot.__string_rec(s,"");
+}
+Std["int"] = function(x) {
+	if(x < 0) return Math.ceil(x);
+	return Math.floor(x);
+}
+Std.parseInt = function(x) {
+	var v = parseInt(x);
+	if(Math.isNaN(v)) return null;
+	return v;
+}
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+}
+Std.random = function(x) {
+	return Math.floor(Math.random() * x);
+}
+Std.prototype.__class__ = Std;
+math.Utils = function() { }
+math.Utils.__name__ = ["math","Utils"];
+math.Utils.RoundNearest = function(_F0) {
+	if(_F0 < 0) {
+		return Std["int"](_F0 - 0.5);
+	}
+	else {
+		return Std["int"](_F0 + 0.5);
+	}
+}
+math.Utils.RoundNearestF = function(_F0) {
+	if(_F0 < 0) {
+		return Std["int"](_F0 - 0.5);
+	}
+	else {
+		return Std["int"](_F0 + 0.5);
+	}
+}
+math.Utils.prototype.__class__ = math.Utils;
+driver.js.rsc.CRscVertexShader = function(p) { if( p === $_ ) return; {
+	renderer.CRscShader.apply(this,[]);
+	this.m_Object = null;
+	this.m_Body = "";
+}}
+driver.js.rsc.CRscVertexShader.__name__ = ["driver","js","rsc","CRscVertexShader"];
+driver.js.rsc.CRscVertexShader.__super__ = renderer.CRscShader;
+for(var k in renderer.CRscShader.prototype ) driver.js.rsc.CRscVertexShader.prototype[k] = renderer.CRscShader.prototype[k];
+driver.js.rsc.CRscVertexShader.prototype.Compile = function() {
+	var l_Gl = kernel.Glb.g_SystemJS.m_GlObject;
+	l_Gl.ShaderSource(this.m_Object,this.m_Body);
+	l_Gl.CompileShader(this.m_Object);
+	if(!l_Gl.GetShaderParameter(this.m_Object,35713)) {
+		var l_Error = l_Gl.GetShaderInfoLog(this.m_Object);
+		if(l_Error != null) {
+			kernel.CDebug.CONSOLEMSG("Error in vertex shader compile: " + l_Error,{ fileName : "CRscVertexShader.hx", lineNumber : 85, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
+		}
+		else {
+			kernel.CDebug.CONSOLEMSG("Unknown error in vertex shader compile ",{ fileName : "CRscVertexShader.hx", lineNumber : 89, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
+		}
+		return kernel.Result.FAILURE;
+	}
+	kernel.CDebug.CONSOLEMSG("Success in vertex shader compiling.",{ fileName : "CRscVertexShader.hx", lineNumber : 94, className : "driver.js.rsc.CRscVertexShader", methodName : "Compile"});
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscVertexShader.prototype.Initialize = function(_Script) {
+	var l_Body = _Script.firstChild;
+	var l_Prev = null;
+	while(l_Body != null) {
+		l_Prev = l_Body;
+		l_Body = l_Body.nextSibling;
+	}
+	this.m_Body = l_Prev.nodeValue;
+	haxe.Log.trace("CRVS::ShaderBody " + this.m_Body,{ fileName : "CRscVertexShader.hx", lineNumber : 50, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
+	if(_Script.getAttribute("type") == "x-shader/x-fragment") {
+		haxe.Log.trace("Initialize vsh , but received fsh",{ fileName : "CRscVertexShader.hx", lineNumber : 54, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
+		return kernel.Result.FAILURE;
+	}
+	else if(_Script.getAttribute("type") == "x-shader/x-vertex") {
+		this.m_Object = kernel.Glb.g_SystemJS.m_GlObject.CreateShader(35633);
+	}
+	else {
+		haxe.Log.trace("cannot init vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 63, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
+		return kernel.Result.FAILURE;
+	}
+	haxe.Log.trace("Initialize vsh",{ fileName : "CRscVertexShader.hx", lineNumber : 67, className : "driver.js.rsc.CRscVertexShader", methodName : "Initialize"});
+	return kernel.Result.SUCCESS;
+}
+driver.js.rsc.CRscVertexShader.prototype.m_Body = null;
+driver.js.rsc.CRscVertexShader.prototype.m_Object = null;
+driver.js.rsc.CRscVertexShader.prototype.__class__ = driver.js.rsc.CRscVertexShader;
+driver.js.kernel.CTypesJS = function() { }
+driver.js.kernel.CTypesJS.__name__ = ["driver","js","kernel","CTypesJS"];
+driver.js.kernel.CTypesJS.prototype.__class__ = driver.js.kernel.CTypesJS;
+driver.js.renderer.CRenderStatesJS = function(p) { if( p === $_ ) return; {
+	renderer.CRenderStates.apply(this,[]);
+	this.m_ZEq = renderer.Z_EQUATION.Z_LESSER_EQ;
+	this.m_ZRead = true;
+	this.m_ZWrite = false;
+}}
+driver.js.renderer.CRenderStatesJS.__name__ = ["driver","js","renderer","CRenderStatesJS"];
+driver.js.renderer.CRenderStatesJS.__super__ = renderer.CRenderStates;
+for(var k in renderer.CRenderStates.prototype ) driver.js.renderer.CRenderStatesJS.prototype[k] = renderer.CRenderStates.prototype[k];
+driver.js.renderer.CRenderStatesJS.prototype.Activate = function() {
+	var l_GL = kernel.Glb.g_SystemJS.m_GlObject;
+	if(this.m_ZRead) {
+		l_GL.Enable(2929);
+	}
+	else {
+		l_GL.Disable(2929);
+	}
+	var $e = (this.m_ZEq);
+	switch( $e[1] ) {
+	case 0:
+	{
+		l_GL.DepthFunc(513);
+	}break;
+	case 1:
+	{
+		l_GL.DepthFunc(515);
+	}break;
+	case 2:
+	{
+		l_GL.DepthFunc(516);
+	}break;
+	case 3:
+	{
+		l_GL.DepthFunc(518);
+	}break;
+	}
+	l_GL.DepthMask((this.m_ZWrite?true:false));
+	return kernel.Result.SUCCESS;
+}
+driver.js.renderer.CRenderStatesJS.prototype.__class__ = driver.js.renderer.CRenderStatesJS;
+renderer.CTexture = function(p) { if( p === $_ ) return; {
+	rsc.CRsc.apply(this,[]);
+}}
+renderer.CTexture.__name__ = ["renderer","CTexture"];
+renderer.CTexture.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) renderer.CTexture.prototype[k] = rsc.CRsc.prototype[k];
+renderer.CTexture.prototype.Activate = function() {
+	return kernel.Result.SUCCESS;
+}
+renderer.CTexture.prototype.GetType = function() {
+	return renderer.CTexture.RSC_ID;
+}
+renderer.CTexture.prototype.__class__ = renderer.CTexture;
+driver.js.renderer.CPrimitiveJS = function(p) { if( p === $_ ) return; {
+	renderer.CPrimitive.apply(this,[]);
+	this.m_NbIndices = 0;
+	this.m_NbVertex = 0;
+	this.m_NrmlObject = null;
+	this.m_TexObject = null;
+	this.m_VtxObject = null;
+	this.m_IdxObject = null;
+	this.m_NrmlNativeBuf = null;
+	this.m_TexNativeBuf = null;
+	this.m_VtxNativeBuf = null;
+	this.m_IdxNativeBuf = null;
+}}
+driver.js.renderer.CPrimitiveJS.__name__ = ["driver","js","renderer","CPrimitiveJS"];
+driver.js.renderer.CPrimitiveJS.__super__ = renderer.CPrimitive;
+for(var k in renderer.CPrimitive.prototype ) driver.js.renderer.CPrimitiveJS.prototype[k] = renderer.CPrimitive.prototype[k];
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerColor = function() {
+	return 4;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerNormal = function() {
+	return 3;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerTexCoord = function() {
+	return 4;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetFloatPerVtx = function() {
+	return 3;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetNbIndices = function() {
+	return this.m_NbIndices;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetNbTriangles = function() {
+	return this.m_NbTriangles;
+}
+driver.js.renderer.CPrimitiveJS.prototype.GetNbVertices = function() {
+	return this.m_NbVertex;
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetIndexArray = function(_Indexes) {
+	if(this.m_IdxObject == null) {
+		this.m_IdxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34963,this.m_IdxObject);
+		kernel.CDebug.CONSOLEMSG("bind index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 114, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+		if(l_Err != 0) {
+			kernel.CDebug.CONSOLEMSG("GlError:PostBindIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 119, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+		}
+	}
+	this.m_NbIndices = _Indexes.length;
+	this.m_IdxNativeBuf = new WebGLUnsignedByteArray(_Indexes);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34963,this.m_IdxNativeBuf,35048);
+	kernel.CDebug.CONSOLEMSG("Set index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 128, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostSetIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 133, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+	}
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetNormalArray = function(_Normals) {
+	if(this.m_NrmlObject == null) {
+		this.m_NrmlObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_NrmlObject);
+	}
+	this.m_NrmlNativeBuf = new WebGLFloatArray(_Normals);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_NrmlNativeBuf,35044);
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetTexCooArray = function(_Coord) {
+	if(this.m_TexObject == null) {
+		this.m_TexObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_TexObject);
+	}
+	this.m_TexNativeBuf = new WebGLFloatArray(_Coord);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_TexNativeBuf,35044);
+}
+driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
+	this.m_NbTriangles = Std["int"](_Vertices.length / 9);
+	this.m_NbVertex = Std["int"](_Vertices.length / 3);
+	if(this.m_VtxObject == null) {
+		this.m_VtxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
+		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_VtxObject);
+		kernel.CDebug.CONSOLEMSG("Bound vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 85, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+		if(l_Err != 0) {
+			kernel.CDebug.CONSOLEMSG("GlError:PostBindVertexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 90, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+		}
+	}
+	{
+		this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
+		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35048);
+		kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 98, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+		if(l_Err != 0) {
+			kernel.CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 103, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+		}
+	}
+}
+driver.js.renderer.CPrimitiveJS.prototype.m_IdxNativeBuf = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_IdxObject = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_NbIndices = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_NbTriangles = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_NbVertex = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_NrmlNativeBuf = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_NrmlObject = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_TexNativeBuf = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_TexObject = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_VtxNativeBuf = null;
+driver.js.renderer.CPrimitiveJS.prototype.m_VtxObject = null;
+driver.js.renderer.CPrimitiveJS.prototype.__class__ = driver.js.renderer.CPrimitiveJS;
 driver.js.rsc.CRscFragmentShader = function(p) { if( p === $_ ) return; {
 	renderer.CRscShader.apply(this,[]);
 	this.m_Body = "";
@@ -2591,12 +2824,64 @@ driver.js.rsc.CRscFragmentShader.prototype.Initialize = function(_Script) {
 driver.js.rsc.CRscFragmentShader.prototype.m_Body = null;
 driver.js.rsc.CRscFragmentShader.prototype.m_Object = null;
 driver.js.rsc.CRscFragmentShader.prototype.__class__ = driver.js.rsc.CRscFragmentShader;
+js.Lib = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.isIE = null;
+js.Lib.isOpera = null;
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.alert = function(v) {
+	alert(js.Boot.__string_rec(v,""));
+}
+js.Lib.eval = function(code) {
+	return eval(code);
+}
+js.Lib.setErrorHandler = function(f) {
+	js.Lib.onerror = f;
+}
+js.Lib.prototype.__class__ = js.Lib;
 $Main = function() { }
 $Main.__name__ = ["@Main"];
 $Main.prototype.__class__ = $Main;
 $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
+{
+	Math.NaN = Number["NaN"];
+	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
+	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	Math.isFinite = function(i) {
+		return isFinite(i);
+	}
+	Math.isNaN = function(i) {
+		return isNaN(i);
+	}
+	Math.__name__ = ["Math"];
+}
+{
+	String.prototype.__class__ = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = Array;
+	Array.__name__ = ["Array"];
+	Int = { __name__ : ["Int"]}
+	Dynamic = { __name__ : ["Dynamic"]}
+	Float = Number;
+	Float.__name__ = ["Float"];
+	Bool = { __ename__ : ["Bool"]}
+	Class = { __name__ : ["Class"]}
+	Enum = { }
+	Void = { __ename__ : ["Void"]}
+}
+{
+	js.Lib.document = document;
+	js.Lib.window = window;
+	onerror = function(msg,url,line) {
+		var f = js.Lib.onerror;
+		if( f == null )
+			return false;
+		return f(msg,[url+":"+line]);
+	}
+}
 {
 	Date.now = function() {
 		return new Date();
@@ -2644,54 +2929,9 @@ js.Boot.__init();
 	Date.prototype.__class__ = Date;
 	Date.__name__ = ["Date"];
 }
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]}
-	Dynamic = { __name__ : ["Dynamic"]}
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]}
-	Class = { __name__ : ["Class"]}
-	Enum = { }
-	Void = { __ename__ : ["Void"]}
-}
-{
-	Math.NaN = Number["NaN"];
-	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
-	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
-	Math.isFinite = function(i) {
-		return isFinite(i);
-	}
-	Math.isNaN = function(i) {
-		return isNaN(i);
-	}
-	Math.__name__ = ["Math"];
-}
-{
-	js.Lib.document = document;
-	js.Lib.window = window;
-	onerror = function(msg,url,line) {
-		var f = js.Lib.onerror;
-		if( f == null )
-			return false;
-		return f(msg,[url+":"+line]);
-	}
-}
-rsc.CRscMan.RSC_COUNT = 0;
-renderer.CPrimitive.RSC_ID = rsc.CRscMan.RSC_COUNT++;
-renderer.CRscShader.SHADER_STATUS_NONE = 0;
-renderer.CRscShader.SHADER_STATUS_COMPILED = 1;
-renderer.CRscShader.SHADER_STATUS_LINKED = 2;
-renderer.CRscShader.SHADER_STATUS_READY = 3;
-renderer.CViewport.RSC_ID = rsc.CRscMan.RSC_COUNT++;
-renderer.CTexture.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 math.CV3D.ZERO = new math.CV3D(0,0,0);
 math.CV3D.ONE = new math.CV3D(1,1,1);
 math.CV3D.HALF = new math.CV3D(0.5,0.5,0.5);
-renderer.CMaterial.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 math.Registers.V0 = new math.CV3D(0,0,0);
 math.Registers.V1 = new math.CV3D(0,0,0);
 math.Registers.V2 = new math.CV3D(0,0,0);
@@ -2712,28 +2952,26 @@ math.Registers.M4 = new math.CMatrix44();
 math.Registers.M5 = new math.CMatrix44();
 math.Registers.M6 = new math.CMatrix44();
 math.Registers.M7 = new math.CMatrix44();
+rsc.CRscMan.RSC_COUNT = 0;
+renderer.CViewport.RSC_ID = rsc.CRscMan.RSC_COUNT++;
+renderer.CMaterial.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 math.Constants.EPSILON = 1e-6;
 math.Constants.PI = 3.1415926535897932384626433;
 math.Constants.DEG_TO_RAD = (3.1415926535897932384626433 * 2.0) / 360.0;
 math.Constants.RAD_TO_DEG = (360.0 / 3.1415926535897932384626433) * 2.0;
 math.Constants.INT_MAX = -2147483648 - 1;
 math.Constants.INT_MIN = -(-2147483648 - 1);
+renderer.CPrimitive.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 kernel.CSystem.FRAMERATE = 60;
 kernel.CSystem.DT = 1.0 / 60;
-renderer.CRenderStates.RSC_ID = rsc.CRscMan.RSC_COUNT++;
-haxe.Timer.arr = new Array();
-math.CV2D.ZERO = new math.CV2D(0,0);
-math.CV2D.ONE = new math.CV2D(1,1);
-math.CV2D.HALF = new math.CV2D(0.5,0.5);
-js.Lib.onerror = null;
-renderer.CRenderer.CAM_PERSPECTIVE_0 = 0;
-renderer.CRenderer.CAM_ORTHO_0 = 1;
-renderer.CRenderer.CAM_COUNT = 2;
-renderer.CRenderer.VP_FULLSCREEN = 0;
-renderer.CRenderer.VP_MAX = 2;
-driver.js.rsc.CRscVertexShader.RSC_ID = rsc.CRscMan.RSC_COUNT++;
+renderer.CRscShader.SHADER_STATUS_NONE = 0;
+renderer.CRscShader.SHADER_STATUS_COMPILED = 1;
+renderer.CRscShader.SHADER_STATUS_LINKED = 2;
+renderer.CRscShader.SHADER_STATUS_READY = 3;
 kernel.Glb.g_SystemJS = new driver.js.kernel.CSystemJS();
 kernel.Glb.g_System = kernel.Glb.g_SystemJS;
+renderer.CRenderStates.RSC_ID = rsc.CRscMan.RSC_COUNT++;
+haxe.Timer.arr = new Array();
 driver.js.rsc.CRscShaderProgram.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 driver.js.rsc.CRscShaderProgram.ATTR_VERTEX_INDEX = 0;
 driver.js.rsc.CRscShaderProgram.ATTR_NORMAL_INDEX = 1;
@@ -2748,5 +2986,16 @@ driver.js.rsc.CRscShaderProgram.ATTR_NAME_COLOR = "_Color";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_VERTEX = "_Vertex";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_NORMAL = "_Normal";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_TEXCOORD = "_TexCoord";
+math.CV2D.ZERO = new math.CV2D(0,0);
+math.CV2D.ONE = new math.CV2D(1,1);
+math.CV2D.HALF = new math.CV2D(0.5,0.5);
+renderer.CRenderer.CAM_PERSPECTIVE_0 = 0;
+renderer.CRenderer.CAM_ORTHO_0 = 1;
+renderer.CRenderer.CAM_COUNT = 2;
+renderer.CRenderer.VP_FULLSCREEN = 0;
+renderer.CRenderer.VP_MAX = 2;
+driver.js.rsc.CRscVertexShader.RSC_ID = rsc.CRscMan.RSC_COUNT++;
+renderer.CTexture.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 driver.js.rsc.CRscFragmentShader.RSC_ID = rsc.CRscMan.RSC_COUNT++;
+js.Lib.onerror = null;
 $Main.init = CMainClient.main();

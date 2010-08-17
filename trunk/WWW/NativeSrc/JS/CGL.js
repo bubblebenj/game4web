@@ -89,9 +89,14 @@ CGL.prototype.Enable = function( _gle  )
 	m_GLContext.enable( _gle );
 }
 
+CGL.prototype.DepthFunc = function( _gle  ) 
+{
+	m_GLContext.depthFunc( _gle );
+}
+
 CGL.prototype.DepthMask = function( _OnOff  ) 
 {
-	m_GLContext.depthMask( _gle );
+	m_GLContext.depthMask( _OnOff );
 }
 
 CGL.prototype.Disable = function( _gle  ) 
@@ -195,9 +200,14 @@ CGL.prototype.AttachShader  = function ( _prgm , _Shdr )
 	m_GLContext.attachShader( _prgm , _Shdr);
 }
 
-CGL.prototype.GetUniformLocation = function( _Name )
+CGL.prototype.GetUniformLocation = function( _prgm,_Name )
 {
-	return m_GLContext.getUniformLocation( _Name )
+	return m_GLContext.getUniformLocation( _prgm,_Name )
+}
+
+CGL.prototype.GetAttribLocation = function (  _prgm,_Name ) 
+{
+	return m_GLContext.getAttribLocation(_prgm,_Name);
 }
 
 CGL.prototype.Uniform3f = function( _Loc, _f0, _f1, _f2 ) 
@@ -210,9 +220,9 @@ CGL.prototype.Uniform4f = function( _Loc, _f0, _f1, _f2, _f3 )
 	m_GLContext.uniform4f( _Loc, _f0, _f1, _f2, _f3 );
 }
 
-CGL.prototype.UniformMatrix4f = function ( _Loc , _Mat )
+CGL.prototype.UniformMatrix4f = function ( _Loc , _Trans, _Mat )
 {
-	m_GLContext.uniformMatrix4f( _Loc, _Mat );
+	m_GLContext.uniformMatrix4fv( _Loc, _Trans,_Mat );
 }
 
 CGL.prototype.Uniform1i = function( _Loc, _i0 ) 
@@ -254,6 +264,21 @@ CGL.prototype.BindAttribLocation  = function (  _Prgm , _Index , _Name  )
 CGL.prototype.DrawArrays = function( _md, _frst, _cnt)
 {
 	m_GLContext.drawArrays( _md, _frst, _cnt);
+}
+
+CGL.prototype.GetError = function()
+{
+	return m_GLContext.getError();
+}
+
+CGL.prototype.Flush = function( ) 
+{
+	m_GLContext.flush();
+}
+
+CGL.prototype.DrawElements = function( _md , _cnt , _type , _offset ) 
+{
+	m_GLContext.drawElements( _md, _cnt, _type,_offset);
 }
 
 CGL.prototype.GetSupportedExtensions = function()  
