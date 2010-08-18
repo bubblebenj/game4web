@@ -233,7 +233,7 @@ class CRscShaderProgram extends CRscShader
 		
 	}
 	
-	public function UniformMatrix4fv( _Name : String, _Transpose:Bool, _m0 : WebGLFloatArray )
+	public function UniformMatrix4fv( _Name : String, _Transpose:Bool, _m0 : Float32Array )
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{

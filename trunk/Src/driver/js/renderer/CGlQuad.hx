@@ -161,7 +161,7 @@ class CGlQuad extends C2DQuad
 		
 		if (m_MatrixCache == null)
 		{
-			m_MatrixCache = new WebGLFloatArray( m_Cameras[_VpId].GetMatrix().m_Buffer );
+			m_MatrixCache = m_Cameras[_VpId].GetMatrix().m_Buffer;
 			
 			m_Cameras[_VpId].GetMatrix().Trace();
 		}
@@ -240,5 +240,5 @@ class CGlQuad extends C2DQuad
 	var m_ShdrPrgm : CRscShaderProgram;
 	var m_RenderStates : CRenderStatesJS;
 	
-	var m_MatrixCache : WebGLFloatArray;
+	var m_MatrixCache : Float32Array;
 }

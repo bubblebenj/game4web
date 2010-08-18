@@ -1,13 +1,20 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
 if(typeof math=='undefined') math = {}
 math.CMatrix44 = function(p) { if( p === $_ ) return; {
-	this.m_Buffer = new Array();
+	this.m_Buffer = new Float32Array(new ArrayBuffer(64));
+	{
+		var _g = 0;
+		while(_g < 16) {
+			var i = _g++;
+			this.m_Buffer.Set(i,0.0);
+		}
+	}
 	{
 		this.Zero();
-		this.m_Buffer[0] = 1;
-		this.m_Buffer[5] = 1;
-		this.m_Buffer[10] = 1;
-		this.m_Buffer[15] = 1;
+		this.m_Buffer.Set(0,1);
+		this.m_Buffer.Set(5,1);
+		this.m_Buffer.Set(10,1);
+		this.m_Buffer.Set(15,1);
 	}
 }}
 math.CMatrix44.__name__ = ["math","CMatrix44"];
@@ -15,14 +22,14 @@ math.CMatrix44.Translate = function(_Out,_In,_x,_y,_z) {
 	var l_Temp = math.Registers.M0;
 	{
 		l_Temp.Zero();
-		l_Temp.m_Buffer[0] = 1;
-		l_Temp.m_Buffer[5] = 1;
-		l_Temp.m_Buffer[10] = 1;
-		l_Temp.m_Buffer[15] = 1;
+		l_Temp.m_Buffer.Set(0,1);
+		l_Temp.m_Buffer.Set(5,1);
+		l_Temp.m_Buffer.Set(10,1);
+		l_Temp.m_Buffer.Set(15,1);
 	}
-	l_Temp.m_Buffer[12] = _x;
-	l_Temp.m_Buffer[13] = _y;
-	l_Temp.m_Buffer[14] = _z;
+	l_Temp.m_Buffer.Set(12,_x);
+	l_Temp.m_Buffer.Set(13,_y);
+	l_Temp.m_Buffer.Set(14,_z);
 	math.CMatrix44.Mult(_Out,_In,l_Temp);
 }
 math.CMatrix44.Mult = function(_Out,_M0,_M1) {
@@ -35,7 +42,7 @@ math.CMatrix44.Mult = function(_Out,_M0,_M1) {
 				var _g1 = 0;
 				while(_g1 < 3) {
 					var _j = _g1++;
-					_Out.m_Buffer[_i * 4 + _j] = _M0.m_Buffer[_i * 4 + _j] * _M1.m_Buffer[_j * 4 + _i] + _Out.m_Buffer[_i * 4 + _j];
+					_Out.m_Buffer.Set(_i * 4 + _j,_M0.m_Buffer.Get(_i * 4 + _j) * _M1.m_Buffer.Get(_j * 4 + _i) + _Out.m_Buffer.Get(_i * 4 + _j));
 				}
 			}
 		}
@@ -53,88 +60,88 @@ math.CMatrix44.Ortho = function(_Out,_left,_right,_bottom,_top,_near,_far) {
 	var l_tz = -(_far + _near) / (_far - _near);
 	{
 		_Out.Zero();
-		_Out.m_Buffer[0] = 1;
-		_Out.m_Buffer[5] = 1;
-		_Out.m_Buffer[10] = 1;
-		_Out.m_Buffer[15] = 1;
+		_Out.m_Buffer.Set(0,1);
+		_Out.m_Buffer.Set(5,1);
+		_Out.m_Buffer.Set(10,1);
+		_Out.m_Buffer.Set(15,1);
 	}
-	_Out.m_Buffer[0] = 2 / (_right - _left);
-	_Out.m_Buffer[1] = 0;
-	_Out.m_Buffer[2] = 0;
-	_Out.m_Buffer[3] = 0;
-	_Out.m_Buffer[4] = 0;
-	_Out.m_Buffer[5] = 2 / (_top - _bottom);
-	_Out.m_Buffer[6] = 0;
-	_Out.m_Buffer[7] = 0;
-	_Out.m_Buffer[8] = 0;
-	_Out.m_Buffer[9] = 0;
-	_Out.m_Buffer[10] = -2 / (_far - _near);
-	_Out.m_Buffer[11] = 0;
-	_Out.m_Buffer[12] = l_tx;
-	_Out.m_Buffer[13] = l_ty;
-	_Out.m_Buffer[14] = l_tz;
-	_Out.m_Buffer[15] = 1;
+	_Out.m_Buffer.Set(0,2 / (_right - _left));
+	_Out.m_Buffer.Set(1,0);
+	_Out.m_Buffer.Set(2,0);
+	_Out.m_Buffer.Set(3,0);
+	_Out.m_Buffer.Set(4,0);
+	_Out.m_Buffer.Set(5,2 / (_top - _bottom));
+	_Out.m_Buffer.Set(6,0);
+	_Out.m_Buffer.Set(7,0);
+	_Out.m_Buffer.Set(8,0);
+	_Out.m_Buffer.Set(9,0);
+	_Out.m_Buffer.Set(10,-2 / (_far - _near));
+	_Out.m_Buffer.Set(11,0);
+	_Out.m_Buffer.Set(12,l_tx);
+	_Out.m_Buffer.Set(13,l_ty);
+	_Out.m_Buffer.Set(14,l_tz);
+	_Out.m_Buffer.Set(15,1);
 }
 math.CMatrix44.prototype.Adjoint = function(_Out) {
-	var a1 = this.m_Buffer[0];
-	var b1 = this.m_Buffer[1];
-	var c1 = this.m_Buffer[2];
-	var d1 = this.m_Buffer[3];
-	var a2 = this.m_Buffer[4];
-	var b2 = this.m_Buffer[5];
-	var c2 = this.m_Buffer[6];
-	var d2 = this.m_Buffer[7];
-	var a3 = this.m_Buffer[8];
-	var b3 = this.m_Buffer[9];
-	var c3 = this.m_Buffer[10];
-	var d3 = this.m_Buffer[11];
-	var a4 = this.m_Buffer[12];
-	var b4 = this.m_Buffer[13];
-	var c4 = this.m_Buffer[14];
-	var d4 = this.m_Buffer[15];
+	var a1 = this.m_Buffer.Get(0);
+	var b1 = this.m_Buffer.Get(1);
+	var c1 = this.m_Buffer.Get(2);
+	var d1 = this.m_Buffer.Get(3);
+	var a2 = this.m_Buffer.Get(4);
+	var b2 = this.m_Buffer.Get(5);
+	var c2 = this.m_Buffer.Get(6);
+	var d2 = this.m_Buffer.Get(7);
+	var a3 = this.m_Buffer.Get(8);
+	var b3 = this.m_Buffer.Get(9);
+	var c3 = this.m_Buffer.Get(10);
+	var d3 = this.m_Buffer.Get(11);
+	var a4 = this.m_Buffer.Get(12);
+	var b4 = this.m_Buffer.Get(13);
+	var c4 = this.m_Buffer.Get(14);
+	var d4 = this.m_Buffer.Get(15);
 	{
-		_Out.m_Buffer[0] = math.CMatrix44.Det33(b2,b3,b4,c2,c3,c4,d2,d3,d4);
-		_Out.m_Buffer[1] = -math.CMatrix44.Det33(a2,a3,a4,c2,c3,c4,d2,d3,d4);
-		_Out.m_Buffer[2] = math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,d2,d3,d4);
-		_Out.m_Buffer[3] = -math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,c2,c3,c4);
-		_Out.m_Buffer[4] = -math.CMatrix44.Det33(b1,b3,b4,c1,c3,c4,d1,d3,d4);
-		_Out.m_Buffer[5] = math.CMatrix44.Det33(a1,a3,a4,c1,c3,c4,d1,d3,d4);
-		_Out.m_Buffer[6] = -math.CMatrix44.Det33(a1,a3,a4,b1,b3,b4,d1,d3,d4);
-		_Out.m_Buffer[7] = math.CMatrix44.Det33(a1,a3,a4,b1,b3,b4,c1,c3,c4);
-		_Out.m_Buffer[8] = math.CMatrix44.Det33(b1,b2,b4,c1,c2,c4,d1,d2,d4);
-		_Out.m_Buffer[9] = -math.CMatrix44.Det33(a1,a2,a4,c1,c2,c4,d1,d2,d4);
-		_Out.m_Buffer[10] = math.CMatrix44.Det33(a1,a2,a4,b1,b2,b4,d1,d2,d4);
-		_Out.m_Buffer[11] = -math.CMatrix44.Det33(a1,a2,a4,b1,b2,b4,c1,c2,c4);
-		_Out.m_Buffer[12] = -math.CMatrix44.Det33(b1,b2,b3,c1,c2,c3,d1,d2,d3);
-		_Out.m_Buffer[13] = math.CMatrix44.Det33(a1,a2,a3,c1,c2,c3,d1,d2,d3);
-		_Out.m_Buffer[14] = -math.CMatrix44.Det33(a1,a2,a3,b1,b2,b3,d1,d2,d3);
-		_Out.m_Buffer[15] = math.CMatrix44.Det33(a1,a2,a3,b1,b2,b3,c1,c2,c3);
+		_Out.m_Buffer.Set(0,math.CMatrix44.Det33(b2,b3,b4,c2,c3,c4,d2,d3,d4));
+		_Out.m_Buffer.Set(1,-math.CMatrix44.Det33(a2,a3,a4,c2,c3,c4,d2,d3,d4));
+		_Out.m_Buffer.Set(2,math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,d2,d3,d4));
+		_Out.m_Buffer.Set(3,-math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,c2,c3,c4));
+		_Out.m_Buffer.Set(4,-math.CMatrix44.Det33(b1,b3,b4,c1,c3,c4,d1,d3,d4));
+		_Out.m_Buffer.Set(5,math.CMatrix44.Det33(a1,a3,a4,c1,c3,c4,d1,d3,d4));
+		_Out.m_Buffer.Set(6,-math.CMatrix44.Det33(a1,a3,a4,b1,b3,b4,d1,d3,d4));
+		_Out.m_Buffer.Set(7,math.CMatrix44.Det33(a1,a3,a4,b1,b3,b4,c1,c3,c4));
+		_Out.m_Buffer.Set(8,math.CMatrix44.Det33(b1,b2,b4,c1,c2,c4,d1,d2,d4));
+		_Out.m_Buffer.Set(9,-math.CMatrix44.Det33(a1,a2,a4,c1,c2,c4,d1,d2,d4));
+		_Out.m_Buffer.Set(10,math.CMatrix44.Det33(a1,a2,a4,b1,b2,b4,d1,d2,d4));
+		_Out.m_Buffer.Set(11,-math.CMatrix44.Det33(a1,a2,a4,b1,b2,b4,c1,c2,c4));
+		_Out.m_Buffer.Set(12,-math.CMatrix44.Det33(b1,b2,b3,c1,c2,c3,d1,d2,d3));
+		_Out.m_Buffer.Set(13,math.CMatrix44.Det33(a1,a2,a3,c1,c2,c3,d1,d2,d3));
+		_Out.m_Buffer.Set(14,-math.CMatrix44.Det33(a1,a2,a3,b1,b2,b3,d1,d2,d3));
+		_Out.m_Buffer.Set(15,math.CMatrix44.Det33(a1,a2,a3,b1,b2,b3,c1,c2,c3));
 	}
 }
 math.CMatrix44.prototype.Copy = function(_Mat) {
 	var _g = 0;
 	while(_g < 16) {
 		var i = _g++;
-		this.m_Buffer[i] = _Mat.m_Buffer[i];
+		this.m_Buffer.Set(i,_Mat.m_Buffer.Get(i));
 	}
 }
 math.CMatrix44.prototype.Det44 = function() {
-	var a1 = this.m_Buffer[0];
-	var b1 = this.m_Buffer[1];
-	var c1 = this.m_Buffer[2];
-	var d1 = this.m_Buffer[3];
-	var a2 = this.m_Buffer[4];
-	var b2 = this.m_Buffer[5];
-	var c2 = this.m_Buffer[6];
-	var d2 = this.m_Buffer[7];
-	var a3 = this.m_Buffer[8];
-	var b3 = this.m_Buffer[9];
-	var c3 = this.m_Buffer[10];
-	var d3 = this.m_Buffer[11];
-	var a4 = this.m_Buffer[12];
-	var b4 = this.m_Buffer[13];
-	var c4 = this.m_Buffer[14];
-	var d4 = this.m_Buffer[15];
+	var a1 = this.m_Buffer.Get(0);
+	var b1 = this.m_Buffer.Get(1);
+	var c1 = this.m_Buffer.Get(2);
+	var d1 = this.m_Buffer.Get(3);
+	var a2 = this.m_Buffer.Get(4);
+	var b2 = this.m_Buffer.Get(5);
+	var c2 = this.m_Buffer.Get(6);
+	var d2 = this.m_Buffer.Get(7);
+	var a3 = this.m_Buffer.Get(8);
+	var b3 = this.m_Buffer.Get(9);
+	var c3 = this.m_Buffer.Get(10);
+	var d3 = this.m_Buffer.Get(11);
+	var a4 = this.m_Buffer.Get(12);
+	var b4 = this.m_Buffer.Get(13);
+	var c4 = this.m_Buffer.Get(14);
+	var d4 = this.m_Buffer.Get(15);
 	return ((a1 * math.CMatrix44.Det33(b2,b3,b4,c2,c3,c4,d2,d3,d4) - b1 * math.CMatrix44.Det33(a2,a3,a4,c2,c3,c4,d2,d3,d4)) + c1 * math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,d2,d3,d4)) - d1 * math.CMatrix44.Det33(a2,a3,a4,b2,b3,b4,c2,c3,c4);
 }
 math.CMatrix44.prototype.Frustum = function(_left,_right,_bottom,_top,_znear,_zfar) {
@@ -145,33 +152,33 @@ math.CMatrix44.prototype.Frustum = function(_left,_right,_bottom,_top,_znear,_zf
 	var l_C = -(_zfar + _znear) / (_zfar - _znear);
 	var l_D = ((-2 * _zfar) * _znear) / (_zfar - _znear);
 	{
-		this.m_Buffer[0] = l_X;
-		this.m_Buffer[1] = 0;
-		this.m_Buffer[2] = 0;
-		this.m_Buffer[3] = 0;
-		this.m_Buffer[4] = 0;
-		this.m_Buffer[5] = l_Y;
-		this.m_Buffer[6] = 0;
-		this.m_Buffer[7] = 0;
-		this.m_Buffer[8] = l_A;
-		this.m_Buffer[9] = l_B;
-		this.m_Buffer[10] = l_C;
-		this.m_Buffer[11] = -1;
-		this.m_Buffer[12] = 0;
-		this.m_Buffer[13] = 0;
-		this.m_Buffer[14] = l_D;
-		this.m_Buffer[15] = 0;
+		this.m_Buffer.Set(0,l_X);
+		this.m_Buffer.Set(1,0);
+		this.m_Buffer.Set(2,0);
+		this.m_Buffer.Set(3,0);
+		this.m_Buffer.Set(4,0);
+		this.m_Buffer.Set(5,l_Y);
+		this.m_Buffer.Set(6,0);
+		this.m_Buffer.Set(7,0);
+		this.m_Buffer.Set(8,l_A);
+		this.m_Buffer.Set(9,l_B);
+		this.m_Buffer.Set(10,l_C);
+		this.m_Buffer.Set(11,-1);
+		this.m_Buffer.Set(12,0);
+		this.m_Buffer.Set(13,0);
+		this.m_Buffer.Set(14,l_D);
+		this.m_Buffer.Set(15,0);
 	}
 }
 math.CMatrix44.prototype.Get = function(_i,_j) {
-	return this.m_Buffer[_i * 4 + _j];
+	return this.m_Buffer.Get(_i * 4 + _j);
 }
 math.CMatrix44.prototype.Identity = function() {
 	this.Zero();
-	this.m_Buffer[0] = 1;
-	this.m_Buffer[5] = 1;
-	this.m_Buffer[10] = 1;
-	this.m_Buffer[15] = 1;
+	this.m_Buffer.Set(0,1);
+	this.m_Buffer.Set(5,1);
+	this.m_Buffer.Set(10,1);
+	this.m_Buffer.Set(15,1);
 }
 math.CMatrix44.prototype.Invert = function(_Out) {
 	var l_Det = this.Det44();
@@ -216,34 +223,34 @@ math.CMatrix44.prototype.LookAt = function(eyex,eyey,eyez,centerx,centery,center
 		yz /= mag1;
 	}
 	{
-		l_Matrix.m_Buffer[0] = xx;
-		l_Matrix.m_Buffer[1] = xy;
-		l_Matrix.m_Buffer[2] = xz;
-		l_Matrix.m_Buffer[3] = 0;
-		l_Matrix.m_Buffer[4] = yx;
-		l_Matrix.m_Buffer[5] = yy;
-		l_Matrix.m_Buffer[6] = yz;
-		l_Matrix.m_Buffer[7] = 0;
-		l_Matrix.m_Buffer[8] = zx;
-		l_Matrix.m_Buffer[9] = zy;
-		l_Matrix.m_Buffer[10] = zz;
-		l_Matrix.m_Buffer[11] = 0;
-		l_Matrix.m_Buffer[12] = 0;
-		l_Matrix.m_Buffer[13] = 0;
-		l_Matrix.m_Buffer[14] = 0;
-		l_Matrix.m_Buffer[15] = 1;
+		l_Matrix.m_Buffer.Set(0,xx);
+		l_Matrix.m_Buffer.Set(1,xy);
+		l_Matrix.m_Buffer.Set(2,xz);
+		l_Matrix.m_Buffer.Set(3,0);
+		l_Matrix.m_Buffer.Set(4,yx);
+		l_Matrix.m_Buffer.Set(5,yy);
+		l_Matrix.m_Buffer.Set(6,yz);
+		l_Matrix.m_Buffer.Set(7,0);
+		l_Matrix.m_Buffer.Set(8,zx);
+		l_Matrix.m_Buffer.Set(9,zy);
+		l_Matrix.m_Buffer.Set(10,zz);
+		l_Matrix.m_Buffer.Set(11,0);
+		l_Matrix.m_Buffer.Set(12,0);
+		l_Matrix.m_Buffer.Set(13,0);
+		l_Matrix.m_Buffer.Set(14,0);
+		l_Matrix.m_Buffer.Set(15,1);
 	}
 	math.CMatrix44.Translate(l_Matrix,l_Matrix,-eyex,-eyey,-eyez);
 	math.CMatrix44.Mult(this,this,l_Matrix);
 }
 math.CMatrix44.prototype.M = function(_i,_j,_f) {
-	this.m_Buffer[_i * 4 + _j] = _f;
+	this.m_Buffer.Set(_i * 4 + _j,_f);
 }
 math.CMatrix44.prototype.MultScalar = function(_InOut,_f) {
 	var _g = 0;
 	while(_g < 16) {
 		var i = _g++;
-		this.m_Buffer[i] *= _f;
+		this.m_Buffer.Set(i,this.m_Buffer.Get(i) * _f);
 	}
 }
 math.CMatrix44.prototype.Perspective = function(_fovy,_aspect,_znear,_zfar) {
@@ -254,46 +261,46 @@ math.CMatrix44.prototype.Perspective = function(_fovy,_aspect,_znear,_zfar) {
 	return this.Frustum(l_xmin,l_xmax,l_ymin,l_ymax,_znear,_zfar);
 }
 math.CMatrix44.prototype.Set = function(_00,_01,_02,_03,_10,_11,_12,_13,_20,_21,_22,_23,_30,_31,_32,_33) {
-	this.m_Buffer[0] = _00;
-	this.m_Buffer[1] = _01;
-	this.m_Buffer[2] = _02;
-	this.m_Buffer[3] = _03;
-	this.m_Buffer[4] = _10;
-	this.m_Buffer[5] = _11;
-	this.m_Buffer[6] = _12;
-	this.m_Buffer[7] = _13;
-	this.m_Buffer[8] = _20;
-	this.m_Buffer[9] = _21;
-	this.m_Buffer[10] = _22;
-	this.m_Buffer[11] = _23;
-	this.m_Buffer[12] = _30;
-	this.m_Buffer[13] = _31;
-	this.m_Buffer[14] = _32;
-	this.m_Buffer[15] = _33;
+	this.m_Buffer.Set(0,_00);
+	this.m_Buffer.Set(1,_01);
+	this.m_Buffer.Set(2,_02);
+	this.m_Buffer.Set(3,_03);
+	this.m_Buffer.Set(4,_10);
+	this.m_Buffer.Set(5,_11);
+	this.m_Buffer.Set(6,_12);
+	this.m_Buffer.Set(7,_13);
+	this.m_Buffer.Set(8,_20);
+	this.m_Buffer.Set(9,_21);
+	this.m_Buffer.Set(10,_22);
+	this.m_Buffer.Set(11,_23);
+	this.m_Buffer.Set(12,_30);
+	this.m_Buffer.Set(13,_31);
+	this.m_Buffer.Set(14,_32);
+	this.m_Buffer.Set(15,_33);
 }
 math.CMatrix44.prototype.Trace = function() {
-	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[0] + ",") + this.m_Buffer[1]) + ",") + this.m_Buffer[2]) + ",") + this.m_Buffer[3]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 103, className : "math.CMatrix44", methodName : "Trace"});
-	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[4] + ",") + this.m_Buffer[5]) + ",") + this.m_Buffer[6]) + ",") + this.m_Buffer[7]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 104, className : "math.CMatrix44", methodName : "Trace"});
-	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[8] + ",") + this.m_Buffer[9]) + ",") + this.m_Buffer[10]) + ",") + this.m_Buffer[11]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 105, className : "math.CMatrix44", methodName : "Trace"});
-	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer[12] + ",") + this.m_Buffer[13]) + ",") + this.m_Buffer[14]) + ",") + this.m_Buffer[15]) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 106, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer.Get(0) + ",") + this.m_Buffer.Get(1)) + ",") + this.m_Buffer.Get(2)) + ",") + this.m_Buffer.Get(3)) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 135, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer.Get(4) + ",") + this.m_Buffer.Get(5)) + ",") + this.m_Buffer.Get(6)) + ",") + this.m_Buffer.Get(7)) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 136, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer.Get(8) + ",") + this.m_Buffer.Get(9)) + ",") + this.m_Buffer.Get(10)) + ",") + this.m_Buffer.Get(11)) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 137, className : "math.CMatrix44", methodName : "Trace"});
+	kernel.CDebug.CONSOLEMSG(((((((this.m_Buffer.Get(12) + ",") + this.m_Buffer.Get(13)) + ",") + this.m_Buffer.Get(14)) + ",") + this.m_Buffer.Get(15)) + "\n",{ fileName : "CMatrix44.hx", lineNumber : 138, className : "math.CMatrix44", methodName : "Trace"});
 }
 math.CMatrix44.prototype.Translation = function(_x,_y,_z) {
 	{
 		this.Zero();
-		this.m_Buffer[0] = 1;
-		this.m_Buffer[5] = 1;
-		this.m_Buffer[10] = 1;
-		this.m_Buffer[15] = 1;
+		this.m_Buffer.Set(0,1);
+		this.m_Buffer.Set(5,1);
+		this.m_Buffer.Set(10,1);
+		this.m_Buffer.Set(15,1);
 	}
-	this.m_Buffer[12] = _x;
-	this.m_Buffer[13] = _y;
-	this.m_Buffer[14] = _z;
+	this.m_Buffer.Set(12,_x);
+	this.m_Buffer.Set(13,_y);
+	this.m_Buffer.Set(14,_z);
 }
 math.CMatrix44.prototype.Zero = function() {
 	var _g = 0;
 	while(_g < 16) {
 		var i = _g++;
-		this.m_Buffer[i] = 0;
+		this.m_Buffer.Set(i,0);
 	}
 }
 math.CMatrix44.prototype.m_Buffer = null;
@@ -1056,6 +1063,17 @@ kernel.Glb.StaticUpdate = function() {
 	kernel.Glb.g_System.Update();
 }
 kernel.Glb.prototype.__class__ = kernel.Glb;
+kernel.CMouse = function(p) { if( p === $_ ) return; {
+	this.m_Coordinate = new math.CV2D(0,0);
+	this.Init();
+}}
+kernel.CMouse.__name__ = ["kernel","CMouse"];
+kernel.CMouse.prototype.Init = function() {
+	this.m_Coordinate.Set(-1.,-1.);
+}
+kernel.CMouse.prototype.m_Coordinate = null;
+kernel.CMouse.prototype.m_Down = null;
+kernel.CMouse.prototype.__class__ = kernel.CMouse;
 renderer.Z_EQUATION = { __ename__ : ["renderer","Z_EQUATION"], __constructs__ : ["Z_LESSER","Z_LESSER_EQ","Z_GREATER","Z_GREATER_EQ"] }
 renderer.Z_EQUATION.Z_GREATER = ["Z_GREATER",2];
 renderer.Z_EQUATION.Z_GREATER.toString = $estr;
@@ -1090,10 +1108,12 @@ renderer.CRenderStates.prototype.Copy = function(_Rsc) {
 	rsc.CRsc.prototype.Copy.apply(this,[_Rsc]);
 	var l_Rs = (function($this) {
 		var $r;
-		var $t = _Rsc;
-		if(Std["is"]($t,renderer.CRenderStates)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = _Rsc;
+		$r = (Std["is"](tmp,renderer.CRenderStates)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	this.m_ZRead = l_Rs.m_ZRead;
@@ -1352,9 +1372,9 @@ js.Boot.__instanceof = function(o,cl) {
 		}
 		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
 	}
-	catch( $e0 ) {
+	catch( $e1 ) {
 		{
-			var e = $e0;
+			var e = $e1;
 			{
 				if(cl == null) return false;
 			}
@@ -1514,8 +1534,8 @@ IntHash.prototype.toString = function() {
 	var s = new StringBuf();
 	s.b[s.b.length] = "{";
 	var it = this.keys();
-	{ var $it0 = it;
-	while( $it0.hasNext() ) { var i = $it0.next();
+	{ var $it2 = it;
+	while( $it2.hasNext() ) { var i = $it2.next();
 	{
 		s.b[s.b.length] = i;
 		s.b[s.b.length] = " => ";
@@ -1527,6 +1547,27 @@ IntHash.prototype.toString = function() {
 	return s.b.join("");
 }
 IntHash.prototype.__class__ = IntHash;
+driver.js.kernel.CMouseJS = function(p) { if( p === $_ ) return; {
+	kernel.CMouse.apply(this,[]);
+	this.m_Context = js.Lib.document.getElementById("FinalRenderTarget");
+	this.m_Context.onmousedown = $closure(this,"Down");
+	this.m_Context.onmousedown = $closure(this,"Up");
+	this.m_Context.onmousemove = $closure(this,"Move");
+}}
+driver.js.kernel.CMouseJS.__name__ = ["driver","js","kernel","CMouseJS"];
+driver.js.kernel.CMouseJS.__super__ = kernel.CMouse;
+for(var k in kernel.CMouse.prototype ) driver.js.kernel.CMouseJS.prototype[k] = kernel.CMouse.prototype[k];
+driver.js.kernel.CMouseJS.prototype.Down = function(_Event) {
+	this.m_Down = true;
+}
+driver.js.kernel.CMouseJS.prototype.Move = function(_Event) {
+	this.m_Coordinate.Set((_Event.clientX - this.m_Context.offsetLeft),(_Event.clientY - this.m_Context.offsetTop));
+}
+driver.js.kernel.CMouseJS.prototype.Up = function(_Event) {
+	this.m_Down = false;
+}
+driver.js.kernel.CMouseJS.prototype.m_Context = null;
+driver.js.kernel.CMouseJS.prototype.__class__ = driver.js.kernel.CMouseJS;
 kernel.CDisplay = function(p) { if( p === $_ ) return; {
 	this.m_Width = 0;
 	this.m_Height = 0;
@@ -1629,99 +1670,6 @@ renderer.C2DQuad.prototype.SetSize = function(_Size) {
 }
 renderer.C2DQuad.prototype.m_Rect = null;
 renderer.C2DQuad.prototype.__class__ = renderer.C2DQuad;
-driver.js.renderer.CGLCube = function(p) { if( p === $_ ) return; {
-	renderer.CDrawObject.apply(this,[]);
-	this.m_MatrixCache = null;
-}}
-driver.js.renderer.CGLCube.__name__ = ["driver","js","renderer","CGLCube"];
-driver.js.renderer.CGLCube.__super__ = renderer.CDrawObject;
-for(var k in renderer.CDrawObject.prototype ) driver.js.renderer.CGLCube.prototype[k] = renderer.CDrawObject.prototype[k];
-driver.js.renderer.CGLCube.prototype.Draw = function(_Vp) {
-	this.m_Matrix = new math.CMatrix44();
-	this.m_Matrix.Identity();
-	math.CMatrix44.Ortho(this.m_Matrix,0,1,0,1,0.01,100);
-	var l_Trans = new math.CMatrix44();
-	{
-		l_Trans.Zero();
-		l_Trans.m_Buffer[0] = 1;
-		l_Trans.m_Buffer[5] = 1;
-		l_Trans.m_Buffer[10] = 1;
-		l_Trans.m_Buffer[15] = 1;
-	}
-	var l_MVP = new math.CMatrix44();
-	{
-		l_MVP.Zero();
-		l_MVP.m_Buffer[0] = 1;
-		l_MVP.m_Buffer[5] = 1;
-		l_MVP.m_Buffer[10] = 1;
-		l_MVP.m_Buffer[15] = 1;
-	}
-	math.CMatrix44.Mult(l_MVP,this.m_Matrix,l_Trans);
-	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
-	if(l_Err != 0) {
-		kernel.CDebug.CONSOLEMSG("GlError:PreActivate:" + l_Err,{ fileName : "CGLCube.hx", lineNumber : 83, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
-	}
-	this.m_RS.Activate();
-	kernel.Glb.g_SystemJS.m_GlObject.Disable(2884);
-	this.m_ShdrPrgm.Activate();
-	var l_vertices = [1.0,1.0,5.5,0.0,1.0,5.5,1.0,0.0,5.5,0.0,0.0,5.5];
-	this.m_Primitive.SetVertexArray(l_vertices);
-	this.m_ShdrPrgm.LinkPrimitive(this.m_Primitive);
-	this.m_MatrixCache = new WebGLFloatArray(l_MVP.m_Buffer);
-	var l_Err1 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
-	if(l_Err1 != 0) {
-		kernel.CDebug.CONSOLEMSG("GlError:PreSetUniform:" + l_Err1,{ fileName : "CGLCube.hx", lineNumber : 107, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
-	}
-	this.m_ShdrPrgm.UniformMatrix4fv("u_MVPMatrix",false,this.m_MatrixCache);
-	this.m_Matrix.Trace();
-	kernel.Glb.g_SystemJS.m_GlObject.DrawArrays(5,0,4);
-	var l_Err2 = kernel.Glb.g_SystemJS.m_GlObject.GetError();
-	if(l_Err2 != 0) {
-		kernel.CDebug.CONSOLEMSG("GlError:PostDraw:" + l_Err2,{ fileName : "CGLCube.hx", lineNumber : 117, className : "driver.js.renderer.CGLCube", methodName : "Draw"});
-	}
-	return kernel.Result.SUCCESS;
-}
-driver.js.renderer.CGLCube.prototype.Initialize = function() {
-	var l_RscMan = kernel.Glb.g_System.GetRscMan();
-	this.m_RS = (function($this) {
-		var $r;
-		var $t = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
-		if(Std["is"]($t,driver.js.renderer.CRenderStatesJS)) $t;
-		else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this));
-	if(this.m_RS == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to createrender states",{ fileName : "CGLCube.hx", lineNumber : 49, className : "driver.js.renderer.CGLCube", methodName : "Initialize"});
-	}
-	this.m_Primitive = (function($this) {
-		var $r;
-		var $t = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
-		if(Std["is"]($t,driver.js.renderer.CPrimitiveJS)) $t;
-		else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this));
-	if(this.m_Primitive == null) {
-		kernel.CDebug.CONSOLEMSG("Unable to create primitive",{ fileName : "CGLCube.hx", lineNumber : 55, className : "driver.js.renderer.CGLCube", methodName : "Initialize"});
-	}
-	this.m_ShdrPrgm = (function($this) {
-		var $r;
-		var $t = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
-		if(Std["is"]($t,driver.js.rsc.CRscShaderProgram)) $t;
-		else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this));
-	this.m_ShdrPrgm.Compile();
-	return kernel.Result.SUCCESS;
-}
-driver.js.renderer.CGLCube.prototype.m_Matrix = null;
-driver.js.renderer.CGLCube.prototype.m_MatrixCache = null;
-driver.js.renderer.CGLCube.prototype.m_Primitive = null;
-driver.js.renderer.CGLCube.prototype.m_RS = null;
-driver.js.renderer.CGLCube.prototype.m_ShdrPrgm = null;
-driver.js.renderer.CGLCube.prototype.__class__ = driver.js.renderer.CGLCube;
 StringBuf = function(p) { if( p === $_ ) return; {
 	this.b = new Array();
 }}
@@ -1849,10 +1797,12 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	}
 	this.m_VtxSh = (function($this) {
 		var $r;
-		var $t = l_Rsc;
-		if(Std["is"]($t,driver.js.rsc.CRscVertexShader)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_Rsc;
+		$r = (Std["is"](tmp,driver.js.rsc.CRscVertexShader)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscFragmentShader.RSC_ID,_Path + ".fsh");
@@ -1862,10 +1812,12 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	}
 	this.m_FragSh = (function($this) {
 		var $r;
-		var $t = l_Rsc;
-		if(Std["is"]($t,driver.js.rsc.CRscFragmentShader)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_Rsc;
+		$r = (Std["is"](tmp,driver.js.rsc.CRscFragmentShader)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	this.m_Program = l_Gl.CreateProgram();
@@ -2055,14 +2007,14 @@ renderer.CRenderer.prototype.BeginScene = function() {
 		}
 	}
 	this.m_BackScene.clear();
-	{ var $it0 = this.m_Scene.iterator();
-	while( $it0.hasNext() ) { var l_do = $it0.next();
+	{ var $it3 = this.m_Scene.iterator();
+	while( $it3.hasNext() ) { var l_do = $it3.next();
 	{
 		this.m_BackScene.push(l_do);
 	}
 	}}
-	{ var $it1 = this.m_BackScene.iterator();
-	while( $it1.hasNext() ) { var l_do = $it1.next();
+	{ var $it4 = this.m_BackScene.iterator();
+	while( $it4.hasNext() ) { var l_do = $it4.next();
 	{
 		l_do.Update();
 	}
@@ -2163,7 +2115,7 @@ driver.js.renderer.CGlQuad.prototype.Activate = function() {
 }
 driver.js.renderer.CGlQuad.prototype.CreateData = function() {
 	var l_Array = new Array();
-	var l_Z = -10.0;
+	var l_Z = -10.;
 	var l_Scale = 0.5;
 	l_Array[0] = 0;
 	l_Array[1] = 0;
@@ -2194,7 +2146,7 @@ driver.js.renderer.CGlQuad.prototype.Draw = function(_VpId) {
 		return kernel.Result.FAILURE;
 	}
 	if(this.m_MatrixCache == null) {
-		this.m_MatrixCache = new WebGLFloatArray(this.m_Cameras[_VpId].GetMatrix().m_Buffer);
+		this.m_MatrixCache = this.m_Cameras[_VpId].GetMatrix().m_Buffer;
 		this.m_Cameras[_VpId].GetMatrix().Trace();
 	}
 	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
@@ -2219,10 +2171,12 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	var l_RscMan = kernel.Glb.g_System.GetRscMan();
 	this.m_ShdrPrgm = (function($this) {
 		var $r;
-		var $t = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
-		if(Std["is"]($t,driver.js.rsc.CRscShaderProgram)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
+		$r = (Std["is"](tmp,driver.js.rsc.CRscShaderProgram)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	if(this.m_ShdrPrgm != null) {
@@ -2237,10 +2191,12 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_Material = (function($this) {
 		var $r;
-		var $t = l_RscMan.Create(renderer.CMaterial.RSC_ID);
-		if(Std["is"]($t,renderer.CMaterial)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_RscMan.Create(renderer.CMaterial.RSC_ID);
+		$r = (Std["is"](tmp,renderer.CMaterial)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	if(this.m_Material != null) {
@@ -2251,10 +2207,12 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_Primitive = (function($this) {
 		var $r;
-		var $t = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
-		if(Std["is"]($t,driver.js.renderer.CPrimitiveJS)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CPrimitiveJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	if(this.m_Primitive == null) {
@@ -2262,10 +2220,12 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_RenderStates = (function($this) {
 		var $r;
-		var $t = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
-		if(Std["is"]($t,driver.js.renderer.CRenderStatesJS)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
+		$r = (Std["is"](tmp,driver.js.renderer.CRenderStatesJS)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	if(this.m_RenderStates == null) {
@@ -2335,8 +2295,8 @@ driver.js.renderer.CRendererJS.prototype.Initialize = function() {
 }
 driver.js.renderer.CRendererJS.prototype.Render = function(_VpId) {
 	this.m_NbDrawn = 0;
-	{ var $it0 = this.m_Scene.iterator();
-	while( $it0.hasNext() ) { var _DOs = $it0.next();
+	{ var $it5 = this.m_Scene.iterator();
+	while( $it5.hasNext() ) { var _DOs = $it5.next();
 	{
 		if(_DOs != null && _DOs.Draw(_VpId) == kernel.Result.SUCCESS) {
 			this.m_NbDrawn++;
@@ -2370,9 +2330,9 @@ Hash.prototype.exists = function(key) {
 		key = "$" + key;
 		return this.hasOwnProperty.call(this.h,key);
 	}
-	catch( $e0 ) {
+	catch( $e6 ) {
 		{
-			var e = $e0;
+			var e = $e6;
 			{
 				
 				for(var i in this.h)
@@ -2415,8 +2375,8 @@ Hash.prototype.toString = function() {
 	var s = new StringBuf();
 	s.b[s.b.length] = "{";
 	var it = this.keys();
-	{ var $it0 = it;
-	while( $it0.hasNext() ) { var i = $it0.next();
+	{ var $it7 = it;
+	while( $it7.hasNext() ) { var i = $it7.next();
 	{
 		s.b[s.b.length] = i;
 		s.b[s.b.length] = " => ";
@@ -2439,21 +2399,26 @@ CMainClient = function() { }
 CMainClient.__name__ = ["CMainClient"];
 CMainClient.m_Stage = null;
 CMainClient.m_Quad = null;
-CMainClient.m_Cube = null;
+CMainClient.m_Mouse = null;
+CMainClient.m_Cpt = null;
 CMainClient.InitGameJS = function() {
+	CMainClient.m_Mouse = new driver.js.kernel.CMouseJS();
+	CMainClient.m_Cpt = 5;
 	var l_OrthoCam = (function($this) {
 		var $r;
-		var $t = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
-		if(Std["is"]($t,renderer.camera.COrthoCamera)) $t;
-		else throw "Class cast error";
-		$r = $t;
+		var tmp = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
+		$r = (Std["is"](tmp,renderer.camera.COrthoCamera)?tmp:(function($this) {
+			var $r;
+			throw "Class cast error";
+			return $r;
+		}($this)));
 		return $r;
 	}(this));
 	var l_CamPos = new math.CV3D(0,0,-1);
 	l_OrthoCam.SetPosition(l_CamPos);
-	l_OrthoCam.SetWidth(1);
-	l_OrthoCam.SetHeight(1);
-	l_OrthoCam.m_Near = 0.01;
+	l_OrthoCam.SetWidth(1.0);
+	l_OrthoCam.SetHeight(1.0);
+	l_OrthoCam.m_Near = 0.1;
 	l_OrthoCam.m_Far = 1000.0;
 	CMainClient.m_Quad = new driver.js.renderer.CGlQuad();
 	CMainClient.m_Quad.Initialize();
@@ -2462,16 +2427,17 @@ CMainClient.InitGameJS = function() {
 	CMainClient.m_Quad.m_Rect.m_BR.Copy(new math.CV2D(0,0));
 	math.CV2D.Add(CMainClient.m_Quad.m_Rect.m_BR,CMainClient.m_Quad.m_Rect.m_BR,new math.CV2D(0.5,0.5));
 	CMainClient.m_Quad.SetCamera(renderer.CRenderer.VP_FULLSCREEN,l_OrthoCam);
-	CMainClient.m_Quad.SetVisible(false);
-	CMainClient.m_Cube = new driver.js.renderer.CGLCube();
-	CMainClient.m_Cube.Initialize();
-	CMainClient.m_Cube.SetVisible(true);
+	CMainClient.m_Quad.SetVisible(true);
 }
 CMainClient.InitGame = function() {
 	CMainClient.InitGameJS();
 }
 CMainClient.UpdateGame = function() {
-	null;
+	if(CMainClient.m_Cpt > 5) {
+		haxe.Log.trace(((("[ " + CMainClient.m_Mouse.m_Coordinate.x) + " ][ ") + CMainClient.m_Mouse.m_Coordinate.y) + " ]",{ fileName : "CMainClient.hx", lineNumber : 84, className : "CMainClient", methodName : "UpdateGame"});
+		CMainClient.m_Cpt = 0;
+	}
+	else CMainClient.m_Cpt++;
 }
 CMainClient.UpdateCallback = function() {
 	var $e = (CMainClient.m_Stage);
@@ -2494,12 +2460,12 @@ CMainClient.RenderCallback = function() {
 CMainClient.main = function() {
 	CMainClient.m_Stage = STAGE.STAGE_INIT;
 	if(kernel.Glb.g_System == null) {
-		haxe.Log.trace("no g_system",{ fileName : "CMainClient.hx", lineNumber : 113, className : "CMainClient", methodName : "main"});
+		haxe.Log.trace("no g_system",{ fileName : "CMainClient.hx", lineNumber : 117, className : "CMainClient", methodName : "main"});
 	}
 	else {
-		haxe.Log.trace("system init",{ fileName : "CMainClient.hx", lineNumber : 117, className : "CMainClient", methodName : "main"});
+		haxe.Log.trace("system init",{ fileName : "CMainClient.hx", lineNumber : 121, className : "CMainClient", methodName : "main"});
 		kernel.Glb.g_System.Initialize();
-		haxe.Log.trace("main loop",{ fileName : "CMainClient.hx", lineNumber : 119, className : "CMainClient", methodName : "main"});
+		haxe.Log.trace("main loop",{ fileName : "CMainClient.hx", lineNumber : 123, className : "CMainClient", methodName : "main"});
 		kernel.Glb.g_System.MainLoop();
 		kernel.Glb.g_System.m_BeforeUpdate = $closure(CMainClient,"UpdateCallback");
 		kernel.Glb.g_System.m_BeforeDraw = $closure(CMainClient,"RenderCallback");
@@ -2707,19 +2673,28 @@ driver.js.renderer.CPrimitiveJS.prototype.SetIndexArray = function(_Indexes) {
 	if(this.m_IdxObject == null) {
 		this.m_IdxObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
 		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34963,this.m_IdxObject);
-		kernel.CDebug.CONSOLEMSG("bind index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 114, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+		kernel.CDebug.CONSOLEMSG("bind index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 120, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
 		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
 		if(l_Err != 0) {
-			kernel.CDebug.CONSOLEMSG("GlError:PostBindIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 119, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+			kernel.CDebug.CONSOLEMSG("GlError:PostBindIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 125, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
 		}
 	}
 	this.m_NbIndices = _Indexes.length;
-	this.m_IdxNativeBuf = new WebGLUnsignedByteArray(_Indexes);
+	if(this.m_IdxNativeBuf == null) {
+		this.m_IdxNativeBuf = new Uint8Array(new ArrayBuffer(this.m_NbIndices));
+	}
+	{
+		var _g1 = 0, _g = this.m_NbVertex;
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.m_IdxNativeBuf.Set(i,_Indexes[i]);
+		}
+	}
 	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34963,this.m_IdxNativeBuf,35044);
-	kernel.CDebug.CONSOLEMSG("Set index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 128, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+	kernel.CDebug.CONSOLEMSG("Set index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 143, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
 	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
 	if(l_Err != 0) {
-		kernel.CDebug.CONSOLEMSG("GlError:PostSetIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 133, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
+		kernel.CDebug.CONSOLEMSG("GlError:PostSetIndexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 148, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
 	}
 }
 driver.js.renderer.CPrimitiveJS.prototype.SetNormalArray = function(_Normals) {
@@ -2727,15 +2702,33 @@ driver.js.renderer.CPrimitiveJS.prototype.SetNormalArray = function(_Normals) {
 		this.m_NrmlObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
 		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_NrmlObject);
 	}
-	this.m_NrmlNativeBuf = new WebGLFloatArray(_Normals);
+	if(null != this.m_NrmlNativeBuf) {
+		this.m_NrmlNativeBuf = new Float32Array(new ArrayBuffer((this.m_NbVertex * 4) * this.GetFloatPerNormal()));
+	}
+	{
+		var _g1 = 0, _g = this.m_NbVertex * this.GetFloatPerNormal();
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.m_NrmlNativeBuf.Set(i,_Normals[i]);
+		}
+	}
 	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_NrmlNativeBuf,35044);
 }
-driver.js.renderer.CPrimitiveJS.prototype.SetTexCooArray = function(_Coord) {
+driver.js.renderer.CPrimitiveJS.prototype.SetTexCooArray = function(_TexCoords) {
 	if(this.m_TexObject == null) {
 		this.m_TexObject = kernel.Glb.g_SystemJS.m_GlObject.CreateBuffer();
 		kernel.Glb.g_SystemJS.m_GlObject.BindBuffer(34962,this.m_TexObject);
 	}
-	this.m_TexNativeBuf = new WebGLFloatArray(_Coord);
+	if(null != this.m_TexNativeBuf) {
+		this.m_TexNativeBuf = new Float32Array(new ArrayBuffer((this.m_NbVertex * 4) * this.GetFloatPerTexCoord()));
+	}
+	{
+		var _g1 = 0, _g = this.m_NbVertex * this.GetFloatPerTexCoord();
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.m_TexNativeBuf.Set(i,_TexCoords[i]);
+		}
+	}
 	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_TexNativeBuf,35044);
 }
 driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
@@ -2750,14 +2743,21 @@ driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
 			kernel.CDebug.CONSOLEMSG("GlError:PostBindVertexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 90, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
 		}
 	}
+	if(this.m_VtxNativeBuf == null) {
+		this.m_VtxNativeBuf = new Float32Array(new ArrayBuffer((this.m_NbVertex * 4) * this.GetFloatPerVtx()));
+	}
 	{
-		this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
-		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
-		kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 98, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
-		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
-		if(l_Err != 0) {
-			kernel.CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 103, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+		var _g1 = 0, _g = this.m_NbVertex * this.GetFloatPerVtx();
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.m_VtxNativeBuf.Set(i,_Vertices[i]);
 		}
+	}
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
+	kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 105, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
+	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
+	if(l_Err != 0) {
+		kernel.CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err,{ fileName : "CPrimitiveJS.hx", lineNumber : 110, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
 	}
 }
 driver.js.renderer.CPrimitiveJS.prototype.m_IdxNativeBuf = null;
@@ -2843,7 +2843,6 @@ $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
 {
-	Math.__name__ = ["Math"];
 	Math.NaN = Number["NaN"];
 	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
@@ -2853,6 +2852,7 @@ js.Boot.__init();
 	Math.isNaN = function(i) {
 		return isNaN(i);
 	}
+	Math.__name__ = ["Math"];
 }
 {
 	String.prototype.__class__ = String;
@@ -2869,35 +2869,24 @@ js.Boot.__init();
 	Void = { __ename__ : ["Void"]}
 }
 {
-	js.Lib.document = document;
-	js.Lib.window = window;
-	onerror = function(msg,url,line) {
-		var f = js.Lib.onerror;
-		if( f == null )
-			return false;
-		return f(msg,[url+":"+line]);
-	}
-}
-{
-	var d = Date;
-	d.now = function() {
+	Date.now = function() {
 		return new Date();
 	}
-	d.fromTime = function(t) {
-		var d1 = new Date();
-		d1["setTime"](t);
-		return d1;
+	Date.fromTime = function(t) {
+		var d = new Date();
+		d["setTime"](t);
+		return d;
 	}
-	d.fromString = function(s) {
+	Date.fromString = function(s) {
 		switch(s.length) {
 		case 8:{
 			var k = s.split(":");
-			var d1 = new Date();
-			d1["setTime"](0);
-			d1["setUTCHours"](k[0]);
-			d1["setUTCMinutes"](k[1]);
-			d1["setUTCSeconds"](k[2]);
-			return d1;
+			var d = new Date();
+			d["setTime"](0);
+			d["setUTCHours"](k[0]);
+			d["setUTCMinutes"](k[1]);
+			d["setUTCSeconds"](k[2]);
+			return d;
 		}break;
 		case 10:{
 			var k = s.split("-");
@@ -2914,17 +2903,27 @@ js.Boot.__init();
 		}break;
 		}
 	}
-	d.prototype["toString"] = function() {
+	Date.prototype["toString"] = function() {
 		var date = this;
 		var m = date.getMonth() + 1;
-		var d1 = date.getDate();
+		var d = date.getDate();
 		var h = date.getHours();
 		var mi = date.getMinutes();
 		var s = date.getSeconds();
-		return (((((((((date.getFullYear() + "-") + ((m < 10?"0" + m:"" + m))) + "-") + ((d1 < 10?"0" + d1:"" + d1))) + " ") + ((h < 10?"0" + h:"" + h))) + ":") + ((mi < 10?"0" + mi:"" + mi))) + ":") + ((s < 10?"0" + s:"" + s));
+		return (((((((((date.getFullYear() + "-") + ((m < 10?"0" + m:"" + m))) + "-") + ((d < 10?"0" + d:"" + d))) + " ") + ((h < 10?"0" + h:"" + h))) + ":") + ((mi < 10?"0" + mi:"" + mi))) + ":") + ((s < 10?"0" + s:"" + s));
 	}
-	d.prototype.__class__ = d;
-	d.__name__ = ["Date"];
+	Date.prototype.__class__ = Date;
+	Date.__name__ = ["Date"];
+}
+{
+	js.Lib.document = document;
+	js.Lib.window = window;
+	onerror = function(msg,url,line) {
+		var f = js.Lib.onerror;
+		if( f == null )
+			return false;
+		return f(msg,[url+":"+line]);
+	}
 }
 math.CV3D.ZERO = new math.CV3D(0,0,0);
 math.CV3D.ONE = new math.CV3D(1,1,1);

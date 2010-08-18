@@ -7,9 +7,17 @@ package math;
 
 import kernel.CDebug;
 
+#if js
+import CGL;
+#end
+
 class CMatrix44 
 {	
-	public var m_Buffer : Array<Float>;
+	#if js
+		public var m_Buffer : FloatArray;
+	#else
+		public var m_Buffer : Array<Float>;
+	#end
 	
 	/*
 	 * 00 01 02 03 
@@ -20,7 +28,15 @@ class CMatrix44
 	
 	public function new() 
 	{
-		m_Buffer = new Array<Float>();
+		#if js
+			m_Buffer = new FloatArray( new ArrayBuffer(16*4) );
+			for( i in 0...16 )
+			{
+				m_Buffer.Set(i,0.0);
+			}
+		#else
+			m_Buffer = new Array<Float>();
+		#end
 		
 		Identity();
 	}
@@ -38,19 +54,31 @@ class CMatrix44
 	{
 		for( i in 0...16 )
 		{
-			m_Buffer[i] = 0;
+			#if js
+				m_Buffer.Set(i, 0);
+			#else
+				m_Buffer[i] = 0;
+			#end
 		}
 	}
 	
 	
 	public inline function M( _i : Int,_j :Int , _f : Float) : Void
 	{
-		m_Buffer[ _i * 4 + _j ] = _f;
+		#if js
+			m_Buffer.Set( _i * 4 + _j , _f);
+		#else
+			m_Buffer[ _i * 4 + _j ] = _f;
+		#end
 	}
 	
 	public inline function Get( _i : Int,_j :Int ) : Float
 	{
-		return m_Buffer[ _i * 4 + _j];
+		#if js
+			return m_Buffer.Get( _i * 4 + _j);
+		#else
+			return m_Buffer[ _i * 4 + _j];
+		#end
 	}
 	
 	public inline function Set( 	_00, _01, _02, _03,
@@ -84,7 +112,11 @@ class CMatrix44
 	{
 		for( i in 0...16 )
 		{
-			m_Buffer[i] = _Mat.m_Buffer[i];
+			#if js
+				m_Buffer.Set(i, _Mat.m_Buffer.Get(i) );
+			#else
+				m_Buffer[i] = _Mat.m_Buffer[i];
+			#end
 		}
 	}
 	
@@ -338,9 +370,13 @@ class CMatrix44
 
 	public function MultScalar( _InOut : CMatrix44, _f : Float ) : Void
 	{
-		for ( i in 0...16)
+		for ( i in 0...16 )
 		{
-			m_Buffer[i] *= _f;
+			#if js
+				m_Buffer.Set(i, m_Buffer.Get(i) * _f);
+			#else
+				m_Buffer[i] *= _f;
+			#end
 		}
 	}
 	

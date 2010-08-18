@@ -12,6 +12,42 @@ typedef GLfloat = Float;
 typedef GLboolean = Bool;
 typedef GLsizeiptr = Int;
 
+
+
+extern class ArrayBuffer
+{
+	public function new ( _ByteSize : Int ) : Void;
+	
+	public var byteLength : Int;
+}
+
+extern class ArrayBufferView
+{
+	public function new ( _Arr : ArrayBuffer  ) : Void;
+	
+	public var buffer : ArrayBuffer; 
+	public var byteLength : Int; 
+	public var byteOffset : Int;
+	public var length : Int;
+}
+
+
+extern class Float32Array extends ArrayBufferView 
+{
+	public var 			BYTES_PER_ELEMENT : Int;
+	public function 	Set( _Index : Int , _Value : Float) : Void;
+	public function 	Get( _Index : Int ) : Float;
+}
+
+typedef FloatArray = Float32Array;
+
+extern class Uint8Array extends ArrayBufferView 
+{
+	public var 			BYTES_PER_ELEMENT : Int;
+	public function 	Set( _Index : Int , _Value : Int) : Void; 
+	public function 	Get( _Index : Int ) : Int;
+}
+
 extern class WebGLObject { } 
 extern class WebGLFramebuffer  { } 
 extern class WebGLRenderbuffer { }
@@ -22,22 +58,6 @@ extern class WebGLTexture { }
 extern class WebGLObjectArray { } 
 extern class WebGLUniformLocation{}
 extern class WebGLActiveInfo { }
-
-extern class WebGLIntArray 
-{
-	public function new( _Arr : Array<Int> ) : Void;
-}
-
-extern class WebGLUnsignedByteArray 
-{
-	public function new( _Arr : Array<Int> ) : Void;
-}
-
-extern class WebGLFloatArray 
-{
-	public function new( _Arr : Array<Float> ) : Void;
-}
-
 
 extern class CGL
 {
@@ -100,7 +120,7 @@ extern class CGL
 	public function Uniform4f( _Loc : WebGLUniformLocation , _x:Float, _y:Float, _z:Float, _z:Float) : Void;
 	public function Uniform1i( _Loc : WebGLUniformLocation , _x:GLint ) : Void;
 	public function Uniform1f( _Loc : WebGLUniformLocation , _x:Float ) : Void;
-	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Transpose : Bool, _Mat : WebGLFloatArray) : Void;
+	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Transpose : Bool, _Mat : Float32Array) : Void;
 	
 	public function EnableVertexAttribArray( _Index : GLuint ) : Void;
 	public function DisableVertexAttribArray( _Index : GLuint  ) : Void;

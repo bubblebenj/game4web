@@ -37,6 +37,8 @@ class CMainClient
 	#if js
 	public static function InitGameJS()
 	{
+		//var l_Ab : ArrayBuffer = new ArrayBuffer( [0,1] );
+		
 		m_Mouse		= new CMouseJS();				// <--
 		m_Cpt		= 5;							// <--
 		

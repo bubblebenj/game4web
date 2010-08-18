@@ -64,15 +64,15 @@ class CSpherePrim extends CPrimitiveJS
 		
 		retval.normalObject = ctx.createBuffer();
 		ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.normalObject);
-		ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(normalData), ctx.STATIC_DRAW);
+		ctx.bufferData(ctx.ARRAY_BUFFER, new Float32Array(normalData), ctx.STATIC_DRAW);
 
 		retval.texCoordObject = ctx.createBuffer();
 		ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.texCoordObject);
-		ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(texCoordData), ctx.STATIC_DRAW);
+		ctx.bufferData(ctx.ARRAY_BUFFER, new Float32Array(texCoordData), ctx.STATIC_DRAW);
 
 		retval.vertexObject = ctx.createBuffer();
 		ctx.bindBuffer(ctx.ARRAY_BUFFER, retval.vertexObject);
-		ctx.bufferData(ctx.ARRAY_BUFFER, new WebGLFloatArray(geometryData), ctx.STATIC_DRAW);
+		ctx.bufferData(ctx.ARRAY_BUFFER, new Float32Array(geometryData), ctx.STATIC_DRAW);
 		
 		retval.numIndices = indexData.length;
 		retval.indexObject = ctx.createBuffer();

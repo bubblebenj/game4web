@@ -13,14 +13,15 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="." />
+    <class path="Src" />
+    <class path="Src\game" />
   </classpaths>
   <!-- Build options -->
   <build>
     <option directives="" />
     <option flashStrict="False" />
     <option mainClass="" />
-    <option enabledebug="False" />
+    <option forcetraces="False" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
