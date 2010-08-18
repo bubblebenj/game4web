@@ -99,7 +99,7 @@ class CGLCube extends CDrawObject
 		m_Primitive.SetVertexArray(l_vertices);
 		m_ShdrPrgm.LinkPrimitive( m_Primitive );
 
-		m_MatrixCache = new WebGLFloatArray( l_MVP.m_Buffer );
+		m_MatrixCache = new Float32Array( l_MVP.m_Buffer );
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
 		if ( l_Err  != 0)
@@ -121,7 +121,7 @@ class CGLCube extends CDrawObject
 	}
 
 	var m_Matrix : CMatrix44;
-	var m_MatrixCache : WebGLFloatArray;
+	var m_MatrixCache : Float32Array;
 	var m_RS : CRenderStatesJS;
 	var m_Primitive : CPrimitiveJS;
 	var m_ShdrPrgm: CRscShaderProgram;

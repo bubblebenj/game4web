@@ -91,17 +91,23 @@ class CPrimitiveJS extends CPrimitive
 			}
 		}
 		
-
+		if(m_VtxNativeBuf==null)
 		{
-			m_VtxNativeBuf =  new WebGLFloatArray(_Vertices);
-			Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
-			CDebug.CONSOLEMSG("Set vertex buffer");
+			m_VtxNativeBuf =  new Float32Array( new ArrayBuffer(m_NbVertex * 4 * GetFloatPerVtx()));
+		}
+		
+		for (i in 0...m_NbVertex * GetFloatPerVtx())
+		{
+			m_VtxNativeBuf.Set(i, _Vertices[i]);
+		}
+		
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
+		CDebug.CONSOLEMSG("Set vertex buffer");
 			
-			var l_Err = Glb.g_SystemJS.GetGL().GetError();
-			if ( l_Err  != 0)
-			{
-				CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err);
-			}
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostSetVertexArray:" + l_Err);
 		}
 	}
 	
@@ -121,7 +127,16 @@ class CPrimitiveJS extends CPrimitive
 		}
 		
 		m_NbIndices = _Indexes.length;
-		m_IdxNativeBuf =  new WebGLUnsignedByteArray( _Indexes );
+		
+		if(m_IdxNativeBuf==null)
+		{
+			m_IdxNativeBuf =  new Uint8Array( new ArrayBuffer(m_NbIndices) );
+		}
+		
+		for (i in 0...m_NbVertex)
+		{
+			m_IdxNativeBuf.Set(i, _Indexes[i]);
+		}
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, CGL.STATIC_DRAW );
 		
@@ -134,7 +149,7 @@ class CPrimitiveJS extends CPrimitive
 		}
 	}
 	
-	public function SetTexCooArray(  _Coord : Array< Float > ) : Void
+	public function SetTexCooArray(  _TexCoords : Array< Float > ) : Void
 	{
 		if ( m_TexObject == null )
 		{
@@ -142,7 +157,15 @@ class CPrimitiveJS extends CPrimitive
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject);
 		}
 		
-		m_TexNativeBuf =  new WebGLFloatArray(_Coord);
+		if ( null != m_TexNativeBuf )
+		{
+			m_TexNativeBuf =  new Float32Array( new ArrayBuffer( m_NbVertex * 4 * GetFloatPerTexCoord()) );
+		}
+		
+		for (i in 0...m_NbVertex*GetFloatPerTexCoord())
+		{
+			m_TexNativeBuf.Set(i, _TexCoords[i]);
+		}
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, CGL.STATIC_DRAW );
 	}
@@ -155,8 +178,16 @@ class CPrimitiveJS extends CPrimitive
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_NrmlObject);
 		}
 		
-		m_NrmlNativeBuf =  new WebGLFloatArray(_Normals);
+		if ( null != m_NrmlNativeBuf )
+		{
+			m_NrmlNativeBuf =  new Float32Array( new ArrayBuffer(m_NbVertex * 4 * GetFloatPerNormal()));
+		}
 		
+		for (i in 0...m_NbVertex*GetFloatPerNormal())
+		{
+			m_NrmlNativeBuf.Set(i, _Normals[i]);
+		}
+				
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_NrmlNativeBuf, CGL.STATIC_DRAW );
 	}
 	
@@ -165,10 +196,10 @@ class CPrimitiveJS extends CPrimitive
 	var m_VtxObject:WebGLBuffer;
 	var m_IdxObject:WebGLBuffer;
 	
-	var m_NrmlNativeBuf:WebGLFloatArray;
-	var m_TexNativeBuf:WebGLFloatArray;
-	var m_VtxNativeBuf:WebGLFloatArray;
-	var m_IdxNativeBuf:WebGLUnsignedByteArray;
+	var m_NrmlNativeBuf:Float32Array;
+	var m_TexNativeBuf:Float32Array;
+	var m_VtxNativeBuf:Float32Array;
+	var m_IdxNativeBuf:Uint8Array;
 	
 	var m_NbIndices:Int;
 	

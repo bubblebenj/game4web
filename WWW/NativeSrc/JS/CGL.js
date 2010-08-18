@@ -1,6 +1,37 @@
 
 //JS binding
 
+function Assign( _Array, _Index ,_V)
+{
+	_Array[_Index] = _V;
+}
+
+function GetBack( _Array, _Index )
+{
+	return _Array[_Index];
+}
+
+
+Float32Array.prototype.Set  = function( _i,_f)
+{
+	Assign( this,_i,_f);
+}
+
+Uint8Array.prototype.Set  = function( _i,_f)
+{
+	Assign( this,_i,_f);
+}
+
+Float32Array.prototype.Get  = function( _i,_f)
+{
+	return GetBack( this,_i);
+}
+
+Uint8Array.prototype.Get  = function( _i,_f)
+{
+	return GetBack( this,_i);
+}
+
 function CGL( _Name ) 
 {
 	m_Element = null;
