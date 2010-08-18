@@ -348,17 +348,21 @@ rsc.CRsc = function(p) { if( p === $_ ) return; {
 	this.m_Ref = 0;
 	this.m_Path = "";
 	this.m_SingleLoad = false;
+	this.m_State = rsc.E_STATE.STREAMED;
 }}
 rsc.CRsc.__name__ = ["rsc","CRsc"];
 rsc.CRsc.prototype.AddRef = function() {
-	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 46, className : "rsc.CRsc", methodName : "AddRef"});
+	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 55, className : "rsc.CRsc", methodName : "AddRef"});
 	this.m_Ref++;
 }
 rsc.CRsc.prototype.Copy = function(_InRsc) {
-	kernel.CDebug.ASSERT(this.GetType() == _InRsc.GetType(),{ fileName : "CRsc.hx", lineNumber : 26, className : "rsc.CRsc", methodName : "Copy"});
+	kernel.CDebug.ASSERT(this.GetType() == _InRsc.GetType(),{ fileName : "CRsc.hx", lineNumber : 35, className : "rsc.CRsc", methodName : "Copy"});
 }
 rsc.CRsc.prototype.GetPath = function() {
 	return this.m_Path;
+}
+rsc.CRsc.prototype.GetState = function() {
+	return this.m_State;
 }
 rsc.CRsc.prototype.GetType = function() {
 	return -1;
@@ -367,7 +371,7 @@ rsc.CRsc.prototype.IsSingleLoaded = function() {
 	return this.m_SingleLoad;
 }
 rsc.CRsc.prototype.Release = function() {
-	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 62, className : "rsc.CRsc", methodName : "Release"});
+	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 81, className : "rsc.CRsc", methodName : "Release"});
 	this.m_Ref--;
 	if(this.m_Ref == 0) {
 		kernel.Glb.g_System.GetRscMan().ForceDelete(this);
@@ -379,9 +383,13 @@ rsc.CRsc.prototype.SetPath = function(_Path) {
 rsc.CRsc.prototype.SetSingleLoaded = function(_OnOff) {
 	this.m_SingleLoad = _OnOff;
 }
+rsc.CRsc.prototype.SetState = function(_State) {
+	this.m_State = _State;
+}
 rsc.CRsc.prototype.m_Path = null;
 rsc.CRsc.prototype.m_Ref = null;
 rsc.CRsc.prototype.m_SingleLoad = null;
+rsc.CRsc.prototype.m_State = null;
 rsc.CRsc.prototype.__class__ = rsc.CRsc;
 rsc.CRscMan = function(p) { if( p === $_ ) return; {
 	this.m_Repository = null;
@@ -1082,12 +1090,10 @@ renderer.CRenderStates.prototype.Copy = function(_Rsc) {
 	rsc.CRsc.prototype.Copy.apply(this,[_Rsc]);
 	var l_Rs = (function($this) {
 		var $r;
-		var tmp = _Rsc;
-		$r = (Std["is"](tmp,renderer.CRenderStates)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = _Rsc;
+		if(Std["is"]($t,renderer.CRenderStates)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	this.m_ZRead = l_Rs.m_ZRead;
@@ -1346,9 +1352,9 @@ js.Boot.__instanceof = function(o,cl) {
 		}
 		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
 	}
-	catch( $e1 ) {
+	catch( $e0 ) {
 		{
-			var e = $e1;
+			var e = $e0;
 			{
 				if(cl == null) return false;
 			}
@@ -1508,8 +1514,8 @@ IntHash.prototype.toString = function() {
 	var s = new StringBuf();
 	s.b[s.b.length] = "{";
 	var it = this.keys();
-	{ var $it2 = it;
-	while( $it2.hasNext() ) { var i = $it2.next();
+	{ var $it0 = it;
+	while( $it0.hasNext() ) { var i = $it0.next();
 	{
 		s.b[s.b.length] = i;
 		s.b[s.b.length] = " => ";
@@ -1596,7 +1602,7 @@ renderer.C2DQuad = function(p) { if( p === $_ ) return; {
 renderer.C2DQuad.__name__ = ["renderer","C2DQuad"];
 renderer.C2DQuad.__super__ = renderer.CDrawObject;
 for(var k in renderer.CDrawObject.prototype ) renderer.C2DQuad.prototype[k] = renderer.CDrawObject.prototype[k];
-renderer.C2DQuad.prototype.MoveTo = function(_Pos) {
+renderer.C2DQuad.prototype.SetPosition = function(_Pos) {
 	var l_V = new math.CV2D(0,0);
 	math.CV2D.Sub(l_V,this.m_Rect.m_BR,this.m_Rect.m_TL);
 	{
@@ -1679,12 +1685,10 @@ driver.js.renderer.CGLCube.prototype.Initialize = function() {
 	var l_RscMan = kernel.Glb.g_System.GetRscMan();
 	this.m_RS = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
-		$r = (Std["is"](tmp,driver.js.renderer.CRenderStatesJS)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
+		if(Std["is"]($t,driver.js.renderer.CRenderStatesJS)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_RS == null) {
@@ -1692,12 +1696,10 @@ driver.js.renderer.CGLCube.prototype.Initialize = function() {
 	}
 	this.m_Primitive = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
-		$r = (Std["is"](tmp,driver.js.renderer.CPrimitiveJS)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
+		if(Std["is"]($t,driver.js.renderer.CPrimitiveJS)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_Primitive == null) {
@@ -1705,12 +1707,10 @@ driver.js.renderer.CGLCube.prototype.Initialize = function() {
 	}
 	this.m_ShdrPrgm = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
-		$r = (Std["is"](tmp,driver.js.rsc.CRscShaderProgram)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
+		if(Std["is"]($t,driver.js.rsc.CRscShaderProgram)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	this.m_ShdrPrgm.Compile();
@@ -1849,12 +1849,10 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	}
 	this.m_VtxSh = (function($this) {
 		var $r;
-		var tmp = l_Rsc;
-		$r = (Std["is"](tmp,driver.js.rsc.CRscVertexShader)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_Rsc;
+		if(Std["is"]($t,driver.js.rsc.CRscVertexShader)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	l_Rsc = kernel.Glb.g_System.GetRscMan().Load(driver.js.rsc.CRscFragmentShader.RSC_ID,_Path + ".fsh");
@@ -1864,12 +1862,10 @@ driver.js.rsc.CRscShaderProgram.prototype.Initialize = function(_Path) {
 	}
 	this.m_FragSh = (function($this) {
 		var $r;
-		var tmp = l_Rsc;
-		$r = (Std["is"](tmp,driver.js.rsc.CRscFragmentShader)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_Rsc;
+		if(Std["is"]($t,driver.js.rsc.CRscFragmentShader)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	this.m_Program = l_Gl.CreateProgram();
@@ -2059,14 +2055,14 @@ renderer.CRenderer.prototype.BeginScene = function() {
 		}
 	}
 	this.m_BackScene.clear();
-	{ var $it3 = this.m_Scene.iterator();
-	while( $it3.hasNext() ) { var l_do = $it3.next();
+	{ var $it0 = this.m_Scene.iterator();
+	while( $it0.hasNext() ) { var l_do = $it0.next();
 	{
 		this.m_BackScene.push(l_do);
 	}
 	}}
-	{ var $it4 = this.m_BackScene.iterator();
-	while( $it4.hasNext() ) { var l_do = $it4.next();
+	{ var $it1 = this.m_BackScene.iterator();
+	while( $it1.hasNext() ) { var l_do = $it1.next();
 	{
 		l_do.Update();
 	}
@@ -2167,7 +2163,7 @@ driver.js.renderer.CGlQuad.prototype.Activate = function() {
 }
 driver.js.renderer.CGlQuad.prototype.CreateData = function() {
 	var l_Array = new Array();
-	var l_Z = -10.;
+	var l_Z = -10.0;
 	var l_Scale = 0.5;
 	l_Array[0] = 0;
 	l_Array[1] = 0;
@@ -2223,19 +2219,17 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	var l_RscMan = kernel.Glb.g_System.GetRscMan();
 	this.m_ShdrPrgm = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
-		$r = (Std["is"](tmp,driver.js.rsc.CRscShaderProgram)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Load(driver.js.rsc.CRscShaderProgram.RSC_ID,"white");
+		if(Std["is"]($t,driver.js.rsc.CRscShaderProgram)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_ShdrPrgm != null) {
 		kernel.CDebug.CONSOLEMSG("create gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 61, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
 	else {
-		kernel.CDebug.CONSOLEMSG("unable gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 65, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
+		kernel.CDebug.CONSOLEMSG("unable to create gl quad shader",{ fileName : "CGlQuad.hx", lineNumber : 65, className : "driver.js.renderer.CGlQuad", methodName : "Initialize"});
 	}
 	var l_Res = (this.m_ShdrPrgm != null?kernel.Result.SUCCESS:kernel.Result.FAILURE);
 	if(l_Res == kernel.Result.SUCCESS) {
@@ -2243,12 +2237,10 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_Material = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Create(renderer.CMaterial.RSC_ID);
-		$r = (Std["is"](tmp,renderer.CMaterial)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Create(renderer.CMaterial.RSC_ID);
+		if(Std["is"]($t,renderer.CMaterial)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_Material != null) {
@@ -2259,12 +2251,10 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_Primitive = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
-		$r = (Std["is"](tmp,driver.js.renderer.CPrimitiveJS)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Create(renderer.CPrimitive.RSC_ID);
+		if(Std["is"]($t,driver.js.renderer.CPrimitiveJS)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_Primitive == null) {
@@ -2272,12 +2262,10 @@ driver.js.renderer.CGlQuad.prototype.Initialize = function() {
 	}
 	this.m_RenderStates = (function($this) {
 		var $r;
-		var tmp = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
-		$r = (Std["is"](tmp,driver.js.renderer.CRenderStatesJS)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = l_RscMan.Create(renderer.CRenderStates.RSC_ID);
+		if(Std["is"]($t,driver.js.renderer.CRenderStatesJS)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	if(this.m_RenderStates == null) {
@@ -2315,7 +2303,7 @@ driver.js.renderer.CRendererJS.prototype.BeginScene = function() {
 	if(l_Err != 0) {
 		kernel.CDebug.CONSOLEMSG("GlError:PreClear:" + l_Err,{ fileName : "CRendererJS.hx", lineNumber : 46, className : "driver.js.renderer.CRendererJS", methodName : "BeginScene"});
 	}
-	kernel.Glb.g_SystemJS.m_GlObject.ClearColor(255.0,0,0,1);
+	kernel.Glb.g_SystemJS.m_GlObject.ClearColor(l_FrameCount / 255.0,0,0,1);
 	kernel.Glb.g_SystemJS.m_GlObject.ClearDepth(1000.0);
 	kernel.Glb.g_SystemJS.m_GlObject.Clear(17664);
 	l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
@@ -2347,8 +2335,8 @@ driver.js.renderer.CRendererJS.prototype.Initialize = function() {
 }
 driver.js.renderer.CRendererJS.prototype.Render = function(_VpId) {
 	this.m_NbDrawn = 0;
-	{ var $it5 = this.m_Scene.iterator();
-	while( $it5.hasNext() ) { var _DOs = $it5.next();
+	{ var $it0 = this.m_Scene.iterator();
+	while( $it0.hasNext() ) { var _DOs = $it0.next();
 	{
 		if(_DOs != null && _DOs.Draw(_VpId) == kernel.Result.SUCCESS) {
 			this.m_NbDrawn++;
@@ -2382,9 +2370,9 @@ Hash.prototype.exists = function(key) {
 		key = "$" + key;
 		return this.hasOwnProperty.call(this.h,key);
 	}
-	catch( $e6 ) {
+	catch( $e0 ) {
 		{
-			var e = $e6;
+			var e = $e0;
 			{
 				
 				for(var i in this.h)
@@ -2427,8 +2415,8 @@ Hash.prototype.toString = function() {
 	var s = new StringBuf();
 	s.b[s.b.length] = "{";
 	var it = this.keys();
-	{ var $it7 = it;
-	while( $it7.hasNext() ) { var i = $it7.next();
+	{ var $it0 = it;
+	while( $it0.hasNext() ) { var i = $it0.next();
 	{
 		s.b[s.b.length] = i;
 		s.b[s.b.length] = " => ";
@@ -2455,12 +2443,10 @@ CMainClient.m_Cube = null;
 CMainClient.InitGameJS = function() {
 	var l_OrthoCam = (function($this) {
 		var $r;
-		var tmp = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
-		$r = (Std["is"](tmp,renderer.camera.COrthoCamera)?tmp:(function($this) {
-			var $r;
-			throw "Class cast error";
-			return $r;
-		}($this)));
+		var $t = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
+		if(Std["is"]($t,renderer.camera.COrthoCamera)) $t;
+		else throw "Class cast error";
+		$r = $t;
 		return $r;
 	}(this));
 	var l_CamPos = new math.CV3D(0,0,-1);
@@ -2670,6 +2656,16 @@ renderer.CTexture.prototype.GetType = function() {
 	return renderer.CTexture.RSC_ID;
 }
 renderer.CTexture.prototype.__class__ = renderer.CTexture;
+rsc.E_STATE = { __ename__ : ["rsc","E_STATE"], __constructs__ : ["INVALID","STREAMING","STREAMED"] }
+rsc.E_STATE.INVALID = ["INVALID",0];
+rsc.E_STATE.INVALID.toString = $estr;
+rsc.E_STATE.INVALID.__enum__ = rsc.E_STATE;
+rsc.E_STATE.STREAMED = ["STREAMED",2];
+rsc.E_STATE.STREAMED.toString = $estr;
+rsc.E_STATE.STREAMED.__enum__ = rsc.E_STATE;
+rsc.E_STATE.STREAMING = ["STREAMING",1];
+rsc.E_STATE.STREAMING.toString = $estr;
+rsc.E_STATE.STREAMING.__enum__ = rsc.E_STATE;
 driver.js.renderer.CPrimitiveJS = function(p) { if( p === $_ ) return; {
 	renderer.CPrimitive.apply(this,[]);
 	this.m_NbIndices = 0;
@@ -2719,7 +2715,7 @@ driver.js.renderer.CPrimitiveJS.prototype.SetIndexArray = function(_Indexes) {
 	}
 	this.m_NbIndices = _Indexes.length;
 	this.m_IdxNativeBuf = new WebGLUnsignedByteArray(_Indexes);
-	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34963,this.m_IdxNativeBuf,35048);
+	kernel.Glb.g_SystemJS.m_GlObject.BufferData(34963,this.m_IdxNativeBuf,35044);
 	kernel.CDebug.CONSOLEMSG("Set index buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 128, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetIndexArray"});
 	var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
 	if(l_Err != 0) {
@@ -2756,7 +2752,7 @@ driver.js.renderer.CPrimitiveJS.prototype.SetVertexArray = function(_Vertices) {
 	}
 	{
 		this.m_VtxNativeBuf = new WebGLFloatArray(_Vertices);
-		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35048);
+		kernel.Glb.g_SystemJS.m_GlObject.BufferData(34962,this.m_VtxNativeBuf,35044);
 		kernel.CDebug.CONSOLEMSG("Set vertex buffer",{ fileName : "CPrimitiveJS.hx", lineNumber : 98, className : "driver.js.renderer.CPrimitiveJS", methodName : "SetVertexArray"});
 		var l_Err = kernel.Glb.g_SystemJS.m_GlObject.GetError();
 		if(l_Err != 0) {
@@ -2847,6 +2843,7 @@ $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
 {
+	Math.__name__ = ["Math"];
 	Math.NaN = Number["NaN"];
 	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
@@ -2856,7 +2853,6 @@ js.Boot.__init();
 	Math.isNaN = function(i) {
 		return isNaN(i);
 	}
-	Math.__name__ = ["Math"];
 }
 {
 	String.prototype.__class__ = String;
@@ -2883,24 +2879,25 @@ js.Boot.__init();
 	}
 }
 {
-	Date.now = function() {
+	var d = Date;
+	d.now = function() {
 		return new Date();
 	}
-	Date.fromTime = function(t) {
-		var d = new Date();
-		d["setTime"](t);
-		return d;
+	d.fromTime = function(t) {
+		var d1 = new Date();
+		d1["setTime"](t);
+		return d1;
 	}
-	Date.fromString = function(s) {
+	d.fromString = function(s) {
 		switch(s.length) {
 		case 8:{
 			var k = s.split(":");
-			var d = new Date();
-			d["setTime"](0);
-			d["setUTCHours"](k[0]);
-			d["setUTCMinutes"](k[1]);
-			d["setUTCSeconds"](k[2]);
-			return d;
+			var d1 = new Date();
+			d1["setTime"](0);
+			d1["setUTCHours"](k[0]);
+			d1["setUTCMinutes"](k[1]);
+			d1["setUTCSeconds"](k[2]);
+			return d1;
 		}break;
 		case 10:{
 			var k = s.split("-");
@@ -2917,17 +2914,17 @@ js.Boot.__init();
 		}break;
 		}
 	}
-	Date.prototype["toString"] = function() {
+	d.prototype["toString"] = function() {
 		var date = this;
 		var m = date.getMonth() + 1;
-		var d = date.getDate();
+		var d1 = date.getDate();
 		var h = date.getHours();
 		var mi = date.getMinutes();
 		var s = date.getSeconds();
-		return (((((((((date.getFullYear() + "-") + ((m < 10?"0" + m:"" + m))) + "-") + ((d < 10?"0" + d:"" + d))) + " ") + ((h < 10?"0" + h:"" + h))) + ":") + ((mi < 10?"0" + mi:"" + mi))) + ":") + ((s < 10?"0" + s:"" + s));
+		return (((((((((date.getFullYear() + "-") + ((m < 10?"0" + m:"" + m))) + "-") + ((d1 < 10?"0" + d1:"" + d1))) + " ") + ((h < 10?"0" + h:"" + h))) + ":") + ((mi < 10?"0" + mi:"" + mi))) + ":") + ((s < 10?"0" + s:"" + s));
 	}
-	Date.prototype.__class__ = Date;
-	Date.__name__ = ["Date"];
+	d.prototype.__class__ = d;
+	d.__name__ = ["Date"];
 }
 math.CV3D.ZERO = new math.CV3D(0,0,0);
 math.CV3D.ONE = new math.CV3D(1,1,1);
