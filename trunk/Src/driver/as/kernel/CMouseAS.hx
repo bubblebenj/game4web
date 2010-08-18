@@ -24,11 +24,11 @@ class CMouseAS extends CMouse
 	public function new()
 	{
 		super();
-		flash.Lib.current.addEventListener( MouseEvent.MOUSE_DOWN,	Down );
-		flash.Lib.current.addEventListener( MouseEvent.MOUSE_UP, 	Up );
-		flash.Lib.current.addEventListener( MouseEvent.MOUSE_MOVE, 	Move );
+		flash.Lib.current.addEventListener( MouseEvent.MOUSE_DOWN,	Down );	//
+		flash.Lib.current.addEventListener( MouseEvent.MOUSE_UP, 	Up );	// To be change with one function handler onMouseEvent
+		flash.Lib.current.addEventListener( MouseEvent.MOUSE_MOVE, 	Move );	//
 	}
-	
+
 	public function Down( _Event : MouseEvent ) : Void
 	{
 		m_Down				= true;
