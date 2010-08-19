@@ -28,6 +28,7 @@ class CRscASFactory extends CRscBuilder
 		{
 			case CRscImage.RSC_ID:
 			l_Rsc =	new CRscImageAS();
+			l_Rsc.SetPath( _Path );
 			
 			default: trace("*_* CRscASFactory :: Error: target type not found : " + _Type ); 
 			l_Rsc = null;

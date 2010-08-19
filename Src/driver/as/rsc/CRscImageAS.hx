@@ -12,6 +12,7 @@ import flash.net.URLRequest;
 import math.CV2D;
 
 import kernel.CTypes;
+import kernel.CDebug;
 import rsc.CRscImage;
 import rsc.CRsc;
 
@@ -34,6 +35,7 @@ class CRscImageAS extends CRscImage
 		// 2 - url of the image or swf to load
 		var l_ImgURL	: URLRequest	= new URLRequest( m_Path );
 		// 3 - Loading of the image or swf inside the container
+		//CDebug.CONSOLEMSG("Loading image " + m_Path);
 		m_ImgContainer.load( l_ImgURL );
 		m_State			= STREAMING;
 		return SUCCESS;

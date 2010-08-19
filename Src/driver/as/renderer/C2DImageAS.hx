@@ -33,11 +33,12 @@ class C2DImageAS extends C2DImage
 		m_RscImage = cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS );
 		if( m_RscImage  != null)
 		{
-			CDebug.CONSOLEMSG("create m_RscImage");
+			//CDebug.CONSOLEMSG("create m_RscImage");
+			m_RscImage.Initialize();
 		}
 		else 
 		{
-			CDebug.CONSOLEMSG("unable m_RscImage");
+			//CDebug.CONSOLEMSG("unable tp create m_RscImage");
 		}
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
@@ -73,12 +74,17 @@ class C2DImageAS extends C2DImage
 		//resize
 		if ( m_RscImage == null )
 		{
-			trace(" /!\\ m_RscImage not created yet. Skipping its resizing ");
+			//trace(" /!\\ m_RscImage not created yet. Skipping its resizing ");
 		}
 		else
 		{
 			m_RscImage.SetSize( _Size );
 			m_RscImage.SetPosition( m_Rect.m_TL );
 		}
+	}
+	
+	public function GetRscImage() : CRscImage
+	{
+		return m_RscImage;
 	}
 }

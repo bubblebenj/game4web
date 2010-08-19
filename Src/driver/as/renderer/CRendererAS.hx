@@ -9,6 +9,7 @@ package driver.as.renderer;
 import flash.display.MovieClip;
 import flash.display.DisplayObject;
 import kernel.CTypes;
+import kernel.CDebug;
 import renderer.CDrawObject;
 import renderer.CRenderer;
 import renderer.CViewport;
@@ -55,10 +56,19 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
-	public function AddToSceneAS( _Obj : DisplayObject )
+	public function AddToSceneAS( _Obj : DisplayObject ) : Result
 	{
-		trace( Type.typeof( _Obj ));
-		m_SceneAS.addChild( _Obj );
+		if ( _Obj == null )
+		{
+			//CDebug.CONSOLEMSG("Can not attach an empty object to the scene");
+			return FAILURE;
+		}
+		else
+		{
+			//CDebug.CONSOLEMSG("Attach AS object to the scene");
+			m_SceneAS.addChild( _Obj );
+			return SUCCESS;
+		}
 	}
 	
 	public function RemoveFromSceneAS( _Obj : DisplayObject )

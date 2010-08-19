@@ -24,8 +24,8 @@ class CHexaGridCell extends CEntity
 		#end
 		super( EENTITY_TYPE_HEXAGRIDCELL );
 		
-		//var l_Size : CV2D = new CV2D( _Width, _Width );
-		//SetSize( l_Size );
+		var l_Size : CV2D = new CV2D( _Width, _Width );
+		SetSize( l_Size );
 	}
 	
 	public function CreateBuilding()	: Void
