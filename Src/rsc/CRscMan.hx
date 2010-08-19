@@ -72,8 +72,11 @@ class CRscMan
 	public function Load( _Type : RSC_TYPES, _Path : String, ?_SingleLoad : Bool ) : CRsc
 	{
 		CDebug.ASSERT(_Path != null );
-		if ( _SingleLoad != null && _SingleLoad != true && _Path != null )
+		if (	_SingleLoad != true 
+			&& 	_Path != null )
 		{
+			CDebug.CONSOLEMSG("searching resource : " + _Path);
+
 			var l_CandRsc : CRsc = m_Repository.get(_Path);
 			if (l_CandRsc != null
 			&&	!l_CandRsc.IsSingleLoaded())
@@ -96,7 +99,10 @@ class CRscMan
 			{
 				l_Rsc.AddRef();
 				l_Rsc.SetPath( _Path );
-				l_Rsc.SetSingleLoaded( (_SingleLoad==null) ? false : _SingleLoad );
+				l_Rsc.SetSingleLoaded( (_SingleLoad != true) ? false : _SingleLoad );
+				
+				m_Repository.set(_Path, l_Rsc);
+				CDebug.CONSOLEMSG("Adding resource : " + _Path);
 			}
 			
 			return l_Rsc;

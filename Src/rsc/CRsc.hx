@@ -73,7 +73,7 @@ class CRsc
 	
 	public function IsSingleLoaded() : Bool
 	{
-		return m_SingleLoad;
+		return m_SingleLoad!= false;
 	}
 	
 	public function Release() : Void 

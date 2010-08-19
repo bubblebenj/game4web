@@ -6,6 +6,7 @@
 package driver.as.rsc;
 
 import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.events.Event;
 import flash.display.Loader;
 import flash.net.URLRequest;
@@ -18,8 +19,6 @@ import rsc.CRsc;
 
 class CRscImageAS extends CRscImage
 {
-	public	var	m_FlashImage		: Bitmap;
-	
 	public function new() 
 	{
 		super();
@@ -35,41 +34,34 @@ class CRscImageAS extends CRscImage
 		// 2 - url of the image or swf to load
 		var l_ImgURL	: URLRequest	= new URLRequest( m_Path );
 		// 3 - Loading of the image or swf inside the container
-		//CDebug.CONSOLEMSG("Loading image " + m_Path);
+		//CDebug.CONSOLEMSG("Initializing img" + m_Path);
 		m_ImgContainer.load( l_ImgURL );
 		m_State			= STREAMING;
 		return SUCCESS;
 	}
+		
+	public override function SetPath( _Path )
+	{
+		super.SetPath(_Path);
+		Initialize();
+	}
 	
 	public function onImgLoaded( _Event : Event )	: Void
 	{
-		// The chocolate in the paper.
-		m_FlashImage	= cast ( m_ImgContainer.content );
 		m_State			= STREAMED;
+		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
-	public function GetSize()	: CV2D
+	public function CreateBitmap() : Bitmap
 	{
-		return new CV2D( m_FlashImage.width, m_FlashImage.height );
-	}
-	
-	public function SetSize( _Size : CV2D )	: Result
-	{
-		m_FlashImage.width	= _Size.x;
-		m_FlashImage.height	= _Size.y;
-		return SUCCESS;
-	}
-	
-	public function GetPosition()	: CV2D
-	{
-		return new CV2D( m_FlashImage.x, m_FlashImage.y );
-	}
-	
-	public function SetPosition( _Pos : CV2D )	: Result
-	{
-		m_FlashImage.x		= _Pos.x;
-		m_FlashImage.y		= _Pos.y;
-		return SUCCESS;
+		if ( m_State == STREAMED )
+		{
+			return new Bitmap( cast( m_ImgContainer.content , Bitmap ).bitmapData );
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	private	var m_ImgContainer	: Loader;

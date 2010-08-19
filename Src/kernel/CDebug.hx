@@ -10,6 +10,14 @@ class CDebug
 		}
 	}
 	
+	public static function BREAK( _Str : String, ?pos : haxe.PosInfos  )
+	{
+		if ( true )
+		{
+			haxe.Log.trace( "Break in "+pos.className+"::"+pos.methodName+":"+  _Str, pos );
+		}
+	}
+	
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
 		trace( _Msg );

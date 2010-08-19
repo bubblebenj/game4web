@@ -4,6 +4,7 @@ import math.CMatrix44;
 import renderer.camera.CPerspectiveCamera;
 
 import kernel.CTypes;
+import kernel.CDebug;
 
 import renderer.CDrawObject;
 import renderer.CViewport;
@@ -56,6 +57,7 @@ class CRenderer
 	
 	public function BuildViewport() : CViewport
 	{
+		CDebug.BREAK("Implement me");
 		return null;
 	}
 	
@@ -96,6 +98,7 @@ class CRenderer
 			m_BackScene.push(l_do);
 		}
 		
+		//CDebug.CONSOLEMSG(".");
 		for ( l_do in m_BackScene )
 		{
 			l_do.Update();

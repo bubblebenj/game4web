@@ -81,7 +81,7 @@ class CBeegonMainClient
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
 		
-		g_Grid 		= new CHexaGrid( 3, 40 );
+		g_Grid 		= new CHexaGrid( 8, 40 );
 		g_Grid.InitCellArray();
 		
 		#if flash10
@@ -111,16 +111,7 @@ class CBeegonMainClient
 		
 		var l_Mouse	: CV2D = Glb.g_System.m_Mouse.m_Coordinate;
 		
-		
-		//!\ Need to put it in the renderer.
-		//trace ( g_ImageTest.GetRscImage().GetState() );
-		if ( g_ImageTest.GetRscImage().GetState() == STREAMED && !g_ImageTest.IsVisible() ) 
-		{
-			g_ImageTest.SetVisible( true );
-		}
-		if ( !g_Avatar.m_Sprite.IsVisible() ) g_Avatar.m_Sprite.SetVisible( true );
-		
-		//trace( "g_Grid.Draw()");
+		g_Grid.Update();
 		
 		#if DebugInfo
 			/* Mouse
@@ -138,6 +129,7 @@ class CBeegonMainClient
 	
 	static function RenderCallback() : Result
 	{
+		g_Grid.Draw();
 		return SUCCESS;
 	}
 } 
