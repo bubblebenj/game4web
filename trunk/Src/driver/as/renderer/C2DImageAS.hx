@@ -5,24 +5,32 @@
 
 package driver.as.renderer;
 
+import flash.display.Bitmap;
 import driver.as.rsc.CRscImageAS;
+
+
+import math.CV2D;
 
 import kernel.CTypes;
 import kernel.CDebug;
 import kernel.Glb;
 
-import math.CV2D;
 import renderer.C2DImage;
+
 import rsc.CRscMan;
+import rsc.CRsc;
 import rsc.CRscImage;
 
 class C2DImageAS extends C2DImage
 {
 	private var m_RscImage : CRscImageAS;
+	private var m_Bmp		: Bitmap;
 	
 	public function new()
 	{
 		super();
+		
+		m_Bmp =  null;
 		//m_RscImage	= null;
 	}
 	
@@ -31,60 +39,81 @@ class C2DImageAS extends C2DImage
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
 		m_RscImage = cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS );
-		if( m_RscImage  != null)
-		{
-			//CDebug.CONSOLEMSG("create m_RscImage");
-			m_RscImage.Initialize();
-		}
-		else 
-		{
-			//CDebug.CONSOLEMSG("unable tp create m_RscImage");
-		}
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
+		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;
 	}
+
+	
+	public override function Activate() : Result
+	{
+		return SUCCESS;
+	}
+	
+	public override function Update() : Result
+	{
+		
+		if ( 	m_RscImage != null
+		&& 		m_RscImage.GetState() == E_STATE.STREAMED )
+		{
+			//CDebug.CONSOLEMSG("Stream finished");
+			if( m_Bmp == null )
+			{
+				m_Bmp = m_RscImage.CreateBitmap(); 
+				
+				SetVisible(true);
+				//CDebug.CONSOLEMSG("Activating" + m_Bmp);
+			}
+		}
+		return SUCCESS;
+	}
+	
+	public function Shut() : Result
+	{
+		Glb.GetRendererAS().RemoveFromScene( this );
+		Glb.GetRendererAS().RemoveFromSceneAS( m_Bmp );
+		return SUCCESS;
+	}
+	
 	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
 		super.SetVisible( _Vis );
 		
-		if( m_Visible )
-		{
-			Glb.GetRendererAS().AddToSceneAS( m_RscImage.m_FlashImage );
-		}
-		else
-		{
-			Glb.GetRendererAS().RemoveFromSceneAS( m_RscImage.m_FlashImage );
-		}
+		m_Bmp.visible = _Vis;
+		Glb.GetRendererAS().AddToSceneAS( m_Bmp );
 	}
 	
-	/* Suposed to be centered... a parameter would be great
-	 * to choose between centered or TL position */
 	public override function SetPosition( _Pos : CV2D ) : Void
 	{
 		super.SetPosition( _Pos );
-		m_RscImage.SetPosition( m_Rect.m_TL );
+		
+		if (m_Bmp != null)
+		{
+			m_Bmp.x = m_Rect.m_TL.x;
+			m_Bmp.y = m_Rect.m_TL.y;
+		}
+	}
+	
+	public function IsReady() : Bool 
+	{
+		return m_Bmp != null;
 	}
 	
 	// We suppose that the 2DQuad is already centered
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );
+		
 		//resize
-		if ( m_RscImage == null )
-		{
-			//trace(" /!\\ m_RscImage not created yet. Skipping its resizing ");
+		if ( m_Bmp != null )
+		{	
+			m_Bmp.width = _Size.x;
+			m_Bmp.height = _Size.y;
+			
+			m_Bmp.x = m_Rect.m_TL.x;
+			m_Bmp.y = m_Rect.m_TL.y;
 		}
-		else
-		{
-			m_RscImage.SetSize( _Size );
-			m_RscImage.SetPosition( m_Rect.m_TL );
-		}
-	}
-	
-	public function GetRscImage() : CRscImage
-	{
-		return m_RscImage;
 	}
 }

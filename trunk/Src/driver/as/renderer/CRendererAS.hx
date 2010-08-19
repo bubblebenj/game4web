@@ -42,6 +42,7 @@ class CRendererAS extends CRenderer
 	// Just copy paste from CRendererJS
 	public override function Render( _VpId : Int) : Result
 	{
+		super.Render(_VpId);
 		m_NbDrawn = 0;
 
 		for( _DOs in m_Scene )
@@ -56,23 +57,13 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
-	public function AddToSceneAS( _Obj : DisplayObject ) : Result
+	public function AddToSceneAS(  _DisplayObj : DisplayObject)
 	{
-		if ( _Obj == null )
-		{
-			//CDebug.CONSOLEMSG("Can not attach an empty object to the scene");
-			return FAILURE;
-		}
-		else
-		{
-			//CDebug.CONSOLEMSG("Attach AS object to the scene");
-			m_SceneAS.addChild( _Obj );
-			return SUCCESS;
-		}
+		m_SceneAS.addChild( _DisplayObj );
 	}
 	
-	public function RemoveFromSceneAS( _Obj : DisplayObject )
+	public function RemoveFromSceneAS( _DisplayObj : DisplayObject )
 	{
-		m_SceneAS.removeChild( _Obj );
+		m_SceneAS.removeChild( _DisplayObj );
 	}
 }

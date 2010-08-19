@@ -7,8 +7,11 @@
 
 import game.beegon.CEntity;
 import kernel.Glb;
+
 import math.CV2D;
 import math.CHexagone;
+import math.Registers;
+
 import rsc.CRsc;
 
 /*
@@ -143,7 +146,7 @@ class CHexaGrid
 				{
 					if ( m_CellArray[i][j] != null )
 					{
-						if ( m_CellArray[i][j].m_Sprite.GetRscImage().GetState() != STREAMED )
+						if ( m_CellArray[i][j].m_Sprite.IsReady() )
 						{
 							return false;
 						}
@@ -155,11 +158,11 @@ class CHexaGrid
 		}
 	}
 	
-	public function Draw()				: Void
+	public function Update() : Void
 	{
 		if ( IsReady() )
 		{
-			var	l_CellPos		: CV2D;
+			var	l_CellPos	: CV2D;
 			var	l_ScrCtr	: CV2D;
 			
 			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
@@ -169,15 +172,19 @@ class CHexaGrid
 					//trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
 					if ( m_CellArray[i][j] != null )
 					{
-						m_CellArray[i][j].m_Sprite.SetVisible( true );
-						l_CellPos	= new CV2D( i, j );
-						l_CellPos	= FromHexaToOrtho( l_CellPos );
+						var l_Register : CV2D = Registers.V2_8;
+						l_Register.Set(i, j );
+						l_CellPos	= FromHexaToOrtho( l_Register );
 						CV2D.Add( l_CellPos, m_Coordinate, l_CellPos );
 						m_CellArray[i][j].SetCoordinate( l_CellPos );
 					}
 				}
 			}
 		}
+	}
+	public function Draw()				: Void
+	{
+		
 	}
 	
 	/*
