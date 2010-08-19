@@ -8,7 +8,7 @@
 -swf ../../Build/SWF/CBeegonMainClient.swf
 -swf-version 10
 #-swf-header 512:384:120:DDDDDD
--swf-header 800:700:120:DDDDDD
+-swf-header 800:600:60:DDDDDD
 
 # Option de compile
 -D DebugInfo 

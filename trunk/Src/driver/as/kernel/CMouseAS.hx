@@ -41,6 +41,7 @@ class CMouseAS extends CMouse
 	
 	public function Move( _Event : MouseEvent ) : Void
 	{
+		// Needs an object to detect the mouse position
 		m_Coordinate.Set( Lib.current.stage.mouseX, Lib.current.stage.mouseY );
 	}
 }

@@ -45,7 +45,7 @@ class CEntity
 	// Bounding box size
 	public	var m_Size				: CV2D;
 	
-	public  var m_Pos				: CV2D;
+	public  var m_Coordinate				: CV2D;
 	
 	//private var m_State				: EENTITY_STATE;
 	//private var m_StateAvailable	: CBitField;
@@ -59,9 +59,9 @@ class CEntity
 	{
 		//trace ( "\t \t [ -- new CEntity : " + _Type );
 		
-		m_Type		= _Type;
-		m_Pos		= new CV2D( 0, 0 );
-		m_Size		= new CV2D( 0, 0 );
+		m_Type			= _Type;
+		m_Coordinate	= new CV2D( 0, 0 );
+		m_Size			= new CV2D( 0, 0 );
 		
 		#if flash10
 			m_Sprite	= new C2DImageAS();
@@ -87,7 +87,7 @@ class CEntity
 	 */
 		public	function SetSprite( _PathToImage : String ) : Result
 		{
-			//m_Sprite.Initialize( _PathToImage );
+			m_Sprite.Load( _PathToImage );
 			return SUCCESS;
 		}
 		
@@ -97,13 +97,13 @@ class CEntity
 		// Return the value of the global coordonate
 		public function GetCoordinate()	: CV2D
 		{
-			return m_Pos;
+			return m_Coordinate;
 		}
 		
 		// Move the entity to a specified position
 		public function SetCoordinate( _Pos : CV2D ) : Void
 		{
-			m_Pos.Copy( _Pos );
+			m_Coordinate.Copy( _Pos );
 			m_Sprite.SetPosition( _Pos );
 		}
 		

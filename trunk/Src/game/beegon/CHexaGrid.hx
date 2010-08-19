@@ -9,6 +9,7 @@ import game.beegon.CEntity;
 import kernel.Glb;
 import math.CV2D;
 import math.CHexagone;
+import rsc.CRsc;
 
 /*
  * THIS REPRESENTATION IS NO MORE IN USE :
@@ -37,16 +38,20 @@ import math.CHexagone;
  */
 class CHexaGrid
 {
-	public var m_CellArray	: Array<Array<CHexaGridCell>>;
+	public var m_CellArray		: Array<Array<CHexaGridCell>>;
 	/*
 	 * The grid size is the number of cell around the center cell.
 	 */
-	public var m_GridRadius	: Int;
+	public var m_GridRadius		: Int;
 	/*
 	 * The cell size is the size of the smaller diagonal,
 	 * i.e the distance between the center of two opposite sides.
 	 */
-	public var m_CellSize	: Float;
+	public var m_CellSize		: Float;
+	
+	private var m_Coordinate	: CV2D;
+	
+	private var m_Ready			: Bool;
 	
 	public function new( _GridRadius : Int, _CellSize: Float )	: Void
 	{
@@ -54,9 +59,11 @@ class CHexaGrid
 			trace( "\t [ -- new CHexaGrid" );
 		#end
 		
-		m_CellSize = _CellSize;
-		m_GridRadius = ( _GridRadius > 1 ) ? _GridRadius 	: 1;
-		
+		m_CellSize		= _CellSize;
+		m_GridRadius	= ( _GridRadius > 1 ) ? _GridRadius 	: 1;
+		m_Coordinate	= new CV2D( Glb.g_System.m_Display.m_Width, Glb.g_System.m_Display.m_Height );
+		CV2D.Scale( m_Coordinate, 0.5, m_Coordinate );
+		m_Ready			= false;
 		#if CHexaGrid
 			trace( "\t new CHexaGrid -- ]" );
 		#end
@@ -77,10 +84,7 @@ class CHexaGrid
 		for (i in (-m_GridRadius) ... (m_GridRadius+1))
 		{
 			m_CellArray[i] = new Array();
-			#if CHexaGrid
-				trace ( "["+ i +"]" );
-			#end
-			
+
 			for (j in -(m_GridRadius) ... m_GridRadius +1)
 			{	
 				if ( DistCell( 0, 0, i, j) <= m_GridRadius )
@@ -98,9 +102,9 @@ class CHexaGrid
 		Fill();
 	}
 	
-	private function AddCell( _x : Int, _y : Int )	: Void	{
+	private function AddCell( _x : Int, _y : Int )	: Void
+	{
 		m_CellArray[_x][_y] = new CHexaGridCell( m_CellSize );
-		trace( "m_CellArray[" + _x + "][" + _y + "] = " + m_CellArray[_x][_y] );
 	}
 	
 	public function Fill()				: Void
@@ -127,31 +131,52 @@ class CHexaGrid
 		}
 	}
 	
+	private function IsReady()	: Bool
+	{
+		if ( m_Ready == true )
+			return true;
+		else
+		{
+			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
+			{
+				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
+				{
+					if ( m_CellArray[i][j] != null )
+					{
+						if ( m_CellArray[i][j].m_Sprite.GetRscImage().GetState() != STREAMED )
+						{
+							return false;
+						}
+					}
+				}
+			}
+			m_Ready = true;
+			return true;
+		}
+	}
+	
 	public function Draw()				: Void
 	{
-		var	l_Pos		: CV2D;
-		var	l_ScrCtr	: CV2D;
-		
-		var l_Cnt_Row	: Int = 0;
-		var l_Cnt_Col	: Int;
-		for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
-		{	
-			l_Cnt_Col	= l_Cnt_Row;
-			for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
-			{
-				trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
-				if ( m_CellArray[i][j] != null )
+		if ( IsReady() )
+		{
+			var	l_CellPos		: CV2D;
+			var	l_ScrCtr	: CV2D;
+			
+			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
+			{	
+				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
 				{
-					m_CellArray[i][j].m_Sprite.SetVisible( true );
-					l_Pos		= new CV2D( i, j );
-					l_ScrCtr	= new CV2D( Glb.g_System.m_Display.m_Width, Glb.g_System.m_Display.m_Height );
-					CV2D.Scale( l_ScrCtr, 0.5, l_ScrCtr );
-					CV2D.Add( l_Pos, l_ScrCtr, l_Pos );
-					m_CellArray[i][j].SetCoordinate( FromHexaToOrtho( l_Pos ) );
+					//trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
+					if ( m_CellArray[i][j] != null )
+					{
+						m_CellArray[i][j].m_Sprite.SetVisible( true );
+						l_CellPos	= new CV2D( i, j );
+						l_CellPos	= FromHexaToOrtho( l_CellPos );
+						CV2D.Add( l_CellPos, m_Coordinate, l_CellPos );
+						m_CellArray[i][j].SetCoordinate( l_CellPos );
+					}
 				}
-				l_Cnt_Col = if ( l_Cnt_Col == 2 ) 0 else l_Cnt_Col + 1 ;
 			}
-			l_Cnt_Row = if ( l_Cnt_Row == 0 ) 2 else l_Cnt_Row - 1 ;
 		}
 	}
 	
