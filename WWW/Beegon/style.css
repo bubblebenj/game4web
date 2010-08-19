@@ -40,13 +40,13 @@ div{
 
 
 #flasharea {
-	width: 800px; /* 640px; /* 512px; /* largeur obligatoire pour être centré */
-	height: 600px; /*480px; /* 384px; */
-	margin: 50px;
-	margin-left:auto;
-	margin-right:auto;
-	padding: 0px;
-	background-color:#00FF99;*/
+	width				: 800px; /* 640px; /* 512px; /* largeur obligatoire pour être centré */
+	height				: 600px; /*480px; /* 384px; */
+	margin				: 50px;
+	margin-left			:auto;
+	margin-right		:auto;
+	padding				: 0px;
+	background-color	:#00FF99;
 }
 
 a{
