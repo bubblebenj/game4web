@@ -6,6 +6,8 @@
  */
 
 import math.CV2D;
+import rsc.CRsc;
+import rsc.CRscMan;
  
 /*
  * 
@@ -16,13 +18,22 @@ import math.CV2D;
  * 
  */
 
-class CMouse
+class CMouse extends CRsc
 {
+	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
+		
 	public var m_Coordinate		: CV2D;
 	public var m_Down			: Bool;
-	
-	public function new()
+	public var m_Out			: Bool; // True if the mouse in outside the game context
+
+	public override function GetType() : Int
 	{
+		return RSC_ID;
+	}
+	
+	public function new() 
+	{
+		super();
 		m_Coordinate	= new CV2D( 0, 0 );
 		Init();
 	}

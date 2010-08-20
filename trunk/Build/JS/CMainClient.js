@@ -347,6 +347,37 @@ math.CV3D.prototype.x = null;
 math.CV3D.prototype.y = null;
 math.CV3D.prototype.z = null;
 math.CV3D.prototype.__class__ = math.CV3D;
+math.CV2D = function(_x,_y) { if( _x === $_ ) return; {
+	this.x = _x;
+	this.y = _y;
+}}
+math.CV2D.__name__ = ["math","CV2D"];
+math.CV2D.Add = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x + _V1.x;
+	_VOut.y = _V0.y + _V1.y;
+}
+math.CV2D.Sub = function(_VOut,_V0,_V1) {
+	_VOut.x = _V0.x - _V1.x;
+	_VOut.y = _V0.y - _V1.y;
+}
+math.CV2D.Scale = function(_VOut,_a,_V) {
+	_VOut.x = _a * _V.x;
+	_VOut.y = _a * _V.y;
+}
+math.CV2D.prototype.Copy = function(_xy) {
+	this.x = _xy.x;
+	this.y = _xy.y;
+}
+math.CV2D.prototype.Set = function(_x,_y) {
+	this.x = _x;
+	this.y = _y;
+}
+math.CV2D.prototype.Trace = function() {
+	return (((("( " + this.x) + " , ") + this.y) + " )");
+}
+math.CV2D.prototype.x = null;
+math.CV2D.prototype.y = null;
+math.CV2D.prototype.__class__ = math.CV2D;
 math.Registers = function() { }
 math.Registers.__name__ = ["math","Registers"];
 math.Registers.prototype.__class__ = math.Registers;
@@ -375,7 +406,7 @@ rsc.CRsc.prototype.GetType = function() {
 	return -1;
 }
 rsc.CRsc.prototype.IsSingleLoaded = function() {
-	return this.m_SingleLoad;
+	return this.m_SingleLoad != false;
 }
 rsc.CRsc.prototype.Release = function() {
 	kernel.CDebug.ASSERT(this.m_Ref >= 0,{ fileName : "CRsc.hx", lineNumber : 81, className : "rsc.CRsc", methodName : "Release"});
@@ -446,7 +477,8 @@ rsc.CRscMan.prototype.Initialize = function() {
 }
 rsc.CRscMan.prototype.Load = function(_Type,_Path,_SingleLoad) {
 	kernel.CDebug.ASSERT(_Path != null,{ fileName : "CRscMan.hx", lineNumber : 74, className : "rsc.CRscMan", methodName : "Load"});
-	if(_SingleLoad != null && _SingleLoad != true && _Path != null) {
+	if(_SingleLoad != true && _Path != null) {
+		kernel.CDebug.CONSOLEMSG("searching resource : " + _Path,{ fileName : "CRscMan.hx", lineNumber : 78, className : "rsc.CRscMan", methodName : "Load"});
 		var l_CandRsc = this.m_Repository.get(_Path);
 		if(l_CandRsc != null && !l_CandRsc.IsSingleLoaded()) {
 			l_CandRsc.AddRef();
@@ -455,7 +487,7 @@ rsc.CRscMan.prototype.Load = function(_Type,_Path,_SingleLoad) {
 	}
 	var l_Builder = this.m_Builders.get(_Type);
 	if(l_Builder == null) {
-		haxe.Log.trace(((("No builder for rsc: " + _Type) + "(") + _Path) + ")",{ fileName : "CRscMan.hx", lineNumber : 89, className : "rsc.CRscMan", methodName : "Load"});
+		haxe.Log.trace(((("No builder for rsc: " + _Type) + "(") + _Path) + ")",{ fileName : "CRscMan.hx", lineNumber : 92, className : "rsc.CRscMan", methodName : "Load"});
 		return null;
 	}
 	else {
@@ -463,7 +495,9 @@ rsc.CRscMan.prototype.Load = function(_Type,_Path,_SingleLoad) {
 		if(l_Rsc != null) {
 			l_Rsc.AddRef();
 			l_Rsc.SetPath(_Path);
-			l_Rsc.SetSingleLoaded(((_SingleLoad == null)?false:_SingleLoad));
+			l_Rsc.SetSingleLoaded(((_SingleLoad != true)?false:_SingleLoad));
+			this.m_Repository.set(_Path,l_Rsc);
+			kernel.CDebug.CONSOLEMSG("Adding resource : " + _Path,{ fileName : "CRscMan.hx", lineNumber : 105, className : "rsc.CRscMan", methodName : "Load"});
 		}
 		return l_Rsc;
 	}
@@ -712,8 +746,11 @@ kernel.CDebug.ASSERT = function(_Obj,pos) {
 		haxe.Log.trace((("Assert in " + pos.className) + "::") + pos.methodName,pos);
 	}
 }
+kernel.CDebug.BREAK = function(_Str,pos) {
+	haxe.Log.trace((((("Break in " + pos.className) + "::") + pos.methodName) + ":") + _Str,pos);
+}
 kernel.CDebug.CONSOLEMSG = function(_Msg,pos) {
-	haxe.Log.trace(_Msg,{ fileName : "CDebug.hx", lineNumber : 15, className : "kernel.CDebug", methodName : "CONSOLEMSG"});
+	haxe.Log.trace(_Msg,{ fileName : "CDebug.hx", lineNumber : 23, className : "kernel.CDebug", methodName : "CONSOLEMSG"});
 }
 kernel.CDebug.prototype.__class__ = kernel.CDebug;
 renderer.MAT_BLEND_MODE = { __ename__ : ["renderer","MAT_BLEND_MODE"], __constructs__ : ["MBM_ADD","MBM_SUB","MBM_BLEND","MBM_OPAQUE"] }
@@ -855,8 +892,11 @@ driver.js.rscbuilders.CRscJSFactory.prototype.Build = function(_Type,_Path) {
 	case renderer.CViewport.RSC_ID:{
 		l_Rsc = new driver.js.renderer.CViewportJS();
 	}break;
+	case kernel.CMouse.RSC_ID:{
+		l_Rsc = new driver.js.kernel.CMouseJS();
+	}break;
 	default:{
-		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 54, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
+		haxe.Log.trace("*_* CRscJSFactory :: Error: target type not found : " + _Type,{ fileName : "CRscJSFactory.hx", lineNumber : 59, className : "driver.js.rscbuilders.CRscJSFactory", methodName : "Build"});
 		l_Rsc = null;
 	}break;
 	}
@@ -967,6 +1007,9 @@ for(var k in kernel.CSystem.prototype ) driver.js.kernel.CSystemJS.prototype[k] 
 driver.js.kernel.CSystemJS.prototype.GetGL = function() {
 	return this.m_GlObject;
 }
+driver.js.kernel.CSystemJS.prototype.GetMouse = function() {
+	return this.m_InputManager.m_Mouse;
+}
 driver.js.kernel.CSystemJS.prototype.Initialize = function() {
 	kernel.CSystem.prototype.Initialize.apply(this,[]);
 	this.m_Renderer = new driver.js.renderer.CRendererJS();
@@ -974,29 +1017,31 @@ driver.js.kernel.CSystemJS.prototype.Initialize = function() {
 	this.InitializeGL();
 	this.m_RscJSFactory = new driver.js.rscbuilders.CRscJSFactory();
 	this.InitializeRscBuilders();
+	this.m_InputManager = new kernel.CInputManager();
 	return kernel.Result.SUCCESS;
 }
 driver.js.kernel.CSystemJS.prototype.InitializeGL = function() {
-	haxe.Log.trace("CSystemJS::Getting GL context",{ fileName : "CSystemJS.hx", lineNumber : 57, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
+	haxe.Log.trace("CSystemJS::Getting GL context",{ fileName : "CSystemJS.hx", lineNumber : 61, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
 	this.m_GlObject = new CGL("FinalRenderTarget");
 	if(this.m_GlObject != null) {
-		haxe.Log.trace("JS object created",{ fileName : "CSystemJS.hx", lineNumber : 61, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
+		haxe.Log.trace("JS object created",{ fileName : "CSystemJS.hx", lineNumber : 65, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
 	}
 	else {
-		haxe.Log.trace("JS object creation failure",{ fileName : "CSystemJS.hx", lineNumber : 65, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
+		haxe.Log.trace("JS object creation failure",{ fileName : "CSystemJS.hx", lineNumber : 69, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
 	}
-	haxe.Log.trace("Hello World !",{ fileName : "CSystemJS.hx", lineNumber : 68, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
-	kernel.CDebug.ASSERT(this.m_Display != null,{ fileName : "CSystemJS.hx", lineNumber : 70, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
+	haxe.Log.trace("Hello World !",{ fileName : "CSystemJS.hx", lineNumber : 72, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
+	kernel.CDebug.ASSERT(this.m_Display != null,{ fileName : "CSystemJS.hx", lineNumber : 74, className : "driver.js.kernel.CSystemJS", methodName : "InitializeGL"});
 	this.m_Display.m_Width = kernel.Glb.g_SystemJS.m_GlObject.GetViewportWidth();
 	this.m_Display.m_Height = kernel.Glb.g_SystemJS.m_GlObject.GetViewportHeight();
 	return kernel.Result.SUCCESS;
 }
 driver.js.kernel.CSystemJS.prototype.InitializeRscBuilders = function() {
-	kernel.CDebug.CONSOLEMSG("Builders created",{ fileName : "CSystemJS.hx", lineNumber : 108, className : "driver.js.kernel.CSystemJS", methodName : "InitializeRscBuilders"});
+	kernel.CDebug.CONSOLEMSG("Builders created",{ fileName : "CSystemJS.hx", lineNumber : 112, className : "driver.js.kernel.CSystemJS", methodName : "InitializeRscBuilders"});
 	this.GetRscMan().AddBuilder(driver.js.rsc.CRscVertexShader.RSC_ID,new driver.js.rscbuilders.CRscBuilderDocElem());
 	this.GetRscMan().AddBuilder(driver.js.rsc.CRscShaderProgram.RSC_ID,new driver.js.rscbuilders.CRscBuilderDocElem());
 	this.GetRscMan().AddBuilder(driver.js.rsc.CRscFragmentShader.RSC_ID,new driver.js.rscbuilders.CRscBuilderDocElem());
 	this.GetRscMan().AddBuilder(renderer.CMaterial.RSC_ID,this.m_RscJSFactory);
+	this.GetRscMan().AddBuilder(kernel.CMouse.RSC_ID,this.m_RscJSFactory);
 	this.GetRscMan().AddBuilder(renderer.CTexture.RSC_ID,this.m_RscJSFactory);
 	this.GetRscMan().AddBuilder(renderer.CViewport.RSC_ID,this.m_RscJSFactory);
 	this.GetRscMan().AddBuilder(renderer.CRenderStates.RSC_ID,this.m_RscJSFactory);
@@ -1011,19 +1056,20 @@ driver.js.kernel.CSystemJS.prototype.Inspect = function() {
 			while(_g < l_Exts.length) {
 				var l_Ext = l_Exts[_g];
 				++_g;
-				haxe.Log.trace("Found Ext : " + l_Ext,{ fileName : "CSystemJS.hx", lineNumber : 89, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
+				haxe.Log.trace("Found Ext : " + l_Ext,{ fileName : "CSystemJS.hx", lineNumber : 93, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
 			}
 		}
 		if(l_Exts.length == 0) {
-			haxe.Log.trace("CSystemJS : found no exts! ",{ fileName : "CSystemJS.hx", lineNumber : 94, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
+			haxe.Log.trace("CSystemJS : found no exts! ",{ fileName : "CSystemJS.hx", lineNumber : 98, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
 		}
 	}
 	else {
-		haxe.Log.trace("CSystemJS : no exts! ",{ fileName : "CSystemJS.hx", lineNumber : 99, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
+		haxe.Log.trace("CSystemJS : no exts! ",{ fileName : "CSystemJS.hx", lineNumber : 103, className : "driver.js.kernel.CSystemJS", methodName : "Inspect"});
 	}
 	return kernel.Result.SUCCESS;
 }
 driver.js.kernel.CSystemJS.prototype.m_GlObject = null;
+driver.js.kernel.CSystemJS.prototype.m_InputManager = null;
 driver.js.kernel.CSystemJS.prototype.m_RscJSFactory = null;
 driver.js.kernel.CSystemJS.prototype.__class__ = driver.js.kernel.CSystemJS;
 renderer.CRscShader = function(p) { if( p === $_ ) return; {
@@ -1051,6 +1097,13 @@ renderer.CRscShader.prototype.Link = function() {
 }
 renderer.CRscShader.prototype.m_Status = null;
 renderer.CRscShader.prototype.__class__ = renderer.CRscShader;
+kernel.CInputManager = function(p) { if( p === $_ ) return; {
+	var l_RscMan = kernel.Glb.g_System.GetRscMan();
+	this.m_Mouse = l_RscMan.Load(kernel.CMouse.RSC_ID,"mouse");
+}}
+kernel.CInputManager.__name__ = ["kernel","CInputManager"];
+kernel.CInputManager.prototype.m_Mouse = null;
+kernel.CInputManager.prototype.__class__ = kernel.CInputManager;
 kernel.Glb = function() { }
 kernel.Glb.__name__ = ["kernel","Glb"];
 kernel.Glb.GetRenderer = function() {
@@ -1064,15 +1117,22 @@ kernel.Glb.StaticUpdate = function() {
 }
 kernel.Glb.prototype.__class__ = kernel.Glb;
 kernel.CMouse = function(p) { if( p === $_ ) return; {
+	rsc.CRsc.apply(this,[]);
 	this.m_Coordinate = new math.CV2D(0,0);
 	this.Init();
 }}
 kernel.CMouse.__name__ = ["kernel","CMouse"];
+kernel.CMouse.__super__ = rsc.CRsc;
+for(var k in rsc.CRsc.prototype ) kernel.CMouse.prototype[k] = rsc.CRsc.prototype[k];
+kernel.CMouse.prototype.GetType = function() {
+	return kernel.CMouse.RSC_ID;
+}
 kernel.CMouse.prototype.Init = function() {
 	this.m_Coordinate.Set(-1.,-1.);
 }
 kernel.CMouse.prototype.m_Coordinate = null;
 kernel.CMouse.prototype.m_Down = null;
+kernel.CMouse.prototype.m_Out = null;
 kernel.CMouse.prototype.__class__ = kernel.CMouse;
 renderer.Z_EQUATION = { __ename__ : ["renderer","Z_EQUATION"], __constructs__ : ["Z_LESSER","Z_LESSER_EQ","Z_GREATER","Z_GREATER_EQ"] }
 renderer.Z_EQUATION.Z_GREATER = ["Z_GREATER",2];
@@ -1550,9 +1610,12 @@ IntHash.prototype.__class__ = IntHash;
 driver.js.kernel.CMouseJS = function(p) { if( p === $_ ) return; {
 	kernel.CMouse.apply(this,[]);
 	this.m_Context = js.Lib.document.getElementById("FinalRenderTarget");
+	this.m_Out = true;
 	this.m_Context.onmousedown = $closure(this,"Down");
 	this.m_Context.onmousedown = $closure(this,"Up");
 	this.m_Context.onmousemove = $closure(this,"Move");
+	this.m_Context.onmouseout = $closure(this,"Out");
+	this.m_Context.onmouseover = $closure(this,"In");
 }}
 driver.js.kernel.CMouseJS.__name__ = ["driver","js","kernel","CMouseJS"];
 driver.js.kernel.CMouseJS.__super__ = kernel.CMouse;
@@ -1560,8 +1623,14 @@ for(var k in kernel.CMouse.prototype ) driver.js.kernel.CMouseJS.prototype[k] = 
 driver.js.kernel.CMouseJS.prototype.Down = function(_Event) {
 	this.m_Down = true;
 }
+driver.js.kernel.CMouseJS.prototype.In = function(_Event) {
+	this.m_Out = false;
+}
 driver.js.kernel.CMouseJS.prototype.Move = function(_Event) {
-	this.m_Coordinate.Set((_Event.clientX - this.m_Context.offsetLeft),(_Event.clientY - this.m_Context.offsetTop));
+	this.m_Coordinate.Set(_Event.clientX - this.m_Context.offsetLeft,_Event.clientY - this.m_Context.offsetTop);
+}
+driver.js.kernel.CMouseJS.prototype.Out = function(_Event) {
+	this.m_Out = true;
 }
 driver.js.kernel.CMouseJS.prototype.Up = function(_Event) {
 	this.m_Down = false;
@@ -1944,34 +2013,6 @@ driver.js.renderer.CViewportJS.prototype.Activate = function() {
 	return kernel.Result.SUCCESS;
 }
 driver.js.renderer.CViewportJS.prototype.__class__ = driver.js.renderer.CViewportJS;
-math.CV2D = function(_x,_y) { if( _x === $_ ) return; {
-	this.x = _x;
-	this.y = _y;
-}}
-math.CV2D.__name__ = ["math","CV2D"];
-math.CV2D.Add = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x + _V1.x;
-	_VOut.y = _V0.y + _V1.y;
-}
-math.CV2D.Sub = function(_VOut,_V0,_V1) {
-	_VOut.x = _V0.x - _V1.x;
-	_VOut.y = _V0.y - _V1.y;
-}
-math.CV2D.Scale = function(_VOut,_a,_V) {
-	_VOut.x = _a * _V.x;
-	_VOut.y = _a * _V.y;
-}
-math.CV2D.prototype.Copy = function(_xy) {
-	this.x = _xy.x;
-	this.y = _xy.y;
-}
-math.CV2D.prototype.Set = function(_x,_y) {
-	this.x = _x;
-	this.y = _y;
-}
-math.CV2D.prototype.x = null;
-math.CV2D.prototype.y = null;
-math.CV2D.prototype.__class__ = math.CV2D;
 renderer.CRenderer = function(p) { if( p === $_ ) return; {
 	this.m_Vps = new Array();
 	{
@@ -2026,6 +2067,7 @@ renderer.CRenderer.prototype.BeginScene = function() {
 	return kernel.Result.SUCCESS;
 }
 renderer.CRenderer.prototype.BuildViewport = function() {
+	kernel.CDebug.BREAK("Implement me",{ fileName : "CRenderer.hx", lineNumber : 60, className : "renderer.CRenderer", methodName : "BuildViewport"});
 	return null;
 }
 renderer.CRenderer.prototype.EndScene = function() {
@@ -2402,8 +2444,8 @@ CMainClient.m_Quad = null;
 CMainClient.m_Mouse = null;
 CMainClient.m_Cpt = null;
 CMainClient.InitGameJS = function() {
-	CMainClient.m_Mouse = new driver.js.kernel.CMouseJS();
-	CMainClient.m_Cpt = 5;
+	CMainClient.m_Mouse = kernel.Glb.g_System.GetMouse();
+	CMainClient.m_Cpt = 15;
 	var l_OrthoCam = (function($this) {
 		var $r;
 		var tmp = kernel.Glb.g_System.m_Renderer.m_Cameras[renderer.CRenderer.CAM_ORTHO_0];
@@ -2433,8 +2475,8 @@ CMainClient.InitGame = function() {
 	CMainClient.InitGameJS();
 }
 CMainClient.UpdateGame = function() {
-	if(CMainClient.m_Cpt > 5) {
-		haxe.Log.trace(((("[ " + CMainClient.m_Mouse.m_Coordinate.x) + " ][ ") + CMainClient.m_Mouse.m_Coordinate.y) + " ]",{ fileName : "CMainClient.hx", lineNumber : 84, className : "CMainClient", methodName : "UpdateGame"});
+	if(CMainClient.m_Cpt > 15) {
+		haxe.Log.trace((CMainClient.m_Mouse.m_Coordinate.Trace() + " ") + (((CMainClient.m_Mouse.m_Out)?" Out !":" In ")),{ fileName : "CMainClient.hx", lineNumber : 84, className : "CMainClient", methodName : "UpdateGame"});
 		CMainClient.m_Cpt = 0;
 	}
 	else CMainClient.m_Cpt++;
@@ -2928,6 +2970,9 @@ js.Boot.__init();
 math.CV3D.ZERO = new math.CV3D(0,0,0);
 math.CV3D.ONE = new math.CV3D(1,1,1);
 math.CV3D.HALF = new math.CV3D(0.5,0.5,0.5);
+math.CV2D.ZERO = new math.CV2D(0,0);
+math.CV2D.ONE = new math.CV2D(1,1);
+math.CV2D.HALF = new math.CV2D(0.5,0.5);
 math.Registers.V0 = new math.CV3D(0,0,0);
 math.Registers.V1 = new math.CV3D(0,0,0);
 math.Registers.V2 = new math.CV3D(0,0,0);
@@ -2940,6 +2985,10 @@ math.Registers.V8 = new math.CV3D(0,0,0);
 math.Registers.V9 = new math.CV3D(0,0,0);
 math.Registers.V10 = new math.CV3D(0,0,0);
 math.Registers.V11 = new math.CV3D(0,0,0);
+math.Registers.V2_8 = new math.CV2D(0,0);
+math.Registers.V2_9 = new math.CV2D(0,0);
+math.Registers.V2_0 = new math.CV2D(0,0);
+math.Registers.V2_1 = new math.CV2D(0,0);
 math.Registers.M0 = new math.CMatrix44();
 math.Registers.M1 = new math.CMatrix44();
 math.Registers.M2 = new math.CMatrix44();
@@ -2966,6 +3015,7 @@ renderer.CRscShader.SHADER_STATUS_LINKED = 2;
 renderer.CRscShader.SHADER_STATUS_READY = 3;
 kernel.Glb.g_SystemJS = new driver.js.kernel.CSystemJS();
 kernel.Glb.g_System = kernel.Glb.g_SystemJS;
+kernel.CMouse.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 renderer.CRenderStates.RSC_ID = rsc.CRscMan.RSC_COUNT++;
 haxe.Timer.arr = new Array();
 driver.js.rsc.CRscShaderProgram.RSC_ID = rsc.CRscMan.RSC_COUNT++;
@@ -2982,9 +3032,6 @@ driver.js.rsc.CRscShaderProgram.ATTR_NAME_COLOR = "_Color";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_VERTEX = "_Vertex";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_NORMAL = "_Normal";
 driver.js.rsc.CRscShaderProgram.ATTR_NAME_TEXCOORD = "_TexCoord";
-math.CV2D.ZERO = new math.CV2D(0,0);
-math.CV2D.ONE = new math.CV2D(1,1);
-math.CV2D.HALF = new math.CV2D(0.5,0.5);
 renderer.CRenderer.CAM_PERSPECTIVE_0 = 0;
 renderer.CRenderer.CAM_ORTHO_0 = 1;
 renderer.CRenderer.CAM_COUNT = 2;
