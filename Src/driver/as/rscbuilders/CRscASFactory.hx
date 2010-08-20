@@ -5,9 +5,12 @@
 
 package driver.as.rscbuilders;
 
+import driver.as.kernel.CMouseAS;
 import driver.as.rsc.CRscImageAS;
+
 import kernel.CTypes;
 import kernel.CDebug;
+import kernel.CMouse;
 
 import rsc.CRscBuilder;
 import rsc.CRsc;
@@ -29,6 +32,9 @@ class CRscASFactory extends CRscBuilder
 		{
 			case CRscImage.RSC_ID:
 			l_Rsc =	new CRscImageAS();
+			
+			case CMouse.RSC_ID:
+			l_Rsc =	new CMouseAS();
 			
 			//CDebug.CONSOLEMSG("CRscASFactory:Initialize : " + _Path);
 			

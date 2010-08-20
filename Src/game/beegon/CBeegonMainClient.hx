@@ -5,6 +5,7 @@
  */
 
 import driver.as.renderer.C2DImageAS;
+import kernel.CMouse;
 
 import game.beegon.CAvatar;
 import game.beegon.CHexaGrid;
@@ -54,7 +55,7 @@ class CBeegonMainClient
 		
 		// /!\ TEMP
 		#if DebugInfo
-		m_Cpt = 250;
+		m_Cpt = 125;
 		#end
     }
 	
@@ -81,7 +82,7 @@ class CBeegonMainClient
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
 		
-		g_Grid 		= new CHexaGrid( 8, 40 );
+		g_Grid 		= new CHexaGrid( 6, 40 );
 		g_Grid.InitCellArray();
 		
 		#if flash10
@@ -109,19 +110,19 @@ class CBeegonMainClient
 		CV2D.Scale( l_V2D, 0.5, l_V2D );
 		g_Avatar.SetSize( l_V2D );
 		
-		var l_Mouse	: CV2D = Glb.g_System.m_Mouse.m_Coordinate;
+		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
 		g_Grid.Update();
 		
 		#if DebugInfo
 			/* Mouse
 			 **********/
-			if (m_Cpt > 250)
+			if (m_Cpt > 125)
 			{
 				//trace( "g_Avatar.SetCoordinate( l_V2D );");
 				g_Avatar.SetCoordinate( l_V2D );
-				trace ( "[ " + l_Mouse.x + " ][ " + l_Mouse.y + " ]" ); 	m_Cpt = 0; 
-				g_Grid.Draw();
+				trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
+				//g_Grid.Draw();
 			}
 			else	m_Cpt++;
 		#end

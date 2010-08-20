@@ -6,8 +6,10 @@ package driver.as.kernel;
  */
 
 import kernel.CDebug;
+import kernel.CInputManager;
 import kernel.CSystem;
 import kernel.CTypes;
+import kernel.CMouse;
 
 import rsc.CRscImage;
 
@@ -16,13 +18,13 @@ import driver.as.rscbuilders.CRscASFactory;
 
 class CSystemAS extends CSystem
 {
-	public	var m_Mouse			: CMouseAS; // <-- Normalement dans input manager lui même dans kernel.CSystem
 	private	var m_RscASFactory	: CRscASFactory;
+	private var m_InputManager	: CInputManager;
 	
 	public function new()
 	{
 		super();
-		m_Mouse = new CMouseAS();
+		//m_Mouse = new CMouseAS();
 	}
 	
 	public override function Initialize() : Result
@@ -30,11 +32,12 @@ class CSystemAS extends CSystem
 		super.Initialize();
 		
 		m_Renderer	= new CRendererAS();
-		
 		m_Renderer.Initialize();
 		
 		m_RscASFactory = new CRscASFactory();
 		InitializeRscBuilders();
+		
+		m_InputManager	= new CInputManager();
 		
 		CDebug.ASSERT(m_Display != null );
 		
@@ -51,8 +54,14 @@ class CSystemAS extends CSystem
 	public function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
-		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	new CRscASFactory() );
+		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
+		GetRscMan().AddBuilder( CMouse.RSC_ID, 		m_RscASFactory );//new CRscASFactory() );
 		
 		return SUCCESS;
+	}
+	
+	public function GetMouse()	: CMouse
+	{
+		return m_InputManager.m_Mouse;
 	}
 }

@@ -4,6 +4,7 @@
 import kernel.CSystem;
 import kernel.Glb;
 import kernel.CTypes;
+import kernel.CMouse;								// <--
 
 import math.CV2D;
 import math.CV3D;
@@ -17,7 +18,6 @@ import renderer.camera.COrthoCamera;
 
 #if js
 	import driver.js.renderer.CGlQuad;
-	import driver.js.kernel.CMouseJS; 				// <--
 	import CGL;
 #end
 
@@ -29,9 +29,9 @@ enum STAGE
 
 class CMainClient
 {
-	static var m_Stage : STAGE;
-	static var m_Quad : C2DQuad;
-	static var m_Mouse	: CMouseJS; 				// <--
+	static var m_Stage	: STAGE;
+	static var m_Quad	: C2DQuad;
+	static var m_Mouse	: CMouse; 					// <--
 	static var m_Cpt	: Int;						// <--
 	
 	#if js
@@ -39,8 +39,8 @@ class CMainClient
 	{
 		//var l_Ab : ArrayBuffer = new ArrayBuffer( [0,1] );
 		
-		m_Mouse		= new CMouseJS();				// <--
-		m_Cpt		= 5;							// <--
+		m_Mouse		= Glb.g_System.GetMouse();		// <--
+		m_Cpt		= 15;							// <--
 		
 		var l_OrthoCam : COrthoCamera = cast(Glb.g_System.GetRenderer().GetCamera( CRenderer.CAM_ORTHO_0 ), COrthoCamera);
 		var l_CamPos : CV3D = new CV3D(0, 0, -1);
@@ -79,9 +79,9 @@ class CMainClient
 	
 	public static function UpdateGame()
 	{
-		if (m_Cpt > 5)								// <--
+		if (m_Cpt > 15)								// <--
 		{											// <--
-			trace ( "[ " + m_Mouse.m_Coordinate.x + " ][ " + m_Mouse.m_Coordinate.y + " ]" ); // <--
+			trace ( m_Mouse.m_Coordinate.Trace() + " " + (( m_Mouse.m_Out ) ? " Out !" : " In " )); // <--
 			m_Cpt = 0; 								// <--
 		}											// <--
 		else	m_Cpt++;							// <--

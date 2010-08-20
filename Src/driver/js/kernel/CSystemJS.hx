@@ -7,12 +7,14 @@ import driver.js.rsc.CRscVertexShader;
 import driver.js.rscbuilders.CRscBuilderDocElem;
 import driver.js.kernel.CTypesJS;
 import driver.js.rscbuilders.CRscJSFactory;
+import kernel.CInputManager;
 
 import kernel.CSystem;
 import kernel.CTypes;
 import kernel.CDisplay;
 import kernel.CDebug;
 import kernel.Glb;
+import kernel.CMouse;
 
 import renderer.CMaterial;
 import renderer.CTexture;
@@ -48,6 +50,8 @@ class CSystemJS extends CSystem
 		
 		m_RscJSFactory = new CRscJSFactory();
 		InitializeRscBuilders();
+		
+		m_InputManager	= new CInputManager();
 		
 		return SUCCESS;
 	}
@@ -111,6 +115,7 @@ class CSystemJS extends CSystem
 		GetRscMan().AddBuilder( CRscPixelShader.RSC_ID,	 	new CRscBuilderDocElem() );
 		
 		GetRscMan().AddBuilder( CMaterial.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CMouse.RSC_ID, 			m_RscJSFactory );
 		GetRscMan().AddBuilder( CTexture.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CViewport.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CRenderStates.RSC_ID, 	m_RscJSFactory );
@@ -119,5 +124,11 @@ class CSystemJS extends CSystem
 		return SUCCESS;
 	}
 	
-	var m_RscJSFactory : CRscJSFactory;
+	public function GetMouse()	: CMouse
+	{
+		return m_InputManager.m_Mouse;
+	}
+	
+	var 		m_RscJSFactory 	: CRscJSFactory;
+	private var m_InputManager	: CInputManager;
 }
