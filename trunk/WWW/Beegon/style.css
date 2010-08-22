@@ -49,6 +49,33 @@ div{
 	background-color	:#00FF99;
 }
 
+.grid	{
+	position			: absolute;
+	width				: 25%;
+	height				: 25%;
+	border-style		: none;
+}
+
+#Pos-1-1	{	left	:	 0%;	top	:	 0%;	background-color	: 	#696969;	}
+#Pos-1-2	{	left	:	 0%;	top	:	25%;	background-color	: 	#E38E5B;	}
+#Pos-1-3	{	left	:	 0%;	top	:	50%;	background-color	:	#696969;	}
+#Pos-1-4	{	left	:	 0%;	top	:	75%;	background-color	:	#E38E5B;	}
+
+#Pos-2-1	{	left	:	25%;	top	:	 0%;	background-color	:	#E38E5B;	}
+#Pos-2-2	{	left	:	25%;	top	:	25%;	background-color	:	#696969;	}
+#Pos-2-3	{	left	:	25%;	top	:	50%;	background-color	:	#E38E5B;	}
+#Pos-2-4	{	left	:	25%;	top	:	75%;	background-color	:	#696969;	}
+
+#Pos-3-1	{	left	:	50%;	top	:	 0%;	background-color	:	#696969;	}
+#Pos-3-2	{	left	:	50%;	top	:	25%;	background-color	:	#E38E5B;	}
+#Pos-3-3	{	left	:	50%;	top	:	50%;	background-color	:	#696969;	}
+#Pos-3-4	{	left	:	50%;	top	:	75%;	background-color	:	#E38E5B;	}
+
+#Pos-4-1	{	left	:	75%;	top	:	 0%;	background-color	:	#E38E5B;	}
+#Pos-4-2	{	left	:	75%;	top	:	25%;	background-color	:	#696969;	}
+#Pos-4-3	{	left	:	75%;	top	:	50%;	background-color	:	#E38E5B;	}
+#Pos-4-4	{	left	:	75%;	top	:	75%;	background-color	:	#696969;	}
+
 a{
 	color:#756FC4;
 	text-decoration:none;

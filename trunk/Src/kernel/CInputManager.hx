@@ -5,12 +5,14 @@
 
 package kernel;
 
+import kernel.CMouse;
+import math.CV2D;
 import rsc.CRsc;
 import rsc.CRscMan;
 
 class CInputManager 
 {
-	public var  m_Mouse	: CMouse;
+	public	var	m_Mouse					: CMouse;
 	
 	public function new() 
 	{

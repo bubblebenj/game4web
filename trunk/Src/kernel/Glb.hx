@@ -21,8 +21,12 @@ class Glb
 		public static var g_System : CSystem = new CSystem();
 	#end
 	
-	public static inline function GetRenderer() : CRenderer		{
+	public static inline function GetRenderer() 	: CRenderer		{
 		return g_System.GetRenderer();
+	}
+	
+	public static inline function GetInputManager() : CInputManager	{
+		return g_System.GetInputManager();
 	}
 
 	#if flash10
@@ -31,12 +35,12 @@ class Glb
 		}
 	#end
 	
-	public static inline function GetSystem() : CSystem
+	public static inline function GetSystem() 		: CSystem
 	{
 		return g_System;
 	}
 	
-	public static function StaticUpdate()
+	public static function StaticUpdate()	: Void
 	{
 		g_System.Update();
 	}

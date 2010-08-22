@@ -51,6 +51,8 @@ class CSystem
 		m_RscMan = null;
 		m_Renderer = null;
 		
+		m_InputManager	= null;
+		
 		m_Display = new CDisplay();
 	}
 	
@@ -147,6 +149,16 @@ class CSystem
 		return m_Renderer;
 	}
 	
+	public inline function GetInputManager() : CInputManager
+	{
+		return m_InputManager;
+	}
+	
+	public inline function GetMouse() : CMouse
+	{
+		return GetInputManager().m_Mouse;
+	}
+	
 	public var m_BeforeDraw		: Void -> Result;
 	public var m_AfterDraw		: Void -> Result;
 	
@@ -171,6 +183,8 @@ class CSystem
 	
 			var m_RscMan	: CRscMan;
 			var m_Renderer	: CRenderer;
+			
+			var m_InputManager	: CInputManager;
 	
 	public 	var m_Display:  CDisplay;
 }

@@ -19,7 +19,6 @@ import driver.as.rscbuilders.CRscASFactory;
 class CSystemAS extends CSystem
 {
 	private	var m_RscASFactory	: CRscASFactory;
-	private var m_InputManager	: CInputManager;
 	
 	public function new()
 	{
@@ -58,10 +57,5 @@ class CSystemAS extends CSystem
 		GetRscMan().AddBuilder( CMouse.RSC_ID, 		m_RscASFactory );//new CRscASFactory() );
 		
 		return SUCCESS;
-	}
-	
-	public function GetMouse()	: CMouse
-	{
-		return m_InputManager.m_Mouse;
 	}
 }

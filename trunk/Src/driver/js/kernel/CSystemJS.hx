@@ -124,11 +124,5 @@ class CSystemJS extends CSystem
 		return SUCCESS;
 	}
 	
-	public function GetMouse()	: CMouse
-	{
-		return m_InputManager.m_Mouse;
-	}
-	
 	var 		m_RscJSFactory 	: CRscJSFactory;
-	private var m_InputManager	: CInputManager;
 }

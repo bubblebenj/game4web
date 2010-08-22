@@ -176,7 +176,7 @@ class CHexaGrid
 						l_Register.Set(i, j );
 						l_CellPos	= FromHexaToOrtho( l_Register );
 						CV2D.Add( l_CellPos, m_Coordinate, l_CellPos );
-						m_CellArray[i][j].SetCoordinate( l_CellPos );
+						m_CellArray[i][j].SetPosition( l_CellPos );
 					}
 				}
 			}

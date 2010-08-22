@@ -101,7 +101,6 @@ class C2DImageAS extends C2DImage
 		return m_Bmp != null;
 	}
 	
-	// We suppose that the 2DQuad is already centered
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );

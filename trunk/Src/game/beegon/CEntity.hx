@@ -45,7 +45,8 @@ class CEntity
 	// Bounding box size
 	public	var m_Size				: CV2D;
 	
-	public  var m_Coordinate				: CV2D;
+	public  var m_Coordinate		: CV2D;
+	public	var m_Rotation			: Float;
 	
 	//private var m_State				: EENTITY_STATE;
 	//private var m_StateAvailable	: CBitField;
@@ -101,10 +102,18 @@ class CEntity
 		}
 		
 		// Move the entity to a specified position
-		public function SetCoordinate( _Pos : CV2D ) : Void
+		public function SetPosition( _Pos : CV2D ) : Void
 		{
 			m_Coordinate.Copy( _Pos );
-			m_Sprite.SetPosition( _Pos );
+			/* Entities are handled by the center whereas 
+			 * "real images" are handled by the top left corner */
+			
+			var l_ImagePos	= new CV2D( 0, 0 );
+			l_ImagePos.Set( m_Size.x * 0.5, m_Size.y * 0.5 );		// Compute the half size
+			
+			CV2D.Sub( l_ImagePos, m_Coordinate, l_ImagePos );		// Change coordinates centered
+			
+			m_Sprite.SetPosition( l_ImagePos );
 		}
 		
 		public function GetSize()	: CV2D
@@ -115,6 +124,10 @@ class CEntity
 		public function SetSize( _Size : CV2D ) : Void
 		{
 			m_Size.Copy( _Size );
+			/* Entities are handled by the center whereas 
+			 * "real images" are handled by the top left corner
+			 * Thus Coordinates need to be adjusted after resizing */
 			m_Sprite.SetSize( _Size );
+			SetPosition( m_Coordinate );
 		}
 }
