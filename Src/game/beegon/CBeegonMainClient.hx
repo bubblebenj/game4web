@@ -4,11 +4,11 @@
  * 
  */
 
-import driver.as.renderer.C2DImageAS;
 import kernel.CMouse;
 
 import game.beegon.CAvatar;
 import game.beegon.CHexaGrid;
+import game.beegon.CGameInputManager;
 
 import rsc.CRsc;
 import kernel.CTypes;
@@ -29,9 +29,9 @@ class CBeegonMainClient
 	// /!\ TEMP
 	#if DebugInfo
 	static var m_Cpt						: Int;
-	static var g_ImageTest					: C2DImageAS;
 	static var g_Avatar						: CAvatar;
 	static var g_Grid						: CHexaGrid;
+	static var m_InputManager				: CGameInputManager;
 	#end
 	
 	public static function main()	: Void
@@ -76,14 +76,14 @@ class CBeegonMainClient
 	{
 		trace ( " Initialising game .. " );
 		
-		g_ImageTest	= new C2DImageAS();
-		g_ImageTest.Load( "./Data/vertical_hexcell1.png" );
+		g_Grid 		= new CHexaGrid( 11, 36 );
+		g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
+		g_Avatar.SetSpeed( m_WorldUnit * 0.7 );
 		
-		g_Grid 		= new CHexaGrid( 6, 40 );
-		g_Grid.InitCellArray();
+		m_InputManager = new CGameInputManager( g_Avatar );
 		
 		#if flash10
 			InitGameAS();
@@ -102,17 +102,16 @@ class CBeegonMainClient
 	public static function UpdateGame()
 	{
 		//trace( "Update");
-		var l_V2D : CV2D = new CV2D( 40, 40 );
-		//g_ImageTest.SetSize( l_V2D );
-		//g_ImageTest.MoveTo( l_V2D );
-		//
-		CV2D.Scale( l_V2D, 4, l_V2D );
-		CV2D.Scale( l_V2D, 0.5, l_V2D );
-		g_Avatar.SetSize( l_V2D );
+		var l_V2D_Size	: CV2D = new CV2D( 80, 80 );
+		g_Avatar.SetSize( l_V2D_Size );
 		
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
 		g_Grid.Update();
+		
+		m_InputManager.Update();
+		
+		g_Avatar.Update();
 		
 		#if DebugInfo
 			/* Mouse
@@ -120,9 +119,7 @@ class CBeegonMainClient
 			if (m_Cpt > 125)
 			{
 				//trace( "g_Avatar.SetCoordinate( l_V2D );");
-				g_Avatar.SetCoordinate( l_V2D );
 				trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
-				//g_Grid.Draw();
 			}
 			else	m_Cpt++;
 		#end
