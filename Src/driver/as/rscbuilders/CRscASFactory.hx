@@ -7,6 +7,7 @@ package driver.as.rscbuilders;
 
 import driver.as.kernel.CMouseAS;
 import driver.as.rsc.CRscImageAS;
+import driver.as.rsc.CRscTextAS;
 
 import kernel.CTypes;
 import kernel.CDebug;
@@ -15,6 +16,7 @@ import kernel.CMouse;
 import rsc.CRscBuilder;
 import rsc.CRsc;
 import rsc.CRscImage;
+import rsc.CRscText;
 
 class CRscASFactory extends CRscBuilder 
 {
@@ -32,6 +34,9 @@ class CRscASFactory extends CRscBuilder
 		{
 			case CRscImage.RSC_ID:
 			l_Rsc =	new CRscImageAS();
+			
+			case CRscText.RSC_ID:
+			l_Rsc =	new CRscTextAS();
 			
 			case CMouse.RSC_ID:
 			l_Rsc =	new CMouseAS();

@@ -4,6 +4,7 @@
  * 
  */
 
+import driver.as.renderer.CTextFieldAS;
 import kernel.CMouse;
 
 import game.beegon.CAvatar;
@@ -28,10 +29,11 @@ class CBeegonMainClient
 
 	// /!\ TEMP
 	#if DebugInfo
-	static var m_Cpt						: Int;
-	static var g_Avatar						: CAvatar;
-	static var g_Grid						: CHexaGrid;
-	static var m_InputManager				: CGameInputManager;
+		static var m_Cpt						: Int;
+		static var g_Avatar						: CAvatar;
+		static var g_Grid						: CHexaGrid;
+		static var m_InputManager				: CGameInputManager;
+		static var m_TestText					: CTextFieldAS;
 	#end
 	
 	public static function main()	: Void
@@ -76,7 +78,7 @@ class CBeegonMainClient
 	{
 		trace ( " Initialising game .. " );
 		
-		g_Grid 		= new CHexaGrid( 11, 36 );
+		g_Grid 		= new CHexaGrid( 7, 36 );
 		g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
@@ -84,6 +86,9 @@ class CBeegonMainClient
 		g_Avatar.SetSpeed( m_WorldUnit * 0.7 );
 		
 		m_InputManager = new CGameInputManager( g_Avatar );
+		
+		m_TestText = new CTextFieldAS();
+		m_TestText.Load( "test" );
 		
 		#if flash10
 			InitGameAS();
@@ -102,9 +107,10 @@ class CBeegonMainClient
 	public static function UpdateGame()
 	{
 		//trace( "Update");
-		var l_V2D_Size	: CV2D = new CV2D( 80, 80 );
-		g_Avatar.SetSize( l_V2D_Size );
+		var l_V2D_Size	: CV2D = new CV2D( 600, 30 );
+		m_TestText.SetPosition( l_V2D_Size );
 		
+		m_TestText.Update();
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
 		g_Grid.Update();

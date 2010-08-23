@@ -23,15 +23,12 @@ import rsc.CRscImage;
 
 class C2DImageAS extends C2DImage
 {
-	private var m_RscImage : CRscImageAS;
-	private var m_Bmp		: Bitmap;
-	
 	public function new()
 	{
 		super();
 		
-		m_Bmp =  null;
-		//m_RscImage	= null;
+		m_Bmp		=  null;
+		m_RscImage	= null;
 	}
 	
 	public function Load( _Path )	: Result
@@ -44,7 +41,6 @@ class C2DImageAS extends C2DImage
 		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;
 	}
-
 	
 	public override function Activate() : Result
 	{
@@ -115,4 +111,7 @@ class C2DImageAS extends C2DImage
 			m_Bmp.y = m_Rect.m_TL.y;
 		}
 	}
+	
+	private var m_Bmp		: Bitmap;		// container
+	private var m_RscImage	: CRscImageAS;	// content
 }
