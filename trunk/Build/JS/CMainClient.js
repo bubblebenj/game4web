@@ -915,6 +915,7 @@ kernel.CSystem = function(p) { if( p === $_ ) return; {
 	this.m_AfterUpdate = null;
 	this.m_RscMan = null;
 	this.m_Renderer = null;
+	this.m_InputManager = null;
 	this.m_Display = new kernel.CDisplay();
 }}
 kernel.CSystem.__name__ = ["kernel","CSystem"];
@@ -932,6 +933,12 @@ kernel.CSystem.prototype.GetGameDeltaTime = function() {
 }
 kernel.CSystem.prototype.GetGameTime = function() {
 	return this.m_GameTime;
+}
+kernel.CSystem.prototype.GetInputManager = function() {
+	return this.m_InputManager;
+}
+kernel.CSystem.prototype.GetMouse = function() {
+	return this.m_InputManager.m_Mouse;
 }
 kernel.CSystem.prototype.GetRenderer = function() {
 	return this.m_Renderer;
@@ -990,6 +997,7 @@ kernel.CSystem.prototype.m_FrameDeltaTime = null;
 kernel.CSystem.prototype.m_FrameTime = null;
 kernel.CSystem.prototype.m_GameDeltaTime = null;
 kernel.CSystem.prototype.m_GameTime = null;
+kernel.CSystem.prototype.m_InputManager = null;
 kernel.CSystem.prototype.m_IsPaused = null;
 kernel.CSystem.prototype.m_Renderer = null;
 kernel.CSystem.prototype.m_RscMan = null;
@@ -1006,9 +1014,6 @@ driver.js.kernel.CSystemJS.__super__ = kernel.CSystem;
 for(var k in kernel.CSystem.prototype ) driver.js.kernel.CSystemJS.prototype[k] = kernel.CSystem.prototype[k];
 driver.js.kernel.CSystemJS.prototype.GetGL = function() {
 	return this.m_GlObject;
-}
-driver.js.kernel.CSystemJS.prototype.GetMouse = function() {
-	return this.m_InputManager.m_Mouse;
 }
 driver.js.kernel.CSystemJS.prototype.Initialize = function() {
 	kernel.CSystem.prototype.Initialize.apply(this,[]);
@@ -1069,7 +1074,6 @@ driver.js.kernel.CSystemJS.prototype.Inspect = function() {
 	return kernel.Result.SUCCESS;
 }
 driver.js.kernel.CSystemJS.prototype.m_GlObject = null;
-driver.js.kernel.CSystemJS.prototype.m_InputManager = null;
 driver.js.kernel.CSystemJS.prototype.m_RscJSFactory = null;
 driver.js.kernel.CSystemJS.prototype.__class__ = driver.js.kernel.CSystemJS;
 renderer.CRscShader = function(p) { if( p === $_ ) return; {
@@ -1108,6 +1112,9 @@ kernel.Glb = function() { }
 kernel.Glb.__name__ = ["kernel","Glb"];
 kernel.Glb.GetRenderer = function() {
 	return kernel.Glb.g_System.m_Renderer;
+}
+kernel.Glb.GetInputManager = function() {
+	return kernel.Glb.g_System.m_InputManager;
 }
 kernel.Glb.GetSystem = function() {
 	return kernel.Glb.g_System;
@@ -1712,30 +1719,16 @@ renderer.C2DQuad = function(p) { if( p === $_ ) return; {
 renderer.C2DQuad.__name__ = ["renderer","C2DQuad"];
 renderer.C2DQuad.__super__ = renderer.CDrawObject;
 for(var k in renderer.CDrawObject.prototype ) renderer.C2DQuad.prototype[k] = renderer.CDrawObject.prototype[k];
+renderer.C2DQuad.prototype.GetSize = function() {
+	math.CV2D.Sub(math.Registers.V2_0,this.m_Rect.m_BR,this.m_Rect.m_TL);
+	return math.Registers.V2_0;
+}
 renderer.C2DQuad.prototype.SetPosition = function(_Pos) {
-	var l_V = new math.CV2D(0,0);
-	math.CV2D.Sub(l_V,this.m_Rect.m_BR,this.m_Rect.m_TL);
-	{
-		l_V.x = 0.5 * l_V.x;
-		l_V.y = 0.5 * l_V.y;
-	}
-	math.CV2D.Sub(this.m_Rect.m_TL,_Pos,l_V);
-	math.CV2D.Add(this.m_Rect.m_BR,_Pos,l_V);
+	math.CV2D.Add(this.m_Rect.m_BR,_Pos,this.GetSize());
+	this.m_Rect.m_TL.Copy(_Pos);
 }
 renderer.C2DQuad.prototype.SetSize = function(_Size) {
-	var l_CurrentPos = new math.CV2D(0,0);
-	math.CV2D.Add(l_CurrentPos,this.m_Rect.m_TL,this.m_Rect.m_BR);
-	{
-		l_CurrentPos.x = 0.5 * l_CurrentPos.x;
-		l_CurrentPos.y = 0.5 * l_CurrentPos.y;
-	}
-	var l_halfSize = new math.CV2D(0,0);
-	{
-		l_halfSize.x = 0.5 * _Size.x;
-		l_halfSize.y = 0.5 * _Size.y;
-	}
-	math.CV2D.Sub(this.m_Rect.m_TL,l_CurrentPos,l_halfSize);
-	math.CV2D.Add(this.m_Rect.m_BR,l_CurrentPos,l_halfSize);
+	math.CV2D.Add(this.m_Rect.m_BR,this.m_Rect.m_TL,_Size);
 }
 renderer.C2DQuad.prototype.m_Rect = null;
 renderer.C2DQuad.prototype.__class__ = renderer.C2DQuad;
@@ -2444,7 +2437,7 @@ CMainClient.m_Quad = null;
 CMainClient.m_Mouse = null;
 CMainClient.m_Cpt = null;
 CMainClient.InitGameJS = function() {
-	CMainClient.m_Mouse = kernel.Glb.g_System.GetMouse();
+	CMainClient.m_Mouse = kernel.Glb.g_System.m_InputManager.m_Mouse;
 	CMainClient.m_Cpt = 15;
 	var l_OrthoCam = (function($this) {
 		var $r;

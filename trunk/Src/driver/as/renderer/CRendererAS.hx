@@ -57,7 +57,7 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
-	public function AddToSceneAS(  _DisplayObj : DisplayObject)
+	public function AddToSceneAS(  _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}

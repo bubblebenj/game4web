@@ -12,6 +12,7 @@ import kernel.CTypes;
 import kernel.CMouse;
 
 import rsc.CRscImage;
+import rsc.CRscText;
 
 import driver.as.renderer.CRendererAS;
 import driver.as.rscbuilders.CRscASFactory;
@@ -23,7 +24,6 @@ class CSystemAS extends CSystem
 	public function new()
 	{
 		super();
-		//m_Mouse = new CMouseAS();
 	}
 	
 	public override function Initialize() : Result
@@ -54,6 +54,7 @@ class CSystemAS extends CSystem
 	{
 		CDebug.CONSOLEMSG("Builders created");
 		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
+		GetRscMan().AddBuilder( CRscText.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
 		GetRscMan().AddBuilder( CMouse.RSC_ID, 		m_RscASFactory );//new CRscASFactory() );
 		
 		return SUCCESS;
