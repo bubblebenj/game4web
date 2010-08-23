@@ -20,7 +20,6 @@ import rsc.CRscText;
 
 class CRscASFactory extends CRscBuilder 
 {
-
 	public function new() 
 	{
 		super();

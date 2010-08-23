@@ -6,6 +6,7 @@ import haxe.Timer;
 import haxe.TimerQueue;
 import kernel.Glb;
 import kernel.CDisplay;
+import math.Utils;
 import renderer.CRenderer;
 import rsc.CRscMan;
 import rsc.CRsc;
@@ -58,7 +59,7 @@ class CSystem
 	
 	public function Initialize() : Result
 	{
-		m_SysTimer = new TimerQueue( FRAMERATE );
+		m_SysTimer = new TimerQueue( Utils.RoundNearest( DT * 1000 ));
 		
 		m_RscMan = new CRscMan();
 		m_RscMan.Initialize();
