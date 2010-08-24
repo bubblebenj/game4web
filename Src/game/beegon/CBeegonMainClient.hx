@@ -90,6 +90,9 @@ class CBeegonMainClient
 		m_TestText = new CTextFieldAS();
 		m_TestText.Load( "test" );
 		
+		var l_V2D_Size	: CV2D = new CV2D( 600, 30 );
+		m_TestText.SetPosition( l_V2D_Size );
+		
 		#if flash10
 			InitGameAS();
 		#end
@@ -107,13 +110,10 @@ class CBeegonMainClient
 	public static function UpdateGame()
 	{
 		//trace( "Update");
-		var l_V2D_Size	: CV2D = new CV2D( 600, 30 );
-		m_TestText.SetPosition( l_V2D_Size );
-		
 		m_TestText.Update();
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
-		g_Grid.Update();
+		//g_Grid.Update();
 		
 		m_InputManager.Update();
 		
@@ -125,7 +125,7 @@ class CBeegonMainClient
 			if (m_Cpt > 125)
 			{
 				//trace( "g_Avatar.SetCoordinate( l_V2D );");
-				trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
+				//trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
 			}
 			else	m_Cpt++;
 		#end

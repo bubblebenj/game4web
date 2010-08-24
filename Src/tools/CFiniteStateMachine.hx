@@ -32,6 +32,7 @@ class CFiniteStateMachine < EState, EEvent >
 	public function SetEvent( _Event	: EEvent )	: Void
 	{
 		m_CurrentEvent	= _Event;
+		trace( "Trigger event : " + m_CurrentEvent);
 	}
 	
 	public function GetEvent()	: EEvent
@@ -92,13 +93,13 @@ class CFiniteStateMachine < EState, EEvent >
 				#end
 				if ( i_Transition.m_Callback != null)
 				{
-					i_Transition.m_Callback();
+					i_Transition.m_Callback();			// Making transition
 				}
-				SetState( i_Transition.m_TgtState );
+				SetState( i_Transition.m_TgtState );	// Changing state
 				m_CurrentEvent	= null;
 			}
 		}
-		trace( m_CurrentState );
+		trace( "State : "+m_CurrentState );
 	}
 	
 	public function Update()	: Void

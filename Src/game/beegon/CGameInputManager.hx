@@ -13,15 +13,15 @@ import math.CV2D;
 
 enum MOUSE_STATE
 {
-	RELEASED;
-	PRESSED;
-	HELD;
+	UP;
+	DOWN;
+	HOLD;
 }
 
 enum MOUSE_TRANS_CONDITION
 {
-	DOWN;
-	UP;
+	RELEASED;
+	PRESSED;
 	HIT_TIMEOUT;
 }
 
@@ -35,17 +35,17 @@ class CGameInputManager
 	public function new( _Avatar	: CAvatar ) 
 	{
 		m_HoldDelay = 200;
-		m_MouseFSM	= new CFiniteStateMachine( MOUSE_STATE.RELEASED );
+		m_MouseFSM	= new CFiniteStateMachine( MOUSE_STATE.UP );
 		InitMouseFSM();
 		m_Avatar	= _Avatar;
 	}
 	
 	public function InitMouseFSM()			: Void
 	{
-		m_MouseFSM.AddTransition( MOUSE_STATE.RELEASED,	MOUSE_TRANS_CONDITION.DOWN,			MOUSE_STATE.PRESSED,	TrMousePressed );
-		m_MouseFSM.AddTransition( MOUSE_STATE.PRESSED,	MOUSE_TRANS_CONDITION.UP,			MOUSE_STATE.RELEASED,	TrMouseHit );
-		m_MouseFSM.AddTransition( MOUSE_STATE.PRESSED,	MOUSE_TRANS_CONDITION.HIT_TIMEOUT,	MOUSE_STATE.HELD,		TrMouseHeld );
-		m_MouseFSM.AddTransition( MOUSE_STATE.HELD,		MOUSE_TRANS_CONDITION.UP,			MOUSE_STATE.RELEASED,	TrMouseReleased );
+		m_MouseFSM.AddTransition( MOUSE_STATE.UP,	MOUSE_TRANS_CONDITION.PRESSED,		MOUSE_STATE.DOWN,	TrMousePressed );
+		m_MouseFSM.AddTransition( MOUSE_STATE.DOWN,	MOUSE_TRANS_CONDITION.RELEASED,		MOUSE_STATE.UP,		TrMouseHit );
+		m_MouseFSM.AddTransition( MOUSE_STATE.DOWN,	MOUSE_TRANS_CONDITION.HIT_TIMEOUT,	MOUSE_STATE.HOLD,	TrMouseHeld );
+		m_MouseFSM.AddTransition( MOUSE_STATE.HOLD,	MOUSE_TRANS_CONDITION.RELEASED,		MOUSE_STATE.UP,		TrMouseReleased );
 		trace ( m_MouseFSM.m_TransitionList[0] );
 	}
 	
@@ -99,8 +99,7 @@ class CGameInputManager
 		{
 			m_LastMouseLeftBtDown	= Glb.GetInputManager().m_Mouse.m_Down;
 			m_LastMousePosition		= Glb.GetInputManager().m_Mouse.m_Coordinate;
-			m_MouseFSM.SetEvent( Glb.GetInputManager().m_Mouse.m_Down ? MOUSE_TRANS_CONDITION.DOWN : MOUSE_TRANS_CONDITION.UP );
-			trace( m_MouseFSM.GetEvent() );
+			m_MouseFSM.SetEvent( Glb.GetInputManager().m_Mouse.m_Down ? MOUSE_TRANS_CONDITION.PRESSED : MOUSE_TRANS_CONDITION.RELEASED );
 		}
 		m_MouseFSM.Update();
 	}
