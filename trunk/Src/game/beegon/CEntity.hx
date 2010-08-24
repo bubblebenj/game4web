@@ -104,16 +104,14 @@ class CEntity
 		// Move the entity to a specified position
 		public function SetPosition( _Pos : CV2D ) : Void
 		{
-			m_Coordinate.Copy( _Pos );
 			/* Entities are handled by the center whereas 
 			 * "real images" are handled by the top left corner */
 			
-			var l_ImagePos	= new CV2D( 0, 0 );
-			l_ImagePos.Set( m_Size.x * 0.5, m_Size.y * 0.5 );		// Compute the half size
+			m_Coordinate.Set( m_Size.x * 0.5, m_Size.y * 0.5 );	// Compute the half size
+			CV2D.Sub( m_Coordinate, _Pos, m_Coordinate );		// Change coordinates centered
+			m_Sprite.SetPosition( m_Coordinate );
 			
-			CV2D.Sub( l_ImagePos, m_Coordinate, l_ImagePos );		// Change coordinates centered
-			
-			m_Sprite.SetPosition( l_ImagePos );
+			m_Coordinate.Copy( _Pos );
 		}
 		
 		public function GetSize()	: CV2D

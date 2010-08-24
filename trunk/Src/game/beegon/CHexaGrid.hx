@@ -41,6 +41,13 @@ import rsc.CRsc;
  */
 class CHexaGrid
 {
+	/*
+	 * HEXA GRID AXIS UNITARY VECTOR
+	 */
+		static var v_x : CV2D	= new CV2D( 1, 0 );
+		static var v_y : CV2D	= new CV2D( 0, 1 );
+		static var v_z : CV2D	= new CV2D( 1,-1 );
+		
 	public var m_CellArray		: Array<Array<CHexaGridCell>>;
 	/*
 	 * The grid size is the number of cell around the center cell.
@@ -162,9 +169,6 @@ class CHexaGrid
 	{
 		if ( IsReady() )
 		{
-			var	l_CellPos	: CV2D;
-			var	l_ScrCtr	: CV2D;
-			
 			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
 			{	
 				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
@@ -172,11 +176,10 @@ class CHexaGrid
 					//trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
 					if ( m_CellArray[i][j] != null )
 					{
-						var l_Register : CV2D = Registers.V2_8;
-						l_Register.Set(i, j );
-						l_CellPos	= FromHexaToOrtho( l_Register );
-						CV2D.Add( l_CellPos, m_Coordinate, l_CellPos );
-						m_CellArray[i][j].SetPosition( l_CellPos );
+						Registers.V2_8.Set( i, j );									// Coordinates in the hexa grid
+						FromHexaToOrtho( Registers.V2_8, Registers.V2_8 );			// Getting orthonormal coordinates
+						CV2D.Add( Registers.V2_8, m_Coordinate, Registers.V2_8 );	// Setting relative to grid coordinates
+						m_CellArray[i][j].SetPosition( Registers.V2_8 );
 					}
 				}
 			}
@@ -209,8 +212,8 @@ class CHexaGrid
 		var l_xSign		: Int	= if ( l_xB < 0 ) -1 else 1;
 		var l_ySign		: Int	= if ( l_yB < 0 ) -1 else 1;
 		
-		if(	( l_xSign ==  v_z().x	&&	l_ySign ==  v_z().y ) 
-		 ||	( l_xSign == -v_z().x	&&	l_ySign == -v_z().y ) )
+		if(	( l_xSign ==  v_z.x	&&	l_ySign ==  v_z.y ) 
+		 ||	( l_xSign == -v_z.x	&&	l_ySign == -v_z.y ) )
 			l_Distance	= cast ( Math.max( Math.abs( l_xB), Math.abs( l_xB) ) );
 		else
 			l_Distance	= cast ( Math.abs( l_xB) + Math.abs( l_yB ) );
@@ -218,55 +221,38 @@ class CHexaGrid
 		return l_Distance;
 	}
 	
-	/*
-	 * HEXA GRID AXIS VECTOR FUNCTIONS
-	 */
-		public function v_x()	: CV2D	{
-			var v : CV2D = new CV2D( 1, 0 );
-			return v;
-		}
-
-		public function v_y()	: CV2D	{
-			var v : CV2D = new CV2D( 0, 1 );
-			return v;
-		}
-	
-		public function v_z()	: CV2D	{
-			var v : CV2D = new CV2D( 1, -1 );
-			return v;
-		}
-	
 	/* 
 	 * CONVERTING HEXA VECTOR TO ORTHONORMAL COORDONATE FUNCTIONS
 	 */
-		public function HexaToOrtho_v_x()	: CV2D	{
+		public function HexaToOrtho_v_x( _VOut : CV2D )	: Void
+		{
 			/*
 			 * For an hexagrid with horizontal cells
 			 * ( x axis going slightly up and y axis going slightly down )
 			 * use this values intead :
-			 * var v : CV2D = new CV2D( 0.75 * LargerDiameter(), -(m_CellSize/2) );
+			 * _VOut.Set( 0.75 * LargerDiameter(), -(m_CellSize/2) );
 			 * 
 			 * for an hexagrid with vertical cells
 			 * (x axis going horizontaly and y axis going slightly (but a little faster) )down
 			 * use it :
 			 */
-			var v : CV2D = new CV2D( m_CellSize, 0 );
-			return v;
+			_VOut.Set( m_CellSize, 0 );
 		}
 		
-		public function HexaToOrtho_v_y()	: CV2D	{
+		public function HexaToOrtho_v_y( _VOut : CV2D )	: Void
+		{
 			/*
 			 * For an hexagrid with horizontal cells (Cf. "public function Coord_v_x(): CV2D" comment)
 			 * use this values intead :
-			 * var v : CV2D = new CV2D( 0.75 * LargerDiameter(), -(m_CellSize/2) );
+			 * _VOut.Set( 0.75 * LargerDiameter(), -(m_CellSize/2) );
 			 * 
 			 * for an hexagrid with vertical cells, use it :
 			 */
-			var v : CV2D = new CV2D( m_CellSize/2, 0.75 * LargerDiameter() );
-			return v;
+			_VOut.Set( m_CellSize/2, 0.75 * LargerDiameter() );
 		}
 		
-		public function HexaToOrtho_v_z()	: CV2D	{
+		public function HexaToOrtho_v_z( _VOut : CV2D )	: Void
+		{
 			/*
 			 * = v_x - v_y, but instead of compute it with
 			 * 		v = v_x();
@@ -277,40 +263,36 @@ class CHexaGrid
 			/*
 			 * For an hexagrid with horizontal cells (Cf. "public function Coord_v_x(): CV2D" comment)
 			 * use this values intead :
-			 * var v : CV2D = new CV2D( 0, -m_CellSize );
+			 * _VOut.Set( 0, -m_CellSize );
 			 * 
 			 * for an hexagrid with vertical cells, use it :
 			 */
-			var v : CV2D = new CV2D( -(m_CellSize/2) , 0.75 * LargerDiameter() );
-			return v;
+			_VOut.Set( -(m_CellSize/2) , 0.75 * LargerDiameter() );
 		}
 	
 	/* 
 	 * CONVERTING ORTHONORMAL COORDONATE TO HEXA VECTOR FUNCTIONS */ 
 	/*
-		public function OrthoToHexa_v_x(): CV2D
+		public function OrthoToHexa_v_x( _VOut : CV2D )	: Void
 		{
-			var v : CV2D = new CV2D();
-			return v;
+		
 		}
 		
-		public function OrthoToHexa_v_y(): CV2D
+		public function OrthoToHexa_v_y( _VOut : CV2D )	: Void
 		{
-			var v : CV2D = new CV2D();
-			return v;
+		
 		}
 		
-		public function OrthoToHexa_v_z(): CV2D
+		public function OrthoToHexa_v_z( _VOut : CV2D )	: Void
 		{
-			var v : CV2D = new CV2D();
-			return v;
+		
 		}
 	*/
 		
 	/*
 	 * SWAP BETWEEN HEXA GRID TO ORTHONORMAL COORDONATE FUNCTIONS
 	 */
-		public function FromHexaToOrtho( _CellCoord : CV2D )	: CV2D
+		public function FromHexaToOrtho( _VOut : CV2D, _CellCoord : CV2D )	: Void
 		{
 			var a			: Float	= m_CellSize;
 			var b			: Float	= 0.5 * m_CellSize;
@@ -320,12 +302,10 @@ class CHexaGrid
 			var	x			: Float = a * _CellCoord.x + b * _CellCoord.y;
 			var y			: Float = c * _CellCoord.x + d * _CellCoord.y;
 			
-			var l_Ortho	: CV2D = new CV2D( x, y );
-			
-			return l_Ortho;
+			_VOut.Set( x, y );
 		}
 		
-		public function FromOrthoToHexa( _Ortho : CV2D )	: CV2D
+		public function FromOrthoToHexa( _VOut : CV2D, _Ortho : CV2D )	: Void
 		{
 			var a			: Float	= m_CellSize;
 			var b			: Float	= 0.5 * m_CellSize;
@@ -337,8 +317,6 @@ class CHexaGrid
 			var	x			: Float = Math.round( l_Factor * ( d * _Ortho.x - b * _Ortho.y ) );
 			var y			: Float = Math.round( l_Factor * ( a * _Ortho.y - c * _Ortho.x ) );
 			
-			var l_Hexa	: CV2D = new CV2D( x, y );
-			
-			return l_Hexa;
+			_VOut.Set( x, y );
 		}
 }

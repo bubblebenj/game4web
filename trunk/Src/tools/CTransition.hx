@@ -8,7 +8,7 @@
 class CTransition < EState, EEvent >
 {
 	public var m_SrcState		: EState;
-	public var m_TriggerEvent	: EEvent; // ~Event : should be an enum, but should work
+	public var m_TriggerEvent	: EEvent; // ~Event : should be an enum, but may work with flash events (discouraged)
 	public var m_TgtState		: EState;
 	public var m_Callback		: Void -> Void;
 	
