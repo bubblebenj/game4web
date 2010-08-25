@@ -72,7 +72,7 @@ CGL.prototype.GetViewportWidth = function()
 	{
 		return 0;
 	}
-	return m_GLContext.viewportWidth;
+	return m_GLContext.canvas.clientWidth;
 }
 
 CGL.prototype.GetViewportHeight = function() 
@@ -81,7 +81,7 @@ CGL.prototype.GetViewportHeight = function()
 	{
 		return 0;
 	}
-	return m_GLContext.viewportHeight;
+	return m_GLContext.canvas.clientHeight;
 }
 
 CGL.prototype.Flush = function() 
