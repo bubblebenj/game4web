@@ -25,7 +25,13 @@ class CPrimitive extends CRsc
 	}
 	
 	//dyn does not actually ensure double buffering just vb change submission
+	
+	public function SetTexCooArray(  _TexCoords : Array< Float > ) : Void;
+	public function SetNormalArray(  _Normals : Array< Float > ) : Void;
+	public function SetIndexArray(  _Indexes : Array< Int > ) : Void;
 	public function SetVertexArray(  _Vertices : Array< Float > , _Dyn ) : Void;
+	
+	public function HasIndex() : Bool														{ return false;  }
 	
 	public function LockVertexArray() : Dynamic;
 	public function ReleaseVertexArray();

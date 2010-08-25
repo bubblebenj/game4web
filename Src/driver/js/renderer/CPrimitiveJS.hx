@@ -123,7 +123,7 @@ class CPrimitiveJS extends CPrimitive
 		}
 	}
 	
-	public function SetIndexArray(  _Indexes : Array< Int > ) : Void
+	public override function SetIndexArray(  _Indexes : Array< Int > ) : Void
 	{
 		if ( m_IdxObject == null )
 		{
@@ -162,7 +162,12 @@ class CPrimitiveJS extends CPrimitive
 		}
 	}
 	
-	public function SetTexCooArray(  _TexCoords : Array< Float > ) : Void
+	public override function HasIndex() : Bool
+	{
+		return m_NbIndices != 0;
+	}
+	
+	public override function SetTexCooArray(  _TexCoords : Array< Float > ) : Void
 	{
 		if ( m_TexObject == null )
 		{
@@ -183,7 +188,8 @@ class CPrimitiveJS extends CPrimitive
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, CGL.STATIC_DRAW );
 	}
 	
-	public function SetNormalArray(  _Normals : Array< Float > ) : Void
+	
+	public override function SetNormalArray(  _Normals : Array< Float > ) : Void
 	{
 		if ( m_NrmlObject == null )
 		{

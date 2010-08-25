@@ -102,7 +102,7 @@ class CGlQuad extends C2DQuad
 	{
 		var l_Array : Array<Float> = new Array<Float>();
 
-		var l_Z : Float = -5.0;
+		var l_Z : Float = -1;
 		var l_Scale : Float = 1.0;
 		
 		l_Array[0] = 0;
@@ -121,7 +121,7 @@ class CGlQuad extends C2DQuad
 		l_Array[10] = 1 * l_Scale;
 		l_Array[11] = l_Z;
 		
-		m_Primitive.SetVertexArray( l_Array , false );
+		m_Primitive.SetVertexArray( l_Array , true );
 		
 		var l_IndexArray : Array<Int> = new Array<Int>();
 		
@@ -147,7 +147,7 @@ class CGlQuad extends C2DQuad
 		var l_Right : Float = math.Utils.RoundNearest( m_Rect.m_BR.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);
 		
 		var l_Array = cast( m_Primitive.LockVertexArray(), Float32Array );
-		var l_Z = -1;
+		var l_Z = -10;
 	
 		l_Array.Set(0,l_Left);
 		l_Array.Set(1,l_Top);
@@ -172,7 +172,7 @@ class CGlQuad extends C2DQuad
 	{
 		super.Draw( _VpId );
 	
-		//UpdateQuad(_VpId);
+		UpdateQuad(_VpId);
 		//CreateData();
 		if ( Activate() == FAILURE)
 		{

@@ -66,6 +66,11 @@ class CMaterial extends CRsc
 		m_Shader = _Sh;
 	}
 	
+	public function HasTexture() : Bool
+	{
+		return m_Textures != null && m_Textures.length > 0;
+	}
+	
 	var m_Alpha : Float;
 	var m_Mode : MAT_BLEND_MODE;
 	var m_Shader : CRscShader;

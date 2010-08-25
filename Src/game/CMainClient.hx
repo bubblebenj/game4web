@@ -43,7 +43,7 @@ class CMainClient
 		m_Cpt		= 15;							// <--
 		
 		var l_OrthoCam : COrthoCamera = cast(Glb.g_System.GetRenderer().GetCamera( CRenderer.CAM_ORTHO_0 ), COrthoCamera);
-		var l_CamPos : CV3D = new CV3D(0, 0, -1);
+		var l_CamPos : CV3D = new CV3D(0, 0, 0);
 	
 		l_OrthoCam.SetPosition( l_CamPos );
 		
@@ -85,6 +85,8 @@ class CMainClient
 			m_Cpt = 0; 								// <--
 		}											// <--
 		else	m_Cpt++;							// <--
+		
+		m_Quad.SetPosition( CV2D.HALF );
 	}
 	
 	
