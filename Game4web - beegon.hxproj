@@ -21,7 +21,7 @@
     <option directives="DebugInfo" />
     <option flashStrict="False" />
     <option mainClass="CBeegonMainClient" />
-    <option enabledebug="False" />
+    <option enabledebug="True" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
@@ -47,6 +47,7 @@
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
+    <option testMovie="OpenDocument" />
+    <option testMovieCommand="WWW/Beegon/index.html" />
   </options>
 </project>
