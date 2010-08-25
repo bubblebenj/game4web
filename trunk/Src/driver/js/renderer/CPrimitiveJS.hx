@@ -73,16 +73,27 @@ class CPrimitiveJS extends CPrimitive
 		return m_NbIndices;
 	}
 	
-	public override function SetVertexArray(  _Vertices : Array< Float > ) : Void
+	public override function LockVertexArray() : Dynamic
 	{
-		m_NbTriangles =  Std.int(_Vertices.length / 9);
+		return m_VtxNativeBuf;
+	}
+	
+	public override function ReleaseVertexArray()
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_VtxObject);
+		Glb.g_SystemJS.GetGL().BufferSubData( CGL.ARRAY_BUFFER, 0, m_VtxNativeBuf );
+	}
+	
+	public override function SetVertexArray(  _Vertices : Array< Float > , _Dynamic : Bool) : Void
+	{
 		m_NbVertex = Std.int(_Vertices.length / 3);
+		m_NbTriangles =  Std.int(_Vertices.length / 9);
 		
 		if ( m_VtxObject == null )
 		{	
 			m_VtxObject = Glb.g_SystemJS.GetGL().CreateBuffer();
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_VtxObject);
-			CDebug.CONSOLEMSG("Bound vertex buffer");
+			CDebug.CONSOLEMSG("Bound vertex buffer vtx:"+m_NbVertex);
 			
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
 			if ( l_Err  != 0)
@@ -101,7 +112,8 @@ class CPrimitiveJS extends CPrimitive
 			m_VtxNativeBuf.Set(i, _Vertices[i]);
 		}
 		
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, (!_Dynamic) ? CGL.STATIC_DRAW : CGL.DYNAMIC_DRAW);
+		//Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
 		CDebug.CONSOLEMSG("Set vertex buffer");
 			
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
@@ -127,20 +139,21 @@ class CPrimitiveJS extends CPrimitive
 		}
 		
 		m_NbIndices = _Indexes.length;
+		m_NbTriangles = Std.int(m_NbIndices / 3);
 		
 		if(m_IdxNativeBuf==null)
 		{
 			m_IdxNativeBuf =  new Uint8Array( new ArrayBuffer(m_NbIndices) );
 		}
 		
-		for (i in 0...m_NbVertex)
+		for (i in 0...m_NbIndices)
 		{
 			m_IdxNativeBuf.Set(i, _Indexes[i]);
 		}
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, CGL.STATIC_DRAW );
 		
-		CDebug.CONSOLEMSG("Set index buffer");
+		CDebug.CONSOLEMSG("Set index buffer (idx:"+m_NbIndices+", tri:"+m_NbTriangles+")" );
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
 		if ( l_Err  != 0)

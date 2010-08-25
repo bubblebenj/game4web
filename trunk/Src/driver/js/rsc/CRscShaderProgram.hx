@@ -129,7 +129,7 @@ class CRscShaderProgram extends CRscShader
 			}
 			else 
 			{
-				CDebug.CONSOLEMSG("*");
+				//CDebug.CONSOLEMSG("*");
 			}
 		}
 		
