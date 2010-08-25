@@ -78,8 +78,8 @@ class CBeegonMainClient
 	{
 		trace ( " Initialising game .. " );
 		
-		g_Grid 		= new CHexaGrid( 7, 36 );
-		g_Grid.InitCellArray();
+		//g_Grid 		= new CHexaGrid( 7, 36 );
+		//g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
@@ -133,7 +133,7 @@ class CBeegonMainClient
 	
 	static function RenderCallback() : Result
 	{
-		g_Grid.Draw();
+		//g_Grid.Draw();
 		return SUCCESS;
 	}
 } 
