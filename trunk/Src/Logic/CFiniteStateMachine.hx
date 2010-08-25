@@ -1,11 +1,11 @@
-﻿package tools;
+﻿package logic;
 
 /**
  * ...
  * @author bdubois
  */
 
-import tools.CTransition;
+import logic.CTransition;
 
 class CFiniteStateMachine < EState, EEvent >
 {

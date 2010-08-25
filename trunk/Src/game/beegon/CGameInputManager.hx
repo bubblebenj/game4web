@@ -7,7 +7,7 @@ package game.beegon;
 
 import haxe.Timer;
 
-import tools.CFiniteStateMachine;
+import logic.CFiniteStateMachine;
 import kernel.Glb;
 import math.CV2D;
 
