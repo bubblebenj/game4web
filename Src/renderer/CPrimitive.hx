@@ -24,5 +24,9 @@ class CPrimitive extends CRsc
 		super();
 	}
 	
-	public function SetVertexArray(  _Vertices : Array< Float > ) : Void;
+	//dyn does not actually ensure double buffering just vb change submission
+	public function SetVertexArray(  _Vertices : Array< Float > , _Dyn ) : Void;
+	
+	public function LockVertexArray() : Dynamic;
+	public function ReleaseVertexArray();
 }

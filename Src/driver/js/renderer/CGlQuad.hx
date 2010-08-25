@@ -102,8 +102,8 @@ class CGlQuad extends C2DQuad
 	{
 		var l_Array : Array<Float> = new Array<Float>();
 
-		var l_Z : Float = - 10.0;
-		var l_Scale : Float = 0.5;
+		var l_Z : Float = -5.0;
+		var l_Scale : Float = 1.0;
 		
 		l_Array[0] = 0;
 		l_Array[1] = 0;
@@ -117,42 +117,63 @@ class CGlQuad extends C2DQuad
 		l_Array[7] = 1 * l_Scale;
 		l_Array[8] = l_Z;
 		
+		l_Array[9] = 1 * l_Scale;
+		l_Array[10] = 1 * l_Scale;
+		l_Array[11] = l_Z;
 		
-		/*
-		l_Array[0] = 0;
-		l_Array[1] = 0;
-		l_Array[2] = l_Z;
-		
-		l_Array[3] = 0;
-		l_Array[4] = 1 * l_Scale;
-		l_Array[5] = l_Z;
-		
-		l_Array[6] = 1 * l_Scale;
-		l_Array[7] = 0;
-		l_Array[8] = l_Z;
-		*/
-		
-		m_Primitive.SetVertexArray( l_Array );
+		m_Primitive.SetVertexArray( l_Array , false );
 		
 		var l_IndexArray : Array<Int> = new Array<Int>();
+		
 		l_IndexArray[0] = 0;
 		l_IndexArray[1] = 1;
 		l_IndexArray[2] = 2;
+		
+		l_IndexArray[3] = 3;
+		l_IndexArray[4] = 2;
+		l_IndexArray[5] = 1;
+		
 		m_Primitive.SetIndexArray(l_IndexArray);
 	}
 
-	public override function Draw( _VpId : Int ) : Result
-	{
-		super.Draw( _VpId );
-		
+	public function UpdateQuad(_VpId : Int )
+	{	
 		var l_Vp : CViewport = Glb.GetRenderer().m_Vps[ _VpId ];
 		CDebug.ASSERT( l_Vp != null );
 		
 		var l_Top : Float = math.Utils.RoundNearest( m_Rect.m_TL.y * l_Vp.m_h + l_Vp.m_y);
 		var l_Left : Float = math.Utils.RoundNearest( m_Rect.m_TL.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);
 		var l_Bottom : Float = math.Utils.RoundNearest( m_Rect.m_BR.y * l_Vp.m_h + l_Vp.m_y);
-		var l_Right : Float = math.Utils.RoundNearest( m_Rect.m_BR.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);	
+		var l_Right : Float = math.Utils.RoundNearest( m_Rect.m_BR.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);
 		
+		var l_Array = cast( m_Primitive.LockVertexArray(), Float32Array );
+		var l_Z = -1;
+	
+		l_Array.Set(0,l_Left);
+		l_Array.Set(1,l_Top);
+		l_Array.Set(2,l_Z);
+		
+		l_Array.Set(3,l_Right);
+		l_Array.Set(4,l_Top);
+		l_Array.Set(5,l_Z);
+		
+		l_Array.Set(6,l_Left);
+		l_Array.Set(7, l_Bottom);
+		l_Array.Set(8, l_Z);
+		
+		l_Array.Set(9, l_Right);
+		l_Array.Set(10, l_Bottom);
+		l_Array.Set(11, l_Z);
+		
+		m_Primitive.ReleaseVertexArray();
+	}
+	
+	public override function Draw( _VpId : Int ) : Result
+	{
+		super.Draw( _VpId );
+	
+		//UpdateQuad(_VpId);
+		//CreateData();
 		if ( Activate() == FAILURE)
 		{
 			CDebug.CONSOLEMSG("Shader activation failure");

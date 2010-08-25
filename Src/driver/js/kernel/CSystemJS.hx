@@ -32,6 +32,8 @@ class CSystemJS extends CSystem
 		super();
 		m_GlObject = null;
 		m_RscJSFactory = null;
+		
+		CDebug.CONSOLEMSG("JS system newed");
 	}
 	
 	public inline function GetGL() : CGL
@@ -53,6 +55,7 @@ class CSystemJS extends CSystem
 		
 		m_InputManager	= new CInputManager();
 		
+		CDebug.CONSOLEMSG("JS system initialized");
 		return SUCCESS;
 	}
 	
@@ -122,6 +125,14 @@ class CSystemJS extends CSystem
 		GetRscMan().AddBuilder( CPrimitive.RSC_ID, 		m_RscJSFactory );
 		
 		return SUCCESS;
+	}
+	
+	public override function Update() : Void
+	{
+		m_Display.m_Width  = Glb.g_SystemJS.GetGL().GetViewportWidth();
+		m_Display.m_Height  = Glb.g_SystemJS.GetGL().GetViewportHeight();
+		
+		super.Update();
 	}
 	
 	var 		m_RscJSFactory 	: CRscJSFactory;

@@ -55,6 +55,8 @@ class CSystem
 		m_InputManager	= null;
 		
 		m_Display = new CDisplay();
+		
+		CDebug.CONSOLEMSG("Master system newed");
 	}
 	
 	public function Initialize() : Result
