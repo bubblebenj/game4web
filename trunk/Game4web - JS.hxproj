@@ -4,10 +4,10 @@
   <output>
     <movie disabled="False" />
     <movie input="" />
-    <movie path="bin\Game4webJS.js" />
-    <movie fps="0" />
-    <movie width="0" />
-    <movie height="0" />
+    <movie path="build/JS/CMainClient.js" />
+    <movie fps="60" />
+    <movie width="800" />
+    <movie height="600" />
     <movie version="11" />
     <movie background="#FFFFFF" />
   </output>
@@ -44,6 +44,6 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="OpenDocument" />
-    <option testMovieCommand="bin/index.html" />
+    <option testMovieCommand="WWW/Index_Js_WebGL.html" />
   </options>
 </project>
