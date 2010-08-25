@@ -14,7 +14,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="Src" />
-    <class path="Src\game\beegon" />
+    <class path="Src\game\beegon\" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -30,7 +30,7 @@
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="src\Main.hx" />
+    <compile path="game\beegon\CBeegonMainClient.hx" />
   </compileTargets>
   <!-- Assets to embed into the output SWF -->
   <library>
