@@ -57,12 +57,7 @@ class CMainClient
 		m_Quad = new CGlQuad();
 		m_Quad.Initialize();
 		
-		m_Quad.m_Rect.m_TL.Copy( CV2D.ZERO );
-		CV2D.Sub( m_Quad.m_Rect.m_TL, m_Quad.m_Rect.m_TL, CV2D.HALF );
-		
-		m_Quad.m_Rect.m_BR.Copy( CV2D.ZERO );
-		CV2D.Add( m_Quad.m_Rect.m_BR, m_Quad.m_Rect.m_BR, CV2D.HALF );
-		
+		m_Quad.SetCenterSize( CV2D.HALF, CV2D.ONE );
 		m_Quad.SetCamera( CRenderer.VP_FULLSCREEN , l_OrthoCam );
 		
 		m_Quad.SetVisible( true );
@@ -86,7 +81,7 @@ class CMainClient
 		}											// <--
 		else	m_Cpt++;							// <--
 		
-		m_Quad.SetPosition( CV2D.HALF );
+		//m_Quad.SetSize( new CV2D(m_Cpt/15.0,m_Cpt/15.0) );
 	}
 	
 	

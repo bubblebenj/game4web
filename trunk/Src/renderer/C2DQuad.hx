@@ -19,20 +19,36 @@ class C2DQuad extends CDrawObject
 	
 	public var m_Rect : CRect2D;
 	
-	public function SetPosition( _Pos : CV2D ) : Void
+	public function SetCenterSize( _Pos : CV2D,_Sz : CV2D ) : Void
 	{
-		CV2D.Add( m_Rect.m_BR, _Pos, GetSize() );
-		m_Rect.m_TL.Copy( _Pos );
+		m_Rect.m_Center.Copy( _Pos);
+		m_Rect.m_Size.Copy( _Sz);
+	}
+	
+	public function SetTLBR( _TL : CV2D,_BR : CV2D  ) : Void
+	{
+		CV2D.Sub( Registers.V2_0, _TL, _BR );
+		
+		m_Rect.m_Size.Set( Math.abs(Registers.V2_0.x), Math.abs(Registers.V2_0.y) );
+		
+		CV2D.Scale( Registers.V2_1, 0.5, m_Rect.m_Size );
+		CV2D.Sub( m_Rect.m_Center, _BR , Registers.V2_1);
+	}
+	
+	public function SetTLSize( _TL : CV2D, _Sz : CV2D) : Void
+	{
+		m_Rect.m_Size.Copy(_Sz);
+		CV2D.Scale( Registers.V2_1, 0.5 , m_Rect.m_Size );
+		CV2D.Add( m_Rect.m_Center, _TL , Registers.V2_1);
 	}
 	
 	public function SetSize( _Size : CV2D ) : Void
 	{
-		CV2D.Add( m_Rect.m_BR, m_Rect.m_TL, _Size );
+		m_Rect.m_Size.Copy( _Size);
 	}
 	
 	public function GetSize() : CV2D
 	{
-		CV2D.Sub( Registers.V2_0, m_Rect.m_BR, m_Rect.m_TL );
-		return Registers.V2_0;
+		return m_Rect.m_Size;
 	}
 }

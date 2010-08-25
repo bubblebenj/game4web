@@ -102,8 +102,8 @@ class CGlQuad extends C2DQuad
 	{
 		var l_Array : Array<Float> = new Array<Float>();
 
-		var l_Z : Float = -1;
-		var l_Scale : Float = 1.0;
+		var l_Z : Float = -10;
+		var l_Scale : Float = 0.5;
 		
 		l_Array[0] = 0;
 		l_Array[1] = 0;
@@ -141,13 +141,15 @@ class CGlQuad extends C2DQuad
 		var l_Vp : CViewport = Glb.GetRenderer().m_Vps[ _VpId ];
 		CDebug.ASSERT( l_Vp != null );
 		
-		var l_Top : Float = math.Utils.RoundNearest( m_Rect.m_TL.y * l_Vp.m_h + l_Vp.m_y);
-		var l_Left : Float = math.Utils.RoundNearest( m_Rect.m_TL.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);
-		var l_Bottom : Float = math.Utils.RoundNearest( m_Rect.m_BR.y * l_Vp.m_h + l_Vp.m_y);
-		var l_Right : Float = math.Utils.RoundNearest( m_Rect.m_BR.x * l_Vp.GetVpRatio() * l_Vp.m_w + l_Vp.m_x);
+		var l_Top : Float = m_Rect.m_Center.y - m_Rect.m_Size.y * 0.5;
+		var l_Left : Float = m_Rect.m_Center.x - m_Rect.m_Size.x *0.5;
+		var l_Bottom : Float = m_Rect.m_Center.y + m_Rect.m_Size.y * 0.5;
+		var l_Right : Float = m_Rect.m_Center.x + m_Rect.m_Size.x *0.5;
 		
 		var l_Array = cast( m_Primitive.LockVertexArray(), Float32Array );
 		var l_Z = -10;
+		
+		//CDebug.CONSOLEMSG("T:"+l_Top+" L:"+l_Left+" B:"+l_Bottom+" R:"+l_Right+"");
 	
 		l_Array.Set(0,l_Left);
 		l_Array.Set(1,l_Top);
@@ -172,6 +174,7 @@ class CGlQuad extends C2DQuad
 	{
 		super.Draw( _VpId );
 	
+		
 		UpdateQuad(_VpId);
 		//CreateData();
 		if ( Activate() == FAILURE)
