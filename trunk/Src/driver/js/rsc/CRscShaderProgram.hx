@@ -291,6 +291,7 @@ class CRscShaderProgram extends CRscShader
 				CDebug.CONSOLEMSG("Error in shader program use: " + l_GlError);
 			}
 		}
+		
 		return SUCCESS;
 	}
 	
