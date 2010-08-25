@@ -10,6 +10,7 @@ import driver.js.renderer.CMaterialJS;
 import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
 import driver.js.renderer.CViewportJS;
+import driver.js.renderer.CTextureJS;
 
 import kernel.CTypes;
 import kernel.CMouse;
@@ -42,7 +43,7 @@ class CRscJSFactory extends CRscBuilder
 			l_Rsc =	new CMaterialJS();
 			
 			case CTexture.RSC_ID:
-			l_Rsc =	new CTexture();
+			l_Rsc =	new CTextureJS();
 			
 			case CPrimitive.RSC_ID:
 			l_Rsc =	new CPrimitiveJS();

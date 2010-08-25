@@ -93,7 +93,20 @@ extern class CGL
 	public function CreateBuffer() : WebGLBuffer;
     public function CreateFramebuffer() : WebGLFramebuffer;
     public function CreateRenderbuffer() : WebGLRenderbuffer;
+	
     public function CreateTexture() : WebGLTexture;
+	public function DeleteTexture( _Tex : WebGLTexture);
+	
+	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture);
+	
+	public function PixelStorei( _pname : GLenum, _param : GLint );
+	public function TexImage2D( _Target: GLenum, _Level: GLint, _Internalformat: GLenum,
+								_Format: GLenum, _Type : GLenum, _Pixels : Dynamic );
+								
+	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint);
+	
+	public function PolygonOffset(  factor : GLfloat, units : GLfloat );
+
 
 	
 	public function CreateProgram() : WebGLProgram;

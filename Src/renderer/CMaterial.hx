@@ -71,6 +71,11 @@ class CMaterial extends CRsc
 		return m_Textures != null && m_Textures.length > 0;
 	}
 	
+	public function AttachTexture( _Index : Int , _Tex : CTexture ) : Void
+	{
+		m_Textures[_Index] = _Tex;
+	}
+	
 	var m_Alpha : Float;
 	var m_Mode : MAT_BLEND_MODE;
 	var m_Shader : CRscShader;

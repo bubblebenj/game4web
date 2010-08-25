@@ -347,6 +347,51 @@ CGL.prototype.BufferSubData = function( _Tgt,  _Offset,  _Buffer )
 	m_GLContext.bufferSubData( _Tgt,_Offset,_Buffer);
 }
 
+/*
+ public function CreateTexture() : WebGLTexture;
+	public function DeleteTexture( _Tex : WebGLTexture);
+	
+	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture);
+	
+	public function PixelStorei( _pname : GLenum, _param : GLint );
+	public function TexImage2D( _Target: GLenum, _Level: GLint, _Internalformat: GLenum,
+								_Format: GLenum, _Type : GLenum, _Pixels : Dynamic );
+								
+	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint);
+	
+	public function PolygonOffset(  factor : GLfloat, units : GLfloat );
+*/
+
+CGL.prototype.DeleteTexture = function( _Tgt )
+{
+	m_GLContext.deleteTexture( _Tgt);
+}
+
+CGL.prototype.BindTexture = function( _Tgt,_Tex )
+{
+	m_GLContext.bindTexture( _Tgt,_Tex);
+}
+
+CGL.prototype.PixelStorei = function( _pname,_param )
+{
+	m_GLContext.pixelStorei( _pname,_param);
+}
+
+CGL.prototype.TexParameteri = function( _Target,_Pname,_Param )
+{
+	m_GLContext.texParameteri( _Target,_Pname,_Param);
+}
+
+CGL.prototype.TexImage2D = function( _Target,_Level,_Internalformat,_Format,_Type,_Pixels )
+{
+	m_GLContext.texImage2D( _Target,_Level,_Internalformat,_Format,_Type,_Pixels );
+}
+
+CGL.prototype.PolygonOffset = function( _factor,_units )
+{
+	m_GLContext.polygonOffset( _factor,_units);
+}
+
 CGL.prototype.BufferData= function( _Tgt , _Buffer , _Usage )
 {
 	if( !m_GLContext && !_Tgt )
