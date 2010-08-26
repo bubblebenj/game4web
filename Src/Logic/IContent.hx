@@ -3,9 +3,9 @@
  * @author BDubois
  */
 
-package Logic;
+package logic;
 
-class IContent 
+class IContent
 {
 	public function new() {}
 	
