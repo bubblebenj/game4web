@@ -6,6 +6,7 @@
 package game.beegon;
 
 import haxe.Timer;
+import logic.CMenuGraph;
 
 import logic.CFiniteStateMachine;
 import kernel.Glb;
@@ -31,16 +32,19 @@ class CGameInputManager
 	public	var	m_LastMousePosition		: CV2D;
 	public	var m_LastMouseLeftBtDown	: Bool;
 	public	var	m_Avatar				: CAvatar;
+	public 	var	m_MenuTest 				: CMenuGraph;	// <--
 	
-	public function new( _Avatar	: CAvatar ) 
+	public function new( _Avatar	: CAvatar, _MenuTest : CMenuGraph ) 
 	{
 		m_HoldDelay = 200;
-		m_MouseFSM	= new CFiniteStateMachine( MOUSE_STATE.UP );
-		InitMouseFSM();
+		m_MouseFSM	= new CFiniteStateMachine();
+		CreateMouseActuators();
+		m_MouseFSM.Initialise( MOUSE_STATE.UP );
 		m_Avatar	= _Avatar;
+		m_MenuTest	= _MenuTest;
 	}
 	
-	public function InitMouseFSM()			: Void
+	public function CreateMouseActuators()			: Void
 	{
 		m_MouseFSM.AddTransition( MOUSE_STATE.UP,	MOUSE_TRANS_CONDITION.PRESSED,		MOUSE_STATE.DOWN,	TrMousePressed );
 		m_MouseFSM.AddTransition( MOUSE_STATE.DOWN,	MOUSE_TRANS_CONDITION.RELEASED,		MOUSE_STATE.UP,		TrMouseHit );
@@ -57,6 +61,7 @@ class CGameInputManager
 		#end
 		m_Timer			= new Timer( m_HoldDelay );		//ms
 		m_Timer.run 	= onTimeOut;
+		m_MenuTest.Actuate( "Transition_Option_to_MainMenu" );
 	}
 	
 	public function TrMouseHit()	: Void
@@ -66,6 +71,7 @@ class CGameInputManager
 			trace ( "Mouse hit" );
 		#end
 		m_Avatar.TeleportTo( m_LastMousePosition );
+		m_MenuTest.Actuate( "Transition_MainMenu_to_Option" );
 	}
 	
 	public function TrMouseHeld()		: Void
@@ -74,6 +80,7 @@ class CGameInputManager
 			trace ( "Mouse held" );
 		#end
 		m_Avatar.SetFollowCursor( true );
+		m_MenuTest.Actuate( "QuitGame" );
 	}
 	
 	public function TrMouseReleased()		: Void
@@ -82,6 +89,7 @@ class CGameInputManager
 			trace ( "Mouse released" );
 		#end
 		m_Avatar.SetFollowCursor( false );
+		m_MenuTest.Actuate( "Transition_MainMenu_to_Game" );
 	}
 	
 	private function onTimeOut()	: Void
@@ -89,7 +97,7 @@ class CGameInputManager
 		#if CInputButton
 			trace ( " ! TimeOut ! " );
 		#end
-		m_MouseFSM.SetEvent( HIT_TIMEOUT );
+		m_MouseFSM.m_CurrentActuator = HIT_TIMEOUT;
 		m_Timer.stop();
 	}
 	
@@ -99,9 +107,8 @@ class CGameInputManager
 		{
 			m_LastMouseLeftBtDown	= Glb.GetInputManager().m_Mouse.m_Down;
 			m_LastMousePosition		= Glb.GetInputManager().m_Mouse.m_Coordinate;
-			m_MouseFSM.SetEvent( Glb.GetInputManager().m_Mouse.m_Down ? MOUSE_TRANS_CONDITION.PRESSED : MOUSE_TRANS_CONDITION.RELEASED );
+			m_MouseFSM.m_CurrentActuator = Glb.GetInputManager().m_Mouse.m_Down ? MOUSE_TRANS_CONDITION.PRESSED : MOUSE_TRANS_CONDITION.RELEASED;
 		}
-		m_MouseFSM.Update();
 	}
 	
 	private var m_HoldDelay : Int;

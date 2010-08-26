@@ -6,6 +6,8 @@
 
 import driver.as.renderer.CTextFieldAS;
 import kernel.CMouse;
+import logic.CMenuGraph;
+import logic.CMenuNode;
 
 import game.beegon.CAvatar;
 import game.beegon.CHexaGrid;
@@ -24,16 +26,17 @@ enum STAGE
 
 class CBeegonMainClient
 {
-	static var 	m_Stage 					: STAGE;
 	inline public static var m_WorldUnit	: Float	= 40.0;		// Unit vector that defined coordinate are 40 pixel long
+	static var 	m_Stage 					: STAGE;
+	static var	g_GameMenu					: CMenuGraph;
 
 	// /!\ TEMP
 	#if DebugInfo
-		static var m_Cpt						: Int;
-		static var g_Avatar						: CAvatar;
-		static var g_Grid						: CHexaGrid;
-		static var m_InputManager				: CGameInputManager;
-		static var m_TestText					: CTextFieldAS;
+		static var m_Cpt					: Int;
+		static var g_Avatar					: CAvatar;
+		static var g_Grid					: CHexaGrid;
+		static var m_InputManager			: CGameInputManager;
+		static var m_TestText				: CTextFieldAS;
 	#end
 	
 	public static function main()	: Void
@@ -78,14 +81,25 @@ class CBeegonMainClient
 	{
 		trace ( " Initialising game .. " );
 		
-		//g_Grid 		= new CHexaGrid( 7, 36 );
-		//g_Grid.InitCellArray();
+		g_GameMenu	= new CMenuGraph();
+		g_GameMenu.AddMenuNode( new CMenuNode( "MainMenu" ) );
+		g_GameMenu.AddMenuNode( new CMenuNode( "Game" ) );
+		g_GameMenu.AddMenuNode( new CMenuNode( "Option" ) );
+		g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Game" );
+		g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Option" );
+		g_GameMenu.GetMenuNode( "Game" ).AddTransition( "MainMenu", "QuitGame" );
+		g_GameMenu.GetMenuNode( "Option" ).AddTransition( "MainMenu" );
+		g_GameMenu.Initialise( "MainMenu" );
+		
+		
+		g_Grid 		= new CHexaGrid( 7, 36 );
+		g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
 		g_Avatar.SetSpeed( m_WorldUnit * 0.7 );
 		
-		m_InputManager = new CGameInputManager( g_Avatar );
+		m_InputManager = new CGameInputManager( g_Avatar, g_GameMenu );
 		
 		m_TestText = new CTextFieldAS();
 		m_TestText.Load( "test" );
@@ -113,7 +127,7 @@ class CBeegonMainClient
 		m_TestText.Update();
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
-		//g_Grid.Update();
+		g_Grid.Update();
 		
 		m_InputManager.Update();
 		
@@ -133,7 +147,7 @@ class CBeegonMainClient
 	
 	static function RenderCallback() : Result
 	{
-		//g_Grid.Draw();
+		g_Grid.Draw();
 		return SUCCESS;
 	}
 } 
