@@ -150,6 +150,11 @@ CGL.prototype.CreateBuffer = function( )
 	return m_GLContext.createBuffer();
 }
 
+CGL.prototype.DeleteBuffer = function( _Buf )  
+{
+	return m_GLContext.deleteBuffer(_Buf);
+}
+
 CGL.prototype.CreateFramebuffer= function( )   
 {
 	return m_GLContext.createFramebuffer();

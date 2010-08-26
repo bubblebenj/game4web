@@ -6,7 +6,9 @@
 package driver.js.renderer;
 
 import kernel.CSystem;
-import kernel.CRsc;
+
+import rsc.CRsc;
+import rsc.CRscImage;
 import js.Dom;
 
 class CRscImageJS extends CRscImage
@@ -21,7 +23,22 @@ class CRscImageJS extends CRscImage
 	
 	public override function SetPath( _Path : String )
 	{
+		super.SetPath(_Path);
 		
+		m_Img = untyped __js__("new Image()");
+		m_Img.src = _Path;
+		
+		var l_functor = function( x ) 
+		{ 
+			return function(_) ( { x.m_State = E_STATE.STREAMED;  } );
+		};
+		
+		m_Img.onload = l_functor(this);
+	}
+	
+	public override function GetDriverImage() : Dynamic
+	{
+		return m_Img;
 	}
 	
 }

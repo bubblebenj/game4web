@@ -7,6 +7,7 @@ import driver.js.rsc.CRscVertexShader;
 import driver.js.rscbuilders.CRscBuilderDocElem;
 import driver.js.kernel.CTypesJS;
 import driver.js.rscbuilders.CRscJSFactory;
+
 import kernel.CInputManager;
 
 import kernel.CSystem;
@@ -17,10 +18,12 @@ import kernel.Glb;
 import kernel.CMouse;
 
 import renderer.CMaterial;
-import renderer.CTexture;
+import renderer.CRscTexture;
 import renderer.CRenderStates;
 import renderer.CViewport;
 import renderer.CPrimitive;
+
+import rsc.CRscImage;
 
 import CGL;
 
@@ -119,10 +122,11 @@ class CSystemJS extends CSystem
 		
 		GetRscMan().AddBuilder( CMaterial.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CMouse.RSC_ID, 			m_RscJSFactory );
-		GetRscMan().AddBuilder( CTexture.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CRscTexture.RSC_ID, 	m_RscJSFactory );
 		GetRscMan().AddBuilder( CViewport.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CRenderStates.RSC_ID, 	m_RscJSFactory );
 		GetRscMan().AddBuilder( CPrimitive.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CRscImage.RSC_ID, 		m_RscJSFactory );
 		
 		return SUCCESS;
 	}

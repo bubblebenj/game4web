@@ -16,11 +16,10 @@ enum E_STATE
 
 class CRsc
 {
-	var m_Ref			: Int;
-	var m_Path			: String;
-	var m_SingleLoad	: Bool;
-	var m_State			: E_STATE;
-	
+	var m_Ref				: Int;
+	var m_Path				: String;
+	var m_SingleLoad		: Bool;
+	public var m_State		: E_STATE;
 	
 	public function new()
 	{
@@ -54,16 +53,6 @@ class CRsc
 	{
 		CDebug.ASSERT( m_Ref >= 0 );
 		m_Ref++;
-	}
-	
-	public function SetState( _State : E_STATE ) : Void
-	{
-		m_State = _State;
-	}
-	
-	public function GetState() : E_STATE
-	{
-		return m_State;
 	}
 	
 	public function SetSingleLoaded( _OnOff : Bool  ): Void 

@@ -19,7 +19,6 @@ import CGL;
 
 class CPrimitiveJS extends CPrimitive
 {
-
 	public function new() 
 	{
 		super();
@@ -84,8 +83,28 @@ class CPrimitiveJS extends CPrimitive
 		Glb.g_SystemJS.GetGL().BufferSubData( CGL.ARRAY_BUFFER, 0, m_VtxNativeBuf );
 	}
 	
-	public override function SetVertexArray(  _Vertices : Array< Float > , _Dynamic : Bool) : Void
+	public override function LockTexCoordArray() : Dynamic
 	{
+		return m_TexNativeBuf;
+	}
+	
+	public override function ReleaseTexCoordArray() : Void
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject);
+		Glb.g_SystemJS.GetGL().BufferSubData( CGL.ARRAY_BUFFER, 0, m_TexNativeBuf );
+	}
+	
+	public override function SetVertexArray(  _Vertices : Array< Float > , _Dyn : Bool) : Void
+	{
+		if ( m_VtxObject != null )
+		{
+			Glb.g_SystemJS.GetGL().DeleteBuffer(m_VtxObject);
+			m_VtxObject = null;
+			m_VtxNativeBuf = null;
+			m_NbVertex = 0;
+			m_NbTriangles = 0;
+		}
+		
 		m_NbVertex = Std.int(_Vertices.length / 3);
 		m_NbTriangles =  Std.int(_Vertices.length / 9);
 		
@@ -112,8 +131,8 @@ class CPrimitiveJS extends CPrimitive
 			m_VtxNativeBuf.Set(i, _Vertices[i]);
 		}
 		
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, (!_Dynamic) ? CGL.STATIC_DRAW : CGL.DYNAMIC_DRAW);
-		//Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, CGL.STATIC_DRAW );
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_VtxNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW );
+		m_AreVtxArrayDynamic = _Dyn;
 		CDebug.CONSOLEMSG("Set vertex buffer");
 			
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
@@ -123,8 +142,17 @@ class CPrimitiveJS extends CPrimitive
 		}
 	}
 	
-	public override function SetIndexArray(  _Indexes : Array< Int > ) : Void
+	public override function SetIndexArray(  _Indexes : Array< Int > , _Dyn : Bool) : Void
 	{
+		if ( m_IdxObject != null )
+		{
+			Glb.g_SystemJS.GetGL().DeleteBuffer(m_IdxObject);
+			m_IdxObject = null;
+			m_IdxNativeBuf = null;
+			m_NbIndices = 0;
+			m_NbTriangles = 0;
+		}
+		
 		if ( m_IdxObject == null )
 		{
 			m_IdxObject = Glb.g_SystemJS.GetGL().CreateBuffer();
@@ -151,7 +179,8 @@ class CPrimitiveJS extends CPrimitive
 			m_IdxNativeBuf.Set(i, _Indexes[i]);
 		}
 		
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, CGL.STATIC_DRAW );
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW  );
+		m_AreIdxArrayDynamic  = _Dyn;
 		
 		CDebug.CONSOLEMSG("Set index buffer (idx:"+m_NbIndices+", tri:"+m_NbTriangles+")" );
 		
@@ -161,21 +190,34 @@ class CPrimitiveJS extends CPrimitive
 			CDebug.CONSOLEMSG("GlError:PostSetIndexArray:" + l_Err);
 		}
 	}
-	
-	public override function HasIndex() : Bool
+	 
+
+	/**
+	 * use this to do an "initial set, to update it use Lock and Release, these are forward compatible for double buffering
+	 * @param	_TexCoords
+	 * @param	_Dyn : Does not mean it is back buffered, just writeable, you have to double buffer it by hand if needed by now
+	 */
+	public override function SetTexCooArray(  _TexCoords : Array< Float > , _Dyn : Bool) : Void
 	{
-		return m_NbIndices != 0;
-	}
-	
-	public override function SetTexCooArray(  _TexCoords : Array< Float > ) : Void
-	{
+		if ( m_TexObject != null )
+		{
+			Glb.g_SystemJS.GetGL().DeleteBuffer( m_TexObject );
+			m_TexObject = null;
+			m_TexNativeBuf = null;
+		}
+		
 		if ( m_TexObject == null )
 		{
 			m_TexObject = Glb.g_SystemJS.GetGL().CreateBuffer();
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject);
 		}
 		
-		if ( null != m_TexNativeBuf )
+		if ( m_NbVertex == 0)
+		{
+			m_NbVertex = Std.int( _TexCoords.length / 4);
+		}
+		
+		if ( null == m_TexNativeBuf )
 		{
 			m_TexNativeBuf =  new Float32Array( new ArrayBuffer( m_NbVertex * 4 * GetFloatPerTexCoord()) );
 		}
@@ -185,19 +227,44 @@ class CPrimitiveJS extends CPrimitive
 			m_TexNativeBuf.Set(i, _TexCoords[i]);
 		}
 		
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, CGL.STATIC_DRAW );
+		
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW );
+		m_AreTexCoordDynamic = _Dyn;
+	}
+	
+	public override function HasIndexArray() : Bool
+	{
+		return m_NbIndices != 0;
+	}
+	
+	public override function HasNormalArray() : Bool
+	{
+		return m_NrmlNativeBuf != null;
+	}
+	
+	public override function HasTexCoordArray() : Bool
+	{
+		return m_TexNativeBuf != null;
 	}
 	
 	
-	public override function SetNormalArray(  _Normals : Array< Float > ) : Void
+	public override function SetNormalArray(  _Normals : Array< Float > , _Dyn : Bool) : Void
 	{
+		CDebug.ASSERT(m_NbVertex != 0);
+		if ( m_NrmlObject != null )
+		{
+			Glb.g_SystemJS.GetGL().DeleteBuffer( m_NrmlObject );
+			m_NrmlObject = null;
+			m_NrmlNativeBuf = null;
+		}
+		
 		if ( m_NrmlObject == null )
 		{
 			m_NrmlObject = Glb.g_SystemJS.GetGL().CreateBuffer();
 			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_NrmlObject);
 		}
 		
-		if ( null != m_NrmlNativeBuf )
+		if ( null == m_NrmlNativeBuf )
 		{
 			m_NrmlNativeBuf =  new Float32Array( new ArrayBuffer(m_NbVertex * 4 * GetFloatPerNormal()));
 		}
@@ -207,7 +274,8 @@ class CPrimitiveJS extends CPrimitive
 			m_NrmlNativeBuf.Set(i, _Normals[i]);
 		}
 				
-		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_NrmlNativeBuf, CGL.STATIC_DRAW );
+		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_NrmlNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW  );
+		m_AreNrmlArrayDynamic = _Dyn;
 	}
 	
 	var m_NrmlObject:WebGLBuffer;
@@ -224,4 +292,9 @@ class CPrimitiveJS extends CPrimitive
 	
 	var m_NbTriangles:Int;
 	var m_NbVertex:Int;
+	
+	public var m_AreTexCoordDynamic(default, null) : Bool;
+	public var m_AreVtxArrayDynamic(default, null) : Bool;
+	public var m_AreIdxArrayDynamic(default, null) : Bool;
+	public var m_AreNrmlArrayDynamic(default,null) : Bool;
 }

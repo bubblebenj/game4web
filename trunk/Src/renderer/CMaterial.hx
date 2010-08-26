@@ -33,6 +33,7 @@ class CMaterial extends CRsc
 		
 		m_Mode = MBM_OPAQUE;
 		m_Alpha = 1;
+		m_Textures = new Array<CRscTexture>();
 	}
 	
 	public function Activate()  : Result
@@ -68,16 +69,37 @@ class CMaterial extends CRsc
 	
 	public function HasTexture() : Bool
 	{
-		return m_Textures != null && m_Textures.length > 0;
+		return m_Textures.length > 0;
 	}
 	
-	public function AttachTexture( _Index : Int , _Tex : CTexture ) : Void
+	public function GetTextureCount() : Int
 	{
+		return m_Textures.length;
+	}
+	
+	public function GetTexture( _Index:  Int)
+	{
+		return m_Textures[_Index];
+	}
+	
+	public function AttachTexture( _Index : Int , _Tex : CRscTexture ) : Void
+	{
+		if ( _Tex != null)
+		{
+			_Tex.AddRef();
+		}
+		
+		if ( m_Textures[_Index] != null )
+		{
+			m_Textures[_Index].Release();
+			m_Textures[_Index] = null;
+		}
+		
 		m_Textures[_Index] = _Tex;
 	}
 	
 	var m_Alpha : Float;
 	var m_Mode : MAT_BLEND_MODE;
 	var m_Shader : CRscShader;
-	var m_Textures : Array<CTexture>;
+	var m_Textures : Array<CRscTexture>;
 }

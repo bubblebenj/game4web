@@ -5,7 +5,7 @@
 
 package driver.js.renderer;
 
-import driver.js.renderer.CGlQuad;
+import driver.js.renderer.C2DImageJS;
 import driver.js.renderer.CViewportJS;
 import math.CMatrix44;
 

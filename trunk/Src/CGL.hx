@@ -91,21 +91,23 @@ extern class CGL
 	public function GetAttribLocation(  _prgm : WebGLProgram,  _Name : DOMString ) : GLint;
 	
 	public function CreateBuffer() : WebGLBuffer;
+	public function DeleteBuffer( _Buf : WebGLBuffer) : Void;
+	
     public function CreateFramebuffer() : WebGLFramebuffer;
     public function CreateRenderbuffer() : WebGLRenderbuffer;
 	
     public function CreateTexture() : WebGLTexture;
-	public function DeleteTexture( _Tex : WebGLTexture);
+	public function DeleteTexture( _Tex : WebGLTexture) : Void;
 	
-	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture);
+	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture): Void;
 	
-	public function PixelStorei( _pname : GLenum, _param : GLint );
+	public function PixelStorei( _pname : GLenum, _param : GLint ): Void;
 	public function TexImage2D( _Target: GLenum, _Level: GLint, _Internalformat: GLenum,
-								_Format: GLenum, _Type : GLenum, _Pixels : Dynamic );
+								_Format: GLenum, _Type : GLenum, _Pixels : Dynamic ): Void;
 								
-	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint);
+	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint): Void;
 	
-	public function PolygonOffset(  factor : GLfloat, units : GLfloat );
+	public function PolygonOffset(  factor : GLfloat, units : GLfloat ): Void;
 
 
 	
@@ -163,6 +165,8 @@ extern class CGL
 	public function GetString( _Name: GLenum )	: DOMString;
 	public function Hint( _Tgt : GLenum, _Mode:GLenum) : Void;
 	
+	static inline var TRUE                            		= 1;
+	static inline var FALSE                             	= 0;
 	
 	/* ClearBufferMask */
     public static inline var DEPTH_BUFFER_BIT               = 0x00000100;
@@ -188,6 +192,7 @@ extern class CGL
     /*      GEQUAL */
     /*      ALWAYS */
     
+
     /* BlendingFactorDest */
     static inline var ZERO                           = 0;
     static inline var ONE                            = 1;
@@ -583,7 +588,13 @@ extern class CGL
     static inline var RENDERBUFFER_BINDING           = 0x8CA7;
     static inline var MAX_RENDERBUFFER_SIZE          = 0x84E8;
     
-    static inline var INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
+	static inline var INVALID_FRAMEBUFFER_OPERATION  = 0x0506;
+	
+	//WebGl spec
+	static inline var  UNPACK_FLIP_Y_WEBGL            = 0x9240;
+    static inline var  UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241;
+    static inline var  CONTEXT_LOST_WEBGL             = 0x9242;
+
 }
 
 

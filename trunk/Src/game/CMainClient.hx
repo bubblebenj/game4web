@@ -5,6 +5,9 @@ import kernel.CSystem;
 import kernel.Glb;
 import kernel.CTypes;
 import kernel.CMouse;								// <--
+import kernel.CDebug;		
+
+import renderer.CRscTexture;
 
 import math.CV2D;
 import math.CV3D;
@@ -16,8 +19,10 @@ import renderer.CRenderer;
 import renderer.camera.CCamera;
 import renderer.camera.COrthoCamera;
 
+import rsc.CRscImage;
+
 #if js
-	import driver.js.renderer.CGlQuad;
+	import driver.js.renderer.C2DImageJS;
 	import CGL;
 #end
 
@@ -30,9 +35,11 @@ enum STAGE
 class CMainClient
 {
 	static var m_Stage	: STAGE;
-	static var m_Quad	: C2DQuad;
+	static var m_Quad	: C2DImageJS;
 	static var m_Mouse	: CMouse; 					// <--
 	static var m_Cpt	: Int;						// <--
+	
+	static var m_Img	: CRscImage;
 	
 	#if js
 	public static function InitGameJS()
@@ -54,7 +61,7 @@ class CMainClient
 		l_OrthoCam.SetFar( 1000.0 );
 		
 		
-		m_Quad = new CGlQuad();
+		m_Quad = new C2DImageJS();
 		m_Quad.Initialize();
 		
 		m_Quad.SetCenterSize( CV2D.HALF, CV2D.ONE );
@@ -62,6 +69,15 @@ class CMainClient
 		
 		m_Quad.SetVisible( true );
 		
+		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscTexture.RSC_ID, "https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/doc/spec/WebGL-Logo.png" ), CRscImage);
+		
+		m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://www.alsacreations.com/xmedia/doc/full/webgl.gif" ), CRscImage);
+		CDebug.ASSERT(m_Img!= null);
+		
+		m_Quad.SetRsc( m_Img );
+		m_Quad.SetUV( CV2D.ZERO, CV2D.ONE );
+		//m_Quad.GetMaterial().AttachTexture( 0, m_Tex );
+		//m_Quad.GetPrimitive().
 	}
 	#end
 	
