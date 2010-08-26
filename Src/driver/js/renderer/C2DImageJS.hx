@@ -8,13 +8,16 @@ package driver.js.renderer;
 import driver.js.rsc.CRscShaderProgram;
 import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
+import rsc.CRscImage;
 
 import CGL;
 
 import renderer.CViewport;
 import renderer.CRenderStates;
 import renderer.C2DQuad;
+import renderer.C2DImage;
 import renderer.CRscShader;
+import renderer.CRscTexture;
 import renderer.CMaterial;
 import renderer.CPrimitive;
 
@@ -28,8 +31,10 @@ import math.Registers;
 
 import rsc.CRsc;
 import rsc.CRscMan;
+import rsc.CRscImage;
 
-class CGlQuad extends C2DQuad
+
+class C2DImageJS extends C2DImage
 {
 
 	public function new() 
@@ -133,7 +138,10 @@ class CGlQuad extends C2DQuad
 		l_IndexArray[4] = 2;
 		l_IndexArray[5] = 1;
 		
-		m_Primitive.SetIndexArray(l_IndexArray);
+		m_Primitive.SetIndexArray(l_IndexArray, false);
+		
+		var l_TexCooArray = m_UV.Flatten();
+		m_Primitive.SetTexCooArray(l_TexCooArray, true);
 	}
 
 	public function UpdateQuad(_VpId : Int )
@@ -173,10 +181,9 @@ class CGlQuad extends C2DQuad
 	public override function Draw( _VpId : Int ) : Result
 	{
 		super.Draw( _VpId );
-	
 		
 		UpdateQuad(_VpId);
-		//CreateData();
+		
 		if ( Activate() == FAILURE)
 		{
 			CDebug.CONSOLEMSG("Shader activation failure");
@@ -258,9 +265,51 @@ class CGlQuad extends C2DQuad
 		
 		return SUCCESS;
 	}
-
+	
+	public function GetMaterial() : CMaterial
+	{
+		return m_Material;
+	}
+	private var m_Material : CMaterial;
+	
+	public override function SetRsc( _Rsc : CRscImage )
+	{
+		
+		if( GetMaterial().GetTexture(0) != null )
+		{
+			GetMaterial().GetTexture(0).Release();
+			GetMaterial().AttachTexture( 0, null );
+		}
+		
+		super.SetRsc(_Rsc);
+		
+		var l_NewTex  = Glb.g_System.GetRscMan().Load( CRscTexture.RSC_ID , _Rsc.GetPath() );
+		
+		if (l_NewTex != null)
+		{
+			GetMaterial().AttachTexture( 0, cast(l_NewTex,CRscTexture) );
+			
+			l_NewTex.Release();
+		}
+	}
+	
+	public override function SetUV( _u,_v )
+	{
+		super.SetUV(_u, _v );
+		CDebug.ASSERT( m_Primitive.m_AreTexCoordDynamic );
+		
+		{
+			var l_TexCooArr = m_Primitive.LockTexCoordArray();
+			l_TexCooArr.Set(0, m_UV.x);
+			l_TexCooArr.Set(1, m_UV.y);
+			l_TexCooArr.Set(2, m_UV.z);
+			l_TexCooArr.Set(3, m_UV.w );
+			m_Primitive.ReleaseTexCoordArray();
+		}
+	}
+	
 	var m_Primitive : CPrimitiveJS;
-	var m_Material : CMaterial;
+	
 	var m_ShdrPrgm : CRscShaderProgram;
 	var m_RenderStates : CRenderStatesJS;
 	

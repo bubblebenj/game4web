@@ -23,4 +23,9 @@ class CRscImage extends CRsc
 	{
 		super();
 	}
+	
+	public function GetDriverImage() : Dynamic
+	{
+		return null;
+	}
 }

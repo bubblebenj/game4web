@@ -26,6 +26,12 @@ class CRscMan
 	public function AddBuilder( _Type : RSC_TYPES , _Builder : CRscBuilder ) : Result
 	{
 		CDebug.ASSERT(_Builder != null );
+		
+		if (_Builder == null)
+		{
+			CDebug.CONSOLEMSG("Rsc Type num " +_Type + " is null");
+		}
+		
 		m_Builders.set( _Type, _Builder);
 		return SUCCESS;
 	}
@@ -72,14 +78,17 @@ class CRscMan
 	public function Load( _Type : RSC_TYPES, _Path : String, ?_SingleLoad : Bool ) : CRsc
 	{
 		CDebug.ASSERT(_Path != null );
+		
+		
 		if (	_SingleLoad != true 
 			&& 	_Path != null )
 		{
-			CDebug.CONSOLEMSG("searching resource : " + _Path);
+			CDebug.CONSOLEMSG("searching resource : >" + _Path+"<");
 
-			var l_CandRsc : CRsc = m_Repository.get(_Path);
+			var l_CandRsc : CRsc = m_Repository.get( _Type + "_" + _Path);
 			if (l_CandRsc != null
-			&&	!l_CandRsc.IsSingleLoaded())
+			&&	!l_CandRsc.IsSingleLoaded()
+			&& _Type == l_CandRsc.GetType())
 			{
 				l_CandRsc.AddRef();
 				return l_CandRsc;
@@ -101,7 +110,7 @@ class CRscMan
 				l_Rsc.SetPath( _Path );
 				l_Rsc.SetSingleLoaded( (_SingleLoad != true) ? false : _SingleLoad );
 				
-				m_Repository.set(_Path, l_Rsc);
+				m_Repository.set(_Type+"_"+_Path, l_Rsc);
 				CDebug.CONSOLEMSG("Adding resource : " + _Path);
 			}
 			
@@ -111,7 +120,7 @@ class CRscMan
 	
 	public function ForceDelete( _R : CRsc  ) : Void
 	{
-		m_Repository.set( _R.GetPath() , null );
+		m_Repository.set( _R.GetType() +"_"+_R.GetPath() , null );
 	}
 	
 	public function new()
