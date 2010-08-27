@@ -274,7 +274,6 @@ class C2DImageJS extends C2DImage
 	
 	public override function SetRsc( _Rsc : CRscImage )
 	{
-		
 		if( GetMaterial().GetTexture(0) != null )
 		{
 			GetMaterial().GetTexture(0).Release();
