@@ -19,7 +19,11 @@ import renderer.CRenderer;
 import renderer.camera.CCamera;
 import renderer.camera.COrthoCamera;
 
+import renderer.C2DImage;
+
 import rsc.CRscImage;
+
+import CDriver;
 
 #if js
 	import driver.js.renderer.C2DImageJS;
@@ -85,6 +89,7 @@ class CMainClient
 		m_Quad.SetUV( CV2D.ZERO, CV2D.ONE );
 		//m_Quad.GetMaterial().AttachTexture( 0, m_Tex );
 		//m_Quad.GetPrimitive().
+
 	}
 	#end
 	
@@ -100,6 +105,12 @@ class CMainClient
 		#if js
 		InitGameJS();
 		#end
+		
+				
+		//var l_Img :C2DImage =  CPlatform.Newer( Type.typeof(C2DImage) );
+		var l_Img :C2DImage = new CDriver2DImage();
+		
+		CDebug.CONSOLEMSG(  "type of 2dimg : " + (Std.is(l_Img,C2DImage) ? "yes" : "No") );
 		
 
 	}
