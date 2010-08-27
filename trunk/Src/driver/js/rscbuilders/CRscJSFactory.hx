@@ -27,13 +27,29 @@ import rsc.CRscBuilder;
 import rsc.CRsc;
 import rsc.CRscImage;
 
+/*
+typedef BuildPair = {
+		var m_Rsc : RSC_TYPES;
+		var m_Func : String -> CRsc;
+	 };
+*/
 
 class CRscJSFactory extends CRscBuilder 
 {
-
+	
+	
 	public function new() 
 	{
 		super();
+		
+		/*
+		var l_Arr : Array<BuildPair> = new Array<BuildPair>();
+	
+		l_Arr[0] = { 	m_Rsc : CMaterial.RSC_ID,
+						m_Func : function(_Path : String) { return cast new CMaterialJS();  }};
+		*/
+		//var l_NewInstance = l_BuildFunc( "d:\\temp" );
+		
 	}
 	
 	public override function Build( _Type : RSC_TYPES, _Path : String ) : CRsc

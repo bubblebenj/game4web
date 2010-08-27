@@ -32,6 +32,13 @@ enum STAGE
 	STAGE_UPDATE;
 }
 
+
+typedef IntPair = {
+	var m_Rsc : Int;
+	var m_Func : String -> Int;
+ };
+ 
+
 class CMainClient
 {
 	static var m_Stage	: STAGE;
@@ -83,9 +90,18 @@ class CMainClient
 	
 	public static function InitGame()
 	{
+		var l_Arr : Array<IntPair> = new Array<IntPair>();
+	
+		l_Arr[0] = { 	m_Rsc : 33,
+						m_Func : function(_Path : String) { return 666;  }};
+						
+		CDebug.CONSOLEMSG("Lambda = " + l_Arr[0].m_Func("bla") );
+		
 		#if js
 		InitGameJS();
 		#end
+		
+
 	}
 	
 	public static function UpdateGame()
