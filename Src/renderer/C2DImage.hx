@@ -13,6 +13,7 @@ import kernel.CTypes;
 import rsc.CRscImage;
 
 
+//
 class C2DImage extends C2DQuad
 {
 	public function new()
