@@ -6,11 +6,13 @@
  */
 
 import kernel.CTypes;
+import kernel.Glb;
+
 import math.CV2D;
 import renderer.C2DImage;
-#if flash10
-	import driver.as.renderer.C2DImageAS;
-#end
+import rsc.CRscImage;
+
+import driver.as.renderer.C2DImageAS;
 
 enum EENTITY_STATE
 {
@@ -50,11 +52,7 @@ class CEntity
 	
 	//private var m_State				: EENTITY_STATE;
 	//private var m_StateAvailable	: CBitField;
-	#if flash10
-		public	var m_Sprite		: C2DImageAS;
-	#else
-		public	var m_Sprite		: C2DImage;
-	#end
+	public	var m_Sprite		: C2DImageAS;
 		
 	public function new( _Type : EENTITY_TYPE )
 	{
@@ -64,12 +62,8 @@ class CEntity
 		m_Coordinate	= new CV2D( 0, 0 );
 		m_Size			= new CV2D( 0, 0 );
 		
-		#if flash10
-			m_Sprite	= new C2DImageAS();
-		#else
-			m_Sprite	= new C2DImage();;
-		#end
-		
+		m_Sprite		= new C2DImageAS();
+
 		//trace ( "\t \t new CEntity -- ] ");
 	}
 	
@@ -88,7 +82,8 @@ class CEntity
 	 */
 		public	function SetSprite( _PathToImage : String ) : Result
 		{
-			m_Sprite.Load( _PathToImage );
+			var l_RscImg	: CRscImage = cast ( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, _PathToImage ), CRscImage);
+			m_Sprite.SetRsc( l_RscImg );
 			return SUCCESS;
 		}
 		
@@ -104,13 +99,7 @@ class CEntity
 		// Move the entity to a specified position
 		public function SetPosition( _Pos : CV2D ) : Void
 		{
-			/* Entities are handled by the center whereas 
-			 * "real images" are handled by the top left corner */
-			
-			m_Coordinate.Set( m_Size.x * 0.5, m_Size.y * 0.5 );	// Compute the half size
-			CV2D.Sub( m_Coordinate, _Pos, m_Coordinate );		// Change coordinates centered
-			m_Sprite.SetPosition( m_Coordinate );
-			
+			m_Sprite.SetCenterPosition( _Pos );
 			m_Coordinate.Copy( _Pos );
 		}
 		
@@ -121,11 +110,7 @@ class CEntity
 		
 		public function SetSize( _Size : CV2D ) : Void
 		{
-			m_Size.Copy( _Size );
-			/* Entities are handled by the center whereas 
-			 * "real images" are handled by the top left corner
-			 * Thus Coordinates need to be adjusted after resizing */
 			m_Sprite.SetSize( _Size );
-			SetPosition( m_Coordinate );
+			m_Size.Copy( _Size );
 		}
 }

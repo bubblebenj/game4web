@@ -8,6 +8,7 @@ import driver.as.renderer.CTextFieldAS;
 import kernel.CMouse;
 import logic.CMenuGraph;
 import logic.CMenuNode;
+import renderer.C2DImage;
 
 import game.beegon.CAvatar;
 import game.beegon.CHexaGrid;
@@ -36,6 +37,7 @@ class CBeegonMainClient
 		static var g_Avatar					: CAvatar;
 		static var g_Grid					: CHexaGrid;
 		static var m_InputManager			: CGameInputManager;
+		static var m_TestImage				: C2DImage;
 		static var m_TestText				: CTextFieldAS;
 	#end
 	
@@ -104,8 +106,8 @@ class CBeegonMainClient
 		m_TestText = new CTextFieldAS();
 		m_TestText.Load( "test" );
 		
-		var l_V2D_Size	: CV2D = new CV2D( 600, 30 );
-		m_TestText.SetPosition( l_V2D_Size );
+		var l_V2D_Pos	: CV2D = new CV2D( 600, 30 );
+		m_TestText.SetTLPosition( l_V2D_Pos );
 		
 		#if flash10
 			InitGameAS();

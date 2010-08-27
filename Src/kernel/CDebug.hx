@@ -4,7 +4,7 @@ class CDebug
 {
 	public static function ASSERT( _Obj : Bool, ?pos : haxe.PosInfos  )
 	{
-		if ( _Obj == false ||  _Obj == null)
+		if ( _Obj == false )//|| _Obj == null )
 		{
 			haxe.Log.trace( "Assert in "+pos.className+"::"+pos.methodName,pos );
 		}

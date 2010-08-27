@@ -52,7 +52,7 @@ class CTextFieldAS extends CTextField
 	{
 		
 		if ( 	m_RscText != null
-		&& 		m_RscText.GetState() == E_STATE.STREAMED )
+		&& 		m_RscText.m_State == E_STATE.STREAMED )
 		{
 			//CDebug.CONSOLEMSG("Stream finished");
 			m_TextField.text	= m_RscText.GetText();
@@ -78,17 +78,6 @@ class CTextFieldAS extends CTextField
 		Glb.GetRendererAS().AddToSceneAS( m_TextField );
 	}
 	
-	public override function SetPosition( _Pos : CV2D ) : Void
-	{
-		super.SetPosition( _Pos );
-		
-		if (m_TextField != null)
-		{
-			m_TextField.x = m_Rect.m_TL.x;
-			m_TextField.y = m_Rect.m_TL.y;
-		}
-	}
-	
 	public function IsReady() : Bool 
 	{
 		return m_TextField != null;
@@ -97,15 +86,30 @@ class CTextFieldAS extends CTextField
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );
-		
-		//resize
 		if ( m_TextField != null )
 		{	
-			m_TextField.width = _Size.x;
-			m_TextField.height = _Size.y;
-			
-			m_TextField.x = m_Rect.m_TL.x;
-			m_TextField.y = m_Rect.m_TL.y;
+			m_TextField.width	= _Size.x;
+			m_TextField.height	= _Size.y;
+		}
+	}
+	
+	public override function SetCenterPosition( _Pos : CV2D ) : Void
+	{
+		super.SetCenterPosition( _Pos );
+		if (m_TextField != null)
+		{
+			m_TextField.x	= GetTL().x;
+			m_TextField.y	= GetTL().y;
+		}
+	}
+	
+	public override function SetTLPosition( _Pos : CV2D ) : Void
+	{
+		super.SetTLPosition( _Pos );
+		if (m_TextField != null)
+		{
+			m_TextField.x = _Pos.x;
+			m_TextField.y = _Pos.y;
 		}
 	}
 	

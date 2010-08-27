@@ -153,10 +153,10 @@ class CHexaGrid
 				{
 					if ( m_CellArray[i][j] != null )
 					{
-						if ( m_CellArray[i][j].m_Sprite.IsReady() )
-						{
-							return false;
-						}
+						//if ( m_CellArray[i][j].m_Sprite.IsReady() )
+						//{
+							//return false;
+						//}
 					}
 				}
 			}
@@ -167,8 +167,8 @@ class CHexaGrid
 	
 	public function Update() : Void
 	{
-		if ( IsReady() )
-		{
+		//if ( IsReady() )
+		//{
 			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
 			{	
 				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
@@ -183,7 +183,7 @@ class CHexaGrid
 					}
 				}
 			}
-		}
+		//}
 	}
 	public function Draw()				: Void
 	{

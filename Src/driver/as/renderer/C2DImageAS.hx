@@ -27,7 +27,7 @@ class C2DImageAS extends C2DImage
 	{
 		super();
 		
-		m_Bmp		=  null;
+		m_Bmp		= null;
 		m_RscImage	= null;
 	}
 	
@@ -42,28 +42,34 @@ class C2DImageAS extends C2DImage
 		return l_Res;
 	}
 	
-	public override function Activate() : Result
+	public override function SetRsc( _Rsc : CRscImage )
 	{
-		return SUCCESS;
+		super.SetRsc(_Rsc);
+		m_RscImage = cast( _Rsc, CRscImageAS );
+		
+		Glb.GetRendererAS().AddToScene( this );
 	}
 	
 	public override function Update() : Result
 	{
-		
 		if ( 	m_RscImage != null
-		&& 		m_RscImage.GetState() == E_STATE.STREAMED )
+		&& 		m_RscImage.m_State == E_STATE.STREAMED )
 		{
 			//CDebug.CONSOLEMSG("Stream finished");
 			if( m_Bmp == null )
 			{
 				m_Bmp = m_RscImage.CreateBitmap(); 
-				
 				SetVisible(true);
 				//CDebug.CONSOLEMSG("Activating" + m_Bmp);
 			}
 		}
 		return SUCCESS;
 	}
+	
+	public override function Activate() : Result
+	{
+		return SUCCESS;
+	}	
 	
 	public function Shut() : Result
 	{
@@ -72,43 +78,41 @@ class C2DImageAS extends C2DImage
 		return SUCCESS;
 	}
 	
-	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
 		super.SetVisible( _Vis );
 		
 		m_Bmp.visible = _Vis;
-		Glb.GetRendererAS().AddToSceneAS( m_Bmp );
-	}
-	
-	public override function SetPosition( _Pos : CV2D ) : Void
-	{
-		super.SetPosition( _Pos );
-		
-		if (m_Bmp != null)
-		{
-			m_Bmp.x = m_Rect.m_TL.x;
-			m_Bmp.y = m_Rect.m_TL.y;
-		}
-	}
-	
-	public function IsReady() : Bool 
-	{
-		return m_Bmp != null;
+		//Glb.GetRendererAS().AddToSceneAS( m_Bmp );
 	}
 	
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );
-		
-		//resize
 		if ( m_Bmp != null )
 		{	
-			m_Bmp.width = _Size.x;
-			m_Bmp.height = _Size.y;
-			
-			m_Bmp.x = m_Rect.m_TL.x;
-			m_Bmp.y = m_Rect.m_TL.y;
+			m_Bmp.width		= _Size.x;
+			m_Bmp.height	= _Size.y;
+		}
+	}
+	
+	public override function SetCenterPosition( _Pos : CV2D ) : Void
+	{
+		super.SetCenterPosition( _Pos );
+		if (m_Bmp != null)
+		{
+			m_Bmp.x	= GetTL().x;
+			m_Bmp.y	= GetTL().y;
+		}
+	}
+	
+	public override function SetTLPosition( _Pos : CV2D ) : Void
+	{
+		super.SetTLPosition( _Pos );
+		if (m_Bmp != null)
+		{
+			m_Bmp.x = _Pos.x;
+			m_Bmp.y = _Pos.y;
 		}
 	}
 	
