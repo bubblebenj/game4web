@@ -4,7 +4,7 @@
  * 
  */
 
-import driver.as.renderer.CTextFieldAS;
+import CDriver;
 import kernel.CMouse;
 import logic.CMenuGraph;
 import logic.CMenuNode;
@@ -37,8 +37,7 @@ class CBeegonMainClient
 		static var g_Avatar					: CAvatar;
 		static var g_Grid					: CHexaGrid;
 		static var m_InputManager			: CGameInputManager;
-		static var m_TestImage				: C2DImage;
-		static var m_TestText				: CTextFieldAS;
+		//static var m_TestText				: CDriverTextField;
 	#end
 	
 	public static function main()	: Void
@@ -103,11 +102,11 @@ class CBeegonMainClient
 		
 		m_InputManager = new CGameInputManager( g_Avatar, g_GameMenu );
 		
-		m_TestText = new CTextFieldAS();
-		m_TestText.Load( "test" );
+		//m_TestText = new CDriverTextField();
+		//m_TestText.Load( "test" );
 		
 		var l_V2D_Pos	: CV2D = new CV2D( 600, 30 );
-		m_TestText.SetTLPosition( l_V2D_Pos );
+		//m_TestText.SetTLPosition( l_V2D_Pos );
 		
 		#if flash10
 			InitGameAS();
@@ -126,7 +125,7 @@ class CBeegonMainClient
 	public static function UpdateGame()
 	{
 		//trace( "Update");
-		m_TestText.Update();
+		//m_TestText.Update();
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
 		g_Grid.Update();
@@ -140,7 +139,6 @@ class CBeegonMainClient
 			 **********/
 			if (m_Cpt > 125)
 			{
-				//trace( "g_Avatar.SetCoordinate( l_V2D );");
 				//trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
 			}
 			else	m_Cpt++;

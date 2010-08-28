@@ -4,15 +4,14 @@
  * ...
  * @author bdubois
  */
-
+import CDriver;
+ 
 import kernel.CTypes;
 import kernel.Glb;
 
 import math.CV2D;
 import renderer.C2DImage;
 import rsc.CRscImage;
-
-import driver.as.renderer.C2DImageAS;
 
 enum EENTITY_STATE
 {
@@ -52,7 +51,7 @@ class CEntity
 	
 	//private var m_State				: EENTITY_STATE;
 	//private var m_StateAvailable	: CBitField;
-	public	var m_Sprite		: C2DImageAS;
+	public	var m_Sprite			: CDriver2DImage;
 		
 	public function new( _Type : EENTITY_TYPE )
 	{
@@ -62,7 +61,7 @@ class CEntity
 		m_Coordinate	= new CV2D( 0, 0 );
 		m_Size			= new CV2D( 0, 0 );
 		
-		m_Sprite		= new C2DImageAS();
+		m_Sprite		= new CDriver2DImage();
 
 		//trace ( "\t \t new CEntity -- ] ");
 	}
@@ -82,8 +81,7 @@ class CEntity
 	 */
 		public	function SetSprite( _PathToImage : String ) : Result
 		{
-			var l_RscImg	: CRscImage = cast ( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, _PathToImage ), CRscImage);
-			m_Sprite.SetRsc( l_RscImg );
+			m_Sprite.Load( _PathToImage );
 			return SUCCESS;
 		}
 		

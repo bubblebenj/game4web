@@ -277,7 +277,7 @@ class C2DImageJS extends C2DImage
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
-		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID, _Path ), CRscImageJS ) ) );
+		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID, _Path ), CRscImageJS ) );
 		
 		return l_Res;
 	}

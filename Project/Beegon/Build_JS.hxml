@@ -1,5 +1,15 @@
--cp ../../Src
+-cp ../../Src/
 -cp ../../Src/game/beegon/
 
--js ../build/JS/CMainClient.js
+### main class
 -main CBeegonMainClient
+
+### Output file
+-js ../../Build/JS/CBeegonMainClient.js
+
+
+
+
+# Option de compile
+-D DebugInfo 
+-D CHexaGrid
