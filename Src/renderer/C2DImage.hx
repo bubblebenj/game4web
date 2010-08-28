@@ -12,8 +12,6 @@ import kernel.CTypes;
 
 import rsc.CRscImage;
 
-
-//
 class C2DImage extends C2DQuad
 {
 	public function new()
@@ -22,9 +20,14 @@ class C2DImage extends C2DQuad
 		m_UV = new CV4D(0,0,1,1);
 	}
 	
-	public function SetRsc( _RscImg : CRscImage ) : Void
+	public function Load( _Path : String ) : Result
 	{
-		
+		return SUCCESS;
+	}
+	
+	public function SetRsc( _RscImg : CRscImage ) : Result
+	{
+		return SUCCESS;
 	}
 	
 	public function SetUV( _u : CV2D , _v : CV2D) : Void
