@@ -35,14 +35,20 @@ class CTextFieldAS extends CTextField
 		return SUCCESS;
 	}
 	
-	
-	
-	public function Load( _Path )	: Result
+	public override function Load( _Path )	: Result
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
-		m_RscText = cast( l_RscMan.Load( CRscText.RSC_ID , _Path ), CRscTextAS );
-		var l_Res = (m_RscText != null) ? SUCCESS : FAILURE;
+		var l_Res = SetRsc( cast( l_RscMan.Load( CRscText.RSC_ID , _Path ), CRscTextAS ) );
+		
+		return l_Res;
+	}
+	
+	public override function SetRsc( _Rsc : CRscText )	: Result
+	{
+		super.SetRsc( _Rsc );
+		m_RscText = cast ( _Rsc, CRscTextAS );
+		var l_Res = ( m_RscText != null) ? SUCCESS : FAILURE;
 		
 		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;

@@ -31,23 +31,23 @@ class C2DImageAS extends C2DImage
 		m_RscImage	= null;
 	}
 	
-	public function Load( _Path )	: Result
+	public override function Load( _Path )	: Result
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
-		m_RscImage = cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS );
+		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
+		
+		return l_Res;
+	}
+	
+	public override function SetRsc( _Rsc : CRscImage )	: Result
+	{
+		super.SetRsc(_Rsc);
+		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
 		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;
-	}
-	
-	public override function SetRsc( _Rsc : CRscImage )
-	{
-		super.SetRsc(_Rsc);
-		m_RscImage = cast( _Rsc, CRscImageAS );
-		
-		Glb.GetRendererAS().AddToScene( this );
 	}
 	
 	public override function Update() : Result
@@ -60,7 +60,7 @@ class C2DImageAS extends C2DImage
 			{
 				m_Bmp = m_RscImage.CreateBitmap(); 
 				SetVisible(true);
-				//CDebug.CONSOLEMSG("Activating" + m_Bmp);
+				CDebug.CONSOLEMSG("Activating" + m_Bmp);
 			}
 		}
 		return SUCCESS;
@@ -83,7 +83,7 @@ class C2DImageAS extends C2DImage
 		super.SetVisible( _Vis );
 		
 		m_Bmp.visible = _Vis;
-		//Glb.GetRendererAS().AddToSceneAS( m_Bmp );
+		Glb.GetRendererAS().AddToSceneAS( m_Bmp );
 	}
 	
 	public override function SetSize( _Size : CV2D ) : Void

@@ -6,9 +6,11 @@
 package ;
 
 #if flash
-typedef CDriver2DImage = driver.js.renderer.C2DImageAS;
+	typedef CDriver2DImage = driver.as.renderer.C2DImageAS;
+	typedef CDriverTextField = driver.as.renderer.CTextFieldAS;
 #elseif js
-typedef CDriver2DImage = driver.js.renderer.C2DImageJS;
+	typedef CDriver2DImage = driver.js.renderer.C2DImageJS;
+	//typedef CDriverTextField = driver.js.renderer.CTextFieldJS;
 #end
 
 /*

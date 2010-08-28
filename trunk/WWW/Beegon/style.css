@@ -36,10 +36,11 @@ div{
 	background-color	:#222222;
 	color				:#EEEEEE;
 	background-repeat	:no-repeat;
+	text-align			:left;
 }
 
 
-#flasharea {
+#gamearea {
 	width				: 800px; /* 640px; /* 512px; /* largeur obligatoire pour être centré */
 	height				: 600px; /*480px; /* 384px; */
 	margin				: 50px;
@@ -47,6 +48,7 @@ div{
 	margin-right		:auto;
 	padding				: 0px;
 	background-color	:#00FF99;
+	z-index				: 1;
 }
 
 .grid	{
@@ -54,6 +56,7 @@ div{
 	width				: 25%;
 	height				: 25%;
 	border-style		: none;
+	z-index				: 0;
 }
 
 #Pos-1-1	{	left	:	 0%;	top	:	 0%;	background-color	: 	#696969;	}
