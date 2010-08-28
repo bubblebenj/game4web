@@ -272,7 +272,17 @@ class C2DImageJS extends C2DImage
 	}
 	private var m_Material : CMaterial;
 	
-	public override function SetRsc( _Rsc : CRscImage )
+	
+	public override function Load( _Path )	: Result
+	{
+		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
+		
+		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID, _Path ), CRscImageJS ) ) );
+		
+		return l_Res;
+	}
+	
+	public override function SetRsc( _Rsc : CRscImage )	: Result
 	{
 		if( GetMaterial().GetTexture(0) != null )
 		{
@@ -280,7 +290,7 @@ class C2DImageJS extends C2DImage
 			GetMaterial().AttachTexture( 0, null );
 		}
 		
-		super.SetRsc(_Rsc);
+		super.SetRsc(_Rsc);		// <-- Est ce vraiment utile ?
 		
 		var l_NewTex  = Glb.g_System.GetRscMan().Load( CRscTexture.RSC_ID , _Rsc.GetPath() );
 		
@@ -290,6 +300,7 @@ class C2DImageJS extends C2DImage
 			
 			l_NewTex.Release();
 		}
+		return SUCCESS;
 	}
 	
 	public override function SetUV( _u,_v )
