@@ -37,7 +37,7 @@ class CBeegonMainClient
 		static var g_Avatar					: CAvatar;
 		static var g_Grid					: CHexaGrid;
 		static var m_InputManager			: CGameInputManager;
-		//static var m_TestText				: CDriverTextField;
+		static var m_TestText				: CDriverTextField;
 	#end
 	
 	public static function main()	: Void
@@ -61,7 +61,7 @@ class CBeegonMainClient
 		
 		// /!\ TEMP
 		#if DebugInfo
-		m_Cpt = 125;
+		m_Cpt = 500;
 		#end
     }
 	
@@ -83,18 +83,20 @@ class CBeegonMainClient
 		trace ( " Initialising game .. " );
 		
 		g_GameMenu	= new CMenuGraph();
-		g_GameMenu.AddMenuNode( new CMenuNode( "MainMenu" ) );
-		g_GameMenu.AddMenuNode( new CMenuNode( "Game" ) );
-		g_GameMenu.AddMenuNode( new CMenuNode( "Option" ) );
-		g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Game" );
-		g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Option" );
-		g_GameMenu.GetMenuNode( "Game" ).AddTransition( "MainMenu", "QuitGame" );
-		g_GameMenu.GetMenuNode( "Option" ).AddTransition( "MainMenu" );
+		//g_GameMenu.AddMenuNode( new CMenuNode( "MainMenu" ) );
+		//g_GameMenu.AddMenuNode( new CMenuNode( "Game" ) );
+		//g_GameMenu.AddMenuNode( new CMenuNode( "Option" ) );
+		//g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Game" );
+		//g_GameMenu.GetMenuNode( "MainMenu" ).AddTransition( "Option" );
+		//g_GameMenu.GetMenuNode( "Game" ).AddTransition( "MainMenu", "QuitGame" );
+		//g_GameMenu.GetMenuNode( "Option" ).AddTransition( "MainMenu" );
+		
+		g_GameMenu.CreateGraph();
+		
 		g_GameMenu.Initialise( "MainMenu" );
 		
-		
-		g_Grid 		= new CHexaGrid( 7, 36 );
-		g_Grid.InitCellArray();
+		//g_Grid 		= new CHexaGrid( 9, 36 );
+		//g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
@@ -102,11 +104,11 @@ class CBeegonMainClient
 		
 		m_InputManager = new CGameInputManager( g_Avatar, g_GameMenu );
 		
-		//m_TestText = new CDriverTextField();
-		//m_TestText.Load( "test" );
+		m_TestText = new CDriverTextField();
+		m_TestText.Load( "test" );
 		
 		var l_V2D_Pos	: CV2D = new CV2D( 600, 30 );
-		//m_TestText.SetTLPosition( l_V2D_Pos );
+		m_TestText.SetTLPosition( l_V2D_Pos );
 		
 		#if flash10
 			InitGameAS();
@@ -125,10 +127,10 @@ class CBeegonMainClient
 	public static function UpdateGame()
 	{
 		//trace( "Update");
-		//m_TestText.Update();
+		m_TestText.Update();
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
-		g_Grid.Update();
+		//g_Grid.Update();
 		
 		m_InputManager.Update();
 		
@@ -137,9 +139,10 @@ class CBeegonMainClient
 		#if DebugInfo
 			/* Mouse
 			 **********/
-			if (m_Cpt > 125)
+			if (m_Cpt > 100)
 			{
-				//trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));	m_Cpt = 0; 
+				//trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));
+				m_Cpt = 0; 
 			}
 			else	m_Cpt++;
 		#end
@@ -147,7 +150,7 @@ class CBeegonMainClient
 	
 	static function RenderCallback() : Result
 	{
-		g_Grid.Draw();
+		//g_Grid.Draw();
 		return SUCCESS;
 	}
 } 

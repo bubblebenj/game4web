@@ -50,7 +50,7 @@ class CSystemAS extends CSystem
 	}
 	
 	// Binding type with its factory
-	public function InitializeRscBuilders() : Result
+	public override function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
 		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );

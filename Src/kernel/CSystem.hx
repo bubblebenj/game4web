@@ -6,8 +6,10 @@ import haxe.Timer;
 import haxe.TimerQueue;
 import kernel.Glb;
 import kernel.CDisplay;
+import logic.CMenuGraph;
 import math.Utils;
 import renderer.CRenderer;
+import rsc.CRscCommonFactory;
 import rsc.CRscMan;
 import rsc.CRsc;
 
@@ -162,6 +164,14 @@ class CSystem
 		return GetInputManager().m_Mouse;
 	}
 	
+	public function InitializeRscBuilders() : Result
+	{
+		CDebug.CONSOLEMSG("Builders created");
+		GetRscMan().AddBuilder( CMenuGraph.RSC_ID, 	m_RscCommonFactory );
+		
+		return SUCCESS;
+	}
+	
 	public var m_BeforeDraw		: Void -> Result;
 	public var m_AfterDraw		: Void -> Result;
 	
@@ -188,6 +198,8 @@ class CSystem
 			var m_Renderer	: CRenderer;
 			
 			var m_InputManager	: CInputManager;
+			
+	private	var m_RscCommonFactory	: CRscCommonFactory;
 	
 	public 	var m_Display:  CDisplay;
 }

@@ -10,6 +10,11 @@
 
 
 
+### Configuration files
+-cp ../../Data/Beegon/Script/
+-resource menugraph.xml@menugraph
+-resource menustyle.xml@menustyle
+
 # Option de compile
 -D DebugInfo 
 -D CHexaGrid

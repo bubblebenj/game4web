@@ -5,23 +5,44 @@
 
 package logic;
 
-import logic.CFiniteStateMachine;
-import logic.CMenuNode;
-import logic.CMenuTransition;
+import Xml;
+import haxe.Resource;
 
 import kernel.CTypes;
 import kernel.CDebug;
 
-class CMenuGraph 			// C&D Menu
+import logic.CFiniteStateMachine;
+import logic.CMenuNode;
+import logic.CMenuTransition;
+
+import rsc.CRsc;
+import rsc.CRscMan;
+
+import renderer.C2DQuad;
+
+class CMenuGraph extends CRsc			// C&D Menu
 {
+	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
+	public override function GetType() : Int
+	{
+		return RSC_ID;
+	}
+	
 	private var m_States	: Hash<CMenuNode>;		// menu pages - C&D MenuState
 	private var m_Actuators	: Hash<CMenuTransition>;		// links between menu pages	- C&D ???
 	private var m_FSM		: CFiniteStateMachine<NodeId, TransitionId>;
+	
 	public function new()
 	{
+		super();
 		m_States	= new Hash<CMenuNode>();
 		m_Actuators	= new Hash<CMenuTransition>();
 		m_FSM		= new CFiniteStateMachine();
+	}
+	
+	public function Load( _XMLPath : String ) : Result
+	{
+		return SUCCESS;
 	}
 	
 	public function Initialise( _NodeId : NodeId ) : Void
@@ -65,16 +86,13 @@ class CMenuGraph 			// C&D Menu
 			CDebug.CONSOLEMSG( " No Transition Id specified trying \"" + _Id +"\" " );
 		}
 		
-		trace ( "blop" + m_Actuators.exists(_Id) );
 		if ( m_Actuators.exists( _Id ) )
 		{
-			trace ( "blop" + _Id );
 			CDebug.CONSOLEMSG( " Transition identifier \"" + _Id +"\" already exists. Can't create this Transition." );
 			l_Res = FAILURE;
 		}
 		else
 		{
-			trace ( "blop" + _Id );
 			// NB : we could have added the nodes on the fly but it's not desirable.
 			if ( !m_States.exists( _SrcNode.GetId() ) ) 
 			{
@@ -107,6 +125,7 @@ class CMenuGraph 			// C&D Menu
 		return l_Res;
 	}
 	
+	/* The graph is updated when Actuate()  */
 	public function Update()
 	{
 	}
@@ -124,4 +143,50 @@ class CMenuGraph 			// C&D Menu
 			return SUCCESS;
 		}
 	}
+	
+	public function CreateGraph()
+	{
+		var l_graphXML : Xml = Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement();
+		
+		// MenuNodes creation : NB doesn't work with - in l_graphXML - (Child)
+		for ( i_MenuNode in l_graphXML.elements() )
+		{
+			AddMenuNode( new CMenuNode( i_MenuNode.get("id") ) );
+		}
+		//
+		for ( i_MenuNode in l_graphXML.elements() )
+		{
+			var l_Content	: Xml	= i_MenuNode.firstElement(); //id = body
+			
+			for ( i_Images in l_Content.elementsNamed("image") )
+			{
+				
+			}
+			
+			for ( i_Div in l_Content.elementsNamed("div") )
+			{
+				if ( i_Div.exists("href") )
+				{
+					trace ( i_Div.get("id") + "<>" + i_Div.get("href"));
+					
+					if ( i_Div.exists("name" ) )
+					{
+						GetMenuNode( i_MenuNode.get("id") ).AddTransition( i_Div.get("href"), i_Div.get("name") );
+					}
+					else
+					{
+						GetMenuNode( i_MenuNode.get("id") ).AddTransition( i_Div.get("href") );
+					}
+				}
+			}
+			
+		}
+	}
+	
+	private function SetStyle( _Selector : StyleSelector, _Object : C2DQuad )
+	{
+		var styleXML : Xml = Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement();
+	}
 }
+
+enum StyleSelector{ ID; CLASS;}

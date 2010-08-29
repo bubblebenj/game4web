@@ -60,7 +60,7 @@ class C2DImageAS extends C2DImage
 			{
 				m_Bmp = m_RscImage.CreateBitmap(); 
 				SetVisible(true);
-				CDebug.CONSOLEMSG("Activating" + m_Bmp);
+				//CDebug.CONSOLEMSG("Activating" + m_Bmp);
 			}
 		}
 		return SUCCESS;
