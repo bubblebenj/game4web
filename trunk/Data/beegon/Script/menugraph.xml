@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<page id="MainMenu">
+		<div id="body">
+			<image id="background-image" src="./body_bg.jpg"></image>
+<!--			
+			<div id="header">
+				<image src="path_to_frisette_qui_dechire_left_part">
+					
+				</image>
+				<image src="path_to_frisette_qui_dechire_right_part" v_align="M" h_align="R" scale="keep_ratio">
+				<text>Main menu</text>
+			</div>
+-->
+			<div id="bt_start_game" href="Game">
+				Start game
+			</div>
+			
+			<div id="bt_credits" href="Option">
+				<image class="bt_image" src="./Data/Button.png"></image>
+				Credits
+			</div>
+<!--			
+			<div id="footer" height="200">
+				<text>Click ou tu veux</text>
+			</div>
+-->
+		</div>
+	</page>
+	
+	<page id="Game">
+		<div id="body">
+			<image id="background-image" src="./body_bg.jpg"></image>
+
+			<div id="bt_stop_game" name="QuitGame" href="MainMenu">
+				Start game
+			</div>
+
+		</div>
+	</page>
+	
+	<page id="Option">
+		<div id="body">
+			<image id="background-image" src="./body_bg.jpg"></image>
+
+			<div id="bt_back_to_menu" href="MainMenu">
+				Start game
+			</div>
+
+		</div>
+	</page>
+</data>

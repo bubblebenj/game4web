@@ -113,7 +113,7 @@ class CSystemJS extends CSystem
 		return SUCCESS;
 	}
 	
-	public function InitializeRscBuilders() : Result
+	public override function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
 		GetRscMan().AddBuilder( CRscVertexShader.RSC_ID, 	new CRscBuilderDocElem() );

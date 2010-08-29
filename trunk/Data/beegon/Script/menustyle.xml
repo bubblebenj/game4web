@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<class name="body">
+		<size	scale="original"	x="800" y="600"></size>
+		<align	handle="center"		x="50" 	y="50"  unit="%"></align_rt>
+	</style>
+	
+	<class name="bt_image">
+		<size	scale="fit"			x=""	y=""></size>
+		<align	handle="center"		x="50"	y="50" unit="px"></align_rt>
+	</class>
+<!--	
+	<class name="header">
+		<size	scale="keep_ratio"	x=""	y="200"></size>
+		<align	handle="TL"			x="0" 	y="0"  unit="%"></align_rt>
+	</style>
+	
+	<class name="footer">
+		<size	scale="original"	x="150"	y="200"></size>
+		<align	handle="TL"			x="200" y="500" unit="px"></align_rt>
+	</style>
+-->
+	<id name="background-image">
+		<size	scale="fit"			x=""	y=""></size>
+		<align	handle="center"		x="50" 	y="50"  unit="%"></align_rt>
+	</style>
+	
+<!--	<id name="header_left_frisette">
+		<size	scale="keep_ratio"	x=""	y=""></size>
+		<align	handle="ML"			x="0" 	y="50"  unit="%"></align_rt>
+	</style>
+	
+	<id name="header_left_frisette">
+		<size	scale="keep_ratio"	x=""	y=""></size>
+		<align	handle="ML"			x="0" 	y="50"  unit="%"></align_rt>
+	</style>
+-->	
+	<id name="bt_start_game">
+		<size	scale="original"	x="150"	y="200"></size>
+		<align	handle="TL"			x="200" y="200" unit="px"></align_rt>
+	</style>
+	
+	<id name="bt_credit">
+		<size	scale="original"	x="150"	y="200"></size>
+		<align	handle="TL"			x="200" y="500" unit="px"></align_rt>
+	</style>
+		
+</data>

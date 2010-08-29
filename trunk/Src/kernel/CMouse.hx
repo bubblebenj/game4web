@@ -21,15 +21,14 @@ import rsc.CRscMan;
 class CMouse extends CRsc
 {
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
-		
-	public var m_Coordinate		: CV2D;
-	public var m_Down			: Bool;
-	public var m_Out			: Bool; // True if the mouse in outside the game context
-
 	public override function GetType() : Int
 	{
 		return RSC_ID;
 	}
+		
+	public var m_Coordinate		: CV2D;
+	public var m_Down			: Bool;
+	public var m_Out			: Bool; // True if the mouse in outside the game context
 	
 	public function new() 
 	{
