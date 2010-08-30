@@ -7,6 +7,7 @@ package logic;
 
 import kernel.CDebug;
 import kernel.CTypes;
+import math.Registers;
 
 import logic.IContent;
 
@@ -37,26 +38,37 @@ class C2DContainer implements IContent
 			}
 			else
 			{
-				
+				m_2DObjects.push( _Object );
 			}
 		}
 		return SUCCESS;
 	}
 	
-	
-	/*** Everything above is a strict copy of C2DQuad ***/
 	/* 
 	 * Position
 	 */
+	private inline function MoveChilds( _Pos : CV2D )
+	{
+		for ( i_Object in m_2DObjects )
+		{
+			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );
+			CV2D.Add( Registers.V2_0, Registers.V2_0, _Pos );
+			i_Object.SetCenterPosition( Registers.V2_0 );
+		}
+	}
+	 
 	public function SetCenterPosition( _Pos : CV2D ) : Void
 	{
-		m_Rect.m_Center.Copy( _Pos);
+		MoveChilds( _Pos );
+		m_Rect.m_Center.Copy( _Pos );
 	}
 	
 	public function SetTLPosition( _Pos : CV2D ) : Void
 	{
 		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
-		CV2D.Add( m_Rect.m_Center, _Pos, Registers.V2_0 );
+		CV2D.Add( Registers.V2_1, _Pos, Registers.V2_0 );
+		
+		SetCenterPosition( Registers.V2_1 );
 	}
 	
 	public function GetCenter(): CV2D
@@ -76,30 +88,31 @@ class C2DContainer implements IContent
 	 */
 	public function SetCenterSize( _Pos : CV2D,_Sz : CV2D ) : Void
 	{
-		m_Rect.m_Center.Copy( _Pos);
+		SetCenterPosition( _Pos );
 		m_Rect.m_Size.Copy( _Sz);
 	}
 	
-	public function SetTLBR( _TL : CV2D,_BR : CV2D  ) : Void
+	private inline ScaleChilds( _Ratio : CV2D )
 	{
-		CV2D.Sub( Registers.V2_0, _TL, _BR );
-		
-		m_Rect.m_Size.Set( Math.abs(Registers.V2_0.x), Math.abs(Registers.V2_0.y) );
-		
-		CV2D.Scale( Registers.V2_1, 0.5, m_Rect.m_Size );
-		CV2D.Sub( m_Rect.m_Center, _BR , Registers.V2_1);
-	}
-	
-	public function SetTLSize( _TL : CV2D, _Sz : CV2D) : Void
-	{
-		m_Rect.m_Size.Copy(_Sz);
-		CV2D.Scale( Registers.V2_1, 0.5 , m_Rect.m_Size );
-		CV2D.Add( m_Rect.m_Center, _TL , Registers.V2_1);
+		for ( i_Object in m_2DObjects )
+		{
+			Registers.V2_0.x	= i_Object.GetSize().x * _Ratio.x;
+			Registers.V2_0.y	= i_Object.GetSize().y * _Ratio.y;
+			i_Object.SetSize( Registers.V2_0 );
+		}
 	}
 	
 	public function SetSize( _Size : CV2D ) : Void
 	{
-		m_Rect.m_Size.Copy( _Size);
+		Registers.V2_1	= GetSize() / _Size;
+		ScaleChilds( Registers.V2_1 );
+		m_Rect.m_Size.Copy( _Size );
+	}
+	
+	public function SetTLSize( _TL : CV2D, _Sz : CV2D) : Void
+	{
+		SetSize( _Sz );
+		SetTLPosition( _TL );
 	}
 	
 	public function GetSize() : CV2D
