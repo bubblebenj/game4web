@@ -29,6 +29,7 @@ class C2DImageAS extends C2DImage
 		
 		m_Bmp		= null;
 		m_RscImage	= null;
+		m_Visible	= false;
 	}
 	
 	public override function Load( _Path )	: Result
@@ -46,7 +47,6 @@ class C2DImageAS extends C2DImage
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
-		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;
 	}
 	
@@ -58,9 +58,14 @@ class C2DImageAS extends C2DImage
 			//CDebug.CONSOLEMSG("Stream finished");
 			if( m_Bmp == null )
 			{
-				m_Bmp = m_RscImage.CreateBitmap(); 
-				SetVisible(true);
+				m_Bmp = m_RscImage.CreateBitmap();
+				SetVisible( m_Visible );
+				Glb.GetRendererAS().AddToSceneAS( m_Bmp );	
 				//CDebug.CONSOLEMSG("Activating" + m_Bmp);
+			}
+			else
+			{
+				SetVisible( m_Visible );
 			}
 		}
 		return SUCCESS;
@@ -68,10 +73,11 @@ class C2DImageAS extends C2DImage
 	
 	public override function Activate() : Result
 	{
+		m_Visible	= true;  // /!\ Not SetVisible() --> m_Bmp could not be loaded
 		return SUCCESS;
-	}	
+	}
 	
-	public function Shut() : Result
+	public override function Shut() : Result
 	{
 		Glb.GetRendererAS().RemoveFromScene( this );
 		Glb.GetRendererAS().RemoveFromSceneAS( m_Bmp );
@@ -80,10 +86,9 @@ class C2DImageAS extends C2DImage
 	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
-		super.SetVisible( _Vis );
+		super.SetVisible( _Vis );    // CRenderer	public function AddToScene( _Obj : CDrawObject )	{	m_Scene.push( _Obj );	}
 		
 		m_Bmp.visible = _Vis;
-		Glb.GetRendererAS().AddToSceneAS( m_Bmp );
 	}
 	
 	public override function SetSize( _Size : CV2D ) : Void
@@ -114,6 +119,12 @@ class C2DImageAS extends C2DImage
 			m_Bmp.x = _Pos.x;
 			m_Bmp.y = _Pos.y;
 		}
+	}
+	
+	public function IsLoaded()	: Bool
+	{
+		var  Res = if ( m_Bmp != null ) true else false;
+		return Res;
 	}
 	
 	private var m_Bmp		: Bitmap;		// container

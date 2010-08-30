@@ -69,7 +69,7 @@ class CTextFieldAS extends CTextField
 		return SUCCESS;
 	}
 	
-	public function Shut() : Result
+	public override function Shut() : Result
 	{
 		Glb.GetRendererAS().RemoveFromScene( this );
 		Glb.GetRendererAS().RemoveFromSceneAS( m_TextField );
