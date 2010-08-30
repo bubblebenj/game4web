@@ -312,7 +312,7 @@ class C2DImageJS extends C2DImage
 			var l_TexCooArr = m_Primitive.LockTexCoordArray();
 			l_TexCooArr.Set(0, m_UV.x);
 			l_TexCooArr.Set(1, m_UV.y);
-			l_TexCooArr.Set(2, m_UV.z);
+			l_TexCooArr.Set(2, m_UV.z);?
 			l_TexCooArr.Set(3, m_UV.w );
 			m_Primitive.ReleaseTexCoordArray();
 		}

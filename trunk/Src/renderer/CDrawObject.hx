@@ -40,6 +40,11 @@ class CDrawObject
 		return SUCCESS;
 	}
 	
+	public function Shut() : Result
+	{
+		return SUCCESS;
+	}
+	
 	public function Draw( _Vp : Int ) : Result
 	{
 		/* bd : process draw requests in child objects

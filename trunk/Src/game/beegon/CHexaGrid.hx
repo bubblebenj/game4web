@@ -141,53 +141,45 @@ class CHexaGrid
 		}
 	}
 	
-	private function IsReady()	: Bool
+	public function Update() : Void
 	{
-		if ( m_Ready == true )
-			return true;
-		else
-		{
-			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
+		for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
+		{	
+			for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
 			{
-				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
+				//trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
+				if ( m_CellArray[i][j] != null )
 				{
-					if ( m_CellArray[i][j] != null )
+					m_CellArray[i][j].Update();
+					if ( m_CellArray[i][j].m_Sprite.IsLoaded() )
 					{
-						//if ( m_CellArray[i][j].m_Sprite.IsReady() )
-						//{
-							//return false;
-						//}
+						//Registers.V2_8.Set( i, j );									// Coordinates in the hexa grid
+						//FromHexaToOrtho( Registers.V2_8, Registers.V2_8 );			// Getting orthonormal coordinates
+						//CV2D.Add( Registers.V2_8, m_Coordinate, Registers.V2_8 );	// Setting relative to grid coordinates
+						//m_CellArray[i][j].SetPosition( Registers.V2_8 );
 					}
+
 				}
 			}
-			m_Ready = true;
-			return true;
 		}
 	}
 	
-	public function Update() : Void
+	public function Activate()	: Void
 	{
-		//if ( IsReady() )
-		//{
-			for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
-			{	
-				for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
+		for ( i in ( -m_GridRadius) ... (m_GridRadius + 1) )
+		{	
+			for ( j in ( -m_GridRadius) ... (m_GridRadius + 1) )
+			{
+				if ( m_CellArray[i][j] != null )
 				{
-					//trace( "if ( m_CellArray["+i+"]["+j+"] == "+m_CellArray[i][j]+" )");
-					if ( m_CellArray[i][j] != null )
-					{
-						Registers.V2_8.Set( i, j );									// Coordinates in the hexa grid
-						FromHexaToOrtho( Registers.V2_8, Registers.V2_8 );			// Getting orthonormal coordinates
-						CV2D.Add( Registers.V2_8, m_Coordinate, Registers.V2_8 );	// Setting relative to grid coordinates
-						m_CellArray[i][j].SetPosition( Registers.V2_8 );
-					}
+					m_CellArray[i][j].Activate();
 				}
 			}
-		//}
+		}
 	}
+	
 	public function Draw()				: Void
 	{
-		
 	}
 	
 	/*

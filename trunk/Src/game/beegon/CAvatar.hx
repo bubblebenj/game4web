@@ -60,8 +60,9 @@ class CAvatar extends CEntity
 		m_Follow = _Follow;
 	}
 	
-	public function Update()	: Void
+	public override function Update()	: Void
 	{
+		super.Update();
 		if ( m_Follow )
 		{
 			MoveTo( Glb.GetInputManager().m_Mouse.m_Coordinate );

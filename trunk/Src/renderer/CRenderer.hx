@@ -155,7 +155,18 @@ class CRenderer
 	
 	public function AddToScene( _Obj : CDrawObject )
 	{
-		m_Scene.push( _Obj );
+		var l_Exists : Bool = false;
+		//for ( i_Obj in m_Scene )
+		//{
+			//if ( i_Obj == _Obj )
+			//{
+				//l_Exists = true;
+			//}
+		//}
+		//if ( ! l_Exists )
+		//{
+			m_Scene.push( _Obj );			
+		//}
 	}
 	
 	public function RemoveFromScene(  _Obj : CDrawObject )

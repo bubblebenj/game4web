@@ -34,7 +34,6 @@ class C2DImage extends C2DQuad
 	{
 		m_UV.CopyV2D(_u, _v);
 	}
-	
-	
+		
 	private var m_UV : CV4D;
 }

@@ -85,6 +85,21 @@ class CEntity
 			return SUCCESS;
 		}
 		
+		public function Activate() : Void
+		{
+			m_Sprite.Activate();
+		}
+		
+		public function Shut()	: Void
+		{
+			m_Sprite.Shut();
+		}
+		
+		public function Update()	: Void
+		{
+			m_Sprite.Update();
+		}
+		
 	/*
 	 * POSITION (CV2D) RELATIVE FUNCTIONS
 	 */
