@@ -33,12 +33,12 @@ class C2DQuad extends CDrawObject
 		CV2D.Add( m_Rect.m_Center, _Pos, Registers.V2_0 );
 	}
 	
-	public function GetCenter(): CV2D
+	public inline function GetCenter(): CV2D
 	{
 		return m_Rect.m_Center;
 	}
 	
-	public function GetTL() : CV2D
+	public inline function GetTL() : CV2D
 	{
 		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
 		CV2D.Sub( Registers.V2_0, m_Rect.m_Center, Registers.V2_0 );
@@ -76,7 +76,7 @@ class C2DQuad extends CDrawObject
 		m_Rect.m_Size.Copy( _Size);
 	}
 	
-	public function GetSize() : CV2D
+	public inline function GetSize() : CV2D
 	{
 		return m_Rect.m_Size;
 	}

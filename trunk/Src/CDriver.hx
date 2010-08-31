@@ -11,6 +11,8 @@ package ;
 #elseif js
 	typedef CDriver2DImage = driver.js.renderer.C2DImageJS;
 	//typedef CDriverTextField = driver.js.renderer.CTextFieldJS;
+#else
+	typedef 
 #end
 
 /*

@@ -107,8 +107,8 @@ class CBeegonMainClient
 		m_TestText = new CDriverTextField();
 		m_TestText.Load( "test" );
 		
-		var l_V2D_Pos	: CV2D = new CV2D( 600, 30 );
-		m_TestText.SetTLPosition( l_V2D_Pos );
+		var l_V2D_Pos	: CV2D = new CV2D( 400, 30 );
+		m_TestText.SetCenterPosition( l_V2D_Pos );
 		
 		g_Avatar.Activate();
 		g_Grid.Activate();
@@ -144,7 +144,7 @@ class CBeegonMainClient
 			 **********/
 			if (m_Cpt > 100)
 			{
-				//trace ( l_Mouse.m_Coordinate.Trace() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));
+				trace ( l_Mouse.m_Coordinate.ToString() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));
 				m_Cpt = 0; 
 			}
 			else	m_Cpt++;

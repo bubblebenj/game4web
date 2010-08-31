@@ -58,10 +58,12 @@ class CDrawObject
 		
 		if( m_Visible )
 		{
+			trace( "add" );
 			Glb.g_System.GetRenderer().AddToScene( this );
 		}
 		else
 		{
+			trace( "remove" );
 			Glb.g_System.GetRenderer().RemoveFromScene( this );
 		}
 	}

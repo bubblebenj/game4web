@@ -41,7 +41,7 @@ class CV2D
 		_VOut.y	= _a * _V.y;
 	}
 	
-	public inline function Trace() : String
+	public inline function ToString() : String
 	{
 		return ("( "+x+" , "+y+" )");
 	}
