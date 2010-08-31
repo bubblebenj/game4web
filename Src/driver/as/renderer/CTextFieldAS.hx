@@ -7,6 +7,7 @@ package driver.as.renderer;
 
 import driver.as.rsc.CRscTextAS;
 import flash.text.TextField;
+import math.Registers;
 
 import kernel.CTypes;
 import kernel.Glb;
@@ -18,9 +19,9 @@ import rsc.CRsc;
 import rsc.CRscMan;
 import rsc.CRscText;
 
-class CTextFieldAS extends CTextField
+class CTextFieldAS extends CTextField 
 {
-	public function new() 
+	public function new()
 	{
 		super();
 		m_TextField			= new TextField();
@@ -62,7 +63,11 @@ class CTextFieldAS extends CTextField
 		{
 			//CDebug.CONSOLEMSG("Stream finished");
 			m_TextField.text	= m_RscText.GetText();
-			
+			if ( GetSize().x == 0 && GetSize().y == 0 )
+			{
+				Registers.V2_8.Set( m_TextField.width, m_TextField.height );
+				SetSize( Registers.V2_8 );
+			}
 			SetVisible(true);
 			//CDebug.CONSOLEMSG("Activating" + m_TextField);
 		}
@@ -78,10 +83,13 @@ class CTextFieldAS extends CTextField
 	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
-		super.SetVisible( _Vis );
-		
-		m_TextField.visible = _Vis;
-		Glb.GetRendererAS().AddToSceneAS( m_TextField );
+		if ( _Vis != m_Visible )
+		{
+			super.SetVisible( _Vis );
+			
+			m_TextField.visible = _Vis;
+			Glb.GetRendererAS().AddToSceneAS( m_TextField );
+		}
 	}
 	
 	public function IsReady() : Bool 
@@ -101,22 +109,33 @@ class CTextFieldAS extends CTextField
 	
 	public override function SetCenterPosition( _Pos : CV2D ) : Void
 	{
-		super.SetCenterPosition( _Pos );
-		if (m_TextField != null)
+		if ( _Pos.x != GetCenter().x || _Pos.y != GetCenter().y )
 		{
-			m_TextField.x	= GetTL().x;
-			m_TextField.y	= GetTL().y;
+			super.SetCenterPosition( _Pos );
+			if (m_TextField != null)
+			{
+				m_TextField.x	= GetTL().x;
+				m_TextField.y	= GetTL().y;
+			}
 		}
 	}
 	
 	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
-		super.SetTLPosition( _Pos );
-		if (m_TextField != null)
-		{
-			m_TextField.x = _Pos.x;
-			m_TextField.y = _Pos.y;
+		if ( _Pos.x != GetTL().x || _Pos.y != GetTL().y )
+		{		
+			super.SetTLPosition( _Pos );
+			if (m_TextField != null)
+			{
+				m_TextField.x = _Pos.x;
+				m_TextField.y = _Pos.y;
+			}
 		}
+	}
+	
+	public function IsLoaded()	: Bool
+	{
+		return  ( m_TextField != null ) ? true : false;
 	}
 	
 	private var m_TextField		: TextField;	// container - AS specific 

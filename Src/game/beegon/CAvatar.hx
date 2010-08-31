@@ -14,7 +14,7 @@ class CAvatar extends CEntity
 	private var m_MaxHealth	: Int;
 	private var m_Health	: Int;
 	private var m_Speed		: Float; // In world units per second
-	private var m_Follow		: Bool;
+	private var m_Follow	: Bool;
 	
 	public function new() 
 	{
@@ -43,16 +43,24 @@ class CAvatar extends CEntity
 	
 	public function MoveTo( _Coordinate : CV2D )	: Void
 	{
-		// Un while risque de tout peter
-		// du coup je vais faire ca par pas
-		var l_NextPos	: CV2D	= new CV2D( 0, 0 );
-		CV2D.Sub( l_NextPos, _Coordinate, m_Coordinate );
-		var l_Distance	: Float	= Math.sqrt( Math.pow( l_NextPos.x , 2 ) + Math.pow( l_NextPos.y , 2 ));
-		var l_StepSize	: Float	= m_Speed / l_Distance;
-
-		CV2D.Scale( l_NextPos, l_StepSize, l_NextPos );
-		CV2D.Add( l_NextPos, m_Coordinate, l_NextPos );
-		SetPosition( l_NextPos );
+		if ( _Coordinate.x != m_Coordinate.x || _Coordinate.x != m_Coordinate.x )
+		{
+			var l_NextPos	: CV2D	= new CV2D( 0, 0 );
+			CV2D.Sub( l_NextPos, _Coordinate, m_Coordinate );
+			var l_Distance	: Float	= Math.sqrt( Math.pow( l_NextPos.x , 2 ) + Math.pow( l_NextPos.y , 2 ));
+			if ( l_Distance < m_Speed )
+			{
+				SetPosition( _Coordinate );
+				trace( "Mouse"+_Coordinate.ToString() +" Avatar"+ m_Coordinate.ToString());
+			}
+			else
+			{
+				var l_StepSize	: Float	= m_Speed / l_Distance;
+				CV2D.Scale( l_NextPos, l_StepSize, l_NextPos );
+				CV2D.Add( l_NextPos, m_Coordinate, l_NextPos );
+				SetPosition( l_NextPos );
+			}
+		}
 	}
 	
 	public function SetFollowCursor( _Follow : Bool )	: Void

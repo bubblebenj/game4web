@@ -153,10 +153,10 @@ class CHexaGrid
 					m_CellArray[i][j].Update();
 					if ( m_CellArray[i][j].m_Sprite.IsLoaded() )
 					{
-						//Registers.V2_8.Set( i, j );									// Coordinates in the hexa grid
-						//FromHexaToOrtho( Registers.V2_8, Registers.V2_8 );			// Getting orthonormal coordinates
-						//CV2D.Add( Registers.V2_8, m_Coordinate, Registers.V2_8 );	// Setting relative to grid coordinates
-						//m_CellArray[i][j].SetPosition( Registers.V2_8 );
+						Registers.V2_8.Set( i, j );									// Coordinates in the hexa grid
+						FromHexaToOrtho( Registers.V2_8, Registers.V2_8 );			// Getting orthonormal coordinates
+						CV2D.Add( Registers.V2_8, m_Coordinate, Registers.V2_8 );	// Setting relative to grid coordinates
+						m_CellArray[i][j].SetPosition( Registers.V2_8 );
 					}
 
 				}
