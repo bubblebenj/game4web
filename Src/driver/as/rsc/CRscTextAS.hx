@@ -5,6 +5,7 @@
 
 package driver.as.rsc;
 
+import flash.text.TextField;
 import kernel.CTypes;
 
 import rsc.CRsc;
@@ -13,19 +14,10 @@ import rsc.CRscText;
 
 class CRscTextAS extends CRscText
 {
-	var m_Text	: String;	// <-- ca va peut-etre etre un peu ridicule de faire une classe pour ca...
-	
 	public function new() 
 	{
 		super();
 		m_State	= INVALID;
-	}
-	
-	public function Initialize() : Result
-	{
-		// bidon
-		SetText( m_Path );
-		return SUCCESS;
 	}
 	
 	public override function SetPath( _Path )
@@ -34,17 +26,30 @@ class CRscTextAS extends CRscText
 		Initialize();
 	}
 	
+	public function Initialize() : Result
+	{
+		m_State			= STREAMING;
+		SetText( m_Path );
+		return SUCCESS;
+	}
+	
 	public function SetText( _Text : String ) : Void
 	{
 		m_Text	= _Text;
 		m_State	= STREAMED;
 	}
 	
-	public function GetText() : String
+	public function CreateText() : TextField
 	{
 		if ( m_State == STREAMED )
 		{
-			return m_Text;
+			var l_TxtField	: TextField = new TextField();
+			l_TxtField.text	= m_Text;
+			#if DebugInfo
+				l_TxtField.border	= true;
+			#end
+			l_TxtField.selectable	= false;
+			return l_TxtField;
 		}
 		else
 		{
@@ -59,4 +64,5 @@ class CRscTextAS extends CRscText
 		SetText( "function Load not implemented yet" );
 	}
 	
+	private	var m_Text	: String;
 }

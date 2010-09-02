@@ -5,14 +5,13 @@
 
 package ;
 
+
 #if flash
-	typedef CDriver2DImage = driver.as.renderer.C2DImageAS;
-	typedef CDriverTextField = driver.as.renderer.CTextFieldAS;
+	typedef C2DImage	= driver.as.renderer.C2DImageAS;
+	typedef CTextField	= driver.as.renderer.CTextFieldAS;
 #elseif js
-	typedef CDriver2DImage = driver.js.renderer.C2DImageJS;
-	//typedef CDriverTextField = driver.js.renderer.CTextFieldJS;
-#else
-	typedef 
+	typedef C2DImage	= driver.js.renderer.C2DImageJS;
+	//typedef CTextField = driver.js.renderer.CTextFieldJS;
 #end
 
 /*

@@ -24,7 +24,7 @@ class C2DQuad extends CDrawObject
 	 */
 	public function SetCenterPosition( _Pos : CV2D ) : Void
 	{
-		m_Rect.m_Center.Copy( _Pos);
+		m_Rect.m_Center.Copy( _Pos );
 	}
 	
 	public function SetTLPosition( _Pos : CV2D ) : Void

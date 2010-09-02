@@ -10,7 +10,6 @@ import kernel.CTypes;
 import kernel.Glb;
 
 import math.CV2D;
-import renderer.C2DImage;
 import rsc.CRscImage;
 
 enum EENTITY_STATE
@@ -51,7 +50,7 @@ class CEntity
 	
 	//private var m_State				: EENTITY_STATE;
 	//private var m_StateAvailable	: CBitField;
-	public	var m_Sprite			: CDriver2DImage;
+	public	var m_Sprite			: C2DImage;
 		
 	public function new( _Type : EENTITY_TYPE )
 	{
@@ -61,7 +60,7 @@ class CEntity
 		m_Coordinate	= new CV2D( 0, 0 );
 		m_Size			= new CV2D( 0, 0 );
 		
-		m_Sprite		= new CDriver2DImage();
+		m_Sprite		= new C2DImage();
 
 		//trace ( "\t \t new CEntity -- ] ");
 	}
