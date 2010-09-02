@@ -8,7 +8,6 @@ import CDriver;
 import kernel.CMouse;
 import logic.CMenuGraph;
 import logic.CMenuNode;
-import renderer.C2DImage;
 
 import game.beegon.CAvatar;
 import game.beegon.CHexaGrid;
@@ -37,7 +36,7 @@ class CBeegonMainClient
 		static var g_Avatar					: CAvatar;
 		static var g_Grid					: CHexaGrid;
 		static var m_InputManager			: CGameInputManager;
-		static var m_TestText				: CDriverTextField;
+		static var m_TestText				: CTextField;
 	#end
 	
 	public static function main()	: Void
@@ -95,7 +94,7 @@ class CBeegonMainClient
 		
 		g_GameMenu.Initialise( "MainMenu" );
 		
-		g_Grid 		= new CHexaGrid( 9, 36 );
+		g_Grid 		= new CHexaGrid( 1, 36 );
 		g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
@@ -104,11 +103,11 @@ class CBeegonMainClient
 		
 		m_InputManager = new CGameInputManager( g_Avatar, g_GameMenu );
 		
-		m_TestText = new CDriverTextField();
-		m_TestText.Load( "test" );
+		m_TestText = new CTextField();
+		m_TestText.Load( "XXXXXXX" );
 		
 		var l_V2D_Pos	: CV2D = new CV2D( 400, 30 );
-		m_TestText.SetCenterPosition( l_V2D_Pos );
+		m_TestText.m_Rect.m_Center.Copy( l_V2D_Pos );
 		
 		g_Avatar.Activate();
 		g_Grid.Activate();
@@ -131,6 +130,7 @@ class CBeegonMainClient
 	{
 		//trace( "Update");
 		m_TestText.Update();
+		
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
 		g_Grid.Update();

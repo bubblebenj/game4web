@@ -28,14 +28,8 @@ class CRscImageAS extends CRscImage
 	
 	public function Initialize() : Result
 	{
-		// 1 - Creation of the loader
 		m_ImgContainer.contentLoaderInfo.addEventListener(Event.INIT, onImgLoaded);
-		// Loading
-		// 2 - url of the image or swf to load
-		var l_ImgURL	: URLRequest	= new URLRequest( m_Path );
-		// 3 - Loading of the image or swf inside the container
-		//CDebug.CONSOLEMSG("Initializing img" + m_Path);
-		m_ImgContainer.load( l_ImgURL );
+		m_ImgContainer.load( new URLRequest( m_Path ) );
 		m_State			= STREAMING;
 		return SUCCESS;
 	}
@@ -56,7 +50,7 @@ class CRscImageAS extends CRscImage
 	{
 		if ( m_State == STREAMED )
 		{
-			return new Bitmap( cast( m_ImgContainer.content , Bitmap ).bitmapData );
+			return new Bitmap( cast( m_ImgContainer.content, Bitmap ).bitmapData );
 		}
 		else
 		{
