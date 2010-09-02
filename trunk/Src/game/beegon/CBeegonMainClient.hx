@@ -94,8 +94,8 @@ class CBeegonMainClient
 		
 		g_GameMenu.Initialise( "MainMenu" );
 		
-		g_Grid 		= new CHexaGrid( 1, 36 );
-		g_Grid.InitCellArray();
+		//g_Grid 		= new CHexaGrid( 1, 36 );
+		//g_Grid.InitCellArray();
 		
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
@@ -109,8 +109,7 @@ class CBeegonMainClient
 		var l_V2D_Pos	: CV2D = new CV2D( 400, 30 );
 		m_TestText.m_Rect.m_Center.Copy( l_V2D_Pos );
 		
-		g_Avatar.Activate();
-		g_Grid.Activate();
+		//g_Grid.Activate();
 		
 		#if flash10
 			InitGameAS();
@@ -133,11 +132,13 @@ class CBeegonMainClient
 		
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
-		g_Grid.Update();
+		//g_Grid.Update();
 		
 		m_InputManager.Update();
 		
 		g_Avatar.Update();
+		
+		g_GameMenu.Update();
 		
 		#if DebugInfo
 			/* Mouse

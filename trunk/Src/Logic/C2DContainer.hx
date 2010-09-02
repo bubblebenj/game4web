@@ -16,15 +16,14 @@ import math.CV2D;
 
 import renderer.C2DQuad;
 
-class C2DContainer implements IContent
+class C2DContainer extends C2DQuad
 {
 	public function new() 
 	{
-		m_Rect		= new CRect2D();
+		super();
 		m_2DObjects	= new Array<C2DQuad>();
 	}
 	
-	private var m_Rect		: CRect2D;
 	private var m_2DObjects	: Array<C2DQuad>;
 	
 	public function AddObject( _Object : C2DQuad ) : Result
@@ -44,10 +43,22 @@ class C2DContainer implements IContent
 		return SUCCESS;
 	}
 	
+	public function GetChildIndex( _Object : C2DQuad ) : Int
+	{
+		for ( i in 0 ... m_2DObjects.length )
+		{
+			if ( m_2DObjects[i] == _Object )
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	/* 
 	 * Position
 	 */
-	private inline function MoveChilds( _Pos : CV2D )
+	public override function SetCenterPosition( _Pos : CV2D ) : Void
 	{
 		for ( i_Object in m_2DObjects )
 		{
@@ -55,44 +66,24 @@ class C2DContainer implements IContent
 			CV2D.Add( Registers.V2_0, Registers.V2_0, _Pos );
 			i_Object.SetCenterPosition( Registers.V2_0 );
 		}
-	}
-	 
-	public function SetCenterPosition( _Pos : CV2D ) : Void
-	{
-		MoveChilds( _Pos );
-		m_Rect.m_Center.Copy( _Pos );
+		super.SetCenterPosition( _Pos );
 	}
 	
-	public function SetTLPosition( _Pos : CV2D ) : Void
+	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
-		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
-		CV2D.Add( Registers.V2_1, _Pos, Registers.V2_0 );
-		
-		SetCenterPosition( Registers.V2_1 );
-	}
-	
-	public function GetCenter(): CV2D
-	{
-		return m_Rect.m_Center;
-	}
-	
-	public function GetTL() : CV2D
-	{
-		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
-		CV2D.Sub( Registers.V2_0, m_Rect.m_Center, Registers.V2_0 );
-		return Registers.V2_0;
+		for ( i_Object in m_2DObjects )
+		{
+			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );
+			CV2D.Add( Registers.V2_0, Registers.V2_0, _Pos );
+			i_Object.SetTLPosition( Registers.V2_0 );
+		}
+		super.SetTLPosition( _Pos );
 	}
 	
 	/* 
 	 * Size
 	 */
-	public function SetCenterSize( _Pos : CV2D,_Sz : CV2D ) : Void
-	{
-		SetCenterPosition( _Pos );
-		m_Rect.m_Size.Copy( _Sz);
-	}
-	
-	private inline ScaleChilds( _Ratio : CV2D )
+	private inline function ScaleChilds( _Ratio : CV2D )
 	{
 		for ( i_Object in m_2DObjects )
 		{
@@ -102,21 +93,46 @@ class C2DContainer implements IContent
 		}
 	}
 	
-	public function SetSize( _Size : CV2D ) : Void
+	public override function SetSize( _Size : CV2D ) : Void
 	{
-		Registers.V2_1	= GetSize() / _Size;
+		Registers.V2_1.x	= GetSize().x / _Size.x;
+		Registers.V2_1.y	= GetSize().y / _Size.y;
 		ScaleChilds( Registers.V2_1 );
-		m_Rect.m_Size.Copy( _Size );
+		super.SetSize( _Size );
 	}
 	
-	public function SetTLSize( _TL : CV2D, _Sz : CV2D) : Void
+	public override function SetTLSize( _TL : CV2D, _Sz : CV2D ) : Void
 	{
 		SetSize( _Sz );
 		SetTLPosition( _TL );
 	}
 	
-	public function GetSize() : CV2D
+	public override function SetVisible( _Vis : Bool ) : Void
 	{
-		return m_Rect.m_Size;
+		super.SetVisible( _Vis );
+		for ( i_Object in m_2DObjects )
+		{
+			i_Object.SetVisible( _Vis );
+		}
+	}
+	
+	public override function Activate() : Result
+	{
+		super.Activate();
+		for ( i_Object in m_2DObjects )
+		{
+			i_Object.Activate();
+		}
+		return SUCCESS;
+	}
+	
+	public override function Shut() : Result
+	{
+		super.Shut();
+		for ( i_Object in m_2DObjects )
+		{
+			i_Object.Shut();
+		}
+		return SUCCESS;
 	}
 }

@@ -4,7 +4,9 @@
  */
 
 package logic;
+import CDriver;
 
+import haxe.xml.Fast;
 import Xml;
 import haxe.Resource;
 
@@ -28,6 +30,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		return RSC_ID;
 	}
 	
+	private var m_LastState	: NodeId;
 	private var m_States	: Hash<CMenuNode>;		// menu pages - C&D MenuState
 	private var m_Actuators	: Hash<CMenuTransition>;		// links between menu pages	- C&D ???
 	private var m_FSM		: CFiniteStateMachine<NodeId, TransitionId>;
@@ -38,6 +41,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		m_States	= new Hash<CMenuNode>();
 		m_Actuators	= new Hash<CMenuTransition>();
 		m_FSM		= new CFiniteStateMachine();
+		m_LastState	= "init";
 	}
 	
 	public function Load( _XMLPath : String ) : Result
@@ -48,6 +52,23 @@ class CMenuGraph extends CRsc			// C&D Menu
 	public function Initialise( _NodeId : NodeId ) : Void
 	{
 		m_FSM.Initialise( _NodeId );
+		
+	}
+	
+	public function Update()	: Void
+	{
+		var l_CurrentState	: NodeId	= m_FSM.GetCurrentState();
+		if ( l_CurrentState != m_LastState )
+		{
+			if ( m_LastState != "init" )
+			{
+				m_States.get( m_LastState ).Shut();
+			}
+
+			m_States.get( l_CurrentState ).Activate();
+			m_LastState	= l_CurrentState;
+		}
+		m_States.get( m_LastState ).Update();
 	}
 	
 	/* Gives the last triggered actuator to the FSM */
@@ -125,11 +146,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 		return l_Res;
 	}
 	
-	/* The graph is updated when Actuate()  */
-	public function Update()
-	{
-	}
-	
 	private function RegisterMenuTransition( _MenuTransition : CMenuTransition ) : Result
 	{
 		if ( m_Actuators.exists( _MenuTransition.GetId() ) )
@@ -144,42 +160,45 @@ class CMenuGraph extends CRsc			// C&D Menu
 		}
 	}
 	
-	public function CreateGraph()
+	public function CreateGraph( )
 	{
+		var l_FGraph	: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement() );
+		
 		var l_graphXML : Xml = Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement();
 		
-		// MenuNodes creation : NB doesn't work with - in l_graphXML - (Child)
-		for ( i_MenuNode in l_graphXML.elements() )
+		for ( l_FMenuNode in l_FGraph.nodes.page )
 		{
-			AddMenuNode( new CMenuNode( i_MenuNode.get("id") ) );
+			AddMenuNode( new CMenuNode( l_FMenuNode.att.id ) );
 		}
-		//
-		for ( i_MenuNode in l_graphXML.elements() )
+		
+		for ( l_FMenuNode in l_FGraph.nodes.page )
 		{
-			var l_Content	: Xml	= i_MenuNode.firstElement(); //id = body
-			
-			for ( i_Images in l_Content.elementsNamed("image") )
+			var l_Fbody	= l_FMenuNode.node.div; // body
+			for ( i_Images in l_Fbody.nodes.image )
 			{
+				var l_C2DImage	: C2DImage	= new C2DImage();
+				l_C2DImage.Load( i_Images.att.src );
 				
+				GetMenuNode( l_FMenuNode.att.id ).AddObject( l_C2DImage );
 			}
 			
-			for ( i_Div in l_Content.elementsNamed("div") )
+			for ( i_Div in l_Fbody.nodes.div )
 			{
-				if ( i_Div.exists("href") )
+				if ( i_Div.has.href )	// if a button
 				{
-					trace ( i_Div.get("id") + "<>" + i_Div.get("href"));
+					//var l_Button	= new C2DButton();
+					//l_Button
 					
-					if ( i_Div.exists("name" ) )
+					if ( i_Div.has.name )
 					{
-						GetMenuNode( i_MenuNode.get("id") ).AddTransition( i_Div.get("href"), i_Div.get("name") );
+						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_Div.att.href, i_Div.att.name );
 					}
 					else
 					{
-						GetMenuNode( i_MenuNode.get("id") ).AddTransition( i_Div.get("href") );
+						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_Div.att.href );
 					}
 				}
 			}
-			
 		}
 	}
 	
@@ -189,4 +208,4 @@ class CMenuGraph extends CRsc			// C&D Menu
 	}
 }
 
-enum StyleSelector{ ID; CLASS;}
+enum StyleSelector { ID; CLASS; }
