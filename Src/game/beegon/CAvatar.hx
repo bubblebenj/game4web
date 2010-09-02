@@ -43,7 +43,7 @@ class CAvatar extends CEntity
 	
 	public function MoveTo( _Coordinate : CV2D )	: Void
 	{
-		if ( _Coordinate.x != m_Coordinate.x || _Coordinate.x != m_Coordinate.x )
+		if ( _Coordinate.x != m_Coordinate.x || _Coordinate.y != m_Coordinate.y )
 		{
 			var l_NextPos	: CV2D	= new CV2D( 0, 0 );
 			CV2D.Sub( l_NextPos, _Coordinate, m_Coordinate );

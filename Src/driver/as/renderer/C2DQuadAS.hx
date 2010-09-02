@@ -24,6 +24,11 @@ class C2DQuadAS extends C2DQuad
 	public override function Activate() : Result
 	{
 		m_Visible	= true;  // /!\ Not SetVisible() --> m_2DObjectAS could not be loaded
+		Glb.GetRendererAS().AddToScene( this );
+		if ( m_DisplayObject != null )
+		{
+			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+		}
 		return SUCCESS;
 	}
 	

@@ -5,6 +5,8 @@
 
 package logic;
 
+import kernel.CTypes;
+
 import logic.IContent;
 
 enum EInternalNodeState   	// C&D EMenuState 
@@ -17,17 +19,20 @@ enum EInternalNodeState   	// C&D EMenuState
 
 typedef NodeId = String;
 
-class CMenuNode 				// C&D MenuState
+class CMenuNode extends C2DContainer				// C&D MenuState
 {
 	private var m_Id			: NodeId;
 	private var	m_MenuGraph		: CMenuGraph;
-	public	var m_CustomContent	: IContent;
 	
 	public function new( _Id : String ) 
 	{
+		super();
 		m_Id	= _Id;
 	}
 	
+	/*
+	 * LOGIC PART
+	 */
 	public function GetId() : String
 	{
 		return	m_Id;
@@ -51,5 +56,20 @@ class CMenuNode 				// C&D MenuState
 	public function SetGraph( _MenuGraph : CMenuGraph ) : Void
 	{
 		m_MenuGraph = _MenuGraph;
+	}
+	
+	/*
+	 * GRAPHIC PART
+	 */
+	public override function Activate() : Result
+	{
+		super.Activate();
+		return SUCCESS;
+	}
+	
+	public override function Shut() : Result
+	{
+		super.Shut();
+		return SUCCESS;
 	}
 }

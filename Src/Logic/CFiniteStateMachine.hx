@@ -35,6 +35,11 @@ class CFiniteStateMachine < TState, TActuator >
 		return m_CurrentActuator;
 	}
 	
+	public function GetCurrentState()	: TState
+	{
+		return m_CurrentState;
+	}
+	
 	private function GetActuator()	: TActuator
 	{
 		return	m_CurrentActuator;
