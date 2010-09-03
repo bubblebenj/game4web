@@ -19,7 +19,7 @@ import renderer.CRenderer;
 import renderer.camera.CCamera;
 import renderer.camera.COrthoCamera;
 
-import renderer.C2DImage;
+import renderer.I2DImage;
 
 import rsc.CRscImage;
 
@@ -108,7 +108,7 @@ class CMainClient
 		
 				
 		//var l_Img :C2DImage =  CPlatform.Newer( Type.typeof(C2DImage) );
-		var l_Img :C2DImage = new CDriver2DImage();
+		var l_Img :C2DImage = new C2DImage();
 		
 		CDebug.CONSOLEMSG(  "type of 2dimg : " + (Std.is(l_Img,C2DImage) ? "yes" : "No") );
 		
@@ -119,7 +119,7 @@ class CMainClient
 	{
 		if (m_Cpt > 15)								// <--
 		{											// <--
-			trace ( m_Mouse.m_Coordinate.Trace() + " " + (( m_Mouse.m_Out ) ? " Out !" : " In " )); // <--
+			//CDebug.CONSOLEMSG( m_Mouse.m_Coordinate.Trace() + " " + (( m_Mouse.m_Out ) ? " Out !" : " In " ) ); // <--
 			m_Cpt = 0; 								// <--
 		}											// <--
 		else	m_Cpt++;							// <--
