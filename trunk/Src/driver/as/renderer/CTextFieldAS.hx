@@ -43,7 +43,6 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 		m_RscText = cast ( _Rsc, CRscTextAS );
 		var l_Res = ( m_RscText != null) ? SUCCESS : FAILURE;
 		
-		Glb.GetRendererAS().AddToScene( this );
 		return l_Res;
 	}
 	
@@ -52,10 +51,10 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 		if ( 	m_RscText != null
 		&& 		m_RscText.m_State == E_STATE.STREAMED )
 		{
-			if(  m_DisplayObject == null )
+			if( m_DisplayObject == null )
 			{
 				m_DisplayObject = m_RscText.CreateText();
-				if ( GetSize().x == 0 && GetSize().y == 0 )
+				if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 				{
 					Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
 					SetSize( Registers.V2_8 );
@@ -66,7 +65,10 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 				}
 				SetCenterPosition( GetCenter() );
 				SetVisible( m_Visible );
-				Glb.GetRendererAS().AddToSceneAS( cast ( m_DisplayObject, TextField ) );	
+				if ( m_Activated )
+				{
+					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
+				}
 			}
 			else
 			{

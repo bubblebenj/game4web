@@ -2,7 +2,7 @@
 <data>
 	<page id="MainMenu">
 		<div id="body">
-			<image id="background-image" src="./body_bg.jpg"></image>
+			<image id="background-image" src="./Data/body_bg.jpg"></image>
 <!--			
 			<div id="header">
 				<image src="path_to_frisette_qui_dechire_left_part">
@@ -30,8 +30,9 @@
 	
 	<page id="Game">
 		<div id="body">
+<!--
 			<image id="background-image" src="./body_bg.jpg"></image>
-
+-->
 			<div id="bt_stop_game" name="QuitGame" href="MainMenu">
 				Start game
 			</div>
@@ -41,8 +42,9 @@
 	
 	<page id="Option">
 		<div id="body">
+<!--
 			<image id="background-image" src="./body_bg.jpg"></image>
-
+-->
 			<div id="bt_back_to_menu" href="MainMenu">
 				Start game
 			</div>

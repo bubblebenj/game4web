@@ -28,19 +28,24 @@ class C2DContainer extends C2DQuad
 	
 	public function AddObject( _Object : C2DQuad ) : Result
 	{
+		var l_AlreadyExists : Bool = false;
 		for ( i_2DObject in m_2DObjects )
 		{
 			if ( i_2DObject == _Object )
 			{
 				CDebug.CONSOLEMSG( "This object has already been added to the container" );
-				return FAILURE;
-			}
-			else
-			{
-				m_2DObjects.push( _Object );
+				l_AlreadyExists = true;
 			}
 		}
-		return SUCCESS;
+		if ( l_AlreadyExists )
+		{
+			return FAILURE;
+		}
+		else
+		{
+			m_2DObjects.push( _Object );
+			return SUCCESS;
+		}
 	}
 	
 	public function GetChildIndex( _Object : C2DQuad ) : Int
@@ -62,9 +67,8 @@ class C2DContainer extends C2DQuad
 	{
 		for ( i_Object in m_2DObjects )
 		{
-			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );
-			CV2D.Add( Registers.V2_0, Registers.V2_0, _Pos );
-			i_Object.SetCenterPosition( Registers.V2_0 );
+			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );	// Shift
+			i_Object.SetRelativeCenterPosition( _Pos, Registers.V2_0 );
 		}
 		super.SetCenterPosition( _Pos );
 	}
@@ -73,9 +77,8 @@ class C2DContainer extends C2DQuad
 	{
 		for ( i_Object in m_2DObjects )
 		{
-			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );
-			CV2D.Add( Registers.V2_0, Registers.V2_0, _Pos );
-			i_Object.SetTLPosition( Registers.V2_0 );
+			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );	// Shift
+			i_Object.SetRelativeTLPosition( _Pos, Registers.V2_0 );
 		}
 		super.SetTLPosition( _Pos );
 	}
@@ -121,6 +124,7 @@ class C2DContainer extends C2DQuad
 		super.Activate();
 		for ( i_Object in m_2DObjects )
 		{
+			//trace( "\t Activating " + i_Object );
 			i_Object.Activate();
 		}
 		return SUCCESS;
@@ -134,5 +138,22 @@ class C2DContainer extends C2DQuad
 			i_Object.Shut();
 		}
 		return SUCCESS;
+	}
+	
+	/* Debug function */
+	public function ListChild() : Void
+	{
+		if ( m_2DObjects.length == 0 )
+		{
+			trace ( this + " is empty" );
+		}
+		else
+		{
+			trace( "Listing Child" );
+			for ( i_Object in m_2DObjects )
+			{
+				trace( i_Object );
+			}
+		}
 	}
 }

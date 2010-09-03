@@ -56,7 +56,7 @@ class CGameInputManager
 	public function TrMousePressed()	: Void
 	{
 		// Start timer
-		#if CInputButton
+		#if CGameInputManager
 			trace ( "Mouse pressed" );
 		#end
 		m_Timer			= new Timer( m_HoldDelay );		//ms
@@ -67,7 +67,7 @@ class CGameInputManager
 	public function TrMouseHit()	: Void
 	{
 		m_Timer.stop();
-		#if CInputButton
+		#if CGameInputManager
 			trace ( "Mouse hit" );
 		#end
 		m_Avatar.TeleportTo( m_LastMousePosition );
@@ -76,7 +76,7 @@ class CGameInputManager
 	
 	public function TrMouseHeld()		: Void
 	{
-		#if CInputButton
+		#if CGameInputManager
 			trace ( "Mouse held" );
 		#end
 		m_Avatar.SetFollowCursor( true );
@@ -85,7 +85,7 @@ class CGameInputManager
 	
 	public function TrMouseReleased()		: Void
 	{
-		#if CInputButton
+		#if CGameInputManager
 			trace ( "Mouse released" );
 		#end
 		m_Avatar.SetFollowCursor( false );
@@ -94,7 +94,7 @@ class CGameInputManager
 	
 	private function onTimeOut()	: Void
 	{
-		#if CInputButton
+		#if CGameInputManager
 			trace ( " ! TimeOut ! " );
 		#end
 		m_MouseFSM.m_CurrentActuator = HIT_TIMEOUT;

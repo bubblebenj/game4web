@@ -90,7 +90,7 @@ class CFiniteStateMachine < TState, TActuator >
 		{
 			if ( m_CurrentState == i_Transition.m_SrcState && m_CurrentActuator == i_Transition.m_Actuator )
 			{
-				trace( "Actuator : " + m_CurrentActuator);
+				//trace( "Actuator : " + m_CurrentActuator);
 				#if CFiniteStateMachine
 					trace ( i_Transition.m_Actuator );
 				#end
@@ -107,6 +107,6 @@ class CFiniteStateMachine < TState, TActuator >
 	private function SetState( _State	: TState )	: Void
 	{
 		m_CurrentState = _State;
-		trace( "State : "+m_CurrentState );
+		//trace( "State : "+m_CurrentState );
 	}
 }
