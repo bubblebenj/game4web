@@ -8,6 +8,8 @@ package driver.js.renderer;
 import driver.js.rsc.CRscShaderProgram;
 import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
+import math.CV2D;
+import math.CV4D;
 import rsc.CRscImage;
 
 import CGL;
@@ -15,7 +17,7 @@ import CGL;
 import renderer.CViewport;
 import renderer.CRenderStates;
 import renderer.C2DQuad;
-import renderer.C2DImage;
+
 import renderer.CRscShader;
 import renderer.CRscTexture;
 import renderer.CMaterial;
@@ -33,19 +35,21 @@ import rsc.CRsc;
 import rsc.CRscMan;
 import rsc.CRscImage;
 
+import renderer.I2DImage;
 
-class C2DImageJS extends C2DImage
+class C2DImageJS  extends C2DQuad, implements I2DImage 
 {
-
 	public function new() 
 	{
 		super();
 		
 		m_Material = null;
 		m_ShdrPrgm = null;
+		
+		m_UV  = new CV4D(0, 0, 1, 1);
 	}
 	
-	public function Shut() : Result
+	public override function Shut() : Result
 	{
 		m_ShdrPrgm.Release();
 		m_ShdrPrgm = null;
@@ -273,7 +277,7 @@ class C2DImageJS extends C2DImage
 	private var m_Material : CMaterial;
 	
 	
-	public override function Load( _Path )	: Result
+	public function Load( _Path )	: Result
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
@@ -282,15 +286,13 @@ class C2DImageJS extends C2DImage
 		return l_Res;
 	}
 	
-	public override function SetRsc( _Rsc : CRscImage )	: Result
+	public function SetRsc( _Rsc : CRscImage )	: Result
 	{
 		if( GetMaterial().GetTexture(0) != null )
 		{
 			GetMaterial().GetTexture(0).Release();
 			GetMaterial().AttachTexture( 0, null );
 		}
-		
-		super.SetRsc(_Rsc);		// <-- Est ce vraiment utile ?
 		
 		var l_NewTex  = Glb.g_System.GetRscMan().Load( CRscTexture.RSC_ID , _Rsc.GetPath() );
 		
@@ -303,17 +305,16 @@ class C2DImageJS extends C2DImage
 		return SUCCESS;
 	}
 	
-	public override function SetUV( _u,_v )
+	public function SetUV( _u : CV2D ,_v : CV2D )
 	{
-		super.SetUV(_u, _v );
 		CDebug.ASSERT( m_Primitive.m_AreTexCoordDynamic );
 		
 		{
 			var l_TexCooArr = m_Primitive.LockTexCoordArray();
 			l_TexCooArr.Set(0, m_UV.x);
 			l_TexCooArr.Set(1, m_UV.y);
-			l_TexCooArr.Set(2, m_UV.z);?
-			l_TexCooArr.Set(3, m_UV.w );
+			l_TexCooArr.Set(2, m_UV.z);
+			l_TexCooArr.Set(3, m_UV.w);
 			m_Primitive.ReleaseTexCoordArray();
 		}
 	}
@@ -324,4 +325,6 @@ class C2DImageJS extends C2DImage
 	var m_RenderStates : CRenderStatesJS;
 	
 	var m_MatrixCache : Float32Array;
+	
+	var m_UV : CV4D ;
 }
