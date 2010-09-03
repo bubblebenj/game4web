@@ -32,6 +32,7 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
+		m_Activated	= true;
 		return SUCCESS;
 	}
 	
@@ -42,6 +43,7 @@ class CDrawObject
 	
 	public function Shut() : Result
 	{
+		m_Activated	= false;
 		return SUCCESS;
 	}
 	
@@ -89,6 +91,8 @@ class CDrawObject
 	}
 	
 			var 	m_Visible	: Bool;
+			var		m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
+			a lot faster than removing it from the scene. Thus object should be remove from the scene only on shut request.*/
 	
 			var 	m_Transfo	: CMatrix44;
 	

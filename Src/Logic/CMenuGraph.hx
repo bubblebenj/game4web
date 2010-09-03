@@ -5,6 +5,7 @@
 
 package logic;
 import CDriver;
+import math.CV2D;
 
 import haxe.xml.Fast;
 import Xml;
@@ -12,6 +13,7 @@ import haxe.Resource;
 
 import kernel.CTypes;
 import kernel.CDebug;
+import kernel.Glb;
 
 import logic.CFiniteStateMachine;
 import logic.CMenuNode;
@@ -62,9 +64,10 @@ class CMenuGraph extends CRsc			// C&D Menu
 		{
 			if ( m_LastState != "init" )
 			{
+				//trace( "Shutting " + m_LastState );
 				m_States.get( m_LastState ).Shut();
 			}
-
+			//trace( "Activating " + l_CurrentState );
 			m_States.get( l_CurrentState ).Activate();
 			m_LastState	= l_CurrentState;
 		}
@@ -92,7 +95,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		else
 		{
 			_MenuNode.SetGraph( this );
-			m_States.set( _MenuNode.GetId(), _MenuNode);
+			m_States.set( _MenuNode.GetId(), _MenuNode );
 			return SUCCESS;
 		}
 	}
@@ -174,38 +177,123 @@ class CMenuGraph extends CRsc			// C&D Menu
 		for ( l_FMenuNode in l_FGraph.nodes.page )
 		{
 			var l_Fbody	= l_FMenuNode.node.div; // body
-			for ( i_Images in l_Fbody.nodes.image )
+			SetStyle( m_States.get( l_FMenuNode.att.id ), l_Fbody );
+			
+			for ( i_FImages in l_Fbody.nodes.image )
 			{
 				var l_C2DImage	: C2DImage	= new C2DImage();
-				l_C2DImage.Load( i_Images.att.src );
-				
+				l_C2DImage.Load( i_FImages.att.src );
+				SetStyle( l_C2DImage, i_FImages, m_States.get( l_FMenuNode.att.id ) );
 				GetMenuNode( l_FMenuNode.att.id ).AddObject( l_C2DImage );
 			}
 			
-			for ( i_Div in l_Fbody.nodes.div )
+			for ( i_FDiv in l_Fbody.nodes.div )
 			{
-				if ( i_Div.has.href )	// if a button
+				if ( i_FDiv.has.href )	// if a button
 				{
 					//var l_Button	= new C2DButton();
 					//l_Button
 					
-					if ( i_Div.has.name )
+					if ( i_FDiv.has.name )
 					{
-						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_Div.att.href, i_Div.att.name );
+						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_FDiv.att.href, i_FDiv.att.name );
 					}
 					else
 					{
-						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_Div.att.href );
+						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_FDiv.att.href );
 					}
 				}
 			}
 		}
 	}
 	
-	private function SetStyle( _Selector : StyleSelector, _Object : C2DQuad )
-	{
-		var styleXML : Xml = Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement();
+	private function SetStyle( _Object : C2DQuad, _FObject : Fast, ?_ObjectParent : C2DQuad )
+	{		
+		var FStyle		: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement() );
+		var l_Size 				: CV2D = new CV2D( 0, 0 );
+		var l_Coordinate		: CV2D = new CV2D( 0, 0 );
+		
+		var l_ParentSize		: CV2D = new CV2D( 0, 0 );
+		var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );
+		if ( _ObjectParent == null )
+		{
+			l_ParentSize.Set( Glb.g_System.m_Display.m_Width, Glb.g_System.m_Display.m_Height );
+			l_ParentCoordinate.Set(	0, 0 );
+		}
+		else
+		{
+			l_ParentSize.Copy(			_ObjectParent.GetSize() );
+			l_ParentCoordinate.Copy(	_ObjectParent.GetTL() );
+		}
+		
+		//for ( i_FStyle in FStyle.nodes.class )
+		//{
+			//if ( i_FStyle.att.name == _FastObj.att.id )
+			//{
+				//
+			//}
+		//}
+		for ( l_FObjStyle in FStyle.nodes.id )
+		{
+			if ( l_FObjStyle.att.name == _FObject.att.id )
+			{
+				trace( ">>>>>>>>>>>>>>>"+_Object+">>"+l_FObjStyle.att.name + " " +_FObject.att.id );
+				var l_x : Float;
+				var l_y : Float;
+				
+				// SIZE
+				switch( l_FObjStyle.node.size.att.scale )
+				{
+					case "fit" :
+					{
+						l_Size.Copy( l_ParentSize );
+					}
+					case "keep_ratio" :
+					{
+						l_x	= ( l_FObjStyle.node.size.att.x == "" ) ? 1 : Std.parseFloat(l_FObjStyle.node.size.att.x);
+						l_y = ( l_FObjStyle.node.size.att.y == "" ) ? 1 : Std.parseFloat(l_FObjStyle.node.size.att.y);
+						l_Size.Set( Std.parseFloat(l_FObjStyle.node.size.att.x), Std.parseFloat(l_FObjStyle.node.size.att.y) );
+						var l_Ratio : Float = Math.min( l_ParentSize.x / l_x, l_ParentSize.y / l_y );
+						CV2D.Scale( l_Size, l_Ratio, l_Size );
+					}
+					case "exact" :
+					{
+						l_x = ( l_FObjStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(l_FObjStyle.node.size.att.x);
+						l_y = ( l_FObjStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(l_FObjStyle.node.size.att.y);
+						trace( "DDDDDDDDDDDDDDDDDDDDDD"+l_x + " " + l_y );
+						l_Size.Set( l_x, l_y );
+					}
+					default	: // fit
+					{
+						l_Size.Copy( l_ParentSize );
+					}
+				}
+				trace ( " Size"+l_Size.ToString() );
+				_Object.SetSize( l_Size );
+				
+				// COORDINATE
+				switch ( l_FObjStyle.node.align.att.handle )
+				{
+					case "%"	:
+					{
+						l_Coordinate.Set(	l_ParentSize.x * Std.parseFloat(FStyle.node.body.node.size.att.x),
+											l_ParentSize.y * Std.parseFloat(FStyle.node.body.node.size.att.y) );
+					}
+					case "px"	:
+					{
+						l_Coordinate.Set(	Std.parseFloat(FStyle.node.body.node.size.att.x),
+											Std.parseFloat(FStyle.node.body.node.size.att.y) );
+					}
+				}
+				
+				trace ( " Coordinate"+l_Coordinate.ToString() );
+				
+				switch ( l_FObjStyle.node.align.att.handle )
+				{
+					case "TL"		: _Object.SetRelativeTLPosition( l_ParentCoordinate, l_Coordinate );
+					case "center"	: _Object.SetRelativeCenterPosition( l_ParentCoordinate, l_Coordinate );
+				}
+			}
+		}
 	}
 }
-
-enum StyleSelector { ID; CLASS; }

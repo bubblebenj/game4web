@@ -43,7 +43,7 @@ class CAvatar extends CEntity
 	
 	public function MoveTo( _Coordinate : CV2D )	: Void
 	{
-		if ( _Coordinate.x != m_Coordinate.x || _Coordinate.y != m_Coordinate.y )
+		if ( CV2D.AreNotEqual( _Coordinate, m_Coordinate ) )
 		{
 			var l_NextPos	: CV2D	= new CV2D( 0, 0 );
 			CV2D.Sub( l_NextPos, _Coordinate, m_Coordinate );
@@ -51,7 +51,6 @@ class CAvatar extends CEntity
 			if ( l_Distance < m_Speed )
 			{
 				SetPosition( _Coordinate );
-				trace( "Mouse"+_Coordinate.ToString() +" Avatar"+ m_Coordinate.ToString());
 			}
 			else
 			{

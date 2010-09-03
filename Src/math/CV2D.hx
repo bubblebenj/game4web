@@ -41,6 +41,16 @@ class CV2D
 		_VOut.y	= _a * _V.y;
 	}
 	
+	public static inline function AreEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
+	{
+		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? false : true;
+	}
+	
+	public static inline function AreNotEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
+	{
+		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? true : false;
+	}
+	
 	public inline function ToString() : String
 	{
 		return ("( "+x+" , "+y+" )");

@@ -19,11 +19,12 @@ class C2DQuadAS extends C2DQuad
 	public function new() 
 	{
 		super();
+		m_Visible	= true;
 	}
 
 	public override function Activate() : Result
 	{
-		m_Visible	= true;  // /!\ Not SetVisible() --> m_2DObjectAS could not be loaded
+		super.Activate();
 		Glb.GetRendererAS().AddToScene( this );
 		if ( m_DisplayObject != null )
 		{
@@ -34,8 +35,12 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function Shut() : Result
 	{
+		super.Shut();
 		Glb.GetRendererAS().RemoveFromScene( this );
-		Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+		if ( m_DisplayObject != null )
+		{
+			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+		}
 		return SUCCESS;
 	}
 	
@@ -60,35 +65,41 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function SetCenterPosition( _Pos : CV2D ) : Void
 	{
+		super.SetCenterPosition( _Pos );
 		if ( m_DisplayObject != null )
 		{
-			if ( _Pos.x != GetTL().x || _Pos.y != GetTL().y )
-			{
-				super.SetCenterPosition( _Pos );
-				m_DisplayObject.x = GetTL().x;
-				m_DisplayObject.y = GetTL().y;
-			}
-		}
-		else
-		{
-			super.SetTLPosition( _Pos );
+			m_DisplayObject.x = GetTL().x;
+			m_DisplayObject.y = GetTL().y;
 		}
 	}
 	
 	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
+		super.SetTLPosition( _Pos );
 		if ( m_DisplayObject != null )
 		{
-			if ( _Pos.x != GetTL().x || _Pos.y != GetTL().y )
-			{
-				super.SetTLPosition( _Pos );
-				m_DisplayObject.x = _Pos.x;
-				m_DisplayObject.y = _Pos.y;
-			}
+			m_DisplayObject.x = _Pos.x;
+			m_DisplayObject.y = _Pos.y;
 		}
-		else
+	}
+	
+	public override function SetRelativeCenterPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
+	{
+		super.SetRelativeCenterPosition( _RefPos, _Pos );
+		if ( m_DisplayObject != null )
 		{
-			super.SetTLPosition( _Pos );
+			m_DisplayObject.x = GetTL().x;
+			m_DisplayObject.y = GetTL().y;
+		}
+	}
+	
+	public override function SetRelativeTLPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
+	{
+		super.SetRelativeTLPosition( _RefPos, _Pos );
+		if ( m_DisplayObject != null )
+		{
+			m_DisplayObject.x = GetTL().x;
+			m_DisplayObject.y = GetTL().y;
 		}
 	}
 	

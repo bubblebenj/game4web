@@ -60,7 +60,7 @@ class CBeegonMainClient
 		
 		// /!\ TEMP
 		#if DebugInfo
-		m_Cpt = 500;
+		m_Cpt = 150;
 		#end
     }
 	
@@ -100,16 +100,19 @@ class CBeegonMainClient
 		g_Avatar	= new CAvatar ();
 		g_Avatar.SetSprite( "./Data/AvatarTypeA_64_64.png" );
 		g_Avatar.SetSpeed( m_WorldUnit * 0.7 );
+
 		
 		m_InputManager = new CGameInputManager( g_Avatar, g_GameMenu );
 		
-		m_TestText = new CTextField();
-		m_TestText.Load( "XXXXXXX" );
+		//m_TestText = new CTextField();
+		//m_TestText.Load( "XXXXXXX" );
 		
-		var l_V2D_Pos	: CV2D = new CV2D( 400, 30 );
-		m_TestText.m_Rect.m_Center.Copy( l_V2D_Pos );
+		//var l_V2D_Pos	: CV2D = new CV2D( 400, 30 );
+		//m_TestText.SetTLPosition( l_V2D_Pos );
 		
+		//m_TestText.Activate();
 		//g_Grid.Activate();
+		g_Avatar.Activate();
 		
 		#if flash10
 			InitGameAS();
@@ -127,8 +130,7 @@ class CBeegonMainClient
 	
 	public static function UpdateGame()
 	{
-		//trace( "Update");
-		m_TestText.Update();
+		//m_TestText.Update();
 		
 		var l_Mouse	: CMouse	= Glb.g_System.GetMouse();
 		
@@ -143,9 +145,9 @@ class CBeegonMainClient
 		#if DebugInfo
 			/* Mouse
 			 **********/
-			if (m_Cpt > 100)
+			if (m_Cpt > 150)
 			{
-				trace ( l_Mouse.m_Coordinate.ToString() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));
+				//trace ( l_Mouse.m_Coordinate.ToString() + " " + (( l_Mouse.m_Out ) ? " Out !" : " In " ));
 				m_Cpt = 0; 
 			}
 			else	m_Cpt++;

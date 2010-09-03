@@ -29,8 +29,20 @@ class C2DQuad extends CDrawObject
 	
 	public function SetTLPosition( _Pos : CV2D ) : Void
 	{
-		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
+		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );	// Compute shift
 		CV2D.Add( m_Rect.m_Center, _Pos, Registers.V2_0 );
+	}
+	
+	public function SetRelativeCenterPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
+	{
+		CV2D.Add( m_Rect.m_Center, _Pos, _RefPos );
+	}
+	
+	public function SetRelativeTLPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
+	{
+		CV2D.Add( Registers.V2_1, _Pos, _RefPos );			// Compute new position
+		CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size ); 	// Compute shift
+		CV2D.Add( m_Rect.m_Center, Registers.V2_1, Registers.V2_0 );
 	}
 	
 	public inline function GetCenter(): CV2D

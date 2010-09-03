@@ -66,7 +66,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			if( m_DisplayObject == null )
 			{
 				m_DisplayObject = m_RscImage.CreateBitmap();
-				if ( GetSize().x == 0 && GetSize().y == 0 )
+				if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 				{
 					Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
 					SetSize( Registers.V2_8 );
@@ -77,7 +77,10 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 				}
 				SetCenterPosition( GetCenter() );
 				SetVisible( m_Visible );
-				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
+				if ( m_Activated )
+				{
+					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
+				}
 			}
 			else
 			{
