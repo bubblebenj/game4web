@@ -167,51 +167,51 @@ class CMenuGraph extends CRsc			// C&D Menu
 	{
 		var l_FGraph	: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement() );
 		
-		var l_graphXML : Xml = Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement();
-		
-		for ( l_FMenuNode in l_FGraph.nodes.page )
+		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
-			AddMenuNode( new CMenuNode( l_FMenuNode.att.id ) );
+			AddMenuNode( new CMenuNode( i_FMenuNode.att.id ) );
 		}
 		
-		for ( l_FMenuNode in l_FGraph.nodes.page )
+		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
-			var l_Fbody	= l_FMenuNode.node.div; // body
-			SetStyle( m_States.get( l_FMenuNode.att.id ), l_Fbody );
-			
-			for ( i_FImages in l_Fbody.nodes.image )
-			{
-				var l_C2DImage	: C2DImage	= new C2DImage();
-				l_C2DImage.Load( i_FImages.att.src );
-				SetStyle( l_C2DImage, i_FImages, m_States.get( l_FMenuNode.att.id ) );
-				GetMenuNode( l_FMenuNode.att.id ).AddObject( l_C2DImage );
-			}
-			
-			for ( i_FDiv in l_Fbody.nodes.div )
-			{
-				if ( i_FDiv.has.href )	// if a button
-				{
-					//var l_Button	= new C2DButton();
-					//l_Button
-					
-					if ( i_FDiv.has.name )
-					{
-						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_FDiv.att.href, i_FDiv.att.name );
-					}
-					else
-					{
-						GetMenuNode( l_FMenuNode.att.id ).AddTransition( i_FDiv.att.href );
-					}
-				}
-			}
+			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
 	}
 	
-	private function SetStyle( _Object : C2DQuad, _FObject : Fast, ?_ObjectParent : C2DQuad )
+	private function RecurseDiv( _CurrentDiv : C2DContainer, _FCurrentDiv : Fast, _Parent : C2DContainer, _MenuNode : CMenuNode )
+	{
+		ApplyStyle( _CurrentDiv, _FCurrentDiv, _Parent );
+		if ( _FCurrentDiv.has.href )	// if a button
+		{
+			//var l_Button	= new C2DButton();
+			//l_Button
+			if ( _FCurrentDiv.has.name )
+			{
+				_MenuNode.AddTransition( _FCurrentDiv.att.href, _FCurrentDiv.att.name );
+			}
+			else
+			{
+				_MenuNode.AddTransition( _FCurrentDiv.att.href );
+			}
+		}
+		
+		for ( i_FImages in _FCurrentDiv.nodes.image )
+		{
+			var l_C2DImage	: C2DImage	= new C2DImage();
+			l_C2DImage.Load( i_FImages.att.src );
+			ApplyStyle( l_C2DImage, i_FImages, _CurrentDiv );
+			_CurrentDiv.AddObject( l_C2DImage );
+		}
+		
+		for ( i_FSubDiv in _FCurrentDiv.nodes.div )
+		{
+			RecurseDiv( new C2DContainer(), i_FSubDiv, _CurrentDiv, _MenuNode );
+		}
+	}
+	
+	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DQuad )
 	{		
 		var FStyle		: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement() );
-		var l_Size 				: CV2D = new CV2D( 0, 0 );
-		var l_Coordinate		: CV2D = new CV2D( 0, 0 );
 		
 		var l_ParentSize		: CV2D = new CV2D( 0, 0 );
 		var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );
@@ -226,74 +226,115 @@ class CMenuGraph extends CRsc			// C&D Menu
 			l_ParentCoordinate.Copy(	_ObjectParent.GetTL() );
 		}
 		
-		//for ( i_FStyle in FStyle.nodes.class )
-		//{
-			//if ( i_FStyle.att.name == _FastObj.att.id )
-			//{
-				//
-			//}
-		//}
-		for ( l_FObjStyle in FStyle.nodes.id )
+		var NoStyleDefined	: Bool	= true;
+		if ( _FObject.has.type )
 		{
-			if ( l_FObjStyle.att.name == _FObject.att.id )
+			for ( i_FStyle in FStyle.nodes.type )
 			{
-				trace( ">>>>>>>>>>>>>>>"+_Object+">>"+l_FObjStyle.att.name + " " +_FObject.att.id );
-				var l_x : Float;
-				var l_y : Float;
-				
-				// SIZE
-				switch( l_FObjStyle.node.size.att.scale )
+				if ( i_FStyle.att.name == _FObject.att.type )
+				{
+					trace( ">>>>> SET TYPE STYLE >>>>> " + _Object +" >> " + i_FStyle.att.name + " " + _FObject.att.type );
+					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
+				}
+			}
+			NoStyleDefined	= false;
+		}
+		if ( _FObject.has.id )
+		{
+			for ( i_FStyle in FStyle.nodes.id )
+			{	
+				if ( i_FStyle.att.name == _FObject.att.id )
+				{
+					trace( ">>>>>  SET ID STYLE  >>>>> " + _Object +" >> " + i_FStyle.att.name + " " + _FObject.att.id );
+					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
+				}
+			}
+			NoStyleDefined	= false;
+		}
+		if ( NoStyleDefined )
+		{
+			_Object.SetRelativeTLPosition( l_ParentCoordinate, CV2D.ZERO );
+		}
+	}
+
+	private function SetStyle( _Object : C2DQuad, _FStyle : Fast, _ParentSize : CV2D, _ParentCoordinate : CV2D )	: Void
+	{
+		var l_Size 				: CV2D = new CV2D( 0, 0 );
+		var l_Coordinate		: CV2D = new CV2D( 0, 0 );
+		
+		var l_x : Float;
+		var l_y : Float;
+		
+		if ( (! _FStyle.hasNode.size) && (! _FStyle.hasNode.align) )
+		{
+			trace( "No style define in this Xml extract" );
+		}
+		else
+		{
+			// SIZE
+			if ( _FStyle.hasNode.size )
+			{
+				switch( _FStyle.node.size.att.scale )
 				{
 					case "fit" :
 					{
-						l_Size.Copy( l_ParentSize );
+						l_Size.Copy( _ParentSize );
 					}
 					case "keep_ratio" :
 					{
-						l_x	= ( l_FObjStyle.node.size.att.x == "" ) ? 1 : Std.parseFloat(l_FObjStyle.node.size.att.x);
-						l_y = ( l_FObjStyle.node.size.att.y == "" ) ? 1 : Std.parseFloat(l_FObjStyle.node.size.att.y);
-						l_Size.Set( Std.parseFloat(l_FObjStyle.node.size.att.x), Std.parseFloat(l_FObjStyle.node.size.att.y) );
-						var l_Ratio : Float = Math.min( l_ParentSize.x / l_x, l_ParentSize.y / l_y );
+						l_x	= ( _FStyle.node.size.att.x == "" ) ? 1 : Std.parseFloat(_FStyle.node.size.att.x);
+						l_y = ( _FStyle.node.size.att.y == "" ) ? 1 : Std.parseFloat(_FStyle.node.size.att.y);
+						l_Size.Set( Std.parseFloat(_FStyle.node.size.att.x), Std.parseFloat(_FStyle.node.size.att.y) );
+						var l_Ratio : Float = Math.min( _ParentSize.x / l_x, _ParentSize.y / l_y );
 						CV2D.Scale( l_Size, l_Ratio, l_Size );
 					}
 					case "exact" :
 					{
-						l_x = ( l_FObjStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(l_FObjStyle.node.size.att.x);
-						l_y = ( l_FObjStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(l_FObjStyle.node.size.att.y);
-						trace( "DDDDDDDDDDDDDDDDDDDDDD"+l_x + " " + l_y );
+						l_x = ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.x);
+						l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.y);
+						trace( l_x + " " + l_y );
 						l_Size.Set( l_x, l_y );
 					}
-					default	: // fit
+					default	:
 					{
-						l_Size.Copy( l_ParentSize );
+						trace( _FStyle.node.size.att.scale + " isn't a correct value for attribute scale" );
+						trace( "Accepted values scale=\"fit|keep_ratio|exact\"" );
 					}
 				}
-				trace ( " Size"+l_Size.ToString() );
 				_Object.SetSize( l_Size );
-				
-				// COORDINATE
-				switch ( l_FObjStyle.node.align.att.handle )
+			}
+			
+			// COORDINATE
+			if ( _FStyle.hasNode.align )
+			{
+				switch ( _FStyle.node.align.att.unit )
 				{
 					case "%"	:
 					{
-						l_Coordinate.Set(	l_ParentSize.x * Std.parseFloat(FStyle.node.body.node.size.att.x),
-											l_ParentSize.y * Std.parseFloat(FStyle.node.body.node.size.att.y) );
+						//trace( FStyle.node.body.node.size.att.x +" " + FStyle.node.body.node.size.att.y );
+						l_Coordinate.Set(	_ParentSize.x * Std.parseFloat(_FStyle.node.align.att.x ) * 0.01,
+											_ParentSize.y * Std.parseFloat(_FStyle.node.align.att.y) * 0.01 ) ;
 					}
 					case "px"	:
 					{
-						l_Coordinate.Set(	Std.parseFloat(FStyle.node.body.node.size.att.x),
-											Std.parseFloat(FStyle.node.body.node.size.att.y) );
+						l_Coordinate.Set(	Std.parseFloat(_FStyle.node.align.att.x ),
+											Std.parseFloat(_FStyle.node.align.att.y ) );
+					}
+					default		:
+					{
+						trace( _FStyle.node.align.att.unit + " isn't a correct value for attribute unit" );
+						trace( "Accepted values unit=\"%|px\"" );
 					}
 				}
-				
-				trace ( " Coordinate"+l_Coordinate.ToString() );
-				
-				switch ( l_FObjStyle.node.align.att.handle )
+							
+				switch ( _FStyle.node.align.att.handle )
 				{
-					case "TL"		: _Object.SetRelativeTLPosition( l_ParentCoordinate, l_Coordinate );
-					case "center"	: _Object.SetRelativeCenterPosition( l_ParentCoordinate, l_Coordinate );
+					case "TL"		: _Object.SetRelativeTLPosition( _ParentCoordinate, l_Coordinate );
+					case "center"	: _Object.SetRelativeCenterPosition( _ParentCoordinate, l_Coordinate );
 				}
 			}
+			
+			trace ( " Coordinate :" + l_Coordinate.ToString() + ">>> Size : " + l_Size.ToString() );
 		}
 	}
 }

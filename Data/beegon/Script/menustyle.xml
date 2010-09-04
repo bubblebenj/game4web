@@ -1,54 +1,66 @@
 <!--
-	Notes for nodes size :
-		attribute scale="fit" : the object will fit the size of the parent
-		attribute scale="keep_ratio" : the object will fit the size of the parent but will aspect ratio as define by x and y
-		attribute scale="exact" : the object will of the size define by x and y
+	when an element gots a type and an id be aware that the properties defined
+	in the id will override thios of the type.
+
+	size :
+		scale="fit"	: the object will fit the size of the parent
+		scale="keep_ratio" : the object will fit the size of the parent but will aspect ratio as define by x and y
+		scale="exact" : the object will of the size define by x and y
+	align :
+		handle="center" : the object is handled using its center coordinate
+		handle="TL" : the object is handled using its top-left coordinate
+		unit="%" : top left of the parent is x=0 y=0 bottom right is 100 100
+		unit="px" : coordinate x, y are added to the parent top left coordinate
 		
 -->
 <?xml version="1.0" encoding="utf-8" ?>
 <data>
-	<id name="body">
-		<size	scale="fit"	x="800" y="600"></size>
+	<type name="body">
+		<size	scale="fit"			x="800" y="600"></size>
 		<align	handle="center"		x="50" 	y="50"  unit="%"></align>
-	</id>
+	</type>
 	
-	<class name="bt_image">
+	<type name="button">
+		<size	scale="exact"		x="150"	y="50"></size>
+		<align	handle="TL"			x="200"	y="50" unit="px"></align>
+	</type>
+	
+	<type name="bt_image">
 		<size	scale="fit"			x="0"	y="0"></size>
 		<align	handle="center"		x="50"	y="50" unit="%"></align>
-	</class>
+	</type>
 <!--	
-	<class name="header">
+	<type name="header">
 		<size	scale="keep_ratio"	x=""	y=""></size>
 		<align	handle="TL"			x="0" 	y="0"  unit="%"></align_rt>
-	</style>
+	</type>
 	
-	<class name="footer">
+	<type name="footer">
 		<size	scale="exact"		x="150"	y="200"></size>
 		<align	handle="TL"			x="200" y="500" unit="px"></align_rt>
-	</style>
+	</type>
 -->
-	<id name="background-image">
-		<size	scale="exact"		x="500"	y="500"></size>
+	<type name="background-image">
+		<size	scale="keep_ratio"			x="50"	y="50"></size>
 		<align	handle="center"		x="50" 	y="50"  unit="%"></align>
-	</id>
+	</type>
 	
-<!--	<id name="header_left_frisette">
+<!--
+	<id name="header_left_frisette">
 		<size	scale="keep_ratio"	x=""	y=""></size>
 		<align	handle="ML"			x="0" 	y="50"  unit="%"></align_rt>
-	</style>
+	</id>
 	
 	<id name="header_left_frisette">
 		<size	scale="keep_ratio"	x=""	y=""></size>
 		<align	handle="ML"			x="0" 	y="50"  unit="%"></align_rt>
-	</style>
--->	
+	</id>
+-->
 	<id name="bt_start_game">
-		<size	scale="exact"		x="150"	y="200"></size>
 		<align	handle="TL"			x="200" y="200" unit="px"></align>
 	</id>
 	
 	<id name="bt_credit">
-		<size	scale="exact"	x="150"	y="200"></size>
 		<align	handle="TL"			x="200" y="500" unit="px"></align>
 	</id>
 		
