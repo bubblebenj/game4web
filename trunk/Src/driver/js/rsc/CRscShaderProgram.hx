@@ -6,6 +6,7 @@ import driver.js.renderer.CPrimitiveJS;
 import driver.js.rsc.CRscVertexShader;
 import driver.js.rsc.CRscFragmentShader;
 import driver.js.kernel.CSystemJS;
+import renderer.CPrimitive;
 
 import math.CMatrix44;
 
@@ -113,14 +114,16 @@ class CRscShaderProgram extends CRscShader
 		}
 	}
 	
-	public function LinkPrimitive( _Prim : CPrimitiveJS ) : Result
+	public override function LinkPrimitive( _Prim : CPrimitive ) : Result
 	{
 		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
+		var l_Prim : CPrimitiveJS = cast _Prim;
+		
 		
 		if( m_AttribsMask & ATTR_VERTEX != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_VERTEX_INDEX );
-			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, _Prim.GetFloatPerVtx(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, l_Prim.GetFloatPerVtx(), CGL.FLOAT, false, 0, 0);
 			
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
 			if ( l_Err  != 0)
@@ -136,19 +139,19 @@ class CRscShaderProgram extends CRscShader
 		if( m_AttribsMask & ATTR_NORMAL!= 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_NORMAL_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, _Prim.GetFloatPerNormal(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, l_Prim.GetFloatPerNormal(), CGL.FLOAT, false, 0, 0);
 		}
 		
 		if( m_AttribsMask & ATTR_COLOR != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_COLOR_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, _Prim.GetFloatPerColor(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, l_Prim.GetFloatPerColor(), CGL.FLOAT, false, 0, 0);
 		}
 		
 		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_TEXCOORD_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, _Prim.GetFloatPerTexCoord(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, l_Prim.GetFloatPerTexCoord(), CGL.FLOAT, false, 0, 0);
 		}
 	
 		//CDebug.CONSOLEMSG("Unable to find Attrib channel");
@@ -218,7 +221,7 @@ class CRscShaderProgram extends CRscShader
 		m_Uniforms.set(_Name, l_Loc );
 	}
 	
-	public function Uniform1f( _Name : String, _f0 : Float )
+	public override function SetUniform1f( _Name : String, _f0 : Float ) : Result
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{
@@ -229,11 +232,30 @@ class CRscShaderProgram extends CRscShader
 		if ( l_Loc != null )
 		{
 			Glb.g_SystemJS.GetGL().Uniform1f( l_Loc, _f0 );
+			return FAILURE;
 		}
 		
+		return SUCCESS;
 	}
 	
-	public function UniformMatrix4fv( _Name : String, _Transpose:Bool, _m0 : Float32Array )
+	public override function SetUniform1i( _Name : String, _i0 : Int ) : Result
+	{
+		if ( !m_Uniforms.exists(_Name))
+		{
+			DeclUniform(_Name);
+		}
+		
+		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
+		if ( l_Loc != null )
+		{
+			Glb.g_SystemJS.GetGL().Uniform1i( l_Loc, _i0 );
+			return FAILURE;
+		}
+		
+		return SUCCESS;
+	}
+	
+	public override function SetUniformMatrix4f( _Name : String, _m0 : CMatrix44 ): Result
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{
@@ -244,18 +266,22 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, _Transpose,_m0 );
+			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, false, _m0.m_Buffer );
+			
 		}
 		else 
 		{
 			CDebug.CONSOLEMSG("UnableToSetUniformMatrix4fv");
+			return FAILURE;
 		}
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
 		if ( l_Err  != 0)
 		{
 			CDebug.CONSOLEMSG("GlError:postSetUniform4fv:" + l_Err);
+			return FAILURE;
 		}
+		return SUCCESS;
 	}
 	
 	public override function  Activate() : Result 

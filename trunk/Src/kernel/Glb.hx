@@ -2,6 +2,7 @@ package kernel;
 
 #if		js
 	import driver.js.kernel.CSystemJS;
+	import driver.js.renderer.CRendererJS;
 #elseif	flash10
 	import driver.as.kernel.CSystemAS;
 	import driver.as.renderer.CRendererAS;
@@ -32,6 +33,10 @@ class Glb
 	#if flash10
 		public static inline function GetRendererAS() : CRendererAS		{
 			return cast g_SystemAS.GetRenderer();
+		}
+	#elseif js
+		public static inline function GetRendererJS() : CRendererJS		{
+			return cast g_SystemJS.GetRenderer();
 		}
 	#end
 	

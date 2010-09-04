@@ -8,39 +8,36 @@ This text is displayed if your browser does not support HTML5 Canvas.
 </canvas>
 
 <script id="main_shader.vsh" type="x-shader/x-vertex">
-    uniform mat4 	u_MVPMatrix;
-    uniform vec3 	u_lightDir;
+    uniform mat4 	_MVPMatrix;
  
-    attribute vec3 	_Normal;
-    attribute vec4 	_TexCoord;
     attribute vec3 	_Vertex;
+	attribute vec4 	_TexCoord;
  
     varying float 	v_Dot;
     varying vec2 	v_texCoord;
  
     void main()
     {
-        gl_Position = u_modelViewProjMatrix * _Position;
+        gl_Position = __modelViewProjMatrix * _Vertex;
         v_texCoord = _TexCoord.st;
-        v_Dot = max(dot( _Normal.xyz, u_lightDir), 0.0);
     }
 </script>
 
 <script id="main_shader.fsh" type="x-shader/x-fragment">
-    uniform sampler2D 	u_sampler2d;
+    uniform sampler2D 	_TexSampler;
  
     varying float 		v_Dot;
     varying vec2		v_texCoord;
  
     void main()
     {
-        gl_FragColor = vec4(l_color.xyz * v_Dot,l_color.a);
+        gl_FragColor = texture2D( _TexSampler,v_texCoord);
     }
 
 </script>
 
 <script id="white.vsh" type="x-shader/x-vertex">
-	uniform		mat4	u_MVPMatrix;
+	uniform		mat4	_MVPMatrix;
 	attribute 	vec3 	_Vertex;
 
     void main()

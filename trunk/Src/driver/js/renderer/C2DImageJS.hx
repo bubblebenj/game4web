@@ -39,6 +39,15 @@ import renderer.I2DImage;
 
 class C2DImageJS  extends C2DQuad, implements I2DImage 
 {
+	var m_Primitive : CPrimitiveJS;
+	
+	var m_ShdrPrgm : CRscShaderProgram;
+	var m_RenderStates : CRenderStatesJS;
+	
+	var m_UV : CV4D ;
+	
+	var m_Matrix : CMatrix44;
+	
 	public function new() 
 	{
 		super();
@@ -47,6 +56,8 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		m_ShdrPrgm = null;
 		
 		m_UV  = new CV4D(0, 0, 1, 1);
+		
+		m_Matrix = null;
 	}
 	
 	public override function Shut() : Result
@@ -55,7 +66,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		m_ShdrPrgm = null;
 		
 		m_Material.Release();
-		m_Material = null;
+		m_Material = null;		
 		
 		return SUCCESS;
 	}
@@ -186,6 +197,8 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 	{
 		super.Draw( _VpId );
 		
+		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
+		
 		UpdateQuad(_VpId);
 		
 		if ( Activate() == FAILURE)
@@ -194,22 +207,21 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 			return FAILURE;
 		}
 		
-		if (m_MatrixCache == null)
+		//we don't use matrices by now
+		if (m_Matrix == null)
 		{
-			m_MatrixCache = m_Cameras[_VpId].GetMatrix().m_Buffer;
+			m_Matrix = m_Cameras[_VpId].GetMatrix();
 			
 			m_Cameras[_VpId].GetMatrix().Trace();
 		}
 		
-		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		var l_Err = l_Gl.GetError();
 		if ( l_Err  != 0)
 		{
 			CDebug.CONSOLEMSG("GlError:PreSetUniform:" + l_Err);
 		}
 		
-		m_ShdrPrgm.UniformMatrix4fv( "u_MVPMatrix", false, m_MatrixCache );
-		
-		//Glb.g_SystemJS.GetGL().DrawArrays( CGL.TRIANGLES, 0, m_Primitive.GetNbVertices() );
+		m_ShdrPrgm.SetUniformMatrix4f( Glb.GetRendererJS().m_GLPipeline.GetModelViewProjectionMatrixName(), m_Matrix );
 		
 		{
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
@@ -319,12 +331,5 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		}
 	}
 	
-	var m_Primitive : CPrimitiveJS;
 	
-	var m_ShdrPrgm : CRscShaderProgram;
-	var m_RenderStates : CRenderStatesJS;
-	
-	var m_MatrixCache : Float32Array;
-	
-	var m_UV : CV4D ;
 }

@@ -99,6 +99,7 @@ extern class CGL
     public function CreateTexture() : WebGLTexture;
 	public function DeleteTexture( _Tex : WebGLTexture) : Void;
 	
+	public function ActiveTexture( _Target: GLenum ): Void;
 	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture): Void;
 	
 	public function PixelStorei( _pname : GLenum, _param : GLint ): Void;

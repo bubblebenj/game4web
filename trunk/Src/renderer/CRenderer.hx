@@ -13,6 +13,7 @@ import renderer.camera.CCamera;
 import renderer.camera.CPerspectiveCamera;
 import renderer.camera.COrthoCamera;
 
+import renderer.CRenderContext;
 
 
 class CRenderer
@@ -32,6 +33,8 @@ class CRenderer
 	public static var VP_FULLSCREEN : Int = 0;
 	public static var VP_MAX : Int = 2;
 	
+	public var m_RenderContext(default,null) : CRenderContext;
+	
 	public function new() 
 	{
 		m_Vps = new Array<>();
@@ -48,6 +51,8 @@ class CRenderer
 		}
 		
 		m_CurrentVPMatrix = null;
+		
+		m_RenderContext = new CRenderContext();
 	}
 	
 	public inline function GetViewProjection() : CMatrix44
@@ -77,6 +82,7 @@ class CRenderer
 		m_Scene = new List<CDrawObject>();
 		m_BackScene  = new List<CDrawObject>();
 		
+		m_RenderContext.Reset();
 		return SUCCESS;
 	}
 	

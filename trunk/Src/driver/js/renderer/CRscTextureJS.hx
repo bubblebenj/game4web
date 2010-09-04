@@ -6,6 +6,8 @@
 package driver.js.renderer;
 
 import js.Dom;
+import renderer.CRenderContext;
+import renderer.CRscShader;
 
 import kernel.CSystem;
 import kernel.CTypes;
@@ -21,6 +23,7 @@ import CGL;
 class CRscTextureJS extends CRscTexture
 {
 	var m_GlTexture : WebGLTexture;
+	var m_Uploaded : Bool ;
 	
 	public function new() 
 	{
@@ -41,11 +44,18 @@ class CRscTextureJS extends CRscTexture
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, null);
 		
 		m_State = STREAMED;
+		
+		m_Uploaded = true;
 	}
 	
-	public override function Activate() : Result
+	public function IsUploaded() : Bool
 	{
-		super.Activate();
+		return m_Uploaded;
+	}
+	
+	public override function Activate( ?_Stage : Int ) : Result
+	{
+		super.Activate(_Stage);
 		
 		if (	m_GlTexture != null
 			&&	m_RscImage.m_State == E_STATE.STREAMED)
@@ -53,7 +63,39 @@ class CRscTextureJS extends CRscTexture
 			FinishGlTexture();
 		}
 		
-		return m_State == E_STATE.STREAMED ? SUCCESS : FAILURE;
+		if( IsUploaded() )
+		{
+			var l_Gl : CGL = Glb.g_SystemJS.GetGL();
+			
+			l_Gl.ActiveTexture(CGL.TEXTURE0 + _Stage );
+			l_Gl.BindTexture(CGL.TEXTURE_2D, m_GlTexture);
+			
+			var l_Ctxt : CRenderContext = Glb.GetRenderer().m_RenderContext;
+			
+			var l_Shdr : CRscShader = l_Ctxt.m_CurrentShader;
+			
+			if (l_Shdr != null) 
+			{
+				l_Shdr.SetUniform1i( Glb.GetRendererJS().m_GLPipeline.GetTexCooName(_Stage), _Stage == null ? 0 : _Stage );
+			}
+		}
+		
+		if( IsUploaded() && IsStreamed())
+		{
+			return SUCCESS;
+		}
+		
+		return FAILURE;
 	}
 	
+	public override function OnDeletion()
+	{
+			if (m_GlTexture != null)
+			{
+				var l_Gl :CGL = Glb.g_SystemJS.GetGL();
+			
+				l_Gl.DeleteTexture(m_GlTexture);
+				m_GlTexture = null;
+			}
+	}
 }
