@@ -29,6 +29,11 @@ class CRsc
 		m_State			= STREAMED;
 	}
 	
+	public inline function IsStreamed() : Bool
+	{
+		return m_State == STREAMED;
+	}
+	
 	public function Copy( _InRsc : CRsc ) : Void 
 	{
 		CDebug.ASSERT( GetType() == _InRsc.GetType() );
@@ -65,6 +70,12 @@ class CRsc
 		return m_SingleLoad!= false;
 	}
 	
+	//one might override this to free system objects
+	public function OnDeletion()
+	{
+		
+	}
+	
 	public function Release() : Void 
 	{
 		CDebug.ASSERT( m_Ref >= 0 );
@@ -72,6 +83,7 @@ class CRsc
 		
 		if(m_Ref==0)
 		{
+			OnDeletion();
 			Glb.g_System.GetRscMan().ForceDelete(this);
 		}
 	}

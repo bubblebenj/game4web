@@ -25,6 +25,7 @@ class CRendererJS extends CRenderer
 	public function new() 
 	{
 		super();
+		m_GLPipeline = new CGLPipelineNames();
 	}
 	
 	public override function  Initialize() : Result
@@ -34,6 +35,8 @@ class CRendererJS extends CRenderer
 		trace("CRendererJS::init");
 		return SUCCESS;
 	}
+	
+	public var m_GLPipeline(default, null) : CGLPipelineNames;
 	
 	public override function BeginScene() : Result
 	{

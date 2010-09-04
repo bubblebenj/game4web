@@ -43,12 +43,22 @@ class CMaterial extends CRsc
 			return FAILURE;
 		}
 		
+		//if( m_Textures[0] != null )
+		
+		for( l_Texes in m_Textures )
+		{
+			if ( l_Texes.Activate() == FAILURE)
+			{
+				return FAILURE;
+			}
+		}
+		
 		return SUCCESS;
 	}
 	
 	public function SetBlendMode( _Mode )  : Void
 	{
-		m_Mode = _Mode;
+		m_Mode = _Mode;	
 	}
 	
 	public function SetShader( _Sh : CRscShader ) : Void

@@ -43,7 +43,7 @@ class CRscTexture extends CRsc
 		}
 	}
 	
-	public function Activate() : Result
+	public function Activate( ?_Stage : Int ) : Result
 	{
 		
 		return SUCCESS;

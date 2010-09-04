@@ -372,6 +372,11 @@ CGL.prototype.DeleteTexture = function( _Tgt )
 	m_GLContext.deleteTexture( _Tgt);
 }
 
+CGL.prototype.ActiveTexture = function( _Tgt )
+{
+	m_GLContext.activeTexture( _Tgt);
+}
+
 CGL.prototype.BindTexture = function( _Tgt,_Tex )
 {
 	m_GLContext.bindTexture( _Tgt,_Tex);

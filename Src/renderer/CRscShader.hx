@@ -6,6 +6,7 @@
 package renderer;
 
 import kernel.CTypes;
+import math.CMatrix44;
 
 import rsc.CRsc;
 
@@ -50,6 +51,26 @@ class CRscShader extends CRsc
 	public function Link() : Result
 	{
 		return SUCCESS;
+	}
+	
+	public function SetUniform1f( _Name : String, _f0 : Float ) : Result
+	{
+		return FAILURE;
+	}
+	
+	public function  SetUniform1i( _Name : String, _Value : Int ) : Result 
+	{
+		return FAILURE;
+	}
+	
+	public function  SetUniformMatrix4f( _Name : String, _Value : CMatrix44 ) : Result 
+	{
+		return FAILURE;
+	}
+	
+	public function  LinkPrimitive( _Prim : CPrimitive ) : Result 
+	{
+		return FAILURE;
 	}
 	
 	var m_Status : Int;
