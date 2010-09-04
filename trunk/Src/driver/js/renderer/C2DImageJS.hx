@@ -10,6 +10,7 @@ import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
 import math.CV2D;
 import math.CV4D;
+import renderer.CRenderContext;
 import rsc.CRscImage;
 
 import CGL;
@@ -244,33 +245,13 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 	
 	public override function Activate() : Result
 	{
-		var l_MatActivation : Result= m_Material.Activate();
-		if(l_MatActivation==FAILURE)
-		{
-			CDebug.CONSOLEMSG("CGLQuad:unable to activate mat");
-			return FAILURE;
-		}
+		var l_RdrContext : CRenderContext = Glb.GetRenderer().m_RenderContext;
 		
-		var  l_ShdrActivation : Result= m_ShdrPrgm.Activate();
-		if(l_ShdrActivation==FAILURE)
-		{
-			CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
-			return FAILURE;
-		}
-		
-		var  l_PrgmLink : Result = m_ShdrPrgm.LinkPrimitive( m_Primitive );
-		if(l_PrgmLink==FAILURE)
-		{
-			CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
-			return FAILURE;
-		}
-		
-		var  l_RsActivate : Result = m_RenderStates.Activate();
-		if(l_RsActivate==FAILURE)
-		{
-			CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
-			return FAILURE;
-		}
+		l_RdrContext.m_CurrentPrimitive = m_Primitive;
+		//l_RdrContext.m_CurrentShader = m_ShdrPrgm;
+		l_RdrContext.m_CurrentMaterial = m_Material;
+		l_RdrContext.m_CurrentRenderState = m_RenderStates;
+		l_RdrContext.Activate();
 		
 		return SUCCESS;
 	}

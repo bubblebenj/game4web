@@ -6,6 +6,7 @@
 package renderer;
 
 import kernel.CTypes;
+import kernel.CDebug;
 
 import rsc.CRsc;
 import rsc.CRscMan;
@@ -38,8 +39,10 @@ class CMaterial extends CRsc
 	
 	public function Activate()  : Result
 	{
-		if ( m_Shader.Activate() == FAILURE )
+		if ( 	m_Shader != null
+		&&		m_Shader.Activate() == FAILURE )
 		{
+			CDebug.CONSOLEMSG("Unable to activate shader");
 			return FAILURE;
 		}
 		
@@ -49,6 +52,7 @@ class CMaterial extends CRsc
 		{
 			if ( l_Texes.Activate() == FAILURE)
 			{
+				CDebug.CONSOLEMSG("Unable to activate texture");
 				return FAILURE;
 			}
 		}

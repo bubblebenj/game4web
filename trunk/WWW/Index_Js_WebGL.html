@@ -43,7 +43,7 @@ This text is displayed if your browser does not support HTML5 Canvas.
     void main()
     {
 		//v_Vertex = u_MVPMatrix * _Vertex;
-        gl_Position = u_MVPMatrix *  vec4(_Vertex,1.0);
+        gl_Position = _MVPMatrix *  vec4(_Vertex,1.0);
 		//gl_Position = vec4(0,0,0,0)
     }
 </script>

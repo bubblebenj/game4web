@@ -88,6 +88,7 @@ class CRenderer
 	
 	public function BeginScene() : Result
 	{
+		m_RenderContext.Reset();
 		//process skinning, texture activations
 		for ( l_Cams in m_Cameras)
 		{
