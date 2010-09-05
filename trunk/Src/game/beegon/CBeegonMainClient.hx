@@ -6,6 +6,7 @@
 
 import CDriver;
 import kernel.CMouse;
+import logic.C2DContainer;
 import logic.CMenuGraph;
 import logic.CMenuNode;
 

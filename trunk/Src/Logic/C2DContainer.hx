@@ -124,7 +124,6 @@ class C2DContainer extends C2DQuad
 		super.Activate();
 		for ( i_Object in m_2DObjects )
 		{
-			//trace( "\t Activating " + i_Object );
 			i_Object.Activate();
 		}
 		return SUCCESS;
@@ -141,18 +140,35 @@ class C2DContainer extends C2DQuad
 	}
 	
 	/* Debug function */
-	public function ListChild() : Void
+	public function ShowTree( ? _Depth : Int ) : Void
 	{
+		_Depth	= ( _Depth == null ) ? 0 : _Depth;
+		
+		var l_Tabs	: String	= "";
+		for ( i in 0 ... _Depth )
+		{
+			l_Tabs	= l_Tabs + "\t ";
+		}
+		
+		trace( l_Tabs + this );
+		
 		if ( m_2DObjects.length == 0 )
 		{
-			trace ( this + " is empty" );
+			trace ( "\t is empty" );
 		}
 		else
 		{
-			trace( "Listing Child" );
+			trace( l_Tabs + "Listing Child" );
 			for ( i_Object in m_2DObjects )
 			{
-				trace( i_Object );
+				if ( Type.getClassName( Type.getClass( i_Object ) ) == "logic.C2DContainer" )
+				{
+					cast( i_Object, C2DContainer).ShowTree( (_Depth + 1) );
+				}
+				else
+				{
+					trace( l_Tabs + "\t " + i_Object );
+				}
 			}
 		}
 	}

@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <data>
 	<page id="MainMenu" type="body">
-		<image type="background-image" src="./Data/body_bg.jpg"></image>
-<!--			
-		<div style="header">
-			<image src="path_to_frisette_qui_dechire_left_part">
-				
-			</image>
-			<image src="path_to_frisette_qui_dechire_right_part" v_align="M" h_align="R" scale="keep_ratio">
-			<text>Main menu</text>
+		<image type="background-image" src="./Data/menu/main_bg.jpg"></image>
+	
+		<div type="header">	
+			<image type="title_image" src="./Data/menu/main_title.png"></image>	
 		</div>
--->
+		
 		<div id="bt_start_game" type="button" href="Game">
+			<image type="bt_image" src="./Data/menu/start_game.png"></image>
 			<text>Start game</text>
 		</div>
-		<image type="button" src="./Data/vertical_hexcell1.png"></image>
+
 		<div id="bt_credits" type="button" href="Option">
-			
+			<image type="bt_image" src="./Data/menu/main_to_credits.png"></image>
 			<text>Credits</text>
 		</div>
 
+<!--
 			
 		<div style="footer" height="200">
 			<text>Click ou tu veux</text>
 		</div>
-
+-->
 	</page>
 	
 	<page id="Game" type="body">
-<!--
-			<image style="background-image" src="./body_bg.jpg"></image>
--->
-			<div id="bt_stop_game" type="button" name="QuitGame" href="MainMenu">
-				<image type="bt_image" src="./Data/Button.png"></image>
-				<text>Start game</text>
-			</div>
+		<image type="background-image" src="./Data/menu/game_bg.jpg"></image>
+		
+		<div id="bt_quit_game" type="button" name="QuitGame" href="MainMenu">
+			<image id="img_quit_game" src="./Data/menu/quit_game.png"></image>
+		</div>
 
 	</page>
 	
 	<page id="Option" type="body">
-<!--
-			<image style="background-image" src="./body_bg.jpg"></image>
--->
-			<div id="bt_back_to_menu" type="button" href="MainMenu">
-				Start game
-			</div>
-
+		<image type="background-image" src="./Data/menu/credits_bg.jpg"></image>
+		
+		<div type="header">	
+			<image type="title_image" src="./Data/menu/credits_title.png"></image>	
+		</div>
+		
+		<div id="bt_back_to_main" type="button" href="MainMenu">
+			<image type="bt_image" src="./Data/menu/back_to_main.png"></image>
+		</div>
+	
 	</page>
+
 </data>
