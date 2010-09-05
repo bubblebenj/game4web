@@ -13,8 +13,9 @@ import renderer.camera.CCamera;
 import renderer.camera.CPerspectiveCamera;
 import renderer.camera.COrthoCamera;
 
-import renderer.CRenderContext;
-
+#if js
+	import renderer.CRenderContext;
+#end
 
 class CRenderer
 {
@@ -32,9 +33,9 @@ class CRenderer
 	
 	public static var VP_FULLSCREEN : Int = 0;
 	public static var VP_MAX : Int = 2;
-	
-	public var m_RenderContext(default,null) : CRenderContext;
-	
+	#if js
+		public var m_RenderContext(default,null) : CRenderContext;
+	#end
 	public function new() 
 	{
 		m_Vps = new Array<>();
@@ -51,8 +52,9 @@ class CRenderer
 		}
 		
 		m_CurrentVPMatrix = null;
-		
-		m_RenderContext = new CRenderContext();
+		#if
+			m_RenderContext = new CRenderContext();
+		#end
 	}
 	
 	public inline function GetViewProjection() : CMatrix44
@@ -82,13 +84,18 @@ class CRenderer
 		m_Scene = new List<CDrawObject>();
 		m_BackScene  = new List<CDrawObject>();
 		
-		m_RenderContext.Reset();
+		#if js
+			//m_RenderContext.Reset();
+		#end
+		
 		return SUCCESS;
 	}
 	
 	public function BeginScene() : Result
 	{
-		m_RenderContext.Reset();
+		#if js
+			m_RenderContext.Reset();
+		#end
 		//process skinning, texture activations
 		for ( l_Cams in m_Cameras)
 		{
