@@ -123,12 +123,12 @@ class CRscShaderProgram extends CRscShader
 		if( m_AttribsMask & ATTR_VERTEX != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_VERTEX_INDEX );
-			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, l_Prim.GetFloatPerVtx(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, l_Prim.GetFloatPerVtx(), CGL.FLOAT, CGL.FALSE, 0, 0);
 			
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
 			if ( l_Err  != 0)
 			{
-				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:" + l_Err);
+				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:Vertex:" + l_Err);
 			}
 			else 
 			{
@@ -139,19 +139,37 @@ class CRscShaderProgram extends CRscShader
 		if( m_AttribsMask & ATTR_NORMAL!= 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_NORMAL_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, l_Prim.GetFloatPerNormal(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, l_Prim.GetFloatPerNormal(), CGL.FLOAT, CGL.FALSE, 0, 0);
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:Normal:" + l_Err);
+			}
 		}
 		
 		if( m_AttribsMask & ATTR_COLOR != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_COLOR_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, l_Prim.GetFloatPerColor(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, l_Prim.GetFloatPerColor(), CGL.FLOAT, CGL.FALSE, 0, 0);
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:Color:" + l_Err);
+			}
 		}
 		
 		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
 		{
 			l_Gl.EnableVertexAttribArray( ATTR_TEXCOORD_INDEX );
-			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, l_Prim.GetFloatPerTexCoord(), CGL.FLOAT, false, 0, 0);
+			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, l_Prim.GetFloatPerTexCoord(), CGL.FLOAT, CGL.FALSE, 0, 0);
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:VertexAttribPointer:TexCoord:" + l_Err);
+			}
 		}
 	
 		//CDebug.CONSOLEMSG("Unable to find Attrib channel");
@@ -216,7 +234,12 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = Glb.g_SystemJS.GetGL().GetUniformLocation( m_Program, _Name );
 		if (l_Loc == null )
 		{
-			CDebug.CONSOLEMSG("Unable to get uniform location: <" + _Name+">");
+			CDebug.CONSOLEMSG("Unable to get uniform location: <" + _Name + ">");
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:GetUniformLocation:" + l_Err);
+			}
 		}
 		m_Uniforms.set(_Name, l_Loc );
 	}
@@ -248,7 +271,14 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().Uniform1i( l_Loc, _i0 );
+			Glb.g_SystemJS.GetGL().Uniform1i( l_Loc, _i0 ); 
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:Uniform1i:"+l_Loc+"::"+ l_Err);
+			}
+			
 			return FAILURE;
 		}
 		
@@ -266,7 +296,7 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, false, _m0.m_Buffer );
+			Glb.g_SystemJS.GetGL().UniformMatrix4f( l_Loc, CGL.FALSE, _m0.m_Buffer );
 			
 		}
 		else 

@@ -94,11 +94,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		
 		m_Material = cast(l_RscMan.Create( CMaterial.RSC_ID ), CMaterial );
 		
-		if (m_Material != null)
-		{
-			m_Material.SetShader(m_ShdrPrgm);
-		}
-		else 
+		if (m_Material == null)
 		{
 			CDebug.CONSOLEMSG("Unable to create material");
 		}
@@ -162,6 +158,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 
 	public function UpdateQuad(_VpId : Int )
 	{	
+		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
 		var l_Vp : CViewport = Glb.GetRenderer().m_Vps[ _VpId ];
 		CDebug.ASSERT( l_Vp != null );
 		
@@ -192,6 +189,12 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		l_Array.Set(11, l_Z);
 		
 		m_Primitive.ReleaseVertexArray();
+		
+		var l_Err = l_Gl.GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostReleaseVertexArray:" + l_Err);
+		}
 	}
 	
 	public override function Draw( _VpId : Int ) : Result
@@ -248,10 +251,17 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		var l_RdrContext : CRenderContext = Glb.GetRenderer().m_RenderContext;
 		
 		l_RdrContext.m_CurrentPrimitive = m_Primitive;
-		//l_RdrContext.m_CurrentShader = m_ShdrPrgm;
+		l_RdrContext.m_CurrentShader = m_ShdrPrgm;
 		l_RdrContext.m_CurrentMaterial = m_Material;
 		l_RdrContext.m_CurrentRenderState = m_RenderStates;
+		
 		l_RdrContext.Activate();
+		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:post Render context Flush:" + l_Err);
+		}
 		
 		return SUCCESS;
 	}

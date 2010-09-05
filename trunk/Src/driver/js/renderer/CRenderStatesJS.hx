@@ -52,7 +52,7 @@ class CRenderStatesJS extends CRenderStates
 			l_GL.DepthFunc( CGL.GEQUAL);
 		}
 		
-		l_GL.DepthMask(m_ZWrite ? true : false);
+		l_GL.DepthMask(m_ZWrite ?CGL.TRUE : CGL.FALSE);
 		
 		return SUCCESS;
 	}
