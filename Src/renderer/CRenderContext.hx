@@ -138,6 +138,7 @@ class CRenderContext
 	
 	public function Activate()
 	{
+		#if js
 		if( m_FlushFlags & (1 << RC_SHADER_STAGE) != 0 )
 		{
 			CDebug.ASSERT(m_CurrentShader != null);
@@ -208,6 +209,7 @@ class CRenderContext
 				CDebug.CONSOLEMSG("GlError:RsActivation:"+ l_Err);
 			}
 		}
+		#end
 		m_FlushFlags = 0;
 		
 		return SUCCESS;
