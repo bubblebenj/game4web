@@ -9,7 +9,7 @@ typedef GLint = Int;
 typedef GLuint = Int;
 typedef GLsizei = Int;
 typedef GLfloat = Float;
-typedef GLboolean = Bool;
+typedef GLboolean = Int;
 typedef GLsizeiptr = Int;
 
 
@@ -136,7 +136,7 @@ extern class CGL
 	public function Uniform4f( _Loc : WebGLUniformLocation , _x:Float, _y:Float, _z:Float, _z:Float) : Void;
 	public function Uniform1i( _Loc : WebGLUniformLocation , _x:GLint ) : Void;
 	public function Uniform1f( _Loc : WebGLUniformLocation , _x:Float ) : Void;
-	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Transpose : Bool, _Mat : Float32Array) : Void;
+	public function UniformMatrix4f( _Loc : WebGLUniformLocation, _Transpose : GLboolean, _Mat : Float32Array) : Void;
 	
 	public function EnableVertexAttribArray( _Index : GLuint ) : Void;
 	public function DisableVertexAttribArray( _Index : GLuint  ) : Void;
@@ -166,7 +166,7 @@ extern class CGL
 	public function GetString( _Name: GLenum )	: DOMString;
 	public function Hint( _Tgt : GLenum, _Mode:GLenum) : Void;
 	
-	static inline var TRUE                            		= 1;
+	static inline var TRUE                           		= 1;
 	static inline var FALSE                             	= 0;
 	
 	/* ClearBufferMask */

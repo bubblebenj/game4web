@@ -7,6 +7,7 @@ package renderer;
 
 import kernel.CTypes;
 import kernel.CDebug;
+import kernel.Glb;
 
 import rsc.CRsc;
 import rsc.CRscMan;
@@ -39,15 +40,6 @@ class CMaterial extends CRsc
 	
 	public function Activate()  : Result
 	{
-		if ( 	m_Shader != null
-		&&		m_Shader.Activate() == FAILURE )
-		{
-			CDebug.CONSOLEMSG("Unable to activate shader");
-			return FAILURE;
-		}
-		
-		//if( m_Textures[0] != null )
-		
 		for( l_Texes in m_Textures )
 		{
 			if ( l_Texes.Activate() == FAILURE)
@@ -63,22 +55,6 @@ class CMaterial extends CRsc
 	public function SetBlendMode( _Mode )  : Void
 	{
 		m_Mode = _Mode;	
-	}
-	
-	public function SetShader( _Sh : CRscShader ) : Void
-	{
-		if ( m_Shader != null )
-		{
-			m_Shader.Release();
-			m_Shader = null;
-		}
-		
-		if( _Sh != null )
-		{
-			_Sh.AddRef();
-		}
-		
-		m_Shader = _Sh;
 	}
 	
 	public function HasTexture() : Bool
@@ -114,6 +90,5 @@ class CMaterial extends CRsc
 	
 	var m_Alpha : Float;
 	var m_Mode : MAT_BLEND_MODE;
-	var m_Shader : CRscShader;
 	var m_Textures : Array<CRscTexture>;
 }

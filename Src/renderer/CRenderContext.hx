@@ -8,6 +8,7 @@ package renderer;
 
 import kernel.CDebug;
 import kernel.CTypes;
+import kernel.Glb;
 
 import renderer.CMaterial;
 import renderer.CPrimitive;
@@ -43,8 +44,14 @@ class CRenderContext
 		SetActiveShader( null );
 		SetActivePrimitive( null );
 		m_FlushFlags = 0xFFFF;
+		
+		ResetDevice();
 	}
 	
+	public function ResetDevice()
+	{
+		
+	}
 	
 	public function SetActiveRenderStates( _Rs : CRenderStates ) : CRenderStates
 	{
@@ -133,43 +140,72 @@ class CRenderContext
 	{
 		if( m_FlushFlags & (1 << RC_SHADER_STAGE) != 0 )
 		{
+			CDebug.ASSERT(m_CurrentShader != null);
 			var  l_ShdrActivation : Result = m_CurrentShader.Activate();
 			if(l_ShdrActivation==FAILURE)
 			{
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
 				return FAILURE;
 			}
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:ShaderActivation:"+ l_Err);
+			}
 		}
 		
-		if ( 	(m_FlushFlags & (1 << RC_SHADER_STAGE)  != 0)
+		if ( 	((m_FlushFlags & (1 << RC_SHADER_STAGE)  != 0)
 		|| 		(m_FlushFlags & (1 << RC_MATERIAL_STAGE) != 0))
+		
+		&&		(m_CurrentMaterial != null))
 		{
-			var l_MatActivation : Result= m_CurrentMaterial.Activate();
+			var l_MatActivation : Result = m_CurrentMaterial.Activate();
 			if(l_MatActivation==FAILURE)
 			{
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate mat");
 				return FAILURE;
+			}
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:MatActivation:"+ l_Err);
 			}
 		}
 		
 		if ( 	(m_FlushFlags & (1 << RC_SHADER_STAGE) != 0)
 		|| 		(m_FlushFlags & (1 << RC_PRIMITIVE_STAGE) != 0))
 		{
+			CDebug.ASSERT(m_CurrentPrimitive != null);
 			var  l_PrgmLink : Result = m_CurrentShader.LinkPrimitive( m_CurrentPrimitive );
 			if(l_PrgmLink==FAILURE)
 			{
 				CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
 				return FAILURE;
 			}
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:LinkPrimActivation:"+ l_Err);
+			}
 		}
 		
-		if( m_FlushFlags & (1 << RC_RENDER_STATES_STAGE ) != 0)
+		if ( m_FlushFlags & (1 << RC_RENDER_STATES_STAGE ) != 0 )
 		{
+			CDebug.ASSERT(m_CurrentRenderState != null);
 			var  l_RsActivate : Result = m_CurrentRenderState.Activate();
 			if(l_RsActivate==FAILURE)
 			{
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
 				return FAILURE;
+			}
+			
+			var l_Err = Glb.g_SystemJS.GetGL().GetError();
+			if ( l_Err  != 0)
+			{
+				CDebug.CONSOLEMSG("GlError:RsActivation:"+ l_Err);
 			}
 		}
 		m_FlushFlags = 0;
