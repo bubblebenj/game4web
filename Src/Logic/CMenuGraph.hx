@@ -176,6 +176,11 @@ class CMenuGraph extends CRsc			// C&D Menu
 		{
 			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
+		
+		for ( i_FMenuNode in l_FGraph.nodes.page )
+		{
+			m_States.get( i_FMenuNode.att.id ).ShowTree();
+		}
 	}
 	
 	private function RecurseDiv( _CurrentDiv : C2DContainer, _FCurrentDiv : Fast, _Parent : C2DContainer, _MenuNode : CMenuNode )
@@ -203,14 +208,19 @@ class CMenuGraph extends CRsc			// C&D Menu
 			_CurrentDiv.AddObject( l_C2DImage );
 		}
 		
+		var l_NewDiv	: C2DContainer;
 		for ( i_FSubDiv in _FCurrentDiv.nodes.div )
 		{
-			RecurseDiv( new C2DContainer(), i_FSubDiv, _CurrentDiv, _MenuNode );
+			l_NewDiv	= new C2DContainer();
+			_CurrentDiv.AddObject( l_NewDiv );
+			RecurseDiv( l_NewDiv, i_FSubDiv, _CurrentDiv, _MenuNode );
 		}
 	}
 	
 	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DQuad )
 	{		
+		trace ("");
+		trace( " " + _ObjectParent +" - " + _Object + " >");
 		var FStyle		: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement() );
 		
 		var l_ParentSize		: CV2D = new CV2D( 0, 0 );
@@ -233,7 +243,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			{
 				if ( i_FStyle.att.name == _FObject.att.type )
 				{
-					trace( ">>>>> SET TYPE STYLE >>>>> " + _Object +" >> " + i_FStyle.att.name + " " + _FObject.att.type );
+					trace( "\t > SET TYPE STYLE > " + i_FStyle.att.name );
 					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
 				}
 			}
@@ -245,7 +255,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			{	
 				if ( i_FStyle.att.name == _FObject.att.id )
 				{
-					trace( ">>>>>  SET ID STYLE  >>>>> " + _Object +" >> " + i_FStyle.att.name + " " + _FObject.att.id );
+					trace( "\t >  SET ID STYLE  > " + i_FStyle.att.name );
 					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
 				}
 			}
@@ -292,7 +302,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 					{
 						l_x = ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.x);
 						l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.y);
-						trace( l_x + " " + l_y );
 						l_Size.Set( l_x, l_y );
 					}
 					default	:
@@ -334,7 +343,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 				}
 			}
 			
-			trace ( " Coordinate :" + l_Coordinate.ToString() + ">>> Size : " + l_Size.ToString() );
+			trace ( "\t \t  Coordinate (center) :" + _Object.GetCenter().ToString() + ">>> Size : " + _Object.GetSize().ToString() );
 		}
 	}
 }

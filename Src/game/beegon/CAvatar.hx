@@ -18,7 +18,7 @@ class CAvatar extends CEntity
 	
 	public function new() 
 	{
-		trace ( "\t new Avatar" );
+		//trace ( "\t new Avatar" );
 		
 		super( EENTITY_TYPE_AVATAR );
 				
