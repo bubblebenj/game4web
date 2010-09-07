@@ -5,6 +5,7 @@
 
 package logic;
 import CDriver;
+
 import math.CV2D;
 
 import haxe.xml.Fast;
@@ -18,6 +19,7 @@ import kernel.Glb;
 import logic.CFiniteStateMachine;
 import logic.CMenuNode;
 import logic.CMenuTransition;
+import logic.CButton;
 
 import rsc.CRsc;
 import rsc.CRscMan;
@@ -33,7 +35,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 	}
 	
 	private var m_LastState	: NodeId;
-	private var m_States	: Hash<CMenuNode>;		// menu pages - C&D MenuState
+	private var m_States	: Hash<CMenuNode>;				// menu pages - C&D MenuState
 	private var m_Actuators	: Hash<CMenuTransition>;		// links between menu pages	- C&D ???
 	private var m_FSM		: CFiniteStateMachine<NodeId, TransitionId>;
 	
@@ -51,10 +53,9 @@ class CMenuGraph extends CRsc			// C&D Menu
 		return SUCCESS;
 	}
 	
-	public function Initialise( _NodeId : NodeId ) : Void
+	public function Initialize( _NodeId : NodeId ) : Void
 	{
-		m_FSM.Initialise( _NodeId );
-		
+		m_FSM.Initialize( _NodeId );
 	}
 	
 	public function Update()	: Void
@@ -177,28 +178,17 @@ class CMenuGraph extends CRsc			// C&D Menu
 			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
 		
-		for ( i_FMenuNode in l_FGraph.nodes.page )
-		{
-			m_States.get( i_FMenuNode.att.id ).ShowTree();
-		}
+		#if DebugInfo
+			//for ( i_FMenuNode in l_FGraph.nodes.page )
+			//{
+				//m_States.get( i_FMenuNode.att.id ).ShowTree();
+			//}
+		#end
 	}
 	
 	private function RecurseDiv( _CurrentDiv : C2DContainer, _FCurrentDiv : Fast, _Parent : C2DContainer, _MenuNode : CMenuNode )
 	{
 		ApplyStyle( _CurrentDiv, _FCurrentDiv, _Parent );
-		if ( _FCurrentDiv.has.href )	// if a button
-		{
-			//var l_Button	= new C2DButton();
-			//l_Button
-			if ( _FCurrentDiv.has.name )
-			{
-				_MenuNode.AddTransition( _FCurrentDiv.att.href, _FCurrentDiv.att.name );
-			}
-			else
-			{
-				_MenuNode.AddTransition( _FCurrentDiv.att.href );
-			}
-		}
 		
 		for ( i_FImages in _FCurrentDiv.nodes.image )
 		{
@@ -211,7 +201,32 @@ class CMenuGraph extends CRsc			// C&D Menu
 		var l_NewDiv	: C2DContainer;
 		for ( i_FSubDiv in _FCurrentDiv.nodes.div )
 		{
-			l_NewDiv	= new C2DContainer();
+			
+			if ( i_FSubDiv.has.href )	// if a button
+			{
+				l_NewDiv	= new CButton();
+				
+				trace( "TYOUPSSSS--------" );
+				if ( i_FSubDiv.has.name )
+				{
+					if ( _MenuNode.AddTransition( i_FSubDiv.att.href, i_FSubDiv.att.name ) == SUCCESS )
+					{
+						cast( l_NewDiv, CButton ).SetAction( Actuate, i_FSubDiv.att.name );
+					}
+				}
+				else
+				{
+					if ( _MenuNode.AddTransition( i_FSubDiv.att.href ) == SUCCESS )
+					{
+						cast( l_NewDiv, CButton ).SetAction( this.Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
+					}
+				}
+				
+			}
+			else
+			{
+				l_NewDiv	= new C2DContainer();
+			}
 			_CurrentDiv.AddObject( l_NewDiv );
 			RecurseDiv( l_NewDiv, i_FSubDiv, _CurrentDiv, _MenuNode );
 		}

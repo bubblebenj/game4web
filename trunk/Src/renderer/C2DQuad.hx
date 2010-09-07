@@ -19,6 +19,26 @@ class C2DQuad extends CDrawObject
 	
 	public var m_Rect : CRect2D;
 	
+	/* Need to be acces via another function - maybe a bad idea ^^ */
+	private function Intersects( _Ptr : CV2D ) : Bool
+	{
+		if( _Ptr == null )
+		{
+			return false;
+		}
+		else
+		{
+			CV2D.Scale( Registers.V2_0, 0.5, m_Rect.m_Size );
+			CV2D.Sub( Registers.V2_0, m_Rect.m_Center, Registers.V2_0 );	// GetTL()
+			CV2D.Add( Registers.V2_1, m_Rect.m_Size, Registers.V2_0 );		// GetBR()
+			
+			return	Registers.V2_0.x <= _Ptr.x
+			&&		Registers.V2_0.y <= _Ptr.y
+			&&		Registers.V2_1.x >= _Ptr.x
+			&&		Registers.V2_1.y >= _Ptr.y;
+		}
+	}
+	
 	/* 
 	 * Position
 	 */

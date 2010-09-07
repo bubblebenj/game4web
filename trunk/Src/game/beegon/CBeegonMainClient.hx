@@ -93,7 +93,7 @@ class CBeegonMainClient
 		//
 		g_GameMenu.CreateGraph();
 		
-		g_GameMenu.Initialise( "MainMenu" );
+		g_GameMenu.Initialize( "MainMenu" );
 		
 		//g_Grid 		= new CHexaGrid( 1, 36 );
 		//g_Grid.InitCellArray();
