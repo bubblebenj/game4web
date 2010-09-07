@@ -39,7 +39,7 @@ class CGameInputManager
 		m_HoldDelay = 200;
 		m_MouseFSM	= new CFiniteStateMachine();
 		CreateMouseActuators();
-		m_MouseFSM.Initialise( MOUSE_STATE.UP );
+		m_MouseFSM.Initialize( MOUSE_STATE.UP );
 		m_Avatar	= _Avatar;
 		m_MenuTest	= _MenuTest;
 	}
@@ -61,7 +61,7 @@ class CGameInputManager
 		#end
 		m_Timer			= new Timer( m_HoldDelay );		//ms
 		m_Timer.run 	= onTimeOut;
-		m_MenuTest.Actuate( "Transition_Option_to_MainMenu" );
+		//m_MenuTest.Actuate( "Transition_Option_to_MainMenu" );
 	}
 	
 	public function TrMouseHit()	: Void
@@ -71,7 +71,7 @@ class CGameInputManager
 			trace ( "Mouse hit" );
 		#end
 		m_Avatar.TeleportTo( m_LastMousePosition );
-		m_MenuTest.Actuate( "Transition_MainMenu_to_Option" );
+		//m_MenuTest.Actuate( "Transition_MainMenu_to_Option" );
 	}
 	
 	public function TrMouseHeld()		: Void
@@ -80,7 +80,7 @@ class CGameInputManager
 			trace ( "Mouse held" );
 		#end
 		m_Avatar.SetFollowCursor( true );
-		m_MenuTest.Actuate( "QuitGame" );
+		//m_MenuTest.Actuate( "QuitGame" );
 	}
 	
 	public function TrMouseReleased()		: Void
@@ -89,7 +89,7 @@ class CGameInputManager
 			trace ( "Mouse released" );
 		#end
 		m_Avatar.SetFollowCursor( false );
-		m_MenuTest.Actuate( "Transition_MainMenu_to_Game" );
+		//m_MenuTest.Actuate( "Transition_MainMenu_to_Game" );
 	}
 	
 	private function onTimeOut()	: Void

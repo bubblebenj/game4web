@@ -139,6 +139,16 @@ class C2DContainer extends C2DQuad
 		return SUCCESS;
 	}
 	
+	public override function Update() : Result
+	{
+		super.Update();
+		for ( i_Object in m_2DObjects )
+		{
+			i_Object.Update();
+		}
+		return SUCCESS;
+	}
+	
 	/* Debug function */
 	public function ShowTree( ? _Depth : Int ) : Void
 	{

@@ -16,5 +16,5 @@ class CRect2D
 	}
 
 	public var m_Center : CV2D;
-	public var m_Size : CV2D;
+	public var m_Size : CV2D;	
 }

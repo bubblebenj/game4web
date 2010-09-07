@@ -40,17 +40,16 @@ class CMenuNode extends C2DContainer				// C&D MenuState
 	
 	/* _TransitionId : The name you want to use to trigger the transition
 	 * _TransitionCallback : The function you want to call */
-	public function AddTransition( _TargetId : NodeId, ?_TransitionId : String, ?_TransitionCallback : Void -> Void )
+	public function AddTransition( _TargetId : NodeId, ?_TransitionId : String, ?_TransitionCallback : Void -> Void ) : Result
 	{
 		if ( _TransitionId == null )
 		{
-			m_MenuGraph.CreateMenuTransition( this, m_MenuGraph.GetMenuNode( _TargetId ), _TransitionCallback );
+			return m_MenuGraph.CreateMenuTransition( this, m_MenuGraph.GetMenuNode( _TargetId ), _TransitionCallback );
 		}
 		else
 		{
-			m_MenuGraph.CreateMenuTransition( _TransitionId, this, m_MenuGraph.GetMenuNode( _TargetId ), _TransitionCallback );
+			return m_MenuGraph.CreateMenuTransition( _TransitionId, this, m_MenuGraph.GetMenuNode( _TargetId ), _TransitionCallback );
 		}
-		
 	}
 	
 	public function SetGraph( _MenuGraph : CMenuGraph ) : Void
