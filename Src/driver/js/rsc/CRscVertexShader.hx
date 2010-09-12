@@ -75,6 +75,8 @@ class CRscVertexShader extends CRscShader
 		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
 		
 		l_Gl.ShaderSource(m_Object, m_Body);
+		
+		
 		l_Gl.CompileShader(m_Object);
 		
 		if( !l_Gl.GetShaderParameter( m_Object, CGL.COMPILE_STATUS) ) 

@@ -76,7 +76,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
-		m_ShdrPrgm = cast(l_RscMan.Load( CRscShaderProgram.RSC_ID , "white"), CRscShaderProgram );
+		m_ShdrPrgm = cast(l_RscMan.Load( CRscShaderProgram.RSC_ID , "single_texture"), CRscShaderProgram );
 		if( m_ShdrPrgm  != null)
 		{
 			CDebug.CONSOLEMSG("create gl quad shader");
@@ -152,8 +152,34 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		
 		m_Primitive.SetIndexArray(l_IndexArray, false);
 		
-		var l_TexCooArray = m_UV.Flatten();
-		m_Primitive.SetTexCooArray(l_TexCooArray, true);
+		var l_TexCooArray : Array<Float> = new Array<Float>();
+		
+		/*
+		l_TexCooArray[0] = m_UV.x;
+		l_TexCooArray[1] = m_UV.y;
+		
+		l_TexCooArray[2] = m_UV.z;
+		l_TexCooArray[3] = m_UV.y;
+		
+		l_TexCooArray[4] = m_UV.x;
+		l_TexCooArray[5] = m_UV.w;
+		
+		l_TexCooArray[6] = m_UV.z;
+		l_TexCooArray[7] = m_UV.w;
+		*/
+		l_TexCooArray[0] = 0;
+		l_TexCooArray[1] = 0;
+		
+		l_TexCooArray[2] = 0;
+		l_TexCooArray[3] = 0;
+		
+		l_TexCooArray[4] = 0;
+		l_TexCooArray[5] = 0;
+		
+		l_TexCooArray[6] = 0;
+		l_TexCooArray[7] = 0;
+		
+		m_Primitive.SetTexCooArray(l_TexCooArray, false);
 	}
 
 	public function UpdateQuad(_VpId : Int )
