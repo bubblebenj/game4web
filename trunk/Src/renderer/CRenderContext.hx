@@ -43,6 +43,7 @@ class CRenderContext
 		SetActiveMaterial( null );
 		SetActiveShader( null );
 		SetActivePrimitive( null );
+		SetActiveRenderStates(null);
 		m_FlushFlags = 0xFFFF;
 		
 		ResetDevice();
@@ -138,7 +139,6 @@ class CRenderContext
 	
 	public function Activate()
 	{
-		#if js
 		if( m_FlushFlags & (1 << RC_SHADER_STAGE) != 0 )
 		{
 			CDebug.ASSERT(m_CurrentShader != null);
@@ -147,12 +147,6 @@ class CRenderContext
 			{
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
 				return FAILURE;
-			}
-			
-			var l_Err = Glb.g_SystemJS.GetGL().GetError();
-			if ( l_Err  != 0)
-			{
-				CDebug.CONSOLEMSG("GlError:ShaderActivation:"+ l_Err);
 			}
 		}
 		
@@ -167,12 +161,6 @@ class CRenderContext
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate mat");
 				return FAILURE;
 			}
-			
-			var l_Err = Glb.g_SystemJS.GetGL().GetError();
-			if ( l_Err  != 0)
-			{
-				CDebug.CONSOLEMSG("GlError:MatActivation:"+ l_Err);
-			}
 		}
 		
 		if ( 	(m_FlushFlags & (1 << RC_SHADER_STAGE) != 0)
@@ -185,12 +173,6 @@ class CRenderContext
 				CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
 				return FAILURE;
 			}
-			
-			var l_Err = Glb.g_SystemJS.GetGL().GetError();
-			if ( l_Err  != 0)
-			{
-				CDebug.CONSOLEMSG("GlError:LinkPrimActivation:"+ l_Err);
-			}
 		}
 		
 		if ( m_FlushFlags & (1 << RC_RENDER_STATES_STAGE ) != 0 )
@@ -202,14 +184,8 @@ class CRenderContext
 				CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
 				return FAILURE;
 			}
-			
-			var l_Err = Glb.g_SystemJS.GetGL().GetError();
-			if ( l_Err  != 0)
-			{
-				CDebug.CONSOLEMSG("GlError:RsActivation:"+ l_Err);
-			}
 		}
-		#end
+		
 		m_FlushFlags = 0;
 		
 		return SUCCESS;

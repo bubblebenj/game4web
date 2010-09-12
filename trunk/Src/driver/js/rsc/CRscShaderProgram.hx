@@ -261,7 +261,7 @@ class CRscShaderProgram extends CRscShader
 		return SUCCESS;
 	}
 	
-	public override function SetUniform1i( _Name : String, _i0 : Int ) : Result
+	public  override function  SetUniform1i( _Name : String, _Value : Int ) : Result 
 	{
 		if ( !m_Uniforms.exists(_Name))
 		{
@@ -271,15 +271,15 @@ class CRscShaderProgram extends CRscShader
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);
 		if ( l_Loc != null )
 		{
-			Glb.g_SystemJS.GetGL().Uniform1i( l_Loc, _i0 ); 
+			Glb.g_SystemJS.GetGL().Uniform1i( l_Loc, _Value ); 
 			
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
 			if ( l_Err  != 0)
 			{
-				CDebug.CONSOLEMSG("GlError:Uniform1i:"+l_Loc+"::"+ l_Err);
+				CDebug.CONSOLEMSG("GlError:Uniform1i:" + l_Loc + "::" + l_Err);
+				return FAILURE;
 			}
 			
-			return FAILURE;
 		}
 		
 		return SUCCESS;
@@ -359,7 +359,7 @@ class CRscShaderProgram extends CRscShader
 			var l_Error = l_Gl.GetProgramInfoLog ( m_Program);
 			if (l_Error != null)
 			{
-				CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error);
+				CDebug.CONSOLEMSG("Error in shader program compiling: " + l_Error + " GL = " + l_Gl.GetError() );
 			}
 		}
 		
@@ -410,6 +410,7 @@ class CRscShaderProgram extends CRscShader
 		{
 			if(m_VtxSh.Compile()==FAILURE)
 			{
+				CDebug.CONSOLEMSG("Vertex shader compile failed.");
 				PrintError();
 				return FAILURE;
 			}
@@ -424,6 +425,7 @@ class CRscShaderProgram extends CRscShader
 		{
 			if ( m_FragSh.Compile() == FAILURE )
 			{
+				CDebug.CONSOLEMSG("Fragment shader compile failed.");
 				PrintError();
 				return FAILURE;
 			}

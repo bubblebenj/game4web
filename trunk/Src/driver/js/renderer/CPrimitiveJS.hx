@@ -54,7 +54,7 @@ class CPrimitiveJS extends CPrimitive
 	
 	public function GetFloatPerTexCoord() : Int
 	{
-		return 4;
+		return 2;
 	}
 	
 	public function GetNbTriangles() : Int 
@@ -214,7 +214,7 @@ class CPrimitiveJS extends CPrimitive
 		
 		if ( m_NbVertex == 0)
 		{
-			m_NbVertex = Std.int( _TexCoords.length / 4);
+			m_NbVertex = Std.int( _TexCoords.length / GetFloatPerTexCoord() );
 		}
 		
 		if ( null == m_TexNativeBuf )
@@ -222,11 +222,12 @@ class CPrimitiveJS extends CPrimitive
 			m_TexNativeBuf =  new Float32Array( new ArrayBuffer( m_NbVertex * 4 * GetFloatPerTexCoord()) );
 		}
 		
-		for (i in 0...m_NbVertex*GetFloatPerTexCoord())
+		for (i in 0...m_NbVertex * GetFloatPerTexCoord())
 		{
 			m_TexNativeBuf.Set(i, _TexCoords[i]);
 		}
 		
+		CDebug.CONSOLEMSG("Set tex coo buffer vtx:"+m_NbVertex );
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW );
 		m_AreTexCoordDynamic = _Dyn;

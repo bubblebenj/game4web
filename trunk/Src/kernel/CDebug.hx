@@ -20,6 +20,6 @@ class CDebug
 	
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
-		trace( _Msg );
+		haxe.Log.trace( _Msg , pos);
 	}
 }

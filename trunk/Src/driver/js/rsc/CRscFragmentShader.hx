@@ -82,7 +82,7 @@ class CRscFragmentShader extends CRscShader
 			var l_Error = l_Gl.GetShaderInfoLog ( m_Object );
 			if (l_Error != null)
 			{
-				CDebug.CONSOLEMSG("Error in fragment shader compile: " + l_Error);
+				CDebug.CONSOLEMSG("Error in fragment shader compile: SHADER = " + l_Error + " GL="+l_Gl.GetError () );
 			}
 			return FAILURE;
 		}

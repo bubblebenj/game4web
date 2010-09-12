@@ -5,6 +5,7 @@
 
 package driver.js.renderer;
 
+import driver.js.rsc.CRscShaderProgram;
 import js.Dom;
 import renderer.CRenderContext;
 import renderer.CRscShader;
@@ -41,8 +42,8 @@ class CRscTextureJS extends CRscTexture
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, m_GlTexture);
 		l_Gl.PixelStorei	(CGL.UNPACK_FLIP_Y_WEBGL, CGL.TRUE );
 		l_Gl.TexImage2D		(CGL.TEXTURE_2D, 0, CGL.RGBA, CGL.RGBA, CGL.UNSIGNED_BYTE, cast( m_RscImage, CRscImageJS).GetDriverImage() );
-		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MAG_FILTER, CGL.LINEAR);
-		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MIN_FILTER, CGL.LINEAR_MIPMAP_LINEAR);
+		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MAG_FILTER, CGL.NEAREST);
+		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MIN_FILTER, CGL.NEAREST);
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, null);
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
@@ -99,7 +100,8 @@ class CRscTextureJS extends CRscTexture
 			
 			if (l_Shdr != null) 
 			{
-				var l_Res = l_Shdr.SetUniform1i( Glb.GetRendererJS().m_GLPipeline.GetTexCooName(_Stage), _Stage == null ? 0 : _Stage );
+				var l_Shdr : CRscShaderProgram = cast l_Shdr; 
+				var l_Res = l_Shdr.SetUniform1i( Glb.GetRendererJS().m_GLPipeline.GetTexSamplerName(_Stage), _Stage == null ? 0 : _Stage );
 				
 				//might return success if uniform wan't fetched but failure would induce shade rnot handling the call
 				if ( l_Res != SUCCESS )
