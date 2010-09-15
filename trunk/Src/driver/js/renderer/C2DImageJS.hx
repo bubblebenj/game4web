@@ -193,6 +193,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		var l_Bottom : Float = m_Rect.m_Center.y + m_Rect.m_Size.y * 0.5;
 		var l_Right : Float = m_Rect.m_Center.x + m_Rect.m_Size.x *0.5;
 		
+		
 		var l_Array = cast( m_Primitive.LockVertexArray(), Float32Array );
 		var l_Z = -10;
 		
