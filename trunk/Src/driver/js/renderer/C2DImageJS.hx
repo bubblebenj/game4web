@@ -179,7 +179,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		l_TexCooArray[6] = 0;
 		l_TexCooArray[7] = 0;
 		
-		m_Primitive.SetTexCooArray(l_TexCooArray, false);
+		m_Primitive.SetTexCooArray(l_TexCooArray, true);
 	}
 
 	public function UpdateQuad(_VpId : Int )

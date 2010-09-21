@@ -227,7 +227,7 @@ class CPrimitiveJS extends CPrimitive
 			m_TexNativeBuf.Set(i, _TexCoords[i]);
 		}
 		
-		CDebug.CONSOLEMSG("Set tex coo buffer vtx:"+m_NbVertex );
+		CDebug.CONSOLEMSG("Set tex coo buffer vtx:"+m_NbVertex +" dyn:" + _Dyn);
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW );
 		m_AreTexCoordDynamic = _Dyn;
