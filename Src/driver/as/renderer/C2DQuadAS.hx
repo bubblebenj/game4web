@@ -53,6 +53,16 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
+	public override function SetAlpha( _Value : Float ) : Void
+	{
+		super.SetAlpha( _Value );
+		if ( m_DisplayObject != null )
+		{
+			m_DisplayObject.alpha = _Value;
+			trace ( "alpha " + m_DisplayObject.alpha );
+		}
+	}
+	
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );

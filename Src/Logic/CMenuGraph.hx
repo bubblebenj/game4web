@@ -66,10 +66,10 @@ class CMenuGraph extends CRsc			// C&D Menu
 			if ( m_LastState != "init" )
 			{
 				//trace( "Shutting " + m_LastState );
-				m_States.get( m_LastState ).Shut();
+				m_States.get( m_LastState ).FadeOut();
 			}
 			//trace( "Activating " + l_CurrentState );
-			m_States.get( l_CurrentState ).Activate();
+			m_States.get( l_CurrentState ).FadeIn();
 			m_LastState	= l_CurrentState;
 		}
 		m_States.get( m_LastState ).Update();
@@ -205,8 +205,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 			if ( i_FSubDiv.has.href )	// if a button
 			{
 				l_NewDiv	= new CButton();
-				
-				trace( "TYOUPSSSS--------" );
 				if ( i_FSubDiv.has.name )
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href, i_FSubDiv.att.name ) == SUCCESS )
@@ -218,7 +216,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetAction( this.Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
+						cast( l_NewDiv, CButton ).SetAction( Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
 					}
 				}
 				

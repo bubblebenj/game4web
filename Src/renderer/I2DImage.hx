@@ -14,12 +14,13 @@ import rsc.CRscImage;
 
 interface I2DImage
 {
-
 	public function Load( _Path : String ) : Result	{}
 	
-	public function SetRsc( _RscImg : CRscImage ) : Result	{}
+	public function SetRsc( _RscImg : CRscImage ) :	Result	{}
 	
-	public function SetUV( _u : CV2D , _v : CV2D ) : Void	{}
+	public function SetUV( _u : CV2D , _v : CV2D )	: Void	{}
+	
+	public function SetAlpha( _Value : Float )		: Void	{}
 		
 	private var m_UV : CV4D;
 }

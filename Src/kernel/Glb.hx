@@ -6,6 +6,7 @@ package kernel;
 #elseif	flash10
 	import driver.as.kernel.CSystemAS;
 	import driver.as.renderer.CRendererAS;
+	import tools.transition.CTransitionManager;
 #end
 
 import renderer.CRenderer;
@@ -29,7 +30,7 @@ class Glb
 	public static inline function GetInputManager() : CInputManager	{
 		return g_System.GetInputManager();
 	}
-
+	
 	#if flash10
 		public static inline function GetRendererAS() : CRendererAS		{
 			return cast g_SystemAS.GetRenderer();
