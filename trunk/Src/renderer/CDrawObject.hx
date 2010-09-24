@@ -17,9 +17,10 @@ class CDrawObject
 {
 	public function new()
 	{
-		m_VpMask = Constants.INT_MAX;
-		m_Visible = false;
-		m_Transfo = new CMatrix44();
+		m_VpMask	= Constants.INT_MAX;
+		m_Visible	= false;
+		m_Alpha		= 1;
+		m_Transfo	= new CMatrix44();
 		m_Transfo.Identity();
 		
 		m_Cameras = new Array<CCamera>();
@@ -75,6 +76,17 @@ class CDrawObject
 		return m_Visible;
 	}
 	
+	public function SetAlpha( _Value : Float )		: Void
+	{
+		trace( m_Alpha );
+		m_Alpha 	= _Value;
+	}
+	
+	public function GetAlpha() : Float
+	{
+		return m_Alpha;
+	}
+	
 	public function SetCamera( _VpIndex : Int, _Cam : CCamera) : Result
 	{
 		if( _VpIndex<0 || _VpIndex>= CRenderer.VP_MAX )
@@ -91,6 +103,7 @@ class CDrawObject
 	}
 	
 			var 	m_Visible	: Bool;
+	private var		m_Alpha		: Float;
 			var		m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
 			a lot faster than removing it from the scene. Thus object should be remove from the scene only on shut request.*/
 	

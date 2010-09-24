@@ -52,13 +52,11 @@ class CButton extends C2DContainer
 		m_InteractFSM		= new CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>();
 		CreateActuators();
 		m_InteractFSM.Initialize( B_IST_DESABLED );
-		
-				trace( " Button created aksdjaosijdosaijdoisajdoiasjdoiasjdoasij");
 	}
 	
 	public function SetAction( _Callback	: TransitionId -> Void, _Transition	: TransitionId )
 	{
-		m_Callback	= _Callback;
+		m_Callback		= _Callback;
 		m_Transition	= _Transition;
 	}
 	
@@ -112,6 +110,16 @@ class CButton extends C2DContainer
 		super.Shut();
 		m_InteractFSM.m_CurrentActuator = B_TC_SET_OFF;
 		return SUCCESS;
+	}
+	
+	public function Disable()	: Void
+	{
+		m_InteractFSM.m_CurrentActuator = B_TC_SET_OFF;
+	}
+	
+	public function Enable()	: Void
+	{
+		m_InteractFSM.m_CurrentActuator = B_TC_SET_ON;
 	}
 
 	/*
