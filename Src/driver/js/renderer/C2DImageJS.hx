@@ -115,6 +115,11 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		return l_Res;
 	}
 	
+	public override function SetAlpha( _Value : Float ) : Void
+	{
+		
+	}
+	
 	public function CreateData()
 	{
 		var l_Array : Array<Float> = new Array<Float>();
