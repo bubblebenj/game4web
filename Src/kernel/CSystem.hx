@@ -35,6 +35,10 @@ class CSystem
 		return m_FrameDeltaTime;
 	}
 	
+	public function GetFrameRate()	: Int
+	{
+		return FRAMERATE;
+	}
 	
 	public function new()
 	{

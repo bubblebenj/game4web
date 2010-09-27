@@ -65,10 +65,8 @@ class CMenuGraph extends CRsc			// C&D Menu
 		{
 			if ( m_LastState != "init" )
 			{
-				//trace( "Shutting " + m_LastState );
 				m_States.get( m_LastState ).FadeOut();
 			}
-			//trace( "Activating " + l_CurrentState );
 			m_States.get( l_CurrentState ).FadeIn();
 			m_LastState	= l_CurrentState;
 		}

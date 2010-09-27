@@ -122,7 +122,6 @@ class C2DContainer extends C2DQuad
 	public override function SetAlpha( _Value : Float ) : Void
 	{
 		super.SetAlpha( _Value );
-		trace( _Value );
 		for ( i_Object in m_2DObjects )
 		{
 			i_Object.SetAlpha( _Value );

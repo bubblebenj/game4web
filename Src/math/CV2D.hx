@@ -23,6 +23,12 @@ class CV2D
 		y = _xy.y;
 	}
 	
+	public inline function TestCopy( _V2D : { x : Float, y : Float } )
+	{
+		x = _V2D.x;
+		y = _V2D.y;
+	}
+	
 	public static inline function Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
 	{
 		_VOut.x = _V0.x + _V1.x;
