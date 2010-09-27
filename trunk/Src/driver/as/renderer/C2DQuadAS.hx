@@ -59,7 +59,6 @@ class C2DQuadAS extends C2DQuad
 		if ( m_DisplayObject != null )
 		{
 			m_DisplayObject.alpha = _Value;
-			trace ( "alpha " + m_DisplayObject.alpha );
 		}
 	}
 	

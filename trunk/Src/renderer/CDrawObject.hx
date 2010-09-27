@@ -78,7 +78,6 @@ class CDrawObject
 	
 	public function SetAlpha( _Value : Float )		: Void
 	{
-		trace( m_Alpha );
 		m_Alpha 	= _Value;
 	}
 	

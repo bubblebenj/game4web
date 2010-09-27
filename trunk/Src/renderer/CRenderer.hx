@@ -1,7 +1,9 @@
 package renderer;
 
+import haxe.FastList;
 import math.CMatrix44;
 import renderer.camera.CPerspectiveCamera;
+import tools.transition.CTween;
 
 import kernel.CTypes;
 import kernel.CDebug;
@@ -34,8 +36,9 @@ class CRenderer
 	public static var VP_FULLSCREEN : Int = 0;
 	public static var VP_MAX : Int = 2;
 	
-	public var m_RenderContext(default,null) : CRenderContext;
-
+	public var m_RenderContext(default, null) : CRenderContext;
+	
+	public var m_TwinList	: FastList<CTween>;
 	public function new() 
 	{
 		m_Vps = new Array<>();
@@ -54,6 +57,8 @@ class CRenderer
 		m_CurrentVPMatrix = null;
 		
 		m_RenderContext = new CRenderContext();
+		
+		m_TwinList		= new FastList<CTween>();
 	}
 	
 	public inline function GetViewProjection() : CMatrix44
@@ -153,6 +158,11 @@ class CRenderer
 					return FAILURE;
 				}
 			}
+		}
+		
+		for ( i in m_TwinList )
+		{
+			i.Update();
 		}
 		
 		//trace("CRenderer:: end scn");

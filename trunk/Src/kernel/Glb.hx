@@ -1,12 +1,14 @@
 package kernel;
 
+import haxe.FastList;
+import tools.transition.CTween;
 #if		js
 	import driver.js.kernel.CSystemJS;
 	import driver.js.renderer.CRendererJS;
+	
 #elseif	flash10
 	import driver.as.kernel.CSystemAS;
 	import driver.as.renderer.CRendererAS;
-	import tools.transition.CTransitionManager;
 #end
 
 import renderer.CRenderer;
@@ -40,6 +42,11 @@ class Glb
 			return cast g_SystemJS.GetRenderer();
 		}
 	#end
+	
+	public static inline function GetTweenList() : FastList<CTween>
+	{
+		return GetRenderer().m_TwinList;
+	}
 	
 	public static inline function GetSystem() 		: CSystem
 	{
