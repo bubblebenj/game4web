@@ -387,6 +387,11 @@ CGL.prototype.PixelStorei = function( _pname,_param )
 	m_GLContext.pixelStorei( _pname,_param);
 }
 
+CGL.prototype.CullFace = function( _Mode   )
+{
+	m_GLContext.cullFace(_Mode);
+}
+
 CGL.prototype.TexParameteri = function( _Target,_Pname,_Param )
 {
 	m_GLContext.texParameteri( _Target,_Pname,_Param);
