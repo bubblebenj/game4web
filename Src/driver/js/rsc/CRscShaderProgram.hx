@@ -34,16 +34,16 @@ class CRscShaderProgram extends CRscShader
 	public var 			m_Program :	WebGLProgram; 
 	
 	public static inline var ATTR_VERTEX_INDEX : Int 	= 0;
-	public static inline var ATTR_NORMAL_INDEX : Int 	= 1;
-	public static inline var ATTR_COLOR_INDEX  : Int	= 2;
-	public static inline var ATTR_TEXCOORD_INDEX  : Int	= 3;
+	public static inline var ATTR_NORMAL_INDEX : Int 	= ATTR_VERTEX_INDEX + 3;
+	public static inline var ATTR_COLOR_INDEX  : Int	= ATTR_VERTEX_INDEX + 2;
+	public static inline var ATTR_TEXCOORD_INDEX  : Int	= ATTR_VERTEX_INDEX + 1;
 	
 	public static inline var ATTR_VERTEX 		: Int 	= 1 << ATTR_VERTEX_INDEX;
 	public static inline var ATTR_NORMAL 		: Int 	= 1 << ATTR_NORMAL_INDEX;
 	public static inline var ATTR_COLOR  		: Int	= 1 << ATTR_COLOR_INDEX;
 	public static inline var ATTR_TEXCOORD 		: Int	= 1 << ATTR_TEXCOORD_INDEX;
 	
-	public static inline var ATTR_MAX_INDEX  : Int	= 4;
+	public static inline var ATTR_MAX_INDEX  : Int	= ATTR_TEXCOORD_INDEX + 4;
 	
 	public static inline var ATTR_NAME_COLOR  	: String	= "_Color";
 	public static inline var ATTR_NAME_VERTEX  	: String	= "_Vertex";
@@ -122,6 +122,7 @@ class CRscShaderProgram extends CRscShader
 		
 		if( m_AttribsMask & ATTR_VERTEX != 0 )
 		{
+			_Prim.BindVertexBuffer();
 			l_Gl.EnableVertexAttribArray( ATTR_VERTEX_INDEX );
 			l_Gl.VertexAttribPointer(ATTR_VERTEX_INDEX, l_Prim.GetFloatPerVtx(), CGL.FLOAT, CGL.FALSE, 0, 0);
 			
@@ -138,6 +139,7 @@ class CRscShaderProgram extends CRscShader
 		
 		if( m_AttribsMask & ATTR_NORMAL!= 0 )
 		{
+			_Prim.BindNormalBuffer();
 			l_Gl.EnableVertexAttribArray( ATTR_NORMAL_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_NORMAL_INDEX, l_Prim.GetFloatPerNormal(), CGL.FLOAT, CGL.FALSE, 0, 0);
 			
@@ -150,6 +152,7 @@ class CRscShaderProgram extends CRscShader
 		
 		if( m_AttribsMask & ATTR_COLOR != 0 )
 		{
+			_Prim.BindColorBuffer();
 			l_Gl.EnableVertexAttribArray( ATTR_COLOR_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_COLOR_INDEX, l_Prim.GetFloatPerColor(), CGL.FLOAT, CGL.FALSE, 0, 0);
 			
@@ -162,6 +165,7 @@ class CRscShaderProgram extends CRscShader
 		
 		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
 		{
+			_Prim.BindTexCoordBuffer();
 			l_Gl.EnableVertexAttribArray( ATTR_TEXCOORD_INDEX );
 			l_Gl.VertexAttribPointer( ATTR_TEXCOORD_INDEX, l_Prim.GetFloatPerTexCoord(), CGL.FLOAT, CGL.FALSE, 0, 0);
 			
@@ -329,7 +333,6 @@ class CRscShaderProgram extends CRscShader
 				}
 			}
 			
-			
 			l_Gl.UseProgram( m_Program );
 			
 			if ( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) != true )
@@ -390,6 +393,11 @@ class CRscShaderProgram extends CRscShader
 		l_Gl.LinkProgram(m_Program);
 		
 		CDebug.ASSERT( l_Gl.GetAttribLocation( m_Program, ATTR_NAME_VERTEX ) == ATTR_VERTEX_INDEX );
+		
+		if( m_AttribsMask & ATTR_TEXCOORD != 0 )
+		{
+			CDebug.ASSERT( l_Gl.GetAttribLocation( m_Program, ATTR_NAME_TEXCOORD ) == ATTR_TEXCOORD_INDEX);
+		}
 		
 		if( l_Gl.GetProgramParameter( m_Program, CGL.LINK_STATUS ) != true)
 		{

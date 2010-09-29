@@ -21,6 +21,14 @@ enum MAT_BLEND_MODE
 	MBM_OPAQUE;
 }
 
+enum MAT_DRAW_SIDE
+{
+	MDS_DOUBLE_SIDED;
+	MDS_FRONT;
+	MDS_BACK;
+	MDS_NO_DRAW;
+}
+
 class CMaterial extends CRsc
 {
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
@@ -36,6 +44,7 @@ class CMaterial extends CRsc
 		m_Mode = MBM_OPAQUE;
 		m_Alpha = 1;
 		m_Textures = new Array<CRscTexture>();
+		m_FillMode = MDS_FRONT;
 	}
 	
 	public function Activate()  : Result
@@ -91,4 +100,6 @@ class CMaterial extends CRsc
 	var m_Alpha : Float;
 	var m_Mode : MAT_BLEND_MODE;
 	var m_Textures : Array<CRscTexture>;
+	var m_FillMode : MAT_DRAW_SIDE;
+	
 }

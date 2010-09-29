@@ -36,6 +36,69 @@ This text is displayed if your browser does not support HTML5 Canvas.
 
 </script>
 
+<script id="display_uv.vsh" type="x-shader/x-vertex">
+    uniform mat4 	_MVPMatrix;
+ 
+    attribute vec3 	_Vertex;
+	attribute vec2 	_TexCoord;
+ 
+    varying vec2 	vTextureCoord;
+ 
+    void main()
+    {
+        gl_Position = _MVPMatrix * vec4(_Vertex,1.0);
+        vTextureCoord = _TexCoord.st;
+    }
+</script>
+
+<script id="display_uv.fsh" type="x-shader/x-fragment">
+
+//ultra mandatory!
+	#ifdef GL_ES
+	precision highp float;
+	#endif
+
+    uniform sampler2D 	_TexSampler;
+    varying vec2		vTextureCoord;
+ 
+    void main()
+    {
+        gl_FragColor = vec4( vTextureCoord.s,vTextureCoord.t ,0,1);
+    }
+</script>
+
+<script id="display_coo.vsh" type="x-shader/x-vertex">
+    uniform mat4 	_MVPMatrix;
+ 
+    attribute vec3 	_Vertex;
+	attribute vec2 	_TexCoord;
+ 
+    varying vec3 	vVtxCoord;
+ 
+    void main()
+    {
+        gl_Position = _MVPMatrix * vec4(_Vertex,1.0);
+        vVtxCoord = _Vertex;
+    }
+</script>
+
+<script id="display_coo.fsh" type="x-shader/x-fragment">
+
+//ultra mandatory!
+	#ifdef GL_ES
+	precision highp float;
+	#endif
+
+    uniform sampler2D 	_TexSampler;
+    varying vec3		vVtxCoord;
+ 
+    void main()
+    {
+        gl_FragColor = vec4( vVtxCoord ,1);
+    }
+</script>
+
+
 <script id="single_texture.vsh" type="x-shader/x-vertex">
     uniform mat4 	_MVPMatrix;
  

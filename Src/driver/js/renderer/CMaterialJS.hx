@@ -55,6 +55,24 @@ class CMaterialJS extends CMaterial
 			l_GL.Enable(CGL.BLEND);
 		}
 		
+		switch( m_FillMode )
+		{
+			case MDS_FRONT:
+			l_GL.Enable( CGL.CULL_FACE );
+			l_GL.CullFace( CGL.BACK );
+			
+			case MDS_BACK:
+			l_GL.Enable( CGL.CULL_FACE );
+			l_GL.CullFace( CGL.FRONT );
+			
+			case MDS_DOUBLE_SIDED:
+			l_GL.Disable( CGL.CULL_FACE );
+			
+			case MDS_NO_DRAW:
+			l_GL.Enable( CGL.CULL_FACE );
+			l_GL.CullFace( CGL.FRONT_AND_BACK );
+		}
+		
 		return super.Activate();
 	}
 }

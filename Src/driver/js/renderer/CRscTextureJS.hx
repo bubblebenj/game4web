@@ -40,10 +40,10 @@ class CRscTextureJS extends CRscTexture
 		
 		m_GlTexture = l_Gl.CreateTexture();
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, m_GlTexture);
-		l_Gl.PixelStorei	(CGL.UNPACK_FLIP_Y_WEBGL, CGL.TRUE );
+		//l_Gl.PixelStorei	(CGL.UNPACK_FLIP_Y_WEBGL, CGL.TRUE );
 		l_Gl.TexImage2D		(CGL.TEXTURE_2D, 0, CGL.RGBA, CGL.RGBA, CGL.UNSIGNED_BYTE, cast( m_RscImage, CRscImageJS).GetDriverImage() );
-		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MAG_FILTER, CGL.NEAREST);
-		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MIN_FILTER, CGL.NEAREST);
+		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MAG_FILTER, CGL.LINEAR);
+		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MIN_FILTER, CGL.LINEAR);
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, null);
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();

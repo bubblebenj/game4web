@@ -10,6 +10,7 @@ import driver.js.kernel.CSystemJS;
 import kernel.CSystem;
 import kernel.Glb;
 import kernel.CDebug;
+import kernel.CTypes;
 
 import renderer.CPrimitive;
 
@@ -177,6 +178,7 @@ class CPrimitiveJS extends CPrimitive
 		for (i in 0...m_NbIndices)
 		{
 			m_IdxNativeBuf.Set(i, _Indexes[i]);
+			CDebug.CONSOLEMSG(" idx[" + i+"]="+ _Indexes[i]	);
 		}
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ELEMENT_ARRAY_BUFFER, m_IdxNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW  );
@@ -209,7 +211,8 @@ class CPrimitiveJS extends CPrimitive
 		if ( m_TexObject == null )
 		{
 			m_TexObject = Glb.g_SystemJS.GetGL().CreateBuffer();
-			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject);
+			Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject); 
+			CDebug.CONSOLEMSG("Tex coo buffer bound");
 		}
 		
 		if ( m_NbVertex == 0)
@@ -225,12 +228,19 @@ class CPrimitiveJS extends CPrimitive
 		for (i in 0...m_NbVertex * GetFloatPerTexCoord())
 		{
 			m_TexNativeBuf.Set(i, _TexCoords[i]);
+			CDebug.CONSOLEMSG(" uv[" + i+"]="+ m_TexNativeBuf.Get(i)	);
 		}
 		
-		CDebug.CONSOLEMSG("Set tex coo buffer vtx:"+m_NbVertex +" dyn:" + _Dyn);
+		CDebug.CONSOLEMSG("Set tex coo buffer vtx:" + m_NbVertex +" dyn:" + _Dyn );
 		
 		Glb.g_SystemJS.GetGL().BufferData( CGL.ARRAY_BUFFER, m_TexNativeBuf, (_Dyn) ? CGL.DYNAMIC_DRAW : CGL.STATIC_DRAW );
 		m_AreTexCoordDynamic = _Dyn;
+		
+		var l_Err = Glb.g_SystemJS.GetGL().GetError();
+		if ( l_Err  != 0)
+		{
+			CDebug.CONSOLEMSG("GlError:PostSetTexCooArray:" + l_Err);
+		}
 	}
 	
 	public override function HasIndexArray() : Bool
@@ -279,11 +289,37 @@ class CPrimitiveJS extends CPrimitive
 		m_AreNrmlArrayDynamic = _Dyn;
 	}
 	
+	public override function BindVertexBuffer() : Result
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_VtxObject);
+		return SUCCESS;
+	}
+	
+	public override function BindNormalBuffer() : Result
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_NrmlObject);
+		return SUCCESS;
+	}
+	
+	public override function BindColorBuffer() : Result
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_ColorObject);
+		return SUCCESS;
+	}
+	
+	public override function BindTexCoordBuffer() : Result
+	{
+		Glb.g_SystemJS.GetGL().BindBuffer( CGL.ARRAY_BUFFER, m_TexObject);
+		return SUCCESS;
+	}
+	
+	var m_ColorObject:WebGLBuffer;
 	var m_NrmlObject:WebGLBuffer;
 	var m_TexObject:WebGLBuffer;
 	var m_VtxObject:WebGLBuffer;
 	var m_IdxObject:WebGLBuffer;
 	
+	var m_ColorNativeBuf:Float32Array;
 	var m_NrmlNativeBuf:Float32Array;
 	var m_TexNativeBuf:Float32Array;
 	var m_VtxNativeBuf:Float32Array;
@@ -297,5 +333,6 @@ class CPrimitiveJS extends CPrimitive
 	public var m_AreTexCoordDynamic(default, null) : Bool;
 	public var m_AreVtxArrayDynamic(default, null) : Bool;
 	public var m_AreIdxArrayDynamic(default, null) : Bool;
-	public var m_AreNrmlArrayDynamic(default,null) : Bool;
+	public var m_AreNrmlArrayDynamic(default, null) : Bool;
+	public var m_AreColorArrayDynamic(default,null) : Bool;
 }

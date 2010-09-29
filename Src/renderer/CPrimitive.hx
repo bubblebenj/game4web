@@ -40,4 +40,9 @@ class CPrimitive extends CRsc
 	
 	public function LockTexCoordArray() : Dynamic;
 	public function ReleaseTexCoordArray() : Void;
+	
+	public function BindVertexBuffer() : Result  { return FAILURE;  }
+	public function BindNormalBuffer() : Result  { return FAILURE;  }
+	public function BindColorBuffer() : Result  { return FAILURE;  }
+	public function BindTexCoordBuffer() : Result  { return FAILURE;  }
 }

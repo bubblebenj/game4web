@@ -86,7 +86,7 @@ class CMainClient
 		CDebug.ASSERT(m_Img!= null);
 		
 		m_Quad.SetRsc( m_Img );
-		m_Quad.SetUV( CV2D.ZERO, CV2D.ONE );
+		//m_Quad.SetUV( CV2D.ZERO, CV2D.ONE );
 		//m_Quad.GetMaterial().AttachTexture( 0, m_Tex );
 		//m_Quad.GetPrimitive().
 

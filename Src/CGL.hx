@@ -109,7 +109,7 @@ extern class CGL
 	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint): Void;
 	
 	public function PolygonOffset(  factor : GLfloat, units : GLfloat ): Void;
-
+	public function CullFace( _Mode : GLenum  ):Void;
 
 	
 	public function CreateProgram() : WebGLProgram;
