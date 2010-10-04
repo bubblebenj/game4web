@@ -166,22 +166,16 @@ class CMenuGraph extends CRsc			// C&D Menu
 	{
 		var l_FGraph	: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement() );
 		
+		// First creating all possible states
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
 			AddMenuNode( new CMenuNode( i_FMenuNode.att.id ) );
 		}
-		
+		// then making transition
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
 			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
-		
-		#if DebugInfo
-			//for ( i_FMenuNode in l_FGraph.nodes.page )
-			//{
-				//m_States.get( i_FMenuNode.att.id ).ShowTree();
-			//}
-		#end
 	}
 	
 	private function RecurseDiv( _CurrentDiv : C2DContainer, _FCurrentDiv : Fast, _Parent : C2DContainer, _MenuNode : CMenuNode )
@@ -207,14 +201,14 @@ class CMenuGraph extends CRsc			// C&D Menu
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href, i_FSubDiv.att.name ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetAction( Actuate, i_FSubDiv.att.name );
+						cast( l_NewDiv, CButton ).SetCmd( Actuate, i_FSubDiv.att.name );
 					}
 				}
 				else
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetAction( Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
+						cast( l_NewDiv, CButton ).SetCmd( Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
 					}
 				}
 				

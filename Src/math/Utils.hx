@@ -31,4 +31,36 @@ class Utils
 		}
 	}
 	
+	
+	/* Maximum base 16 */
+	public static function IntToStr( _Nb : Int, _Base : Int ) : String
+	{	
+		if ( _Base > 16 )
+		{
+			return null;
+		}
+		else
+		{
+			var l_Digits	: Array<String> = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
+			var l_StrNb	= "";
+			var l_End	: Bool = false;
+			
+			while( ! l_End )
+			{
+				if ( _Nb >= _Base )
+				{
+					l_StrNb = l_Digits[ _Nb % _Base ] + l_StrNb;
+					_Nb		= Math.floor( _Nb / _Base );
+					
+				}
+				else
+				{
+					l_StrNb = l_Digits[_Nb] + l_StrNb;
+					l_End	= true;
+				}
+			}
+			return l_StrNb;
+		}
+	}
+	
 }

@@ -46,6 +46,20 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 		return l_Res;
 	}
 	
+	private function CreateTextField() : Void
+	{
+		var l_Text = m_RscText.GetTextData();
+		if ( l_Text != null )
+		{
+			m_DisplayObject			= new TextField();
+			cast( m_DisplayObject, TextField ).text	= l_Text;
+			#if DebugInfo
+				cast( m_DisplayObject, TextField ).border	= true;
+			#end
+			cast( m_DisplayObject, TextField ).selectable	= false;
+		}
+	}
+	
 	public override function Update() : Result
 	{
 		if ( 	m_RscText != null
@@ -53,7 +67,7 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 		{
 			if( m_DisplayObject == null )
 			{
-				m_DisplayObject = m_RscText.CreateText();
+				CreateTextField();
 				if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 				{
 					Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );

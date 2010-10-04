@@ -31,7 +31,6 @@ class CLinear
 	{
 		Registers.V2_8.x = ( _CurrentTime / _Duration ) * ( _FinalValue.x - _InitialValue.x ) + _InitialValue.x;
 		Registers.V2_8.y = ( _CurrentTime / _Duration ) * ( _FinalValue.y - _InitialValue.y ) + _InitialValue.y;
-		trace( Registers.V2_8.ToString() );
 		return Registers.V2_8;
 	}
 	

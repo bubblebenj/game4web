@@ -22,14 +22,14 @@ class CRscImageAS extends CRscImage
 	public function new() 
 	{
 		super();
-		m_ImgContainer	= new Loader();
+		m_ImgLoader	= new Loader();
 		m_State			= INVALID;
 	}
 	
 	public function Initialize() : Result
 	{
-		m_ImgContainer.contentLoaderInfo.addEventListener(Event.INIT, onImgLoaded);
-		m_ImgContainer.load( new URLRequest( m_Path ) );
+		m_ImgLoader.contentLoaderInfo.addEventListener(Event.INIT, onLoaded);
+		m_ImgLoader.load( new URLRequest( m_Path ) );
 		m_State			= STREAMING;
 		return SUCCESS;
 	}
@@ -40,17 +40,17 @@ class CRscImageAS extends CRscImage
 		Initialize();
 	}
 	
-	public function onImgLoaded( _Event : Event )	: Void
+	public function onLoaded( _Event : Event )	: Void
 	{
 		m_State			= STREAMED;
 		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
-	public function CreateBitmap() : Bitmap
+	public function GetBitmapData() : BitmapData
 	{
-		if ( m_State == STREAMED )
+		if  ( m_State == STREAMED )
 		{
-			return new Bitmap( cast( m_ImgContainer.content, Bitmap ).bitmapData );
+			return cast( m_ImgLoader.content, Bitmap ).bitmapData;
 		}
 		else
 		{
@@ -58,5 +58,5 @@ class CRscImageAS extends CRscImage
 		}
 	}
 	
-	private	var m_ImgContainer	: Loader;
+	private	var m_ImgLoader	: Loader;
 }

@@ -363,5 +363,15 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		}
 	}
 	
+	public function GetRGB( _xy : CV2D ) : Int
+	{
+		trace ( " /!\\ Function GetPixel not implemented yet " );
+		return 0;
+	}
 	
+	public function GetARGB( _xy : CV2D ) : Int
+	{
+		trace ( " /!\\ Function GetPixel not implemented yet " );
+		return 0;
+	}
 }

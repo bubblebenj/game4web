@@ -5,6 +5,9 @@
 
 package logic;
 
+import CDriver;
+import logic.collision.CColPoint;
+
 import kernel.Glb;
 import kernel.CTypes;
 
@@ -41,11 +44,10 @@ enum BUTTON_TRANS_CONDITION
 class CButton extends C2DContainer
 {
 	private var m_InteractFSM	: CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>;
-	private var	m_Callback		: TransitionId -> Void;
-	private var m_Transition	: TransitionId;
+	private var	m_Callback		: Dynamic -> Void;
+	private var m_Argument		: Dynamic;
 	
-	
-	public function new() 
+	public function new()
 	{
 		super();
 
@@ -54,10 +56,13 @@ class CButton extends C2DContainer
 		m_InteractFSM.Initialize( B_IST_DESABLED );
 	}
 	
-	public function SetAction( _Callback	: TransitionId -> Void, _Transition	: TransitionId )
+	public function SetCmd( _Callback	: Dynamic -> Void, ?_Argument	: Dynamic )
 	{
 		m_Callback		= _Callback;
-		m_Transition	= _Transition;
+		if ( _Argument != null )
+		{
+			m_Argument		= _Argument;
+		}
 	}
 	
 	private function CreateActuators()			: Void
@@ -133,7 +138,14 @@ class CButton extends C2DContainer
 	
 	private function TrBtUsed()
 	{
-		m_Callback( m_Transition );
+		if ( m_Argument != null )
+		{
+			m_Callback( m_Argument );
+		}
+		else
+		{
+			m_Callback( null );
+		}
 	}
 	
 	private function TrBtCancel()
