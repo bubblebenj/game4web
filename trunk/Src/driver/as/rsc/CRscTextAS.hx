@@ -5,7 +5,10 @@
 
 package driver.as.rsc;
 
+import flash.events.Event;
+import flash.net.URLLoader;
 import flash.text.TextField;
+import flash.net.URLRequest;
 import kernel.CTypes;
 
 import rsc.CRsc;
@@ -17,7 +20,16 @@ class CRscTextAS extends CRscText
 	public function new() 
 	{
 		super();
+		m_TextLoader = new URLLoader();
 		m_State	= INVALID;
+	}
+	
+	public function Initialize() : Result
+	{
+		m_TextLoader.addEventListener(Event.COMPLETE, onLoaded);
+		m_TextLoader.load( new URLRequest( m_Path ) );
+		m_State			= STREAMING;
+		return SUCCESS;
 	}
 	
 	public override function SetPath( _Path )
@@ -26,30 +38,17 @@ class CRscTextAS extends CRscText
 		Initialize();
 	}
 	
-	public function Initialize() : Result
+	public function onLoaded( _Event : Event )	: Void
 	{
-		m_State			= STREAMING;
-		SetText( m_Path );
-		return SUCCESS;
+		m_State			= STREAMED;
+		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
-	public function SetText( _Text : String ) : Void
+	public function GetTextData() : String
 	{
-		m_Text	= _Text;
-		m_State	= STREAMED;
-	}
-	
-	public function CreateText() : TextField
-	{
-		if ( m_State == STREAMED )
+		if  ( m_State == STREAMED )
 		{
-			var l_TxtField	: TextField = new TextField();
-			l_TxtField.text	= m_Text;
-			#if DebugInfo
-				l_TxtField.border	= true;
-			#end
-			l_TxtField.selectable	= false;
-			return l_TxtField;
+			return cast( m_TextLoader.data, String );
 		}
 		else
 		{
@@ -57,12 +56,5 @@ class CRscTextAS extends CRscText
 		}
 	}
 	
-	public function Load( _Path : String )
-	{
-		m_State	= STREAMING;
-		// loading stuff
-		SetText( "function Load not implemented yet" );
-	}
-	
-	private	var m_Text	: String;
+	private var  m_TextLoader	: URLLoader;
 }

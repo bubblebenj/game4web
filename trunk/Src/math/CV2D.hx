@@ -23,12 +23,6 @@ class CV2D
 		y = _xy.y;
 	}
 	
-	public inline function TestCopy( _V2D : { x : Float, y : Float } )
-	{
-		x = _V2D.x;
-		y = _V2D.y;
-	}
-	
 	public static inline function Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
 	{
 		_VOut.x = _V0.x + _V1.x;
@@ -60,6 +54,22 @@ class CV2D
 	public inline function ToString() : String
 	{
 		return ("( "+x+" , "+y+" )");
+	}
+	
+	public inline function TestCopy( _V2D : { x : Float, y : Float } )
+	{
+		x = _V2D.x;
+		y = _V2D.y;
+	}
+	
+	public static inline function ToStringStatic( _V2D : { x : Float, y : Float } ) : String
+	{
+		return ("( "+_V2D.x+" , "+_V2D.y+" )");
+	}
+	
+	public static inline function GetDistance( _V0 : CV2D, _V1 :  CV2D ) : Float
+	{
+		return Math.sqrt( Math.pow( (_V1.x - _V0.x), 2 ) + Math.pow( (_V1.y - _V0.y), 2 ) );
 	}
 	
 	public static inline var ZERO 	: CV2D = new CV2D(0, 0);

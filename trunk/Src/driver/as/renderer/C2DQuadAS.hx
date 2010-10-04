@@ -6,8 +6,12 @@
 package driver.as.renderer;
 
 import flash.display.DisplayObject;
+import flash.geom.Matrix;
+import flash.geom.Transform;
 import kernel.CTypes;
 import kernel.Glb;
+import math.Constants;
+import math.CTrigo;
 
 import math.CV2D;
 import renderer.C2DQuad;
@@ -110,6 +114,45 @@ class C2DQuadAS extends C2DQuad
 			m_DisplayObject.x = GetTL().x;
 			m_DisplayObject.y = GetTL().y;
 		}
+	}
+	
+	private function Rotate( _Rad : Float ) : Void
+	{
+		if ( ( _Rad % ( 2 * Constants.PI ) ) != 0 )
+		{
+			//var l_RotationMatrix	= new Matrix();
+			//l_RotationMatrix.rotate( _Rad );
+			
+			var l_Matrix : Matrix	= m_DisplayObject.transform.matrix;
+			
+			//l_Matrix.concat(l_RotationMatrix);
+			
+			l_Matrix.tx	-= GetCenter().x;
+			l_Matrix.ty	-= GetCenter().y;
+			trace( "Rotate("+ CTrigo.RadToDeg(_Rad) );
+			l_Matrix.rotate( _Rad );
+			l_Matrix.tx	+= GetCenter().x;
+			l_Matrix.ty	+= GetCenter().y;
+			
+			m_DisplayObject.transform.matrix = l_Matrix;
+		}
+	}
+	
+	public override function SetRotation( _Rad : Float ) : Void
+	{
+		
+		trace( "SetRotation(" +_Rad );
+		
+		Rotate( _Rad - GetRotation() );
+		super.SetRotation( _Rad );
+		//m_RotationMatrix	= m_DisplayObject.transform.matrix;
+		//m_RotationMatrix.tx	-= GetCenter().x;
+		//m_RotationMatrix.ty	-= GetCenter().y;
+		//m_RotationMatrix.rotate( Constants.PI *0.5 );// CTrigo.RadToDeg( _Rad );
+		//m_RotationMatrix.tx	+= GetCenter().x;
+		//m_RotationMatrix.ty	+= GetCenter().y;
+		
+
 	}
 	
 	public function IsLoaded()	: Bool

@@ -6,6 +6,7 @@
 package rsc;
 
 import kernel.CTypes;
+import math.CV2D;
 
 import rsc.CRsc;
 import rsc.CRscMan;

@@ -5,6 +5,7 @@
 
 package renderer;
 
+import math.Constants;
 import math.CV2D;
 import math.CRect2D;
 import math.Registers;
@@ -15,6 +16,7 @@ class C2DQuad extends CDrawObject
 	{
 		super();
 		m_Rect = new CRect2D();
+		m_Rotation	= 0;
 	}
 	
 	public var m_Rect : CRect2D;
@@ -112,4 +114,22 @@ class C2DQuad extends CDrawObject
 	{
 		return m_Rect.m_Size;
 	}
+	
+	/* 
+	 * Rotation
+	 */
+	/* Set the rotation using a radian value */
+	public function SetRotation( _Rad : Float )
+	{
+		trace( _Rad + " " + 2 + " " + Math.PI );
+		m_Rotation = _Rad % ( 2 * Math.PI );
+		trace( m_Rotation );
+	}
+	
+	public function GetRotation() : Float
+	{
+		return m_Rotation;
+	}
+	
+	private var m_Rotation	: Float;
 }
