@@ -73,33 +73,27 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	
 	public override function Update() : Result
 	{
-		if ( 	m_RscImage != null
-		&& 		m_RscImage.m_State == E_STATE.STREAMED )
+		if ( 	m_RscImage			!= null
+		&& 		m_RscImage.m_State	== E_STATE.STREAMED
+		&&		m_DisplayObject 	== null )
 		{
-			if( m_DisplayObject == null )
+			CreateBitmap();
+			
+			if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 			{
-				CreateBitmap();
-				
-				if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
-				{
-					Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
-					SetSize( Registers.V2_8 );
-				}
-				else
-				{
-					SetSize( GetSize() );
-				}
-				SetCenterPosition( GetCenter() );
-				
-				SetVisible( m_Visible );
-				if ( m_Activated )
-				{
-					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
-				}
+				Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
+				SetSize( Registers.V2_8 );
 			}
 			else
 			{
-				SetVisible( m_Visible );
+				SetSize( GetSize() );
+			}
+			SetCenterPosition( GetCenter() );
+			
+			SetVisible( m_Visible );
+			if ( m_Activated )
+			{
+				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
 			}
 		}
 		return SUCCESS;
