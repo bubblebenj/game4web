@@ -45,7 +45,7 @@ class CButton extends C2DContainer
 {
 	private var m_InteractFSM	: CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>;
 	private var	m_Callback		: Dynamic -> Void;
-	private var m_Argument		: Dynamic;
+	private var m_Argument		: Array<Dynamic>;
 	
 	public function new()
 	{
@@ -56,12 +56,16 @@ class CButton extends C2DContainer
 		m_InteractFSM.Initialize( B_IST_DESABLED );
 	}
 	
-	public function SetCmd( _Callback	: Dynamic -> Void, ?_Argument	: Dynamic )
+	public function SetCmd( _Callback	: Dynamic, ?_Argument	: Array<Dynamic> )
 	{
 		m_Callback		= _Callback;
 		if ( _Argument != null )
 		{
 			m_Argument		= _Argument;
+		}
+		else
+		{
+			m_Argument		= new Array<Dynamic>();
 		}
 	}
 	
@@ -138,14 +142,7 @@ class CButton extends C2DContainer
 	
 	private function TrBtUsed()
 	{
-		if ( m_Argument != null )
-		{
-			m_Callback( m_Argument );
-		}
-		else
-		{
-			m_Callback( null );
-		}
+		Reflect.callMethod( null, m_Callback, m_Argument );
 	}
 	
 	private function TrBtCancel()

@@ -169,7 +169,14 @@ class CMenuGraph extends CRsc			// C&D Menu
 		// First creating all possible states
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
-			AddMenuNode( new CMenuNode( i_FMenuNode.att.id ) );
+			if ( i_FMenuNode.att.id == "Stage" )
+			{
+				AddMenuNode( GameGlb.g_Stage );
+			}
+			else
+			{
+				AddMenuNode( new CMenuNode( i_FMenuNode.att.id ) );
+			}
 		}
 		// then making transition
 		for ( i_FMenuNode in l_FGraph.nodes.page )
@@ -201,14 +208,14 @@ class CMenuGraph extends CRsc			// C&D Menu
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href, i_FSubDiv.att.name ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetCmd( Actuate, i_FSubDiv.att.name );
+						cast( l_NewDiv, CButton ).SetCmd( Actuate, [i_FSubDiv.att.name] );
 					}
 				}
 				else
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetCmd( Actuate, "Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href );
+						cast( l_NewDiv, CButton ).SetCmd( Actuate, ["Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href] );
 					}
 				}
 				
@@ -268,7 +275,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		}
 		if ( NoStyleDefined )
 		{
-			_Object.SetRelativeTLPosition( l_ParentCoordinate, CV2D.ZERO );
+			_Object.SetTLPosition( l_ParentCoordinate );
 		}
 	}
 
@@ -340,11 +347,13 @@ class CMenuGraph extends CRsc			// C&D Menu
 						trace( "Accepted values unit=\"%|px\"" );
 					}
 				}
-							
+				
+				
+				CV2D.Add( l_Coordinate, _ParentCoordinate, l_Coordinate );
 				switch ( _FStyle.node.align.att.handle )
 				{
-					case "TL"		: _Object.SetRelativeTLPosition( _ParentCoordinate, l_Coordinate );
-					case "center"	: _Object.SetRelativeCenterPosition( _ParentCoordinate, l_Coordinate );
+					case "TL"		: _Object.SetTLPosition( l_Coordinate );
+					case "center"	: _Object.SetCenterPosition( l_Coordinate );
 				}
 			}
 			
