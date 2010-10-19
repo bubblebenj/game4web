@@ -68,7 +68,8 @@ class C2DContainer extends C2DQuad
 		for ( i_Object in m_2DObjects )
 		{
 			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );	// Shift
-			i_Object.SetRelativeCenterPosition( _Pos, Registers.V2_0 );
+			CV2D.Add( Registers.V2_0, _Pos, Registers.V2_0 );
+			i_Object.SetCenterPosition( Registers.V2_0 );
 		}
 		super.SetCenterPosition( _Pos );
 	}
@@ -78,7 +79,8 @@ class C2DContainer extends C2DQuad
 		for ( i_Object in m_2DObjects )
 		{
 			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), GetCenter() );	// Shift
-			i_Object.SetRelativeTLPosition( _Pos, Registers.V2_0 );
+			CV2D.Add( Registers.V2_0, _Pos, Registers.V2_0 );
+			i_Object.SetTLPosition( Registers.V2_0 );
 		}
 		super.SetTLPosition( _Pos );
 	}
