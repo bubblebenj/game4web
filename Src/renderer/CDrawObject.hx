@@ -86,9 +86,9 @@ class CDrawObject
 		return m_Alpha;
 	}
 	
-	public function SetCamera( _VpIndex : Int, _Cam : CCamera) : Result
+	public function SetCamera( _VpIndex : Int, _Cam : CCamera ) : Result
 	{
-		if( _VpIndex<0 || _VpIndex>= CRenderer.VP_MAX )
+		if( _VpIndex < 0 || _VpIndex >= CRenderer.VP_MAX )
 		{
 			return FAILURE;
 		}
@@ -96,7 +96,7 @@ class CDrawObject
 		return SUCCESS;
 	}
 	
-	public function SetTransfo( _Transfo : CMatrix44) : Void
+	public function SetTransfo( _Transfo : CMatrix44 ) : Void
 	{
 		m_Transfo.Copy(_Transfo);
 	}

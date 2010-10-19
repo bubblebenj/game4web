@@ -2,13 +2,14 @@ package renderer;
 
 import haxe.FastList;
 import math.CMatrix44;
-import renderer.camera.CPerspectiveCamera;
+
 import tools.transition.CTween;
 
 import kernel.CTypes;
 import kernel.CDebug;
 
 import renderer.CDrawObject;
+import renderer.CRenderContext;
 import renderer.CViewport;
 
 import renderer.camera.CCamera;
@@ -16,30 +17,30 @@ import renderer.camera.CPerspectiveCamera;
 import renderer.camera.COrthoCamera;
 
 
-import renderer.CRenderContext;
 
 
 class CRenderer
 {
-	var	m_CurrentVPMatrix : CMatrix44;
+	var	m_CurrentVPMatrix	: CMatrix44;
 	
-	var m_Scene : List<CDrawObject>;
-	var m_BackScene : List<CDrawObject>;
+	var m_Scene 			: List<CDrawObject>;
+	var m_BackScene			: List<CDrawObject>;
 	
-	public var m_Vps : Array<CViewport>;
-	public var m_Cameras : Array<CCamera>;
+	public var m_Vps		: Array<CViewport>;
+	public var m_Cameras	: Array<CCamera>;
 	
 	public static var CAM_PERSPECTIVE_0 : Int = 0;
-	public static var CAM_ORTHO_0 : Int = 1;
-	public static var CAM_COUNT : Int = 2;
+	public static var CAM_ORTHO_0		: Int = 1;
+	public static var CAM_COUNT			: Int = 2;
 	
-	public static var VP_FULLSCREEN : Int = 0;
-	public static var VP_MAX : Int = 2;
+	public static var VP_FULLSCREEN		: Int = 0;
+	public static var VP_MAX			: Int = 2;
 	
 	public var m_RenderContext(default, null) : CRenderContext;
 	
-	public var m_TwinList	: FastList<CTween>;
-	public function new() 
+	public var m_TwinList				: FastList<CTween>;
+	
+	public function new()
 	{
 		m_Vps = new Array<>();
 		
@@ -51,14 +52,14 @@ class CRenderer
 		m_Cameras = new Array<CCamera>();
 		for( i in 0...VP_MAX)
 		{
-			m_Cameras[i] = null;
+			m_Cameras[i]	= null;
 		}
 		
-		m_CurrentVPMatrix = null;
+		m_CurrentVPMatrix	= null;
 		
-		m_RenderContext = new CRenderContext();
+		m_RenderContext		= new CRenderContext();
 		
-		m_TwinList		= new FastList<CTween>();
+		m_TwinList			= new FastList<CTween>();
 	}
 	
 	public inline function GetViewProjection() : CMatrix44
@@ -82,12 +83,11 @@ class CRenderer
 		m_Vps[VP_FULLSCREEN] = BuildViewport();
 		m_Vps[VP_FULLSCREEN].Initialize(0, 0, 1, 1);
 		
-		m_Cameras[CAM_PERSPECTIVE_0] = new CPerspectiveCamera();
-		m_Cameras[CAM_ORTHO_0] = new COrthoCamera();
+		m_Cameras[CAM_PERSPECTIVE_0]	= new CPerspectiveCamera();
+		m_Cameras[CAM_ORTHO_0]			= new COrthoCamera();
 		
-		m_Scene = new List<CDrawObject>();
-		m_BackScene  = new List<CDrawObject>();
-		
+		m_Scene			= new List<CDrawObject>();
+		m_BackScene		= new List<CDrawObject>();
 	
 		m_RenderContext.Reset();
 		
@@ -141,19 +141,19 @@ class CRenderer
 	public function Update() : Result 
 	{
 		var l_BegRes : Result = BeginScene();
-		if (l_BegRes==FAILURE)
+		if ( l_BegRes == FAILURE )
 		{
 			return FAILURE;
 		}
 		
-		for (  l_VpId in 0...m_Vps.length )
+		for ( l_VpId in 0...m_Vps.length )
 		{
-			if (m_Vps[l_VpId ]!=null)
+			if (m_Vps[ l_VpId ]!= null)
 			{
-				m_Vps[l_VpId ].Activate();
+				m_Vps[ l_VpId ].Activate();
 				
 				var l_RdrRes : Result = Render( l_VpId );
-				if (l_RdrRes==FAILURE)
+				if ( l_RdrRes == FAILURE )
 				{
 					return FAILURE;
 				}
@@ -167,7 +167,7 @@ class CRenderer
 		
 		//trace("CRenderer:: end scn");
 		var l_Endres : Result = EndScene();
-		if (l_Endres==FAILURE)
+		if ( l_Endres == FAILURE )
 		{
 			return FAILURE;
 		}
@@ -186,9 +186,4 @@ class CRenderer
 	{
 		m_Scene.remove(_Obj );
 	}
-	
-	
-	
 }
-
-

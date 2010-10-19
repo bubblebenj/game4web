@@ -57,6 +57,22 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
+	override public function Draw( _Vp : Int ) : Result 
+	{
+		super.Draw( _Vp );
+		
+		if( m_DisplayObject != null )
+		{
+			SetVisible( m_Visible );
+			m_DisplayObject.x		= GetTL().x - Glb.GetRenderer().GetCamera( 0 ).GetPosition().x;
+			m_DisplayObject.y		= GetTL().y - Glb.GetRenderer().GetCamera( 0 ).GetPosition().y;
+			m_DisplayObject.width	= GetSize().x * Glb.GetRenderer().m_Vps[_Vp].GetVpRatio();
+			m_DisplayObject.height	= GetSize().y * Glb.GetRenderer().m_Vps[_Vp].GetVpRatio();
+		}
+		
+		return SUCCESS;
+	}
+	
 	public override function SetAlpha( _Value : Float ) : Void
 	{
 		super.SetAlpha( _Value );
@@ -71,48 +87,7 @@ class C2DQuadAS extends C2DQuad
 		super.SetSize( _Size );
 		if ( m_DisplayObject != null )
 		{	
-			m_DisplayObject.width	= _Size.x;
-			m_DisplayObject.height	= _Size.y;
-		}
-	}
-	
-	public override function SetCenterPosition( _Pos : CV2D ) : Void
-	{
-		super.SetCenterPosition( _Pos );
-		if ( m_DisplayObject != null )
-		{
-			m_DisplayObject.x = GetTL().x;
-			m_DisplayObject.y = GetTL().y;
-		}
-	}
-	
-	public override function SetTLPosition( _Pos : CV2D ) : Void
-	{
-		super.SetTLPosition( _Pos );
-		if ( m_DisplayObject != null )
-		{
-			m_DisplayObject.x = _Pos.x;
-			m_DisplayObject.y = _Pos.y;
-		}
-	}
-	
-	public override function SetRelativeCenterPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
-	{
-		super.SetRelativeCenterPosition( _RefPos, _Pos );
-		if ( m_DisplayObject != null )
-		{
-			m_DisplayObject.x = GetTL().x;
-			m_DisplayObject.y = GetTL().y;
-		}
-	}
-	
-	public override function SetRelativeTLPosition( _RefPos : CV2D, _Pos : CV2D ) : Void
-	{
-		super.SetRelativeTLPosition( _RefPos, _Pos );
-		if ( m_DisplayObject != null )
-		{
-			m_DisplayObject.x = GetTL().x;
-			m_DisplayObject.y = GetTL().y;
+
 		}
 	}
 	
@@ -151,8 +126,6 @@ class C2DQuadAS extends C2DQuad
 		//m_RotationMatrix.rotate( Constants.PI *0.5 );// CTrigo.RadToDeg( _Rad );
 		//m_RotationMatrix.tx	+= GetCenter().x;
 		//m_RotationMatrix.ty	+= GetCenter().y;
-		
-
 	}
 	
 	public function IsLoaded()	: Bool

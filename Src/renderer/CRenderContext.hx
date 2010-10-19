@@ -15,27 +15,33 @@ import renderer.CPrimitive;
 import renderer.CRenderStates;
 import renderer.CRscShader;
 
+import renderer.CRenderer;
+
 class CRenderContext 
 {
-	public var m_CurrentMaterial(default,SetActiveMaterial) : CMaterial;
-	public var m_CurrentShader (default, SetActiveShader): CRscShader;
-	public var m_CurrentPrimitive (default, SetActivePrimitive): CPrimitive;
+	public var m_CurrentViewport	: Int;
+	
+	public var m_CurrentMaterial	(default, SetActiveMaterial) 	: CMaterial;
+	public var m_CurrentShader 		(default, SetActiveShader)		: CRscShader;
+	public var m_CurrentPrimitive 	(default, SetActivePrimitive)	: CPrimitive;
 	public var m_CurrentRenderState (default, SetActiveRenderStates ): CRenderStates;
 	
 	private var m_FlushFlags : Int;
 	
-	public static inline var RC_SHADER_STAGE : Int = 0;
-	public static inline var RC_MATERIAL_STAGE : Int = 1;
-	public static inline var RC_PRIMITIVE_STAGE : Int = 2;
+	public static inline var RC_SHADER_STAGE		: Int = 0;
+	public static inline var RC_MATERIAL_STAGE		: Int = 1;
+	public static inline var RC_PRIMITIVE_STAGE 	: Int = 2;
 	public static inline var RC_RENDER_STATES_STAGE : Int = 3;
 	
 	public function new() 
 	{
-		m_CurrentMaterial = null;
-		m_CurrentShader = null;
-		m_CurrentPrimitive = null;
-		m_CurrentRenderState = null;
-		m_FlushFlags = 0xFFFF;
+		m_CurrentViewport		= CRenderer.VP_FULLSCREEN;
+		
+		m_CurrentMaterial		= null;
+		m_CurrentShader			= null;
+		m_CurrentPrimitive		= null;
+		m_CurrentRenderState	= null;
+		m_FlushFlags			= 0xFFFF;
 	}
 	
 	public function Reset()
@@ -106,7 +112,7 @@ class CRenderContext
 			}
 			
 			m_CurrentShader = _sh;
-			m_FlushFlags = RC_SHADER_STAGE;//completely flushed because of prim and mat linkage
+			m_FlushFlags = RC_SHADER_STAGE; //completely flushed because of prim and mat linkage
 			if (m_CurrentShader != null)
 			{
 				m_CurrentShader.AddRef();

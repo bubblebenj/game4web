@@ -17,14 +17,14 @@ class CCamera
 {
 	public function new() 
 	{
-		m_Near = 0.0001;
-		m_Far = 1000.0;
-		m_Fov = Constants.DEG_TO_RAD * 54.4;
+		m_Near	= 0.0001;
+		m_Far	= 1000.0;
+		m_Fov	= Constants.DEG_TO_RAD * 54.4;
 		m_AspectRatio = 4.0 / 3.0;
 		
-		m_Up = new CV3D(0, 1, 0);
-		m_Pos = new CV3D(0, 0, 5);
-		m_Dir = new CV3D(0, 0, -1);
+		m_Up	= new CV3D(0, 1, 0);
+		m_Pos	= new CV3D(0, 0, 5);
+		m_Dir	= new CV3D(0, 0, -1);
 		
 		m_VPMatrix = new CMatrix44();
 	}
@@ -80,14 +80,14 @@ class CCamera
 	}
 	
 	//
-	var m_Near : Float;
-	var m_Far : Float;
-	var m_Fov : Float;
+	var m_Near	: Float;
+	var m_Far	: Float;
+	var m_Fov	: Float;
 	var m_AspectRatio : Float;
 	
-	var m_Pos : CV3D;
-	var m_Dir : CV3D;
-	var m_Up : CV3D;
+	var m_Pos	: CV3D;
+	var m_Dir	: CV3D;
+	var m_Up	: CV3D;
 	
 	var m_VPMatrix : CMatrix44;
 

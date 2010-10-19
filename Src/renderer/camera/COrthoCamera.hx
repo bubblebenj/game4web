@@ -20,8 +20,8 @@ class COrthoCamera extends CCamera
 	{
 		super();
 		
-		m_Height = 0;
-		m_Width = 0;
+		m_Height	= 0;
+		m_Width		= 0;
 	}
 	
 	public function SetHeight(  _H : Float  ) : Void
@@ -36,14 +36,14 @@ class COrthoCamera extends CCamera
 	
 	public override function BuildMatrix( _Out : CMatrix44 ) : Result
 	{
-		var l_Left : Float = m_Pos.x;
-		var l_Right : Float  = m_Pos.x + m_Width;
+		var l_Left		: Float = m_Pos.x;
+		var l_Right		: Float = m_Pos.x + m_Width;
 		
-		var l_Bottom  : Float = m_Pos.y + m_Height;
-		var l_Top : Float  = m_Pos.y;
+		var l_Bottom	: Float = m_Pos.y + m_Height;
+		var l_Top		: Float = m_Pos.y;
 
 		
-		CMatrix44.Ortho(_Out, l_Left, l_Right, l_Bottom, l_Top, m_Pos.z + m_Near, m_Pos.z + m_Far );
+		CMatrix44.Ortho( _Out, l_Left, l_Right, l_Bottom, l_Top, m_Pos.z + m_Near, m_Pos.z + m_Far );
 		//CMatrix44.Ortho(_Out, 0, 1, 1, 0, m_Near,  m_Far );
 		
 		return SUCCESS;
