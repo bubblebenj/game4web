@@ -26,6 +26,37 @@ class CMatrix44
 	 * 30		33
 	 * */
 	
+	 /* 
+	  * right 
+	  * direction
+	  * up
+	  * position
+	  * 
+	  * rx ry rz 0
+	  * ux uy uz
+	  * dx dy dz
+	  * tx ty tz 1
+	  * inline V3D& Matrix::Right()
+		{
+			return *(V3D*)&(m[0][0]);
+		}
+		inline V3D& Matrix::Up()
+		{
+			return *(V3D*)&(m[1][0]);
+		}
+		inline V3D& Matrix::At()
+		{
+			return *(V3D*)&(m[2][0]);
+		}
+
+
+		inline V3D& Matrix::Pos()
+		{	
+			return *(V3D*)&(m[3][0]);
+		}
+	  * */
+	 
+	  
 	public function new() 
 	{
 		#if js
