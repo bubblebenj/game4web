@@ -20,7 +20,7 @@ enum BUTTON_INTERACTION_STATE
 	B_IST_UP;
 	B_IST_DOWN;
 	B_IST_CANCELLED;
-	B_IST_DESABLED;
+	B_IST_DISABLED;
 	B_IST_INVALID;
 }
 
@@ -53,7 +53,7 @@ class CButton extends C2DContainer
 
 		m_InteractFSM		= new CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>();
 		CreateActuators();
-		m_InteractFSM.Initialize( B_IST_DESABLED );
+		m_InteractFSM.Initialize( B_IST_DISABLED );
 	}
 	
 	public function SetCmd( _Callback	: Dynamic, ?_Argument	: Array<Dynamic> )
@@ -76,8 +76,8 @@ class CButton extends C2DContainer
 		m_InteractFSM.AddTransition( B_IST_DOWN,		B_TC_MOUSE_OUT,	B_IST_CANCELLED,	TrBtCancel );
 		m_InteractFSM.AddTransition( B_IST_CANCELLED,	B_TC_RELEASED,	B_IST_UP,			TrBtFreed );
 		
-		m_InteractFSM.AddTransition( B_IST_DESABLED,	B_TC_SET_ON,	B_IST_UP,			TrBtOn );
-		m_InteractFSM.AddTransition( B_IST_UP,			B_TC_SET_OFF,	B_IST_DESABLED,		TrBtOff );
+		m_InteractFSM.AddTransition( B_IST_DISABLED,	B_TC_SET_ON,	B_IST_UP,			TrBtOn );
+		m_InteractFSM.AddTransition( B_IST_UP,			B_TC_SET_OFF,	B_IST_DISABLED,		TrBtOff );
 	}
 	
 	public function MouseOver() : Bool

@@ -5,6 +5,8 @@
 
 package logic;
 import CDriver;
+import rsc.CRscText;
+import tools.CXml;
 
 import math.CV2D;
 
@@ -28,11 +30,16 @@ import renderer.C2DQuad;
 
 class CMenuGraph extends CRsc			// C&D Menu
 {
+	private var m_MenuGraph	: CXml;
+	private var m_MenuStyle : CXml;
+	
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
 	public override function GetType() : Int
 	{
 		return RSC_ID;
 	}
+	
+	private var m_Loaded		: Bool;
 	
 	private var m_LastState	: NodeId;
 	private var m_States	: Hash<CMenuNode>;				// menu pages - C&D MenuState
@@ -46,10 +53,18 @@ class CMenuGraph extends CRsc			// C&D Menu
 		m_Actuators	= new Hash<CMenuTransition>();
 		m_FSM		= new CFiniteStateMachine();
 		m_LastState	= "init";
+		m_MenuGraph	= new CXml();
+		m_MenuStyle	= new CXml();
+		m_Loaded	= false;
 	}
 	
-	public function Load( _XMLPath : String ) : Result
+	public function Load( _XMLGraphPath : String, _XMLStylePath : String ) : Result
 	{
+		trace( "HOP" );
+		m_MenuGraph.Load( _XMLGraphPath );
+		trace( "HIP" );
+		
+		m_MenuStyle.Load( _XMLStylePath );
 		return SUCCESS;
 	}
 	
@@ -60,17 +75,29 @@ class CMenuGraph extends CRsc			// C&D Menu
 	
 	public function Update()	: Void
 	{
-		var l_CurrentState	: NodeId	= m_FSM.GetCurrentState();
-		if ( l_CurrentState != m_LastState )
+		if ( m_Loaded == false )
 		{
-			if ( m_LastState != "init" )
+			m_MenuGraph.Update();
+			m_MenuStyle.Update();
+			if ( m_MenuGraph.m_Text != null &&  m_MenuStyle.m_Text != null )
 			{
-				m_States.get( m_LastState ).FadeOut();
+				CreateGraph();
 			}
-			m_States.get( l_CurrentState ).FadeIn();
-			m_LastState	= l_CurrentState;
 		}
-		m_States.get( m_LastState ).Update();
+		else
+		{
+			var l_CurrentState	: NodeId	= m_FSM.GetCurrentState();
+			if ( l_CurrentState != m_LastState )
+			{
+				if ( m_LastState != "init" )
+				{
+					m_States.get( m_LastState ).FadeOut();
+				}
+				m_States.get( l_CurrentState ).FadeIn();
+				m_LastState	= l_CurrentState;
+			}
+			m_States.get( m_LastState ).Update();
+		}
 	}
 	
 	/* Gives the last triggered actuator to the FSM */
@@ -162,16 +189,19 @@ class CMenuGraph extends CRsc			// C&D Menu
 		}
 	}
 	
-	public function CreateGraph( )
+	public function CreateGraph()
 	{
-		var l_FGraph	: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menugraph") ).firstElement() );
+		trace( m_MenuGraph.IsLoaded() );
+		m_Loaded = true;
+		return;
+		var l_FGraph	: Fast = new Fast( Xml.parse( m_MenuGraph.m_Text ).firstElement() );
 		
 		// First creating all possible states
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
 			if ( i_FMenuNode.att.id == "Stage" )
 			{
-				AddMenuNode( GameGlb.g_Stage );
+				//AddMenuNode( GameGlb.g_Stage );
 			}
 			else
 			{
@@ -183,6 +213,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		{
 			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
+		m_Loaded = true;
 	}
 	
 	private function RecurseDiv( _CurrentDiv : C2DContainer, _FCurrentDiv : Fast, _Parent : C2DContainer, _MenuNode : CMenuNode )
@@ -233,7 +264,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 	{		
 		trace ("");
 		trace( " " + _ObjectParent +" - " + _Object + " >");
-		var FStyle		: Fast = new Fast( Xml.parse( haxe.Resource.getString( "menustyle") ).firstElement() );
+		var FStyle		: Fast = new Fast( Xml.parse( m_MenuStyle.m_Text ).firstElement() );
 		
 		var l_ParentSize		: CV2D = new CV2D( 0, 0 );
 		var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );

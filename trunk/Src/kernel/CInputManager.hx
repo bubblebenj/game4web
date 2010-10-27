@@ -7,6 +7,8 @@ package kernel;
 
 import kernel.CMouse;
 import math.CV2D;
+import math.Registers;
+import renderer.camera.C2DCamera;
 import rsc.CRsc;
 import rsc.CRscMan;
 
