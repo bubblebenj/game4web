@@ -91,7 +91,6 @@ class CBeegonMainClient
 		//g_GameMenu.GetMenuNode( "Game" ).AddTransition( "MainMenu", "QuitGame" );
 		//g_GameMenu.GetMenuNode( "Option" ).AddTransition( "MainMenu" );
 		//
-		g_GameMenu.CreateGraph();
 		
 		g_GameMenu.Initialize( "MainMenu" );
 		

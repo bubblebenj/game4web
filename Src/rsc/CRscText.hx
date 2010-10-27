@@ -23,4 +23,9 @@ class CRscText extends CRsc
 	{
 		super();
 	}
+	
+	public function GetTextData() : String
+	{
+		return null;
+	}
 }

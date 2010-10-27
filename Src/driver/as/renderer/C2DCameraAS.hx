@@ -21,12 +21,22 @@ class C2DCameraAS extends C2DCamera
 	
 	override public function SetPosition( _Pos : CV2D ) : Void
 	{
-		CV2D.Sub( _Pos, _Pos, m_Coordinate );
-		m_Matrix.translate( _Pos.x, _Pos.y );
+		var x = _Pos.x - m_Coordinate.x;
+		var y = _Pos.y - m_Coordinate.y;
+		
+		m_Matrix.translate( x, y );
+		
+		super.SetPosition( _Pos );
 	}
 	
 	public function GetMatrix() : Matrix
 	{
 		return m_Matrix.clone();
+	}
+	
+	override public function SetScale( _Value : Float ) : Void
+	{
+		m_Matrix.scale( _Value, _Value );
+		super.SetScale( _Value );
 	}
 }

@@ -44,7 +44,7 @@ class CRscTextAS extends CRscText
 		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
-	public function GetTextData() : String
+	public override function GetTextData() : String
 	{
 		if  ( m_State == STREAMED )
 		{
