@@ -54,6 +54,34 @@ class CMatrix44
 		{	
 			return *(V3D*)&(m[3][0]);
 		}
+		
+			
+	inline void MatrixFromBase( OUT Matrix & _Out, IN const V3D & _At,IN const V3D & _Up, IN const V3D & _Right, IN const V3D & _Pos )
+	{
+		_Out.SetIdentity();
+
+		_Out.At() = _At;
+		_Out.Up() = _Up;
+		_Out.Right() = _Right;
+
+		_Out.Pos() = _Pos;
+	};
+
+	inline void  MatrixFromTRS(	Matrix & _Out, 
+								const V3D & _T,
+								const Quat & _R, 
+								const V3D & _S )
+	{
+		_Out.SetIdentity();
+		_R.GetMatrix(_Out);
+
+		Matrix l_Scaling;
+
+		MatrixScaling(l_Scaling,_S.x,_S.y,_S.z);
+		MatrixMultiply(_Out,_Out,l_Scaling);
+
+		_Out.Pos() = _T;
+	}
 	  * */
 	 
 	  
