@@ -26,7 +26,12 @@ class C2DContainer extends C2DQuad
 	
 	private var m_2DObjects	: Array<C2DQuad>;
 	
-	public function AddObject( _Object : C2DQuad ) : Result
+	public function GetElements() : Array<C2DQuad>
+	{
+		return m_2DObjects;
+	}
+	
+	public function AddElement( _Object : C2DQuad ) : Result
 	{
 		var l_AlreadyExists : Bool = false;
 		for ( i_2DObject in m_2DObjects )

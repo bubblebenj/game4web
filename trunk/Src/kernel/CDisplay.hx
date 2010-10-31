@@ -16,4 +16,16 @@ class CDisplay
 	
 	public var m_Width : Float;
 	public var m_Height  : Float;
+	
+	public function GetAspectRatio() : Float
+	{
+		if ( m_Height != 0 )
+		{
+			return m_Width / m_Height;
+		}
+		else
+		{
+			return Math.NaN;
+		}
+	}
 }

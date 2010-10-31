@@ -80,7 +80,8 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			
 			if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 			{
-				Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
+				Registers.V2_8.Set(	m_DisplayObject.width / Glb.GetSystem().m_Display.m_Width,
+									m_DisplayObject.height / Glb.GetSystem().m_Display.m_Height );
 				SetSize( Registers.V2_8 );
 			}
 			else

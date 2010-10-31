@@ -163,11 +163,6 @@ class CSystem
 		return m_InputManager;
 	}
 	
-	public inline function GetMouse() : CMouse
-	{
-		return GetInputManager().m_Mouse;
-	}
-	
 	public function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");

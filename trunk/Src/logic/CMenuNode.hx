@@ -22,15 +22,16 @@ enum EInternalNodeState   	// C&D EMenuState
 
 typedef NodeId = String;
 
-class CMenuNode extends C2DContainer				// C&D MenuState
+class CMenuNode				// C&D MenuState
 {
 	private var m_Id			: NodeId;
 	private var	m_MenuGraph		: CMenuGraph;
+	private var m_EltsContainer	: C2DContainer;
 	
 	public function new( _Id : String ) 
 	{
-		super();
-		m_Id		= _Id;
+		m_Id			= _Id;
+		m_EltsContainer	= null;
 	}
 	
 	/*
@@ -39,6 +40,16 @@ class CMenuNode extends C2DContainer				// C&D MenuState
 	public function GetId() : String
 	{
 		return	m_Id;
+	}
+	
+	public function GetContainer() : C2DContainer
+	{
+		return m_EltsContainer;
+	}
+	
+	public function SetContainer( _Container : C2DContainer ) : Void
+	{
+		m_EltsContainer	= _Container;
 	}
 	
 	/* _TransitionId : The name you want to use to trigger the transition
@@ -60,53 +71,53 @@ class CMenuNode extends C2DContainer				// C&D MenuState
 		m_MenuGraph = _MenuGraph;
 	}
 	
-	public override function Update() : Result
+	public function Update() : Result
 	{
-		super.Update();
+		m_EltsContainer.Update();
 		return SUCCESS;
 	}
 	
 	/*
 	 * GRAPHIC PART
 	 */
-	public override function Activate() : Result
+	public function Activate() : Result
 	{
-		super.Activate();
+		m_EltsContainer.Activate();
 		return SUCCESS;
 	}
 	
 	public function FadeIn() : Void
 	{
 		Activate();
-		var l_Tween = new CTween( this.SetAlpha, 0, 1, 150, CLinear.Float_VaryIn, EnableButtons  );
+		var l_Tween = new CTween( m_EltsContainer.SetAlpha, 0, 1, 150, CLinear.Float_VaryIn, EnableButtons  );
 		l_Tween.Start();
 	}
 	
 	public function FadeOut() : Void
 	{
 		DisableButtons();
-		var l_Tween = new CTween( this.SetAlpha, 1, 0, 250, CLinear.Float_VaryIn, Shut );
+		var l_Tween = new CTween( m_EltsContainer.SetAlpha, 1, 0, 250, CLinear.Float_VaryIn, m_EltsContainer.Shut );
 		l_Tween.Start();
 	}
 	
 	public function EnableButtons() : Void
 	{
-		for ( i_Object in m_2DObjects )
+		for ( i_Element in m_EltsContainer.GetElements() )
 		{
-			if ( Type.getClassName( Type.getClass( i_Object ) ) == "logic.CButton" )
+			if ( Type.getClassName( Type.getClass( i_Element ) ) == "logic.CButton" )
 			{
-				cast( i_Object, CButton).Enable();
+				cast( i_Element, CButton).Enable();
 			}
 		}
 	}
 	
 	public function DisableButtons() : Void
 	{
-		for ( i_Object in m_2DObjects )
+		for ( i_Element in m_EltsContainer.GetElements() )
 		{
-			if ( Type.getClassName( Type.getClass( i_Object ) ) == "logic.CButton" )
+			if ( Type.getClassName( Type.getClass( i_Element ) ) == "logic.CButton" )
 			{
-				cast( i_Object, CButton).Disable();
+				cast( i_Element, CButton).Disable();
 			}
 		}
 	}

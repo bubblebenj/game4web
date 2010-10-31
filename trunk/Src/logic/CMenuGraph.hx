@@ -12,7 +12,6 @@ import math.CV2D;
 
 import haxe.xml.Fast;
 import Xml;
-import haxe.Resource;
 
 import kernel.CTypes;
 import kernel.CDebug;
@@ -191,27 +190,31 @@ class CMenuGraph extends CRsc			// C&D Menu
 	
 	public function CreateGraph()
 	{
-		trace( m_MenuGraph.IsLoaded() );
-		m_Loaded = true;
-		return;
-		var l_FGraph	: Fast = new Fast( Xml.parse( m_MenuGraph.m_Text ).firstElement() );
+		var l_Xml		: Xml	= Xml.parse( m_MenuGraph.m_Text );
+		var l_FGraph	: Fast	= new Fast( l_Xml.firstElement() );
 		
 		// First creating all possible states
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
 			if ( i_FMenuNode.att.id == "Stage" )
 			{
-				//AddMenuNode( GameGlb.g_Stage );
+				AddMenuNode( new CMenuNode( "Stage" ) );
+				GetMenuNode( "Stage" ).SetContainer( GameGlb.g_Stage );
 			}
 			else
 			{
 				AddMenuNode( new CMenuNode( i_FMenuNode.att.id ) );
+				GetMenuNode( i_FMenuNode.att.id ).SetContainer( new C2DContainer() );
 			}
 		}
+		var i = 0;
 		// then making transition
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
-			RecurseDiv( m_States.get( i_FMenuNode.att.id ), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
+			trace( i_FMenuNode.att.id );
+			RecurseDiv( GetMenuNode( i_FMenuNode.att.id ).GetContainer(), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
+			trace( i );
+			i++;
 		}
 		m_Loaded = true;
 	}
@@ -225,7 +228,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			var l_C2DImage	: C2DImage	= new C2DImage();
 			l_C2DImage.Load( i_FImages.att.src );
 			ApplyStyle( l_C2DImage, i_FImages, _CurrentDiv );
-			_CurrentDiv.AddObject( l_C2DImage );
+			_CurrentDiv.AddElement( l_C2DImage );
 		}
 		
 		var l_NewDiv	: C2DContainer;
@@ -255,14 +258,13 @@ class CMenuGraph extends CRsc			// C&D Menu
 			{
 				l_NewDiv	= new C2DContainer();
 			}
-			_CurrentDiv.AddObject( l_NewDiv );
+			_CurrentDiv.AddElement( l_NewDiv );
 			RecurseDiv( l_NewDiv, i_FSubDiv, _CurrentDiv, _MenuNode );
 		}
 	}
 	
 	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DQuad )
 	{		
-		trace ("");
 		trace( " " + _ObjectParent +" - " + _Object + " >");
 		var FStyle		: Fast = new Fast( Xml.parse( m_MenuStyle.m_Text ).firstElement() );
 		
@@ -270,7 +272,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );
 		if ( _ObjectParent == null )
 		{
-			l_ParentSize.Set( Glb.g_System.m_Display.m_Width, Glb.g_System.m_Display.m_Height );
+			l_ParentSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
 			l_ParentCoordinate.Set(	0, 0 );
 		}
 		else
@@ -346,6 +348,8 @@ class CMenuGraph extends CRsc			// C&D Menu
 						l_x = ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.x);
 						l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.y);
 						l_Size.Set( l_x, l_y );
+						l_Size.x /= Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+						l_Size.y /= Glb.GetSystem().m_Display.m_Height;
 					}
 					default	:
 					{
@@ -371,6 +375,8 @@ class CMenuGraph extends CRsc			// C&D Menu
 					{
 						l_Coordinate.Set(	Std.parseFloat(_FStyle.node.align.att.x ),
 											Std.parseFloat(_FStyle.node.align.att.y ) );
+						l_Coordinate.x /= Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+						l_Coordinate.y /= Glb.GetSystem().m_Display.m_Height;
 					}
 					default		:
 					{
@@ -378,7 +384,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 						trace( "Accepted values unit=\"%|px\"" );
 					}
 				}
-				
 				
 				CV2D.Add( l_Coordinate, _ParentCoordinate, l_Coordinate );
 				switch ( _FStyle.node.align.att.handle )

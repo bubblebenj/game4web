@@ -62,8 +62,8 @@ class C2DQuadAS extends C2DQuad
 		super.SetCenterPosition(_Pos);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.x		= GetTL().x;
-			m_DisplayObject.y		= GetTL().y;
+			m_DisplayObject.x		= GetTL().x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.y		= GetTL().y * Glb.GetSystem().m_Display.m_Height;
 		}
 	}
 	
@@ -72,8 +72,8 @@ class C2DQuadAS extends C2DQuad
 		super.SetTLPosition(_Pos);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.x		= _Pos.x;
-			m_DisplayObject.y		= _Pos.y;
+			m_DisplayObject.x		= _Pos.x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.y		= _Pos.y * Glb.GetSystem().m_Display.m_Height;
 		}
 	}
 	
@@ -82,8 +82,8 @@ class C2DQuadAS extends C2DQuad
 		super.SetSize(_Size);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.width	= _Size.x;
-			m_DisplayObject.height	= _Size.y;
+			m_DisplayObject.width	= _Size.x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.height	= _Size.y * Glb.GetSystem().m_Display.m_Height;
 		}
 	}
 	
@@ -94,8 +94,8 @@ class C2DQuadAS extends C2DQuad
 		if( m_DisplayObject != null )
 		{
 			SetVisible( m_Visible );
-			m_DisplayObject.width	= GetSize().x;
-			m_DisplayObject.height	= GetSize().y;
+			m_DisplayObject.width	= GetSize().x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.height	= GetSize().y * Glb.GetSystem().m_Display.m_Height;
 		}
 		
 		return SUCCESS;
