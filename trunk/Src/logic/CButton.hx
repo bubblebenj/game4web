@@ -5,15 +5,12 @@
 
 package logic;
 
-import CDriver;
-import logic.collision.CColPoint;
-
+//import CDriver;
 import kernel.Glb;
 import kernel.CTypes;
 
 import logic.CFiniteStateMachine;
-import logic.C2DContainer;
-import logic.CMenuTransition;
+
 
 enum BUTTON_INTERACTION_STATE 
 {
@@ -40,6 +37,10 @@ enum BUTTON_TRANS_CONDITION
 	B_TC_SET_ON;
 	B_TC_SET_OFF;
 }
+
+#if flash
+	typedef C2DContainer	= driver.as.renderer.C2DContainerAS;
+#end
 
 class CButton extends C2DContainer
 {

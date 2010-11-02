@@ -4,6 +4,7 @@
  */
 
 package logic;
+
 import CDriver;
 import rsc.CRscText;
 import tools.CXml;

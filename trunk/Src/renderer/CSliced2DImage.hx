@@ -5,7 +5,6 @@
 package renderer;
 
 import CDriver;
-import logic.C2DContainer;
 import kernel.CTypes;
 import math.CV2D;
 import math.CV4D;
