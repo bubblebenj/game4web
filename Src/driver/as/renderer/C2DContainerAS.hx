@@ -1,30 +1,35 @@
 /**
  * ...
- * @author Benjamin Dubois
+ * @author bdubois
  */
 
-package logic;
+package driver.as.renderer;
 
+
+import CDriver;
+import flash.display.Sprite;
+
+import renderer.C2DQuad;
+import renderer.I2DContainer;
 import kernel.CDebug;
 import kernel.CTypes;
 import math.Registers;
-
-import logic.IContent;
 
 import math.CRect2D;
 import math.CV2D;
 
 import renderer.C2DQuad;
 
-class C2DContainer extends C2DQuad
+class C2DContainerAS extends C2DQuadAS, implements I2DContainer
 {
-	public function new() 
+	private var m_2DObjects	: Array<C2DQuad>;
+	
+	public function new()
 	{
 		super();
-		m_2DObjects	= new Array<C2DQuad>();
+		m_2DObjects		= new Array<C2DQuad>();
+		m_DisplayObject	= new Sprite();
 	}
-	
-	private var m_2DObjects	: Array<C2DQuad>;
 	
 	public function GetElements() : Array<C2DQuad>
 	{
@@ -33,6 +38,15 @@ class C2DContainer extends C2DQuad
 	
 	public function AddElement( _Object : C2DQuad ) : Result
 	{
+		
+		if ( m_DisplayObject != null )
+		{
+			if ( Reflect.hasField( _Object, "m_DisplayObject" ) )
+			{
+				cast ( m_DisplayObject, Sprite ).addChild( cast ( _Object, C2DQuadAS ).m_DisplayObject );
+			}
+		}
+		
 		var l_AlreadyExists : Bool = false;
 		for ( i_2DObject in m_2DObjects )
 		{

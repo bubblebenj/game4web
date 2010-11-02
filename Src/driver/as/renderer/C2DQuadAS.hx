@@ -8,6 +8,7 @@ package driver.as.renderer;
 import flash.display.DisplayObject;
 import flash.geom.Matrix;
 import flash.geom.Transform;
+import flash.Lib;
 import kernel.CTypes;
 import kernel.Glb;
 import math.Constants;
@@ -32,7 +33,14 @@ class C2DQuadAS extends C2DQuad
 		Glb.GetRendererAS().AddToScene( this );
 		if ( m_DisplayObject != null )
 		{
-			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			if ( m_DisplayObject.parent == Lib.current.stage )
+			{
+				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			}
+			else
+			{
+				m_DisplayObject.parent.addChild( m_DisplayObject );
+			}
 		}
 		return SUCCESS;
 	}
@@ -43,7 +51,14 @@ class C2DQuadAS extends C2DQuad
 		Glb.GetRendererAS().RemoveFromScene( this );
 		if ( m_DisplayObject != null )
 		{
-			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			if ( m_DisplayObject.parent == Lib.current.stage )
+			{
+				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			}
+			else
+			{
+				m_DisplayObject.parent.removeChild( m_DisplayObject );
+			}
 		}
 		return SUCCESS;
 	}
@@ -53,7 +68,10 @@ class C2DQuadAS extends C2DQuad
 		if ( _Vis != m_Visible )
 		{
 			super.SetVisible( _Vis );
-			m_DisplayObject.visible = _Vis;
+			if( m_DisplayObject != null )
+			{
+				m_DisplayObject.visible = _Vis;
+			}
 		}
 	}
 	
