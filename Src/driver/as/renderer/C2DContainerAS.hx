@@ -23,12 +23,14 @@ import renderer.C2DQuad;
 class C2DContainerAS extends C2DQuadAS, implements I2DContainer
 {
 	private var m_2DObjects	: Array<C2DQuad>;
+	private var m_CameraAS	: C2DCameraAS;
 	
 	public function new()
 	{
 		super();
 		m_2DObjects		= new Array<C2DQuad>();
 		m_DisplayObject	= new Sprite();
+		m_CameraAS		= new C2DCameraAS();
 	}
 	
 	public function GetElements() : Array<C2DQuad>
@@ -43,7 +45,10 @@ class C2DContainerAS extends C2DQuadAS, implements I2DContainer
 		{
 			if ( Reflect.hasField( _Object, "m_DisplayObject" ) )
 			{
-				cast ( m_DisplayObject, Sprite ).addChild( cast ( _Object, C2DQuadAS ).m_DisplayObject );
+				if ( cast ( _Object, C2DQuadAS ).m_DisplayObject != null )
+				{
+					cast ( m_DisplayObject, Sprite ).addChild( cast ( _Object, C2DQuadAS ).m_DisplayObject );
+				}
 			}
 		}
 		
@@ -176,6 +181,9 @@ class C2DContainerAS extends C2DQuadAS, implements I2DContainer
 		{
 			i_Object.Update();
 		}
+		var l_InvMatrix = m_CameraAS.m_Matrix.clone();
+		l_InvMatrix.invert();
+		cast ( m_DisplayObject, Sprite ).transform.matrix = l_InvMatrix;
 		return SUCCESS;
 	}
 	

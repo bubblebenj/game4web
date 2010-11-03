@@ -33,13 +33,9 @@ class C2DQuadAS extends C2DQuad
 		Glb.GetRendererAS().AddToScene( this );
 		if ( m_DisplayObject != null )
 		{
-			if ( m_DisplayObject.parent == Lib.current.stage )
+			if ( m_DisplayObject.parent == null )
 			{
 				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-			}
-			else
-			{
-				m_DisplayObject.parent.addChild( m_DisplayObject );
 			}
 		}
 		return SUCCESS;
@@ -54,10 +50,6 @@ class C2DQuadAS extends C2DQuad
 			if ( m_DisplayObject.parent == Lib.current.stage )
 			{
 				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
-			}
-			else
-			{
-				m_DisplayObject.parent.removeChild( m_DisplayObject );
 			}
 		}
 		return SUCCESS;
@@ -75,7 +67,7 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
-	override public function SetCenterPosition( _Pos : CV2D ):Void 
+	override public function SetCenterPosition( _Pos : CV2D ) : Void 
 	{
 		super.SetCenterPosition(_Pos);
 		if( m_DisplayObject != null )
