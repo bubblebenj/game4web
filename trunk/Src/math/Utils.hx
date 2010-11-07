@@ -31,6 +31,15 @@ class Utils
 		}
 	}
 	
+	/* Remove extra digits from a float. Useful for debug */
+	public static function CutDigits( _Nb : Float, _NbDigits : Int ) : Float
+	{
+		_Nb *= Math.pow( 10, _NbDigits);
+		_Nb = RoundNearestF( _Nb );
+		_Nb /= Math.pow( 10, _NbDigits);
+		return _Nb;
+	}
+	
 	
 	/* Maximum base 16 */
 	public static function IntToStr( _Nb : Int, _Base : Int ) : String

@@ -92,7 +92,7 @@ class CDrawObject
 		{
 			return FAILURE;
 		}
-		m_Cameras[_VpIndex] =  _Cam;
+		//m_Cameras[_VpIndex] =  _Cam;
 		return SUCCESS;
 	}
 	

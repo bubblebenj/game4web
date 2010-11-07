@@ -9,6 +9,8 @@ import flash.display.Bitmap;
 import driver.as.rsc.CRscImageAS;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
 import flash.sampler.NewObjectSample;
 import math.CV4D;
 import math.Registers;
@@ -28,13 +30,16 @@ import rsc.CRscImage;
 
 class C2DImageAS extends C2DQuadAS, implements I2DImage 
 {
+	public	var m_Loading	: Bool;
+	
 	public function new()
 	{
 		super();
-		m_DisplayObject	= null;
+		m_Loading		= false;
+		m_DisplayObject	= new Bitmap( new BitmapData( 8, 8, false, 0x00FF00 ) );
 		m_RscImage		= null;
 		m_Visible		= false;
-		m_UV = new CV4D(0,0,1,1);
+		m_UV = new CV4D(0, 0, 1, 1);
 	}
 
 	private var m_UV : CV4D;
@@ -46,6 +51,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	
 	public function Load( _Path )	: Result
 	{
+		m_Loading	= true;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
 		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
@@ -74,8 +80,9 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	{
 		if ( 	m_RscImage			!= null
 		&& 		m_RscImage.m_State	== E_STATE.STREAMED
-		&&		m_DisplayObject 	== null )
+		&&		m_Loading )
 		{
+			m_Loading	= false;
 			CreateBitmap();
 			
 			if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
@@ -88,12 +95,16 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			{
 				SetSize( GetSize() );
 			}
+			
 			SetCenterPosition( GetCenter() );
 			
 			SetVisible( m_Visible );
 			if ( m_Activated )
 			{
-				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
+				if ( m_DisplayObject.parent == null )
+				{
+					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+				}
 			}
 		}
 		return SUCCESS;
@@ -128,5 +139,18 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		var l_y = Utils.RoundNearest( l_LocalCoord.y );
 		
 		return cast( m_DisplayObject, Bitmap ).bitmapData.getPixel32( l_x, l_y ) ;
+	}
+	
+	// Debug functions
+	public override function DebugInfo() : String
+	{
+		var l_Url		= ( m_RscImage	!= null)? m_RscImage.GetPath() : null;
+		return this +", Pos: " + GetCenter().ToString() + ", Sz: " + GetSize().ToString() + " URL: " + l_Url;
+	}
+	
+	public override function DebugInfoAS() : String
+	{
+		var l_RenderPriority	= ( m_DisplayObject.parent != null ) ? m_DisplayObject.parent.getChildIndex( m_DisplayObject ) : null;
+		return this +", ["+l_RenderPriority+"]\t Pos: [" + m_DisplayObject.localToGlobal( new Point( m_DisplayObject.x, m_DisplayObject.y ) ) +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]";
 	}
 }

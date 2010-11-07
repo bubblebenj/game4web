@@ -5,11 +5,14 @@
 
 package logic;
 
-//import CDriver;
+import CDriver;
+
 import kernel.Glb;
 import kernel.CTypes;
 
 import logic.CFiniteStateMachine;
+
+import renderer.C2DContainer;
 
 
 enum BUTTON_INTERACTION_STATE 
@@ -38,10 +41,6 @@ enum BUTTON_TRANS_CONDITION
 	B_TC_SET_OFF;
 }
 
-#if flash
-	typedef C2DContainer	= driver.as.renderer.C2DContainerAS;
-#end
-
 class CButton extends C2DContainer
 {
 	private var m_InteractFSM	: CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>;
@@ -51,7 +50,6 @@ class CButton extends C2DContainer
 	public function new()
 	{
 		super();
-
 		m_InteractFSM		= new CFiniteStateMachine<BUTTON_INTERACTION_STATE, BUTTON_TRANS_CONDITION>();
 		CreateActuators();
 		m_InteractFSM.Initialize( B_IST_DISABLED );

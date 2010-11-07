@@ -29,11 +29,6 @@ class C2DCameraAS extends C2DCamera
 		super.SetPosition( _Pos );
 	}
 	
-	public function GetMatrix() : Matrix
-	{
-		return m_Matrix.clone();
-	}
-	
 	override public function SetScale( _Value : Float ) : Void
 	{
 		m_Matrix.scale( _Value, _Value );
