@@ -53,7 +53,7 @@ class CV2D
 	
 	public inline function ToString() : String
 	{
-		return ("( "+x+" , "+y+" )");
+		return ("[x="+Utils.CutDigits(x, 3)+" , y="+Utils.CutDigits(y, 3)+" ]");
 	}
 	
 	public inline function TestCopy( _V2D : { x : Float, y : Float } )

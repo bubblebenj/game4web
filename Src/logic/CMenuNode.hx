@@ -6,8 +6,13 @@
 package logic;
 
 import CDriver;
+
+
 import kernel.CTypes;
 import math.CMatrix44;
+
+import renderer.C2DContainer;
+
 import tools.transition.CTween;
 import tools.transition.interpolation.CLinear;
 
@@ -51,6 +56,7 @@ class CMenuNode				// C&D MenuState
 	public function SetContainer( _Container : C2DContainer ) : Void
 	{
 		m_EltsContainer	= _Container;
+		m_EltsContainer.m_Name	= m_Id;
 	}
 	
 	/* _TransitionId : The name you want to use to trigger the transition
@@ -75,6 +81,7 @@ class CMenuNode				// C&D MenuState
 	public function Update() : Result
 	{
 		m_EltsContainer.Update();
+		m_EltsContainer.ShowTree();
 		return SUCCESS;
 	}
 	

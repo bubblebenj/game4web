@@ -6,6 +6,7 @@
 package logic;
 
 import CDriver;
+import renderer.C2DContainer;
 import rsc.CRscText;
 import tools.CXml;
 
@@ -60,10 +61,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 	
 	public function Load( _XMLGraphPath : String, _XMLStylePath : String ) : Result
 	{
-		trace( "HOP" );
 		m_MenuGraph.Load( _XMLGraphPath );
-		trace( "HIP" );
-		
 		m_MenuStyle.Load( _XMLStylePath );
 		return SUCCESS;
 	}
@@ -75,6 +73,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 	
 	public function Update()	: Void
 	{
+		
 		if ( m_Loaded == false )
 		{
 			m_MenuGraph.Update();
@@ -214,8 +213,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 		{
 			trace( i_FMenuNode.att.id );
 			RecurseDiv( GetMenuNode( i_FMenuNode.att.id ).GetContainer(), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
-			trace( i );
-			i++;
 		}
 		m_Loaded = true;
 	}
@@ -232,10 +229,9 @@ class CMenuGraph extends CRsc			// C&D Menu
 			_CurrentDiv.AddElement( l_C2DImage );
 		}
 		
-		var l_NewDiv	: C2DContainer;
 		for ( i_FSubDiv in _FCurrentDiv.nodes.div )
 		{
-			
+			var l_NewDiv	: C2DContainer;
 			if ( i_FSubDiv.has.href )	// if a button
 			{
 				l_NewDiv	= new CButton();
@@ -244,16 +240,17 @@ class CMenuGraph extends CRsc			// C&D Menu
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href, i_FSubDiv.att.name ) == SUCCESS )
 					{
 						cast( l_NewDiv, CButton ).SetCmd( Actuate, [i_FSubDiv.att.name] );
+						l_NewDiv.m_Name	= i_FSubDiv.att.name;
 					}
 				}
 				else
 				{
 					if ( _MenuNode.AddTransition( i_FSubDiv.att.href ) == SUCCESS )
 					{
-						cast( l_NewDiv, CButton ).SetCmd( Actuate, ["Transition_"+ _MenuNode.GetId() +"_to_"+ i_FSubDiv.att.href] );
+						cast( l_NewDiv, CButton ).SetCmd( Actuate, ["Transition_" + _MenuNode.GetId() +"_to_" + i_FSubDiv.att.href] );
+						l_NewDiv.m_Name	= "Transition_" + _MenuNode.GetId() +"_to_" + i_FSubDiv.att.href;
 					}
 				}
-				
 			}
 			else
 			{
@@ -349,7 +346,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 						l_x = ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.x);
 						l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.y);
 						l_Size.Set( l_x, l_y );
-						l_Size.x /= Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+						l_Size.x /= Glb.GetSystem().m_Display.m_Height;
 						l_Size.y /= Glb.GetSystem().m_Display.m_Height;
 					}
 					default	:
@@ -368,7 +365,6 @@ class CMenuGraph extends CRsc			// C&D Menu
 				{
 					case "%"	:
 					{
-						//trace( FStyle.node.body.node.size.att.x +" " + FStyle.node.body.node.size.att.y );
 						l_Coordinate.Set(	_ParentSize.x * Std.parseFloat(_FStyle.node.align.att.x ) * 0.01,
 											_ParentSize.y * Std.parseFloat(_FStyle.node.align.att.y) * 0.01 ) ;
 					}
@@ -376,7 +372,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 					{
 						l_Coordinate.Set(	Std.parseFloat(_FStyle.node.align.att.x ),
 											Std.parseFloat(_FStyle.node.align.att.y ) );
-						l_Coordinate.x /= Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+						l_Coordinate.x /= Glb.GetSystem().m_Display.m_Height;
 						l_Coordinate.y /= Glb.GetSystem().m_Display.m_Height;
 					}
 					default		:

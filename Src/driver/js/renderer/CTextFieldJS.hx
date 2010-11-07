@@ -1,25 +1,34 @@
 package driver.js.renderer;
+
+import kernel.CTypes;
+import kernel.Glb;
+
 import renderer.C2DQuad;
+import renderer.ITextField;
+
+import rsc.CRscText;
+import rsc.CRscMan;
 
 /**
  * ...
  * @author bdubois
  */
 
-class CTextFieldJS extends C2DQuad, implements I2DImage 
+class CTextFieldJS extends C2DQuad, implements ITextField 
 {
 	public function new() 
 	{
-		
+		super();
 	}
 	
 	public function Load( _Path )	: Result
 	{
-		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
+		//var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
+		//
+		//var l_Res = SetRsc( cast( l_RscMan.Load( CRscText.RSC_ID , _Path ), CRscTextJS ) );
 		
-		var l_Res = SetRsc( cast( l_RscMan.Load( CRscText.RSC_ID , _Path ), CRscTextJS ) );
-		
-		return l_Res;
+		//return l_Res;
+		return SUCCESS;
 	}
 	
 	public function SetRsc( _Rsc : CRscText )	: Result
@@ -38,5 +47,6 @@ class CTextFieldJS extends C2DQuad, implements I2DImage
 	{
 		return SUCCESS;
 	}
-
+	
+	private var m_RscText	: CRscText;
 }

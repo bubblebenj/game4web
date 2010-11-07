@@ -6,7 +6,9 @@
 package driver.as.renderer;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.geom.Matrix;
+import flash.geom.Point;
 import flash.geom.Transform;
 import flash.Lib;
 import kernel.CTypes;
@@ -26,18 +28,16 @@ class C2DQuadAS extends C2DQuad
 		super();
 		m_Visible	= true;
 	}
-
+	
 	public override function Activate() : Result
 	{
 		super.Activate();
 		Glb.GetRendererAS().AddToScene( this );
 		if ( m_DisplayObject != null )
 		{
-			if ( m_DisplayObject.parent == null )
-			{
-				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-			}
+			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
 		}
+		
 		return SUCCESS;
 	}
 	
@@ -47,10 +47,7 @@ class C2DQuadAS extends C2DQuad
 		Glb.GetRendererAS().RemoveFromScene( this );
 		if ( m_DisplayObject != null )
 		{
-			if ( m_DisplayObject.parent == Lib.current.stage )
-			{
-				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
-			}
+			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
 		}
 		return SUCCESS;
 	}
@@ -72,8 +69,12 @@ class C2DQuadAS extends C2DQuad
 		super.SetCenterPosition(_Pos);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.x		= GetTL().x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.x		= GetTL().x * Glb.GetSystem().m_Display.m_Height;
 			m_DisplayObject.y		= GetTL().y * Glb.GetSystem().m_Display.m_Height;
+		}
+		else
+		{
+			trace( " Warning : m_DisplayObject is null, position not set " );
 		}
 	}
 	
@@ -82,18 +83,26 @@ class C2DQuadAS extends C2DQuad
 		super.SetTLPosition(_Pos);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.x		= _Pos.x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.x		= _Pos.x * Glb.GetSystem().m_Display.m_Height;
 			m_DisplayObject.y		= _Pos.y * Glb.GetSystem().m_Display.m_Height;
+		}
+		else
+		{
+			trace( " Warning : m_DisplayObject is null, position not set " );
 		}
 	}
 	
-	override public function SetSize( _Size :CV2D ) : Void
+	override public function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize(_Size);
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.width	= _Size.x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
+			m_DisplayObject.width	= _Size.x * Glb.GetSystem().m_Display.m_Height;
 			m_DisplayObject.height	= _Size.y * Glb.GetSystem().m_Display.m_Height;
+		}
+		else
+		{
+			trace( " Warning : m_DisplayObject is null, size not set " );
 		}
 	}
 	
@@ -101,12 +110,12 @@ class C2DQuadAS extends C2DQuad
 	{
 		super.Draw( _Vp );
 		
-		if( m_DisplayObject != null )
-		{
-			SetVisible( m_Visible );
-			m_DisplayObject.width	= GetSize().x * Glb.GetSystem().m_Display.m_Height; // Glb.GetSystem().m_Display.m_Width;
-			m_DisplayObject.height	= GetSize().y * Glb.GetSystem().m_Display.m_Height;
-		}
+		//if( m_DisplayObject != null )
+		//{
+			//SetVisible( m_Visible );
+			//m_DisplayObject.width	= GetSize().x * Glb.GetSystem().m_Display.m_Height;
+			//m_DisplayObject.height	= GetSize().y * Glb.GetSystem().m_Display.m_Height;
+		//}
 		
 		return SUCCESS;
 	}
@@ -160,5 +169,24 @@ class C2DQuadAS extends C2DQuad
 	public function IsLoaded()	: Bool
 	{
 		return  ( m_DisplayObject != null ) ? true : false;
+	}
+	
+	// debug functions
+	public function DebugInfo() : String
+	{
+		return this +", Pos: " + GetCenter().ToString() + ", Sz: " + GetSize().ToString();
+	}
+	
+	public function DebugInfoAS() : String
+	{
+		if ( m_DisplayObject != null )
+		{
+			var l_RenderPriority	= ( m_DisplayObject.parent != null ) ? m_DisplayObject.parent.getChildIndex( m_DisplayObject ) : null;
+			return this +", "+ m_DisplayObject +", ["+l_RenderPriority+"] \t Pos: [" + m_DisplayObject.localToGlobal( new Point( m_DisplayObject.x, m_DisplayObject.y ) ) +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]";
+		}
+		else
+		{
+			return this + "m_DisplayObject not initialize";
+		}
 	}
 }
