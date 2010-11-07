@@ -7,7 +7,7 @@ package rsc;
 
 import rsc.CRsc;
 import rsc.CRscBuilder;
-import logic.CMenuGraph;
+//import logic.CMenuGraph;
 
 class CRscCommonFactory extends CRscBuilder 
 {
@@ -18,6 +18,7 @@ class CRscCommonFactory extends CRscBuilder
 	
 	public override function Build( _Type : RSC_TYPES, _Path : String ) : CRsc
 	{
+		/*
 		var l_Rsc : CRsc = null;
 		
 		switch( _Type )
@@ -30,7 +31,7 @@ class CRscCommonFactory extends CRscBuilder
 			default: trace("CRscASFactory :: Error: target type not found : " + _Type ); 
 			l_Rsc = null;
 		}
-		
-		return l_Rsc;
+		*/
+		return null;
 	}
 }

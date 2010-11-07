@@ -42,6 +42,9 @@ class CRscTextureJS extends CRscTexture
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, m_GlTexture);
 		//l_Gl.PixelStorei	(CGL.UNPACK_FLIP_Y_WEBGL, CGL.TRUE );
 		l_Gl.TexImage2D		(CGL.TEXTURE_2D, 0, CGL.RGBA, CGL.RGBA, CGL.UNSIGNED_BYTE, cast( m_RscImage, CRscImageJS).GetDriverImage() );
+		
+		//l_Gl.TexImage2D_2(CGL.TEXTURE_2D, 0, cast( m_RscImage, CRscImageJS).GetDriverImage(), true);
+		
 		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MAG_FILTER, CGL.LINEAR);
 		l_Gl.TexParameteri	(CGL.TEXTURE_2D, CGL.TEXTURE_MIN_FILTER, CGL.LINEAR);
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, null);
@@ -88,6 +91,12 @@ class CRscTextureJS extends CRscTexture
 				CDebug.CONSOLEMSG("GlError:PostActiveTexture:"+l_Stage+":" + l_Err);
 			}
 			l_Gl.BindTexture(CGL.TEXTURE_2D, m_GlTexture);
+			
+			if ( m_GlTexture == null )
+			{
+				CDebug.CONSOLEMSG("Invalid GLTexture handle");
+			}
+			
 			var l_Err = Glb.g_SystemJS.GetGL().GetError();
 			if ( l_Err  != 0)
 			{
@@ -107,6 +116,10 @@ class CRscTextureJS extends CRscTexture
 				if ( l_Res != SUCCESS )
 				{
 					CDebug.CONSOLEMSG("G4W:Error:ShaderCall:SetUniform1i:" + l_Err);
+				}
+				else 
+				{
+					//CDebug.CONSOLEMSG("G4W:Error:ShaderCall:SetUniform1i:Ok");	
 				}
 			}
 		}

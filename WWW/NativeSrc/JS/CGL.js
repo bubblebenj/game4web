@@ -402,6 +402,11 @@ CGL.prototype.TexImage2D = function( _Target,_Level,_Internalformat,_Format,_Typ
 	m_GLContext.texImage2D( _Target,_Level,_Internalformat,_Format,_Type,_Pixels );
 }
 
+CGL.prototype.TexImage2D_2 = function( _Target, _Level , _Img , _Dunno )
+{
+	m_GLContext.texImage2D( _Target, _Level , _Img , _Dunno  );
+}
+
 CGL.prototype.PolygonOffset = function( _factor,_units )
 {
 	m_GLContext.polygonOffset( _factor,_units);

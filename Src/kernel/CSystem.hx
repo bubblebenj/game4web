@@ -6,7 +6,7 @@ import haxe.Timer;
 import haxe.TimerQueue;
 import kernel.Glb;
 import kernel.CDisplay;
-import logic.CMenuGraph;
+//import logic.CMenuGraph;
 import math.Utils;
 import renderer.CRenderer;
 import rsc.CRscCommonFactory;
@@ -166,7 +166,8 @@ class CSystem
 	public function InitializeRscBuilders() : Result
 	{
 		CDebug.CONSOLEMSG("Builders created");
-		GetRscMan().AddBuilder( CMenuGraph.RSC_ID, 	m_RscCommonFactory );
+		
+		//GetRscMan().AddBuilder( CMenuGraph.RSC_ID, 	m_RscCommonFactory );
 		
 		return SUCCESS;
 	}

@@ -5,6 +5,7 @@
 
 package driver.js.renderer;
 
+import kernel.CDebug;
 import kernel.CSystem;
 
 import rsc.CRsc;
@@ -30,9 +31,15 @@ class CRscImageJS extends CRscImage
 		
 		var l_functor = function( x ) 
 		{ 
-			return function(_) ( { x.m_State = E_STATE.STREAMED;  } );
+			return function(_) ( 
+			{ 
+				CDebug.CONSOLEMSG("Streamed image : " + _Path );
+				x.m_State = E_STATE.STREAMED;  
+			}
+			);
 		};
 		
+		m_State = E_STATE.STREAMING;
 		m_Img.onload = l_functor(this);
 	}
 	

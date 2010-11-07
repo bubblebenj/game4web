@@ -296,7 +296,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		l_RdrContext.m_CurrentMaterial = m_Material;
 		l_RdrContext.m_CurrentRenderState = m_RenderStates;
 		
-		l_RdrContext.Activate();
+		var l_Res = l_RdrContext.Activate();
 		
 		var l_Err = Glb.g_SystemJS.GetGL().GetError();
 		if ( l_Err  != 0)
@@ -304,7 +304,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 			CDebug.CONSOLEMSG("GlError:post Render context Flush:" + l_Err);
 		}
 		
-		return SUCCESS;
+		return l_Res;
 	}
 	
 	public override function Update() : Result
