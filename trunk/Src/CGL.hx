@@ -103,8 +103,12 @@ extern class CGL
 	public function BindTexture( _Target: GLenum, _Tex : WebGLTexture): Void;
 	
 	public function PixelStorei( _pname : GLenum, _param : GLint ): Void;
+	
 	public function TexImage2D( _Target: GLenum, _Level: GLint, _Internalformat: GLenum,
 								_Format: GLenum, _Type : GLenum, _Pixels : Dynamic ): Void;
+								
+								
+	public function TexImage2D_2( _Target: GLenum, _Level : Dynamic, _Img : Dynamic, _dunno : Bool): Void;
 								
 	public function TexParameteri( _Target : GLenum , _Pname : GLenum, _Param : GLint): Void;
 	

@@ -270,6 +270,7 @@ class CRscShaderProgram extends CRscShader
 		if ( !m_Uniforms.exists(_Name))
 		{
 			DeclUniform(_Name);
+			CDebug.CONSOLEMSG("DeclaredUniform1i " + _Name);
 		}
 		
 		var l_Loc :  WebGLUniformLocation = m_Uniforms.get(_Name);

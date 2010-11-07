@@ -5,7 +5,6 @@ package tools;
  * @author bdubois
  */
 
-import driver.as.rsc.CRscTextAS;
 import kernel.Glb;
 import kernel.CTypes;
 import rsc.CRsc;

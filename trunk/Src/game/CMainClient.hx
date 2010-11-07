@@ -47,7 +47,7 @@ class CMainClient
 {
 	static var m_Stage	: STAGE;
 	static var m_Quad	: C2DImageJS;
-	static var m_Mouse	: CMouse; 					// <--
+	//static var m_Mouse	: CMouse; 					// <--
 	static var m_Cpt	: Int;						// <--
 	
 	static var m_Img	: CRscImage;
@@ -57,7 +57,7 @@ class CMainClient
 	{
 		//var l_Ab : ArrayBuffer = new ArrayBuffer( [0,1] );
 		
-		m_Mouse		= Glb.g_System.GetMouse();		// <--
+		//m_Mouse		= Glb.g_System.GetMouse();		// <--
 		m_Cpt		= 15;							// <--
 		
 		var l_OrthoCam : COrthoCamera = cast(Glb.g_System.GetRenderer().GetCamera( CRenderer.CAM_ORTHO_0 ), COrthoCamera);
@@ -82,7 +82,8 @@ class CMainClient
 		
 		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscTexture.RSC_ID, "https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/doc/spec/WebGL-Logo.png" ), CRscImage);
 		
-		m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://www.alsacreations.com/xmedia/doc/full/webgl.gif" ), CRscImage);
+		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://www.alsacreations.com/xmedia/doc/full/webgl.gif" ), CRscImage);
+		m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "file:///D:/workspace/G4W/Data/Gfx/images/FX_EarthClod.png" ), CRscImage);
 		CDebug.ASSERT(m_Img!= null);
 		
 		m_Quad.SetRsc( m_Img );

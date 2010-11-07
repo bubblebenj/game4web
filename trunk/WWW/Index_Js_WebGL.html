@@ -100,6 +100,10 @@ This text is displayed if your browser does not support HTML5 Canvas.
 
 
 <script id="single_texture.vsh" type="x-shader/x-vertex">
+	#ifdef GL_ES
+	precision highp float;
+	#endif
+
     uniform mat4 	_MVPMatrix;
  
     attribute vec3 	_Vertex;
@@ -127,6 +131,13 @@ This text is displayed if your browser does not support HTML5 Canvas.
     void main()
     {
         gl_FragColor = texture2D( _TexSampler, vTextureCoord);
+	   //gl_FragColor = _TexSampler ? vec4(1,1,1,1) : vec4(1,0,1,1);
+		//if( _TexSampler )
+		//	gl_FragColor = vec4(1,1,1,1);
+		//else
+		//gl_FragColor = vec4(1,0,1,1);
+		//gl_FragColor.r = _TexSampler;
+		//gl_FragColor.a = 1;
 		//gl_FragColor = texture2D( _TexSampler, vec2(1,1) );
 		//gl_FragColor = vec4(0.0,1.0,1.0,1.0);
     }
@@ -148,12 +159,13 @@ This text is displayed if your browser does not support HTML5 Canvas.
 <script id="white.fsh" type="x-shader/x-fragment">
     void main()
     {
-        gl_FragColor = vec4(0.0,1.0,0.0,1.0);
+        gl_FragColor = vec4(1.0,1.0,1.0,1.0);
 	}
 </script>
 
 <div id="haxe:trace"></div>
 <script src="NativeSrc/JS/CGL.js" 	type="text/javascript" 	language="JavaScript"></script>
+<script src="NativeSrc/JS/webgl-debug.js" type="text/javascript" 	language="JavaScript"></script>
 <script type="text/javascript" src="../Build/JS/CMainClient.js"></script>
 
 </body>
