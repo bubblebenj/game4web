@@ -6,6 +6,7 @@
 package logic;
 
 import CDriver;
+import math.CV2D;
 
 import kernel.Glb;
 import kernel.CTypes;
@@ -103,6 +104,7 @@ class CButton extends C2DContainer
 		{
 			m_InteractFSM.m_CurrentActuator = B_TC_RELEASED;
 		}
+		
 		return SUCCESS;
 	}
 	

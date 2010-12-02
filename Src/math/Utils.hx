@@ -31,6 +31,26 @@ class Utils
 		}
 	}
 	
+	public static function Clamp( _A : Float, _Min : Float, _Max : Float ) : Float
+	{
+		//return Math.min( _Max, Math.max( _A, _Min ) );
+		if ( _A < _Min )
+		{
+			return _Min;
+		}
+		else
+		{
+			if ( _A > _Max )
+			{
+				return _Max;
+			}
+			else
+			{
+				return _A;
+			}
+		}
+	}
+	
 	/* Remove extra digits from a float. Useful for debug */
 	public static function CutDigits( _Nb : Float, _NbDigits : Int ) : Float
 	{

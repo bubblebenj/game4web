@@ -27,4 +27,6 @@ interface I2DImage
 	public function GetRGB( _xy : CV2D )			: Int	{}
 	
 	private var m_UV : CV4D;
+	
+	private var m_Pivot	: CV2D;
 }

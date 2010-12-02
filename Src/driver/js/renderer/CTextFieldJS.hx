@@ -38,9 +38,12 @@ class CTextFieldJS extends C2DQuad, implements ITextField
 		return l_Res;
 	}
 	
+	public function SetText( _Text : String ) : Void
+	{
+	}
+	
 	private function CreateTextField() : Void
 	{
-
 	}
 	
 	public override function Update() : Result

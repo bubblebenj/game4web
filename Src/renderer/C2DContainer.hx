@@ -6,6 +6,8 @@ package renderer;
  */
 
 import CDriver;
+import driver.as.renderer.C2DQuadAS;
+import flash.media.Camera;
 
 import kernel.Glb;
 
@@ -16,28 +18,21 @@ import math.CV2D;
 import math.Registers;
 
 import renderer.C2DQuad;
-import renderer.I2DContainer;
 import renderer.camera.C2DCamera;
 
 
 
-class C2DContainer extends C2DQuad, implements I2DContainer
+class C2DContainer extends C2DQuad
 {
 	public 	var m_Name		: String;
 	private var m_2DObjects	: Array<C2DQuad>;
-	private var m_Camera	: C2DCamera;
 	
 	public function new()
 	{
 		super();
 		m_Name			= "anonymous";
 		m_2DObjects		= new Array<C2DQuad>();
-		m_Camera		= new C2DCamera();
-	}
-	
-	public function GetCamera()	: C2DCamera
-	{
-		return m_Camera;
+		SetSize( CV2D.ONE );
 	}
 	
 	public function GetElements() : Array<C2DQuad>
@@ -64,7 +59,6 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 		else
 		{
 			m_2DObjects.push( _Object );
-			
 			return SUCCESS;
 		}
 	}
@@ -84,40 +78,58 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 	/* 
 	 * Position
 	 */
-	public override function SetCenterPosition( _Pos : CV2D ) : Void
+	public override function SetPosition( _Pos : CV2D ) : Void
 	{
-		var l_Center	= GetCenter();
-		super.SetCenterPosition( _Pos );
+		var l_ObjPos : CV2D = new CV2D( 0, 0 );
 		for ( i_Object in m_2DObjects )
 		{
-			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), l_Center );	// Shift
-			CV2D.Add( Registers.V2_0, _Pos, Registers.V2_0 );
-			i_Object.SetCenterPosition( Registers.V2_0 );
+			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
+							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
+			i_Object.SetPosition( l_ObjPos );
 		}
+		super.SetPosition( _Pos );
+	}
+	 
+	public override function SetCenterPosition( _Pos : CV2D ) : Void
+	{
+		var l_ObjPos : CV2D = new CV2D( 0, 0 );
+		for ( i_Object in m_2DObjects )
+		{
+			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
+							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
+			i_Object.SetCenterPosition( l_ObjPos );
+		}
+		super.SetCenterPosition( _Pos );
 	}
 	
 	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
-		var l_Center	= GetCenter();
-		super.SetTLPosition( _Pos );
+		var l_ObjPos : CV2D = new CV2D( 0, 0 );
 		for ( i_Object in m_2DObjects )
 		{
-			CV2D.Sub( Registers.V2_0, i_Object.GetCenter(), l_Center );	// Shift
-			CV2D.Add( Registers.V2_0, _Pos, Registers.V2_0 );
-			i_Object.SetTLPosition( Registers.V2_0 );
+			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
+							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
+			i_Object.SetTLPosition( l_ObjPos );
 		}
+		super.SetTLPosition( _Pos );
 	}
 	
 	/* 
 	 * Size
 	 */
-	private inline function ScaleChilds( _Ratio : CV2D )
+	private inline function ScaleAndMoveChildren( _Ratio : { x : Float, y : Float } )
 	{
 		for ( i_Object in m_2DObjects )
 		{
-			Registers.V2_0.x	= i_Object.GetSize().x * _Ratio.x;
-			Registers.V2_0.y	= i_Object.GetSize().y * _Ratio.y;
-			i_Object.SetSize( Registers.V2_0 );
+			// 1st scale		
+			var l_V2D	= new CV2D(	i_Object.GetSize().x * _Ratio.x,
+									i_Object.GetSize().y * _Ratio.y );
+			i_Object.SetSize( l_V2D );
+			
+			// 2nd adapt the relative position
+			l_V2D.Set( 	( i_Object.GetTL().x - GetTL().x ) * _Ratio.x,
+						( i_Object.GetTL().y - GetTL().y ) * _Ratio.y );
+			i_Object.SetTLPosition( l_V2D );
 		}
 	}
 	
@@ -125,9 +137,8 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 	{
 		if ( _Size.x != 0 && _Size.y != 0 )
 		{
-			Registers.V2_1.x	= _Size.x / GetSize().x;
-			Registers.V2_1.y	= _Size.y / GetSize().y;
-			ScaleChilds( Registers.V2_1 );
+			ScaleAndMoveChildren( {	x : (_Size.x / GetSize().x),
+									y : (_Size.y / GetSize().y) } );
 		}
 		super.SetSize( _Size );
 	}
@@ -187,9 +198,13 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 	}
 	
 	/* Debug functions */
-	public function DebugInfo() : String
+	public override function DebugInfo( ?_Prefix : String ) : Void
 	{
-		return this +" Name: " + m_Name +", Pos: " + GetCenter().ToString() + ", Sz: " + GetSize().ToString();
+		if ( _Prefix == null )
+		{
+			_Prefix = "";
+		}
+		trace( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().ToString()+ ", Pivot: " + GetPivot().ToString() + ", Sz: " + GetSize().ToString() );
 	}
 	
 	public function ShowTree( ? _Depth : Int ) : Void
@@ -202,7 +217,7 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 			l_Tabs	= l_Tabs + "\t ";
 		}
 		
-		trace( l_Tabs + DebugInfo() );
+		DebugInfo( l_Tabs );
 			
 		if ( m_2DObjects.length == 0 )
 		{
@@ -212,11 +227,16 @@ class C2DContainer extends C2DQuad, implements I2DContainer
 		{
 			for ( i_Object in m_2DObjects )
 			{
+				//trace( Type.getClassName( Type.getClass( i_Object ) ) );
 				switch( Type.getClassName( Type.getClass( i_Object ) ) )
 				{
-					case "renderer.C2DContainer", "logic.CButton" :
+					case "renderer.C2DContainer", "logic.CButton", "renderer.CLayer", "CTrack", "CStage", "CHUD" :
 					{
 						cast( i_Object, C2DContainer).ShowTree( (_Depth + 1) );
+					}
+					default	:
+					{
+						i_Object.DebugInfo( l_Tabs + "\t \t" );
 					}
 				}
 			}

@@ -1,4 +1,5 @@
 package math;
+import renderer.CViewport;
 
 class CV2D
 {
@@ -51,15 +52,46 @@ class CV2D
 		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? true : false;
 	}
 	
-	public inline function ToString() : String
+	public inline function Norm2()
 	{
-		return ("[x="+Utils.CutDigits(x, 3)+" , y="+Utils.CutDigits(y, 3)+" ]");
+		return x * x + y * y;
 	}
 	
-	public inline function TestCopy( _V2D : { x : Float, y : Float } )
+	public inline function Norm()
+	{
+		return Math.sqrt(x * x + y * y);
+	}
+	
+	/*
+	 * Test
+	 */
+	public inline function AnonymCopy( _V2D : { x : Float, y : Float } )
 	{
 		x = _V2D.x;
 		y = _V2D.y;
+	}
+	
+	public static inline function AnonymAdd( _V0 : { x : Float, y : Float }, _V1 : { x : Float, y : Float } ) : { x : Float, y : Float }
+	{
+		return { x : _V0.x + _V1.x, y : _V0.y + _V1.y };
+	}
+	
+	public static inline function AnonymSub( _V0 : { x : Float, y : Float }, _V1 : { x : Float, y : Float } ) : { x : Float, y : Float }
+	{
+		return { x : _V0.x - _V1.x, y : _V0.y - _V1.y };
+	}
+	
+	public static inline function AnonymScale( _V : { x : Float, y : Float }, _a : Float ) : { x : Float, y : Float }
+	{
+		return { x : _a * _V.x, y : _a * _V.y };
+	}
+	/*
+	 * End Test
+	 */
+	
+	public inline function ToString() : String
+	{
+		return ("[x="+Utils.CutDigits(x, 3)+" , y="+Utils.CutDigits(y, 3)+" ]");
 	}
 	
 	public static inline function ToStringStatic( _V2D : { x : Float, y : Float } ) : String
@@ -72,7 +104,7 @@ class CV2D
 		return Math.sqrt( Math.pow( (_V1.x - _V0.x), 2 ) + Math.pow( (_V1.y - _V0.y), 2 ) );
 	}
 	
-	public static inline var ZERO 	: CV2D = new CV2D(0, 0);
-	public static inline var ONE 	: CV2D = new CV2D(1, 1);
-	public static inline var HALF 	: CV2D = new CV2D(0.5, 0.5);
+	public static inline var ZERO 		: CV2D = new CV2D(0, 0);
+	public static inline var ONE 		: CV2D = new CV2D(1, 1);
+	public static inline var HALF 		: CV2D = new CV2D(0.5, 0.5);
 }

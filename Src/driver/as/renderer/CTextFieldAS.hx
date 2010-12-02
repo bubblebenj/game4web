@@ -25,72 +25,63 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 	{
 		super();
 		m_DisplayObject	= null;
-		m_RscText		= null;
 		m_Visible		= false;
-	}
-	
-	public function Load( _Path )	: Result
-	{
-		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
-		
-		var l_Res = SetRsc( cast( l_RscMan.Load( CRscText.RSC_ID , _Path ), CRscTextAS ) );
-		
-		return l_Res;
-	}
-	
-	public function SetRsc( _Rsc : CRscText )	: Result
-	{
-		m_RscText = cast ( _Rsc, CRscTextAS );
-		var l_Res = ( m_RscText != null) ? SUCCESS : FAILURE;
-		
-		return l_Res;
+		m_Text			= "";
 	}
 	
 	private function CreateTextField() : Void
 	{
-		var l_Text = m_RscText.GetTextData();
-		if ( l_Text != null )
+		m_DisplayObject			= new TextField();
+		cast( m_DisplayObject, TextField ).text	= m_Text;
+		#if DebugInfo
+			cast( m_DisplayObject, TextField ).border	= true;
+		#end
+		cast( m_DisplayObject, TextField ).selectable	= false;
+	}
+	
+	public function SetText( _Text : String ) : Void
+	{
+		m_Text	= _Text;
+		if ( m_DisplayObject != null )
 		{
-			m_DisplayObject			= new TextField();
-			cast( m_DisplayObject, TextField ).text	= l_Text;
-			#if DebugInfo
-				cast( m_DisplayObject, TextField ).border	= true;
-			#end
-			cast( m_DisplayObject, TextField ).selectable	= false;
+			cast( m_DisplayObject, TextField ).text	= m_Text;
 		}
 	}
 	
 	public override function Update() : Result
 	{
-		if ( 	m_RscText != null
-		&& 		m_RscText.m_State == E_STATE.STREAMED )
+		if( m_DisplayObject == null )
 		{
-			if( m_DisplayObject == null )
+			CreateTextField();
+			// Update size
+			var l_x : Float = 0;
+			var l_y : Float = 0;
+			if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
 			{
-				CreateTextField();
-				if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
-				{
-					Registers.V2_8.Set( m_DisplayObject.width, m_DisplayObject.height );
-					SetSize( Registers.V2_8 );
-				}
-				else
-				{
-					SetSize( GetSize() );
-				}
-				SetCenterPosition( GetCenter() );
-				SetVisible( m_Visible );
-				if ( m_Activated )
-				{
-					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );	
-				}
+				l_x	=	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height;
+				l_y	=	m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height;
 			}
 			else
 			{
-				SetVisible( m_Visible );
+				l_x	= ( GetSize().x == 0 ) ? GetSize().y * m_DisplayObject.width / m_DisplayObject.height : GetSize().x;
+				l_y	= ( GetSize().y == 0 ) ? GetSize().x * m_DisplayObject.height / m_DisplayObject.width : GetSize().y;
+			}
+			SetSize( new CV2D( l_x, l_y ) );
+			//
+			
+			SetPosition( GetPosition() );
+			
+			SetVisible( m_Visible );
+			if ( m_Activated )
+			{
+				if ( m_DisplayObject.parent == null )
+				{
+					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+				}
 			}
 		}
 		return SUCCESS;
 	}
 	
-	private var m_RscText		: CRscTextAS; 		// content - CRscTextAS !
+	private var m_Text		: String;
 }
