@@ -5,34 +5,37 @@
 
 package logic;
 
-import CDriver;
-import renderer.C2DContainer;
-import rsc.CRscText;
-import tools.CXml;
-
-import math.CV2D;
-
 import haxe.xml.Fast;
 import Xml;
+
+import CDriver;
 
 import kernel.CTypes;
 import kernel.CDebug;
 import kernel.Glb;
+import kernel.CInputManager;
 
 import logic.CFiniteStateMachine;
 import logic.CMenuNode;
 import logic.CMenuTransition;
 import logic.CButton;
 
+import math.CV2D;
+
 import rsc.CRsc;
 import rsc.CRscMan;
 
 import renderer.C2DQuad;
+import renderer.C2DContainer;
+import renderer.C2DInterface;
+
+import tools.CXml;
 
 class CMenuGraph extends CRsc			// C&D Menu
 {
-	private var m_MenuGraph	: CXml;
-	private var m_MenuStyle : CXml;
+	private var m_MenuGraph			: CXml;
+	private var m_MenuStyle			: CXml;
+	private var m_InterfaceBuilder	: List<C2DInterface>;
 	
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
 	public override function GetType() : Int
@@ -56,6 +59,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		m_LastState	= "init";
 		m_MenuGraph	= new CXml();
 		m_MenuStyle	= new CXml();
+		m_InterfaceBuilder	= new List<C2DInterface>();
 		m_Loaded	= false;
 	}
 	
@@ -96,6 +100,21 @@ class CMenuGraph extends CRsc			// C&D Menu
 				m_LastState	= l_CurrentState;
 			}
 			m_States.get( m_LastState ).Update();
+			m_States.get( m_LastState ).GetContainer().ShowTree();
+		}
+		if ( m_InterfaceBuilder.length > 0 )
+		{
+			for ( i_Interface in m_InterfaceBuilder )
+			{
+				if ( i_Interface.NeedUpdate() )
+				{
+					i_Interface.Update();
+				}
+				else
+				{
+					m_InterfaceBuilder.remove( i_Interface );
+				}
+			}
 		}
 	}
 	
@@ -261,23 +280,23 @@ class CMenuGraph extends CRsc			// C&D Menu
 		}
 	}
 	
-	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DQuad )
+	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DContainer )
 	{		
 		trace( " " + _ObjectParent +" - " + _Object + " >");
 		var FStyle		: Fast = new Fast( Xml.parse( m_MenuStyle.m_Text ).firstElement() );
 		
-		var l_ParentSize		: CV2D = new CV2D( 0, 0 );
-		var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );
-		if ( _ObjectParent == null )
-		{
-			l_ParentSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
-			l_ParentCoordinate.Set(	0, 0 );
-		}
-		else
-		{
-			l_ParentSize.Copy(			_ObjectParent.GetSize() );
-			l_ParentCoordinate.Copy(	_ObjectParent.GetTL() );
-		}
+		//var l_ParentSize		: CV2D = new CV2D( 0, 0 );
+		//var l_ParentCoordinate	: CV2D = new CV2D( 0, 0 );
+		//if ( _ObjectParent == null )
+		//{
+			//l_ParentSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
+			//l_ParentCoordinate.Set(	0, 0 );
+		//}
+		//else
+		//{
+			//l_ParentSize.Copy(			_ObjectParent.GetSize() );
+			//l_ParentCoordinate.Copy(	_ObjectParent.GetTL() );
+		//}
 		
 		var NoStyleDefined	: Bool	= true;
 		if ( _FObject.has.type )
@@ -287,7 +306,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 				if ( i_FStyle.att.name == _FObject.att.type )
 				{
 					trace( "\t > SET TYPE STYLE > " + i_FStyle.att.name );
-					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
+					SetStyle( _Object, i_FStyle, /* l_ParentSize, l_ParentCoordinate */ _ObjectParent);
 				}
 			}
 			NoStyleDefined	= false;
@@ -299,26 +318,37 @@ class CMenuGraph extends CRsc			// C&D Menu
 				if ( i_FStyle.att.name == _FObject.att.id )
 				{
 					trace( "\t >  SET ID STYLE  > " + i_FStyle.att.name );
-					SetStyle( _Object, i_FStyle, l_ParentSize, l_ParentCoordinate );
+					SetStyle( _Object, i_FStyle, /* l_ParentSize, l_ParentCoordinate */ _ObjectParent);
 				}
 			}
 			NoStyleDefined	= false;
 		}
-		if ( NoStyleDefined )
-		{
-			_Object.SetTLPosition( l_ParentCoordinate );
-		}
+		//if ( NoStyleDefined )
+		//{
+			//_Object.SetTLPosition( l_ParentCoordinate );
+		//}
 	}
 
-	private function SetStyle( _Object : C2DQuad, _FStyle : Fast, _ParentSize : CV2D, _ParentCoordinate : CV2D )	: Void
+	private function SetStyle( _Object : C2DQuad, _FStyle : Fast, /*_ParentSize : CV2D, _ParentCoordinate : CV2D*/ _ObjectParent : C2DContainer)	: Void
 	{
-		var l_Size 				: CV2D = new CV2D( 0, 0 );
-		var l_Coordinate		: CV2D = new CV2D( 0, 0 );
+		//var l_Size 				: CV2D = new CV2D( 1, 1 );
+		//var l_Coordinate		: CV2D = new CV2D( 0, 0 );
 		
+		var l_Interface			: C2DInterface;
+		if ( _ObjectParent == null )
+		{
+			l_Interface	= new C2DInterface( _Object );
+		}
+		else
+		{
+			l_Interface	= new C2DInterface( _Object, _ObjectParent );
+		}
+		
+		var l_Unit	: E_Unit;
 		var l_x : Float;
 		var l_y : Float;
 		
-		if ( (! _FStyle.hasNode.size) && (! _FStyle.hasNode.align) )
+		if ( (! _FStyle.hasNode.size) && (! _FStyle.hasNode.handle) && (! _FStyle.hasNode.pos) )
 		{
 			trace( "No style define in this Xml extract" );
 		}
@@ -327,70 +357,91 @@ class CMenuGraph extends CRsc			// C&D Menu
 			// SIZE
 			if ( _FStyle.hasNode.size )
 			{
-				switch( _FStyle.node.size.att.scale )
+				switch( _FStyle.node.size.att.unit )
 				{
-					case "fit" :
+					case "%" :
 					{
-						l_Size.Copy( _ParentSize );
+						l_Unit	= E_Unit.PERCENTAGE;
 					}
-					case "keep_ratio" :
+					case "/" :
 					{
-						l_x	= ( _FStyle.node.size.att.x == "" ) ? 1 : Std.parseFloat(_FStyle.node.size.att.x);
-						l_y = ( _FStyle.node.size.att.y == "" ) ? 1 : Std.parseFloat(_FStyle.node.size.att.y);
-						l_Size.Set( Std.parseFloat(_FStyle.node.size.att.x), Std.parseFloat(_FStyle.node.size.att.y) );
-						var l_Ratio : Float = Math.min( _ParentSize.x / l_x, _ParentSize.y / l_y );
-						CV2D.Scale( l_Size, l_Ratio, l_Size );
+						l_Unit	= E_Unit.RATIO;
 					}
-					case "exact" :
+					case "px" :
 					{
-						l_x = ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.x);
-						l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat(_FStyle.node.size.att.y);
-						l_Size.Set( l_x, l_y );
-						l_Size.x /= Glb.GetSystem().m_Display.m_Height;
-						l_Size.y /= Glb.GetSystem().m_Display.m_Height;
+						l_Unit	= E_Unit.PX;
 					}
 					default	:
 					{
-						trace( _FStyle.node.size.att.scale + " isn't a correct value for attribute scale" );
-						trace( "Accepted values scale=\"fit|keep_ratio|exact\"" );
+						l_Unit	= E_Unit.PX;
+						trace( _FStyle.node.size.att.unit + " isn't a correct value for attribute unit" );
+						trace( "Accepted values scale=\" '%' , '/' or 'px'\". Using pixels" );
 					}
 				}
-				_Object.SetSize( l_Size );
+				l_x	= ( _FStyle.node.size.att.x == "" ) ? 0 : Std.parseFloat( _FStyle.node.size.att.x );
+				l_y = ( _FStyle.node.size.att.y == "" ) ? 0 : Std.parseFloat( _FStyle.node.size.att.y );
+				l_Interface.SetEltSize( l_Unit, new CV2D( l_x, l_y ) );
 			}
 			
-			// COORDINATE
-			if ( _FStyle.hasNode.align )
+			// PIVOT
+			if ( _FStyle.hasNode.handle )
 			{
-				switch ( _FStyle.node.align.att.unit )
+				switch ( _FStyle.node.handle.att.type )
 				{
-					case "%"	:
+					case "TL"	:
 					{
-						l_Coordinate.Set(	_ParentSize.x * Std.parseFloat(_FStyle.node.align.att.x ) * 0.01,
-											_ParentSize.y * Std.parseFloat(_FStyle.node.align.att.y) * 0.01 ) ;
+						l_Interface.SetEltPivot( "TL" );
 					}
-					case "px"	:
+					case "center"	:
 					{
-						l_Coordinate.Set(	Std.parseFloat(_FStyle.node.align.att.x ),
-											Std.parseFloat(_FStyle.node.align.att.y ) );
-						l_Coordinate.x /= Glb.GetSystem().m_Display.m_Height;
-						l_Coordinate.y /= Glb.GetSystem().m_Display.m_Height;
+						l_Interface.SetEltPivot( "center" );
+					}
+					case "pivot"	:
+					{
+						l_x	= ( _FStyle.node.handle.att.x == "" ) ? 0.5 : Std.parseFloat( _FStyle.node.handle.att.x );
+						l_y = ( _FStyle.node.handle.att.y == "" ) ? 0.5 : Std.parseFloat( _FStyle.node.handle.att.y );
+						l_Interface.SetEltPivot( "pivot", new CV2D( l_x, l_y ) );
 					}
 					default		:
 					{
-						trace( _FStyle.node.align.att.unit + " isn't a correct value for attribute unit" );
-						trace( "Accepted values unit=\"%|px\"" );
+						l_Interface.SetEltPivot( "center" );
+						trace( _FStyle.node.handle.att.type + " isn't a correct value for attribute type" );
+						trace( "Accepted values type=\" 'TL' , 'center' or 'pivot' \". Using center" );
 					}
-				}
-				
-				CV2D.Add( l_Coordinate, _ParentCoordinate, l_Coordinate );
-				switch ( _FStyle.node.align.att.handle )
-				{
-					case "TL"		: _Object.SetTLPosition( l_Coordinate );
-					case "center"	: _Object.SetCenterPosition( l_Coordinate );
 				}
 			}
 			
-			trace ( "\t \t  Coordinate (center) :" + _Object.GetCenter().ToString() + ">>> Size : " + _Object.GetSize().ToString() );
+			// COORDINATE
+			if ( _FStyle.hasNode.pos )
+			{
+				switch ( _FStyle.node.pos.att.unit )
+				{
+					case "%" :
+					{
+						l_Unit	= E_Unit.PERCENTAGE;
+					}
+					case "/" :
+					{
+						l_Unit	= E_Unit.RATIO;
+					}
+					case "px" :
+					{
+						l_Unit	= E_Unit.PX;
+					}
+					default	:
+					{
+						l_Unit	= E_Unit.PX;
+						trace( _FStyle.node.pos.att.unit + " isn't a correct value for attribute unit" );
+						trace( "Accepted values scale=\" '%' , '/' or 'px'\". Using pixels" );
+					}
+				}
+				l_x	= ( _FStyle.node.pos.att.x == "" ) ? 0 : Std.parseFloat( _FStyle.node.pos.att.x );
+				l_y = ( _FStyle.node.pos.att.y == "" ) ? 0 : Std.parseFloat( _FStyle.node.pos.att.y );
+				l_Interface.SetEltPos( l_Unit, new CV2D( l_x, l_y ) );
+			}
+			
+			//trace ( "\t \t  Coordinate (center) :" + _Object.GetCenter().ToString() + ">>> Size : " + _Object.GetSize().ToString() );
+			m_InterfaceBuilder.add( l_Interface );
 		}
 	}
 }

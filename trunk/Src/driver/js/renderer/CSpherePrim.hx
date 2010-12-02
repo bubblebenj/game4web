@@ -22,7 +22,7 @@ class CSpherePrim extends CPrimitiveJS
 		
 		for (var latNumber = 0; latNumber <= lats; ++latNumber) {
 			for (var longNumber = 0; longNumber <= longs; ++longNumber) {
-				var theta = latNumber * Math.PI / lats;
+				var theta = latNumber * Math.PI / lats;				// why not math.Constants.PI ?
 				var phi = longNumber * 2 * Math.PI / longs;
 				var sinTheta = Math.sin(theta);
 				var sinPhi = Math.sin(phi);

@@ -5,11 +5,8 @@
 
  package tools;
 
-import kernel.Glb;
-import kernel.CTypes;
-import rsc.CRsc;
-import rsc.CRscMan;
 import rsc.CRscText;
+import rsc.CRsc;
 
 class CXml extends CText
 {

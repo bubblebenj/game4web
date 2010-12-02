@@ -13,6 +13,7 @@ import rsc.CRscImage;
 
 class CSliced2DImage extends C2DContainer, implements I2DImage
 {
+	private var m_RscImage	: CRscImage;
 	public var m_NbWidthSlices( default, null )		: Int;
 	public var m_NbHeightSlices( default, null )	: Int;
 	private var m_SliceSize							: CV2D;

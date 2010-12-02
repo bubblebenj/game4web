@@ -15,6 +15,7 @@ import kernel.CTypes;
 import kernel.Glb;
 import math.Constants;
 import math.CTrigo;
+import renderer.camera.C2DCamera;
 
 import math.CV2D;
 import renderer.C2DQuad;
@@ -64,37 +65,36 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
-	override public function SetCenterPosition( _Pos : CV2D ) : Void 
+	private function UpdateDisplayObjectPos() : Void
 	{
-		super.SetCenterPosition(_Pos);
-		if( m_DisplayObject != null )
+		if ( m_DisplayObject != null )
 		{
-			m_DisplayObject.x		= GetTL().x * Glb.GetSystem().m_Display.m_Height;
-			m_DisplayObject.y		= GetTL().y * Glb.GetSystem().m_Display.m_Height;
-		}
-		else
-		{
-			trace( " Warning : m_DisplayObject is null, position not set " );
-		}
+			m_DisplayObject.x	= GetTL().x * Glb.GetSystem().m_Display.m_Height;
+			m_DisplayObject.y	= GetTL().y * Glb.GetSystem().m_Display.m_Height;
+		}		
 	}
 	
-	override public function SetTLPosition( _Pos :CV2D ) : Void
+	override public function SetPosition( _Pos : CV2D ) : Void
 	{
-		super.SetTLPosition(_Pos);
-		if( m_DisplayObject != null )
-		{
-			m_DisplayObject.x		= _Pos.x * Glb.GetSystem().m_Display.m_Height;
-			m_DisplayObject.y		= _Pos.y * Glb.GetSystem().m_Display.m_Height;
-		}
-		else
-		{
-			trace( " Warning : m_DisplayObject is null, position not set " );
-		}
+		super.SetPosition( _Pos );
+		UpdateDisplayObjectPos();
+	}
+	
+	override public function SetCenterPosition( _Pos : CV2D ) : Void 
+	{
+		super.SetCenterPosition( _Pos );
+		UpdateDisplayObjectPos();
+	}
+	
+	override public function SetTLPosition( _Pos : CV2D ) : Void
+	{
+		super.SetTLPosition( _Pos );
+		UpdateDisplayObjectPos();
 	}
 	
 	override public function SetSize( _Size : CV2D ) : Void
 	{
-		super.SetSize(_Size);
+		super.SetSize( _Size );
 		if( m_DisplayObject != null )
 		{
 			m_DisplayObject.width	= _Size.x * Glb.GetSystem().m_Display.m_Height;
@@ -140,12 +140,12 @@ class C2DQuadAS extends C2DQuad
 			
 			//l_Matrix.concat(l_RotationMatrix);
 			
-			l_Matrix.tx	-= GetCenter().x;
-			l_Matrix.ty	-= GetCenter().y;
+			l_Matrix.tx	-= GetPosition().x;
+			l_Matrix.ty	-= GetPosition().y;
 			trace( "Rotate("+ CTrigo.RadToDeg(_Rad) );
 			l_Matrix.rotate( _Rad );
-			l_Matrix.tx	+= GetCenter().x;
-			l_Matrix.ty	+= GetCenter().y;
+			l_Matrix.tx	+= GetPosition().x;
+			l_Matrix.ty	+= GetPosition().y;
 			
 			m_DisplayObject.transform.matrix = l_Matrix;
 		}
@@ -172,21 +172,16 @@ class C2DQuadAS extends C2DQuad
 	}
 	
 	// debug functions
-	public function DebugInfo() : String
+	public override function DebugInfo( ?_Prefix : String ) : Void
 	{
-		return this +", Pos: " + GetCenter().ToString() + ", Sz: " + GetSize().ToString();
-	}
-	
-	public function DebugInfoAS() : String
-	{
+		super.DebugInfo( _Prefix );
 		if ( m_DisplayObject != null )
 		{
-			var l_RenderPriority	= ( m_DisplayObject.parent != null ) ? m_DisplayObject.parent.getChildIndex( m_DisplayObject ) : null;
-			return this +", "+ m_DisplayObject +", ["+l_RenderPriority+"] \t Pos: [" + m_DisplayObject.localToGlobal( new Point( m_DisplayObject.x, m_DisplayObject.y ) ) +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]";
+			trace( _Prefix + " " + this +", "+ m_DisplayObject +", \t Pos: [" + m_DisplayObject.x +", "+ m_DisplayObject.y +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]");
 		}
 		else
 		{
-			return this + "m_DisplayObject not initialize";
+			trace( _Prefix + " " + this + "m_DisplayObject not initialize" );
 		}
 	}
 }

@@ -81,7 +81,7 @@ class CMenuNode				// C&D MenuState
 	public function Update() : Result
 	{
 		m_EltsContainer.Update();
-		m_EltsContainer.ShowTree();
+		//m_EltsContainer.ShowTree();
 		return SUCCESS;
 	}
 	

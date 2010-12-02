@@ -45,6 +45,13 @@ class CV3D
 		_VOut.z = _V0.z - _V1.z;
 	}
 	
+	public static inline function Scale( _VOut : CV3D, _a : Float, _V : CV3D ) :  Void
+	{
+		_VOut.x = _a * _V.x;
+		_VOut.y	= _a * _V.y;
+		_VOut.z	= _a * _V.z;
+	}
+	
 	public static inline function Normalize( _InOut : CV3D )
 	{
 		var l_InvLen = 1.0 / _InOut.Norm();

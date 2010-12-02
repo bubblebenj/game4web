@@ -40,22 +40,22 @@ import renderer.I2DImage;
 
 class C2DImageJS  extends C2DQuad, implements I2DImage 
 {
-	var m_Primitive : CPrimitiveJS;
+	var m_Primitive		: CPrimitiveJS;
 	
-	var m_ShdrPrgm : CRscShaderProgram;
-	var m_RenderStates : CRenderStatesJS;
+	var m_ShdrPrgm		: CRscShaderProgram;
+	var m_RenderStates	: CRenderStatesJS;
 	
-	var m_UV : CV4D ;
-	
-	var m_Matrix : CMatrix44;
+	var m_UV			: CV4D ;
+	var m_Matrix		: CMatrix44;
 	
 	public function new() 
 	{
 		super();
 		
-		m_Material = null;
-		m_ShdrPrgm = null;
+		m_Material	= null;
+		m_ShdrPrgm	= null;
 		
+		m_Pivot		= new CV2D( 0.5, 0.5 );    // ToDo
 		m_UV  = new CV4D(0, 0, 1, 1);
 		
 		m_Matrix = null;
@@ -202,10 +202,10 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		var l_Vp : CViewport = Glb.GetRenderer().m_Vps[ _VpId ];
 		CDebug.ASSERT( l_Vp != null );
 		
-		var l_Top : Float = m_Rect.m_Center.y - m_Rect.m_Size.y * 0.5;
-		var l_Left : Float = m_Rect.m_Center.x - m_Rect.m_Size.x *0.5;
-		var l_Bottom : Float = m_Rect.m_Center.y + m_Rect.m_Size.y * 0.5;
-		var l_Right : Float = m_Rect.m_Center.x + m_Rect.m_Size.x *0.5;
+		var l_Top		: Float = m_Rect.m_TL.y;
+		var l_Left		: Float = m_Rect.m_TL.x;
+		var l_Bottom 	: Float = m_Rect.m_TL.y + m_Rect.m_Size.y;
+		var l_Right		: Float = m_Rect.m_TL.x + m_Rect.m_Size.x;
 		
 		
 		var l_Array = cast( m_Primitive.LockVertexArray(), Float32Array );
