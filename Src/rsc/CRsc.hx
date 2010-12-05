@@ -26,7 +26,7 @@ class CRsc
 		m_Ref			= 0;
 		m_Path 			= "";
 		m_SingleLoad 	= false;
-		m_State			= STREAMED;
+		m_State			= INVALID;
 	}
 	
 	public inline function IsStreamed() : Bool

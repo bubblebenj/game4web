@@ -100,7 +100,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 				m_LastState	= l_CurrentState;
 			}
 			m_States.get( m_LastState ).Update();
-			m_States.get( m_LastState ).GetContainer().ShowTree();
+			//m_States.get( m_LastState ).GetContainer().ShowTree();
 		}
 		if ( m_InterfaceBuilder.length > 0 )
 		{

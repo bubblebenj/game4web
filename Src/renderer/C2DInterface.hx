@@ -20,20 +20,22 @@ enum E_Unit
 class C2DInterface
 {
 	private var m_2DObject	: C2DQuad;
-	private var m_Parent	: C2DContainer;
+	private var m_RefObj	: C2DQuad;
 	
-	public function new( _Object : C2DQuad, ?_Container : C2DContainer ) 
+	public function new( _Object : C2DQuad, ?_RefObj : C2DQuad ) 
 	{
 		Set2DObject( _Object );
-
-		if ( _Container == null )
+		m_WaitObjSize = false;
+		m_WaitRefObjSize = false;
+		
+		if ( _RefObj == null )
 		{
-			m_Parent	= null;
+			m_RefObj	= null;
 		}
 		else
 		{
-			SetParent( _Container );
-			m_Parent.AddElement( m_2DObject );
+			SetRefObj( _RefObj );
+			//m_Parent.AddElement( m_2DObject );
 		}
 	}
 	
@@ -47,14 +49,14 @@ class C2DInterface
 		return m_2DObject;
 	}
 	
-	public function SetParent( _Container : C2DContainer )
+	public function SetRefObj( _RefObj : C2DQuad )
 	{
-		m_Parent = _Container;
+		m_RefObj = _RefObj;
 	}
 	
-	public function GetParent() : C2DContainer
+	public function GetRefObj() : C2DQuad
 	{
-		return m_Parent;
+		return m_RefObj;
 	}
 	
 	public function SetEltSize( _Unit : E_Unit, _Size : CV2D ) : Void
@@ -65,14 +67,14 @@ class C2DInterface
 		var l_Size			: CV2D	= new CV2D( _Size.x, _Size.y );
 		var l_NewSize		: CV2D	= new CV2D( 0, 0 );
 		
-		var l_ParentSize	: CV2D	= new CV2D( 0, 0 );
-		if ( m_Parent == null )
+		var l_RefObjSize	: CV2D	= new CV2D( 0, 0 );
+		if ( m_RefObj == null )
 		{
-			l_ParentSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
+			l_RefObjSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
 		}
 		else
 		{
-			l_ParentSize.Copy( m_Parent.GetSize() );
+			l_RefObjSize.Copy( m_RefObj.GetSize() );
 		}
 		
 		
@@ -90,7 +92,7 @@ class C2DInterface
 			/*\ if element size is (0, 0) will wait to fit parent size (keeping image ratio) */
 			if ( CV2D.AreEqual( l_Size, CV2D.ZERO ) &&  CV2D.AreEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
 			{
-				m_NeedToFitParent = true;
+				m_WaitObjSize = true;
 				return;
 			}
 			else
@@ -98,19 +100,19 @@ class C2DInterface
 				if ( CV2D.AreEqual( l_Size, CV2D.ZERO ) )	// fit inside parent keeping image ratio
 				{
 					var l_ImgRatio	= m_2DObject.GetSize().x / m_2DObject.GetSize().y;
-					if ( l_ParentSize.x / l_ParentSize.y > l_ImgRatio ) // Fit to parent height
+					if ( l_RefObjSize.x / l_RefObjSize.y > l_ImgRatio ) // Fit to parent height
 					{
-						l_Size.Set(	l_ParentSize.y * l_ImgRatio,	l_ParentSize.y );
+						l_Size.Set(	l_RefObjSize.y * l_ImgRatio,	l_RefObjSize.y );
 					}
 					else															// Fit to parent width
 					{
-						l_Size.Set(	l_ParentSize.x,					l_ParentSize.y / l_ImgRatio );
+						l_Size.Set(	l_RefObjSize.x,					l_RefObjSize.y / l_ImgRatio );
 					}
 				}
 				else	
 				{
-					l_Size.Set(	l_Size.x * l_ParentSize.x,
-								l_Size.y * l_ParentSize.y );
+					l_Size.Set(	l_Size.x * l_RefObjSize.x,
+								l_Size.y * l_RefObjSize.y );
 				}
 			}
 			// convert parent ratio to pixels
@@ -118,7 +120,7 @@ class C2DInterface
 						l_Size.y * Glb.GetSystem().m_Display.m_Height );
 		}
 		
-		m_NeedToFitParent = false;
+		m_WaitObjSize = false;
 		// Now size is in pixels (if not already)
 		if ( CV2D.AreEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
 		{
@@ -169,17 +171,19 @@ class C2DInterface
 	
 	public function SetEltPos( _Unit : E_Unit, _Pos : CV2D ) : Void
 	{
-		var l_ParentSize	: CV2D	= new CV2D( 0, 0 );
-		var l_ParentPos		: CV2D	= new CV2D( 0, 0 );
-		if ( m_Parent == null )
+		//le probleme est que la position de l'objet ne peut etre fait en ratio du parent si celui-ci a un taille nulle
+		
+		var l_RefObjSize	: CV2D	= new CV2D( 0, 0 );
+		var l_RefObjPos		: CV2D	= new CV2D( 0, 0 );
+		if ( m_RefObj == null )
 		{
-			l_ParentSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
-			l_ParentPos.Set( 0, 0 );
+			l_RefObjSize.Set( Glb.GetSystem().m_Display.GetAspectRatio(), 1 );
+			l_RefObjPos.Set( 0, 0 );
 		}
 		else
 		{
-			l_ParentSize.Copy( m_Parent.GetSize() );
-			l_ParentPos.Copy( m_Parent.GetTL() );
+			l_RefObjSize.Copy( m_RefObj.GetSize() );
+			l_RefObjPos.Copy( m_RefObj.GetTL() );
 		}
 		
 		var l_Pos			: CV2D	= new CV2D( _Pos.x, _Pos.y );
@@ -194,8 +198,17 @@ class C2DInterface
 		// Convert to pixels
 		if ( _Unit == RATIO )
 		{
-			l_Pos.Set(	l_ParentSize.x * l_Pos.x * Glb.GetSystem().m_Display.m_Height,
-						l_ParentSize.y * l_Pos.y * Glb.GetSystem().m_Display.m_Height );
+			if ( l_RefObjSize.x == 0 || l_RefObjSize.y == 0 )
+			{
+				m_WaitRefObjSize = true;
+				l_Pos.Set(	l_Pos.x * Glb.GetSystem().m_Display.m_Height,
+							l_Pos.y * Glb.GetSystem().m_Display.m_Height );
+			}
+			else
+			{
+				l_Pos.Set(	l_RefObjSize.x * l_Pos.x * Glb.GetSystem().m_Display.m_Height,
+							l_RefObjSize.y * l_Pos.y * Glb.GetSystem().m_Display.m_Height );
+			}
 		}
 		
 		// Convert to homogenous screen unit
@@ -203,8 +216,8 @@ class C2DInterface
 					l_Pos.y / Glb.GetSystem().m_Display.m_Height );
 		
 		// Add parent origin
-		l_Pos.Set(	l_Pos.x + l_ParentPos.x,
-					l_Pos.y + l_ParentPos.y );
+		l_Pos.Set(	l_Pos.x + l_RefObjPos.x,
+					l_Pos.y + l_RefObjPos.y );
 					
 		m_2DObject.SetPosition( new CV2D( l_Pos.x, l_Pos.y ) );
 	}
@@ -212,19 +225,26 @@ class C2DInterface
 	public function Update() : Result
 	{
 		m_2DObject.Update();
-		if ( m_NeedToFitParent && m_2DObject.GetSize().x != 0 && m_2DObject.GetSize().y != 0 )
+		if ( m_WaitObjSize && m_2DObject.GetSize().x != 0 && m_2DObject.GetSize().y != 0 )
 		{
-			m_NeedToFitParent = false;
+			m_WaitObjSize = false;
 			SetEltSize( RATIO, CV2D.ZERO ); // The element will fit parent size keeping aspect ratio
 											// Was not possible before knowing image aspect ratio
+		}
+		
+		if ( m_WaitRefObjSize && m_RefObj.GetSize().x != 0 && m_RefObj.GetSize().y != 0 )
+		{
+			m_WaitRefObjSize = false;
+			SetEltPos( RATIO, m_2DObject.GetPosition() );
 		}
 		return SUCCESS;
 	}
 	
 	public function NeedUpdate() : Bool
 	{
-		return m_NeedToFitParent;
+		return m_WaitObjSize || m_WaitRefObjSize;
 	}
 	
-	private var m_NeedToFitParent	: Bool;
+	private var m_WaitRefObjSize	: Bool;
+	private var m_WaitObjSize	: Bool;
 }

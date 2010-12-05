@@ -17,7 +17,7 @@ class CText
 	
 	public function new()
 	{
-		m_RscText		= null;
+		m_RscText	= null;
 	}
 	
 	public function Load( _Path )	: Result
