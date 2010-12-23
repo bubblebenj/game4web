@@ -148,7 +148,8 @@ class C2DQuad extends CDrawObject
 	/* Set the rotation using a radian value */
 	public function SetRotation( _Rad : Float )
 	{
-		trace( _Rad + " " + 2 + " " + Math.PI );
+		// NB : Y axis is inverted, so angles are clockwise instead of counterclockwise
+		trace( _Rad + " % " + 2 + " * " + Math.PI );
 		m_Rotation = _Rad % ( 2 * Math.PI );
 		trace( m_Rotation );
 	}

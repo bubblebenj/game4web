@@ -19,7 +19,7 @@ class CRscText extends CRsc
 		return RSC_ID;
 	}
 	
-	public function new() 
+	public function new()
 	{
 		super();
 	}

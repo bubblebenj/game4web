@@ -62,36 +62,51 @@ class CV2D
 		return Math.sqrt(x * x + y * y);
 	}
 	
+	public static function DotProduct( _V0 : CV2D, _V1 :  CV2D ) : Float
+	{
+		return	_V0.x * _V1.x
+			+	_V0.y * _V1.y;
+	}
+	
 	/*
 	 * Test
 	 */
-	public inline function AnonymCopy( _V2D : { x : Float, y : Float } )
+	/***/
+	public static function NewCopy( _V : CV2D ) : CV2D
 	{
-		x = _V2D.x;
-		y = _V2D.y;
+		return new CV2D( _V.x, _V.y );
 	}
 	
-	public static inline function AnonymAdd( _V0 : { x : Float, y : Float }, _V1 : { x : Float, y : Float } ) : { x : Float, y : Float }
+	public static function OperatorPlus( _V0 : CV2D, _V1 :  CV2D ) : CV2D
 	{
-		return { x : _V0.x + _V1.x, y : _V0.y + _V1.y };
+		var l_VOut	: CV2D = new CV2D( 0, 0 );
+		l_VOut.x = _V0.x + _V1.x;
+		l_VOut.y = _V0.y + _V1.y;
+		return l_VOut;
 	}
 	
-	public static inline function AnonymSub( _V0 : { x : Float, y : Float }, _V1 : { x : Float, y : Float } ) : { x : Float, y : Float }
+	public static function OperatorMinus( _V0 : CV2D, _V1 :  CV2D ) : CV2D
 	{
-		return { x : _V0.x - _V1.x, y : _V0.y - _V1.y };
+		var l_VOut	: CV2D = new CV2D( 0, 0 );
+		l_VOut.x = _V0.x - _V1.x;
+		l_VOut.y = _V0.y - _V1.y;
+		return l_VOut;
 	}
 	
-	public static inline function AnonymScale( _V : { x : Float, y : Float }, _a : Float ) : { x : Float, y : Float }
+	public static function OperatorScale( _a : Float, _V : CV2D ) :  CV2D
 	{
-		return { x : _a * _V.x, y : _a * _V.y };
+		var l_VOut	: CV2D = new CV2D( 0, 0 );
+		l_VOut.x 	= _a * _V.x;
+		l_VOut.y	= _a * _V.y;
+		return l_VOut;
 	}
 	/*
 	 * End Test
 	 */
 	
-	public inline function ToString() : String
+	public inline function ToString( ?_NbDigits = 3 ) : String
 	{
-		return ("[x="+Utils.CutDigits(x, 3)+" , y="+Utils.CutDigits(y, 3)+" ]");
+		return ("[ x="+Utils.CutDigits(x, _NbDigits)+",\t y="+Utils.CutDigits(y, _NbDigits)+" ]");
 	}
 	
 	public static inline function ToStringStatic( _V2D : { x : Float, y : Float } ) : String

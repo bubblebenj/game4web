@@ -71,8 +71,57 @@ class CV3D
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 	
+	public static function DotProduct( _V0 : CV3D, _V1 :  CV3D ) : Float
+	{
+		return	_V0.x * _V1.x
+			+	_V0.y * _V1.y
+			+	_V0.z * _V1.z;
+	}
+	
+	public static function CrossProduct( _V0 : CV3D, _V1 :  CV3D ) : CV3D
+	{
+		var l_VOut	: CV3D = new CV3D( 0, 0, 0 );
+		l_VOut.x = _V0.y * _V1.z - _V1.y * _V0.z;
+		l_VOut.y = _V0.z * _V1.x - _V1.z * _V0.x;
+		l_VOut.z = _V0.x * _V1.y - _V1.x * _V0.y;
+		return l_VOut;
+	}
 	
 	public static inline var ZERO 	: CV3D = new CV3D(0, 0, 0);
 	public static inline var ONE 	: CV3D = new CV3D(1, 1, 1);
 	public static inline var HALF 	: CV3D = new CV3D(0.5, 0.5, 0.5);
+	
+	
+	/***/
+	public static function NewCopy( _V : CV3D ) : CV3D
+	{
+		return new CV3D( _V.x, _V.y, _V.z );
+	}
+	
+	public static function OperatorPlus( _V0 : CV3D, _V1 :  CV3D ) : CV3D
+	{
+		var l_VOut	: CV3D = new CV3D( 0, 0, 0 );
+		l_VOut.x = _V0.x + _V1.x;
+		l_VOut.y = _V0.y + _V1.y;
+		l_VOut.z = _V0.z + _V1.z;
+		return l_VOut;
+	}
+	
+	public static function OperatorMinus( _V0 : CV3D, _V1 :  CV3D ) : CV3D
+	{
+		var l_VOut	: CV3D = new CV3D( 0, 0, 0 );
+		l_VOut.x = _V0.x - _V1.x;
+		l_VOut.y = _V0.y - _V1.y;
+		l_VOut.z = _V0.z - _V1.z;
+		return l_VOut;
+	}
+	
+	public static function OperatorScale( _a : Float, _V : CV3D ) :  CV3D
+	{
+		var l_VOut	: CV3D = new CV3D( 0, 0, 0 );
+		l_VOut.x 	= _a * _V.x;
+		l_VOut.y	= _a * _V.y;
+		l_VOut.z	= _a * _V.z;
+		return l_VOut;
+	}
 }

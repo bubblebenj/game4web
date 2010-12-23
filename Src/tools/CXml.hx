@@ -14,9 +14,4 @@ class CXml extends CText
 	{
 		super();
 	}
-	
-	public function IsLoaded() : Bool
-	{
-		return m_RscText.IsStreamed();
-	}
 }

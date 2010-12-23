@@ -136,28 +136,29 @@ class C2DQuadAS extends C2DQuad
 			//var l_RotationMatrix	= new Matrix();
 			//l_RotationMatrix.rotate( _Rad );
 			
-			var l_Matrix : Matrix	= m_DisplayObject.transform.matrix;
-			
+			//var l_Matrix : Matrix	= m_DisplayObject.transform.matrix;
+			//
 			//l_Matrix.concat(l_RotationMatrix);
-			
-			l_Matrix.tx	-= GetPosition().x;
-			l_Matrix.ty	-= GetPosition().y;
-			trace( "Rotate("+ CTrigo.RadToDeg(_Rad) );
-			l_Matrix.rotate( _Rad );
-			l_Matrix.tx	+= GetPosition().x;
-			l_Matrix.ty	+= GetPosition().y;
-			
-			m_DisplayObject.transform.matrix = l_Matrix;
+			//
+			//l_Matrix.tx	-= GetPosition().x;
+			//l_Matrix.ty	-= GetPosition().y;
+			//trace( "Rotate("+ CTrigo.RadToDeg(_Rad) );
+			//l_Matrix.rotate( _Rad );
+			//l_Matrix.tx	+= GetPosition().x;
+			//l_Matrix.ty	+= GetPosition().y;
+			//
+			//m_DisplayObject.transform.matrix = l_Matrix;
 		}
 	}
 	
 	public override function SetRotation( _Rad : Float ) : Void
 	{
 		
-		trace( "SetRotation(" +_Rad );
+		trace( "SetRotation(" + _Rad +"\t > "+ CTrigo.RadToDeg( _Rad ));
 		
-		Rotate( _Rad - GetRotation() );
+		//Rotate( _Rad - GetRotation() );
 		super.SetRotation( _Rad );
+		m_DisplayObject.rotation = CTrigo.RadToDeg( m_Rotation );
 		//m_RotationMatrix	= m_DisplayObject.transform.matrix;
 		//m_RotationMatrix.tx	-= GetCenter().x;
 		//m_RotationMatrix.ty	-= GetCenter().y;
