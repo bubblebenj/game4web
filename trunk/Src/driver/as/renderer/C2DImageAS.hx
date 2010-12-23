@@ -30,9 +30,9 @@ import rsc.CRscImage;
 
 class C2DImageAS extends C2DQuadAS, implements I2DImage 
 {
-	private var m_RscImage		: CRscImageAS;	// content
+	private var m_RscImage	: CRscImageAS;	// content
 	
-	public	var m_Loading	: Bool;
+	private	var m_Loading	: Bool;
 	
 	public function new()
 	{

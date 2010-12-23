@@ -17,6 +17,13 @@ enum E_Unit
 	PERCENTAGE;
 }
 
+enum E_PivotType
+{
+	TL;
+	CENTER;
+	CUSTOM;
+}
+
 class C2DInterface
 {
 	private var m_2DObject	: C2DQuad;
@@ -157,14 +164,14 @@ class C2DInterface
 		m_2DObject.SetSize( l_NewSize );
 	}
 	
-	public function SetEltPivot( _Type : String, ?_Pos : CV2D ) : Void
+	public function SetEltPivot( _Type : E_PivotType, ?_Pos : CV2D ) : Void
 	{
 		var l_Pos : CV2D = new CV2D( 0, 0 );
 		switch ( _Type )
 		{
-			case "center"	: l_Pos.Set( 0.5, 0.5 );
-			case "TL"		: l_Pos.Set( 0  , 0   );
-			case "pivot"	: l_Pos.Copy( _Pos );
+			case CENTER	: l_Pos.Set( 0.5, 0.5 );
+			case TL		: l_Pos.Set( 0  , 0   );
+			case CUSTOM	: l_Pos.Copy( _Pos );
 		}
 		m_2DObject.SetPivot( l_Pos );
 	}

@@ -62,7 +62,7 @@ class Utils
 	
 	
 	/* Maximum base 16 */
-	public static function IntToStr( _Nb : Int, _Base : Int ) : String
+	public static function IntToStr( _Nb : Int, ?_Base : Int = 10 ) : String
 	{	
 		if ( _Base > 16 )
 		{

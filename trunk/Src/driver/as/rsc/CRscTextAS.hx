@@ -20,8 +20,8 @@ class CRscTextAS extends CRscText
 	public function new() 
 	{
 		super();
-		m_TextLoader = new URLLoader();
-		m_State	= INVALID;
+		m_TextLoader	= new URLLoader();
+		m_State			= INVALID;
 	}
 	
 	public function Initialize() : Result

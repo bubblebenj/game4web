@@ -390,21 +390,21 @@ class CMenuGraph extends CRsc			// C&D Menu
 				{
 					case "TL"	:
 					{
-						l_Interface.SetEltPivot( "TL" );
+						l_Interface.SetEltPivot( TL );
 					}
 					case "center"	:
 					{
-						l_Interface.SetEltPivot( "center" );
+						l_Interface.SetEltPivot( CENTER );
 					}
 					case "pivot"	:
 					{
 						l_x	= ( _FStyle.node.handle.att.x == "" ) ? 0.5 : Std.parseFloat( _FStyle.node.handle.att.x );
 						l_y = ( _FStyle.node.handle.att.y == "" ) ? 0.5 : Std.parseFloat( _FStyle.node.handle.att.y );
-						l_Interface.SetEltPivot( "pivot", new CV2D( l_x, l_y ) );
+						l_Interface.SetEltPivot( CUSTOM, new CV2D( l_x, l_y ) );
 					}
 					default		:
 					{
-						l_Interface.SetEltPivot( "center" );
+						l_Interface.SetEltPivot( CENTER );
 						trace( _FStyle.node.handle.att.type + " isn't a correct value for attribute type" );
 						trace( "Accepted values type=\" 'TL' , 'center' or 'pivot' \". Using center" );
 					}
