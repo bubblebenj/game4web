@@ -26,8 +26,17 @@ class CInputManager
 		m_Mouse = cast( l_RscMan.Load( CMouse.RSC_ID , "mouse" ) );
 	}
 	
+	public function GetKeyState()
+	{
+		
+	}
+	
 	public function GetMousePosition() : CV2D
 	{
+		if (null == m_Mouse)
+		{
+			return null;
+		}
 		m_MouseCoordinate.Copy( m_Mouse.m_Coordinate );
 		m_MouseCoordinate.x /= Glb.GetSystem().m_Display.m_Height; // for ratio 1:1 Glb.GetSystem().m_Display.m_Width;
 		m_MouseCoordinate.y /= Glb.GetSystem().m_Display.m_Height;
