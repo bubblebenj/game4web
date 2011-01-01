@@ -1,6 +1,7 @@
 
 
 
+import editor.CEditorPanel;
 import kernel.CSystem;
 import kernel.Glb;
 import kernel.CTypes;
@@ -52,6 +53,8 @@ class CMainClient
 	static var m_Cpt	: Int;						// <--
 	
 	static var m_Img	: CRscImage;
+	
+	static var m_Editor : CEditorPanel = new CEditorPanel();
 	
 	#if js
 	public static function InitGameJS()
@@ -142,6 +145,11 @@ class CMainClient
 				m_Stage = STAGE_UPDATE;
 			case STAGE_UPDATE:
 				UpdateGame();
+		}
+		
+		//if( Glb.GetInputManager().)
+		{
+			
 		}
 		return SUCCESS;
 	}

@@ -34,7 +34,9 @@ class CRenderer
 	public static var CAM_COUNT			: Int = 2;
 	
 	public static var VP_FULLSCREEN		: Int = 0;
-	public static var VP_MAX			: Int = 2;
+	public static var VP_MAX			: Int = 8;
+	public static var VP_EDITOR			: Int = VP_MAX;
+	public static var VP_SDK_MAX		: Int = VP_EDITOR + 1;
 	
 	public var m_RenderContext(default, null) : CRenderContext;
 	
@@ -82,6 +84,9 @@ class CRenderer
 	{
 		m_Vps[VP_FULLSCREEN] = BuildViewport();
 		m_Vps[VP_FULLSCREEN].Initialize(0, 0, 1, 1);
+		
+		m_Vps[VP_EDITOR] = BuildViewport();
+		m_Vps[VP_EDITOR].Initialize(0.75, 0.75, 1, 1);
 		
 		m_Cameras[CAM_PERSPECTIVE_0]	= new CPerspectiveCamera();
 		m_Cameras[CAM_ORTHO_0]			= new COrthoCamera();
