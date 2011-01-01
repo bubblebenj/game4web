@@ -24,9 +24,10 @@ import renderer.I2DImage;
 import rsc.CRscImage;
 
 import CDriver;
+import driver.js.renderer.C2DImageJS;
+import test.CSerializableQuad;
 
 #if js
-	import driver.js.renderer.C2DImageJS;
 	import CGL;
 #end
 
@@ -46,7 +47,7 @@ typedef IntPair = {
 class CMainClient
 {
 	static var m_Stage	: STAGE;
-	static var m_Quad	: C2DImageJS;
+	static var m_Quad	: CSerializableQuad;
 	//static var m_Mouse	: CMouse; 					// <--
 	static var m_Cpt	: Int;						// <--
 	
@@ -72,7 +73,7 @@ class CMainClient
 		l_OrthoCam.SetFar( 1000.0 );
 		
 		
-		m_Quad = new C2DImageJS();
+		m_Quad = new CSerializableQuad();
 		m_Quad.Initialize();
 		
 		m_Quad.SetCenterSize( CV2D.HALF, CV2D.ONE );
@@ -90,6 +91,8 @@ class CMainClient
 		//m_Quad.SetUV( CV2D.ZERO, CV2D.ONE );
 		//m_Quad.GetMaterial().AttachTexture( 0, m_Tex );
 		//m_Quad.GetPrimitive().
+		
+		m_Quad.Dump();
 
 	}
 	#end
@@ -113,7 +116,7 @@ class CMainClient
 		
 		CDebug.CONSOLEMSG(  "type of 2dimg : " + (Std.is(l_Img,C2DImage) ? "yes" : "No") );
 		
-
+		m_Quad.Dump();
 	}
 	
 	public static function UpdateGame()
