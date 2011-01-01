@@ -85,7 +85,7 @@ class CRscShaderProgram extends CRscShader
 		if( m_VtxSh.m_Body.lastIndexOf( ATTR_NAME_TEXCOORD ) != -1)
 		{
 			m_AttribsMask |= ATTR_TEXCOORD;
-			CDebug.CONSOLEMSG("Found tex coord.");
+			CDebug.CONSOLEMSG("Found Tex coord.");
 		}
 	}
 	
