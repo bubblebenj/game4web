@@ -244,6 +244,12 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		
 		var l_Gl : CGL = Glb.g_SystemJS.GetGL();
 		
+		if( null == m_Cameras[_VpId] )
+		{
+			CDebug.CONSOLEMSG("Camera activation failure");
+			return FAILURE;
+		}
+		
 		UpdateQuad(_VpId);
 		
 		if ( Activate() == FAILURE)
