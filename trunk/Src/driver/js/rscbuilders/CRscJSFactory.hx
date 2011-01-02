@@ -13,9 +13,13 @@ import driver.js.renderer.CViewportJS;
 import driver.js.renderer.CRscTextureJS;
 import driver.js.renderer.CRscImageJS;
 
+import driver.js.input.CKeyboardJS;
+
 import kernel.CTypes;
 import kernel.CMouse;
 import kernel.CDebug;
+
+import input.CKeyboard;
 
 import renderer.CRscTexture;
 import renderer.CMaterial;
@@ -75,6 +79,9 @@ class CRscJSFactory extends CRscBuilder
 			
 			case CMouse.RSC_ID:
 			l_Rsc =	new CMouseJS();
+			
+			case CKeyboard.RSC_ID:
+			l_Rsc =	new CKeyboardJS();
 			
 			case CRscTexture.RSC_ID:
 			l_Rsc =	new CRscTextureJS();
