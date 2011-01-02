@@ -8,7 +8,10 @@ import driver.js.rscbuilders.CRscBuilderDocElem;
 import driver.js.kernel.CTypesJS;
 import driver.js.rscbuilders.CRscJSFactory;
 
+
 import kernel.CInputManager;
+
+import input.CKeyboard;
 
 import kernel.CSystem;
 import kernel.CTypes;
@@ -127,6 +130,7 @@ class CSystemJS extends CSystem
 		GetRscMan().AddBuilder( CRenderStates.RSC_ID, 	m_RscJSFactory );
 		GetRscMan().AddBuilder( CPrimitive.RSC_ID, 		m_RscJSFactory );
 		GetRscMan().AddBuilder( CRscImage.RSC_ID, 		m_RscJSFactory );
+		GetRscMan().AddBuilder( CKeyboard.RSC_ID, 		m_RscJSFactory );
 		
 		return SUCCESS;
 	}

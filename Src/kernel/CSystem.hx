@@ -109,6 +109,8 @@ class CSystem
 			
 			m_GameTime += m_GameDeltaTime;
 			
+			
+			
 			if( m_BeforeUpdate != null)
 			{
 				m_BeforeUpdate();
@@ -135,6 +137,8 @@ class CSystem
 			{
 				m_AfterDraw();
 			}
+			
+			GetInputManager().Update();
 		}
 		
 		

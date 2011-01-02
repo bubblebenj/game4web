@@ -8,6 +8,11 @@ import kernel.CTypes;
 import kernel.CMouse;								// <--
 import kernel.CDebug;		
 
+import input.CKeyboard;
+import input.CKeyCodes;
+
+import algorithms.CBitArray;
+
 import renderer.CRscTexture;
 
 import math.CV2D;
@@ -101,6 +106,36 @@ class CMainClient
 	}
 	#end
 	
+	public static function TestBitArray()
+	{
+	
+		var l_Ar = new CBitArray(32);
+		
+		l_Ar.Fill(false);
+		if (l_Ar !=null)
+		{
+			l_Ar.Set(32, true);
+		}
+		
+		if (l_Ar.Is(32) )
+		{
+			CDebug.CONSOLEMSG("t0 ok");
+		}
+		else 
+		{
+			CDebug.CONSOLEMSG("t0 wrong");
+		}
+		
+		if (l_Ar.Is(33) )
+		{
+			CDebug.CONSOLEMSG("t1 ok");
+		}
+		else 
+		{
+			CDebug.CONSOLEMSG("t1 wrong");
+		}
+	}
+	
 	public static function InitGame()
 	{
 		var l_Arr : Array<IntPair> = new Array<IntPair>();
@@ -110,17 +145,28 @@ class CMainClient
 						
 		CDebug.CONSOLEMSG("Lambda = " + l_Arr[0].m_Func("bla") );
 		
+		
 		#if js
 		InitGameJS();
 		#end
 		
-				
+		if(null == Glb.GetInputManager().GetKeyboard()) 
+		{
+			CDebug.CONSOLEMSG(  "ERROR" );
+		}
+		else
+		{
+			CDebug.CONSOLEMSG(  "KeyBoard OK" );
+		}
+		
 		//var l_Img :C2DImage =  CPlatform.Newer( Type.typeof(C2DImage) );
 		var l_Img :C2DImage = new C2DImage();
 		
 		CDebug.CONSOLEMSG(  "type of 2dimg : " + (Std.is(l_Img,C2DImage) ? "yes" : "No") );
 		
 		m_Quad.Dump();
+		
+	
 	}
 	
 	public static function UpdateGame()
@@ -133,6 +179,24 @@ class CMainClient
 		else	m_Cpt++;							// <--
 		
 		//m_Quad.SetSize( new CV2D(m_Cpt/15.0,m_Cpt/15.0) );
+		
+		if ( 	Glb.GetInputManager().GetKeyboard() != null
+		&&		!Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_A )
+		&&		Glb.GetInputManager().GetKeyboard().WasKeyDown( CKeyCodes.KEY_A )
+		)
+		{
+			CDebug.CONSOLEMSG( "A");
+		}
+		/*a
+		
+		if ( 	null != Glb.GetInputManager().GetKeyboard() 
+		&&		Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_SHIFT )
+		//&&		Glb.GetInputManager().GetKeyboard().WasKeyDown( CKeyCodes.KEY_A )
+		)
+		{
+			CDebug.CONSOLEMSG( "SHIFT");
+		}
+		*/
 	}
 	
 	

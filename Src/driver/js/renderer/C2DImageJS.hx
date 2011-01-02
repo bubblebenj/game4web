@@ -246,7 +246,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		
 		if( null == m_Cameras[_VpId] )
 		{
-			CDebug.CONSOLEMSG("Camera activation failure");
+			//CDebug.CONSOLEMSG("Camera activation failure on vp : " + _VpId);
 			return FAILURE;
 		}
 		

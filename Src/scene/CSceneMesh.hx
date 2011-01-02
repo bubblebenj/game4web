@@ -5,7 +5,7 @@
 
 package scene;
 
-class SceneMesh 
+class CSceneMesh 
 {
 
 	public function new() 

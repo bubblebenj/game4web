@@ -5,7 +5,7 @@
 
 package scene;
 
-class SceneNode 
+class CSceneNode 
 {
 
 	public function new() 
