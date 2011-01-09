@@ -13,13 +13,11 @@ import input.CKeyboard;
 
 class CKeyboardJS extends CKeyboard
 {
-
 	public function new() 
 	{
 		super();
 		m_Context	= js.Lib.document.body;
 		
-	
 		m_Context.onkeydown 	= OnDown;
 		
 		if( null != m_Context)
@@ -29,7 +27,7 @@ class CKeyboardJS extends CKeyboard
 	}
 	
 	
-	public function OnDown(  _Evt : Event)
+	public function OnDown( _Evt : Event )
 	{
 		m_UpArray.Set(_Evt.keyCode, false);
 		CDebug.CONSOLEMSG("OnDown :" +_Evt.keyCode);

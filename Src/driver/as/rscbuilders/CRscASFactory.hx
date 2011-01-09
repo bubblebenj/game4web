@@ -5,6 +5,7 @@
 
 package driver.as.rscbuilders;
 
+import driver.as.input.CKeyboardAS;
 import driver.as.kernel.CMouseAS;
 import driver.as.rsc.CRscImageAS;
 import driver.as.rsc.CRscTextAS;
@@ -12,6 +13,7 @@ import driver.as.rsc.CRscTextAS;
 import kernel.CTypes;
 import kernel.CDebug;
 import kernel.CMouse;
+import input.CKeyboard;
 
 import rsc.CRscBuilder;
 import rsc.CRsc;
@@ -39,6 +41,9 @@ class CRscASFactory extends CRscBuilder
 			
 			case CMouse.RSC_ID:
 			l_Rsc =	new CMouseAS();
+			
+			case CKeyboard.RSC_ID:
+			l_Rsc =	new CKeyboardAS();
 			
 			//CDebug.CONSOLEMSG("CRscASFactory:Initialize : " + _Path);
 			
