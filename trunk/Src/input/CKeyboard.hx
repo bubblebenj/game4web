@@ -24,7 +24,7 @@ class CKeyboard extends CRsc
 	public function new() 
 	{
 		super();
-		m_UpArray = new CBitArray(CKeyCodes.KEY_MAX);
+		m_UpArray = new CBitArray( CKeyCodes.KEY_MAX );
 		m_UpArray.Fill(true);
 		
 		m_PreviousUpArray = new CBitArray(CKeyCodes.KEY_MAX);

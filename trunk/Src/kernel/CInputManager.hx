@@ -5,7 +5,6 @@
 
 package kernel;
 
-
 import math.CV2D;
 import math.Registers;
 
