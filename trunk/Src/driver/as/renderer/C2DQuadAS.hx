@@ -65,45 +65,56 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
-	private function UpdateDisplayObjectPos() : Void
+	private function UpdateDisplayObjectMatrix() : Void
 	{
 		if ( m_DisplayObject != null )
 		{
-			m_DisplayObject.x	= GetTL().x * Glb.GetSystem().m_Display.m_Height;
-			m_DisplayObject.y	= GetTL().y * Glb.GetSystem().m_Display.m_Height;
+			var l_Matrix	: Matrix	= new Matrix();
+			l_Matrix.identity();
+			
+			// Set size
+			l_Matrix.scale( GetScale().x ,
+							GetScale().y );
+			
+			// place pivot at origine
+			var l_Pivot	= new CV2D( GetPosition().x - GetTL().x,
+			                        GetPosition().y - GetTL().y );
+			l_Matrix.tx	-= ( GetPosition().x - GetTL().x ) * Glb.GetSystem().m_Display.m_Height;
+			l_Matrix.ty	-= ( GetPosition().y - GetTL().y ) * Glb.GetSystem().m_Display.m_Height;
+			
+			// Set rotation
+			l_Matrix.rotate( m_Rotation );
+			
+			// place object at the good place
+			l_Matrix.tx	+= GetPosition().x * Glb.GetSystem().m_Display.m_Height;
+			l_Matrix.ty	+= GetPosition().y * Glb.GetSystem().m_Display.m_Height;
+			
+			m_DisplayObject.transform.matrix = l_Matrix;
 		}		
 	}
 	
 	override public function SetPosition( _Pos : CV2D ) : Void
 	{
 		super.SetPosition( _Pos );
-		UpdateDisplayObjectPos();
+		UpdateDisplayObjectMatrix();
 	}
 	
 	override public function SetCenterPosition( _Pos : CV2D ) : Void 
 	{
 		super.SetCenterPosition( _Pos );
-		UpdateDisplayObjectPos();
+		UpdateDisplayObjectMatrix();
 	}
 	
 	override public function SetTLPosition( _Pos : CV2D ) : Void
 	{
 		super.SetTLPosition( _Pos );
-		UpdateDisplayObjectPos();
+		UpdateDisplayObjectMatrix();
 	}
 	
 	override public function SetSize( _Size : CV2D ) : Void
 	{
 		super.SetSize( _Size );
-		if( m_DisplayObject != null )
-		{
-			m_DisplayObject.width	= _Size.x * Glb.GetSystem().m_Display.m_Height;
-			m_DisplayObject.height	= _Size.y * Glb.GetSystem().m_Display.m_Height;
-		}
-		else
-		{
-			trace( " Warning : m_DisplayObject is null, size not set " );
-		}
+		UpdateDisplayObjectMatrix();
 	}
 	
 	override public function Draw( _Vp : Int ) : Result 
@@ -153,18 +164,22 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function SetRotation( _Rad : Float ) : Void
 	{
-		
-		trace( "SetRotation(" + _Rad +"\t > "+ CTrigo.RadToDeg( _Rad ));
-		
+		var l_Rotation : Float	= m_Rotation;
+		//trace( "SetRotation(" + _Rad +"\t > "+ CTrigo.RadToDeg( _Rad ));
+		//m_DisplayObject.rotation = CTrigo.RadToDeg( m_Rotation );
 		//Rotate( _Rad - GetRotation() );
+		
 		super.SetRotation( _Rad );
-		m_DisplayObject.rotation = CTrigo.RadToDeg( m_Rotation );
-		//m_RotationMatrix	= m_DisplayObject.transform.matrix;
-		//m_RotationMatrix.tx	-= GetCenter().x;
-		//m_RotationMatrix.ty	-= GetCenter().y;
-		//m_RotationMatrix.rotate( Constants.PI *0.5 );// CTrigo.RadToDeg( _Rad );
-		//m_RotationMatrix.tx	+= GetCenter().x;
-		//m_RotationMatrix.ty	+= GetCenter().y;
+		UpdateDisplayObjectMatrix();
+		//l_Rotation -=	m_Rotation;
+		//var m_RotationMatrix = m_DisplayObject.transform.matrix;
+		//m_RotationMatrix.tx	-= GetPosition().x;
+		//m_RotationMatrix.ty	-= GetPosition().y;
+		//m_RotationMatrix.rotate( l_Rotation );
+		//m_RotationMatrix.tx	+= GetPosition().x;
+		//m_RotationMatrix.ty	+= GetPosition().y;
+		//m_DisplayObject.transform.matrix = m_RotationMatrix;
+		
 	}
 	
 	public function IsLoaded()	: Bool

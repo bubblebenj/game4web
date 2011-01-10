@@ -87,21 +87,24 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			m_Loading	= false;
 			CreateBitmap();
 			
-			// Update size
-			var l_x : Float = 0;
-			var l_y : Float = 0;
-			if ( CV2D.AreEqual( GetSize(), CV2D.ZERO ) )
+
+			
+			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
+			
+			// initializing Scale value
+			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height,
+								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
+			m_Scale.Set( 1, 1 );
+			
+			if ( CV2D.AreNotEqual( l_Size, CV2D.ZERO ) )
 			{
-				l_x	=	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height;
-				l_y	=	m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height;
+				// Update size if a size was already set
+				var l_x : Float = 0;
+				var l_y : Float = 0;
+				l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
+				l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
+				SetSize( new CV2D( l_x, l_y ) );
 			}
-			else
-			{
-				l_x	= ( GetSize().x == 0 ) ? GetSize().y * m_DisplayObject.width / m_DisplayObject.height : GetSize().x;
-				l_y	= ( GetSize().y == 0 ) ? GetSize().x * m_DisplayObject.height / m_DisplayObject.width : GetSize().y;
-			}
-			SetSize( new CV2D( l_x, l_y ) );
-			//
 			
 			SetPosition( GetPosition() );
 			

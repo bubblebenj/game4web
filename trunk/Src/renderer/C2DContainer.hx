@@ -92,12 +92,15 @@ class C2DContainer extends C2DQuad
 	 
 	public override function SetCenterPosition( _Pos : CV2D ) : Void
 	{
-		var l_ObjPos : CV2D = new CV2D( 0, 0 );
+		var l_ObjPos	: CV2D = new CV2D( 0, 0 );
+		var l_Delta		: CV2D = new CV2D(	_Pos.x - GetPosition( { x : 0.5, y : 0.5 } ).x ,
+											_Pos.y - GetPosition( { x : 0.5, y : 0.5 } ).y );
 		for ( i_Object in m_2DObjects )
 		{
-			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
-							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
-			i_Object.SetCenterPosition( l_ObjPos );
+			//l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition( { x : 0.5, y : 0.5 } ).x,
+				//			_Pos.y + i_Object.GetPosition().y - GetPosition( { x : 0.5, y : 0.5 } ).y );
+			CV2D.Add( l_ObjPos, i_Object.GetPosition(), l_Delta );
+			i_Object.SetPosition( l_ObjPos );
 		}
 		super.SetCenterPosition( _Pos );
 	}
@@ -107,9 +110,9 @@ class C2DContainer extends C2DQuad
 		var l_ObjPos : CV2D = new CV2D( 0, 0 );
 		for ( i_Object in m_2DObjects )
 		{
-			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
-							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
-			i_Object.SetTLPosition( l_ObjPos );
+			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition( { x : 0.0, y : 0.0 } ).x,
+							_Pos.y + i_Object.GetPosition().y - GetPosition( { x : 0.0, y : 0.0 } ).y );
+			i_Object.SetPosition( l_ObjPos );
 		}
 		super.SetTLPosition( _Pos );
 	}
