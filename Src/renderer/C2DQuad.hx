@@ -17,6 +17,7 @@ class C2DQuad extends CDrawObject
 	private var m_Pivot		: CV2D;
 	
 	private var	m_Rotation	: Float;
+	private var m_Scale		: CV2D;
 
 		
 	public function new() 
@@ -24,7 +25,7 @@ class C2DQuad extends CDrawObject
 		super();
 		m_Rect		= new CRect2D();
 		m_Pivot		= new CV2D( 0.5, 0.5 ); // Center
-		
+		m_Scale		= new CV2D( 0, 0 );
 		m_Rotation	= 0;
 	}
 	
@@ -111,7 +112,17 @@ class C2DQuad extends CDrawObject
 	 */
 	public function SetSize( _Size : CV2D ) : Void
 	{
-		//Registers.V2_9.Copy( GetPosition() );
+		if ( CV2D.AreEqual( m_Scale, CV2D.ZERO ) )
+		{
+			// initialize scale
+			m_Scale.Set( 1, 1 );
+		}
+		else
+		{
+			// Set new scale value
+			m_Scale.Set(	_Size.x * m_Scale.x / GetSize().x,
+							_Size.y * m_Scale.y / GetSize().y );
+		}
 		var l_PivotCoord	= new CV2D( GetPosition().x, GetPosition().y );
 		trace( GetPosition().ToString());
 		m_Rect.m_Size.Copy( _Size );
@@ -131,7 +142,7 @@ class C2DQuad extends CDrawObject
 	
 	public function SetCenterSize( _Pos : CV2D,_Sz : CV2D ) : Void
 	{
-		m_Rect.m_Size.Copy( _Sz);
+		m_Rect.m_Size.Copy( _Sz );
 		SetCenterPosition( _Pos );
 	}
 	
@@ -141,7 +152,17 @@ class C2DQuad extends CDrawObject
 							_BR.y - _TL.y );
 		SetTLPosition( _TL );
 	}
-
+	
+	private function SetScale( _Scale : CV2D )
+	{
+		m_Scale	= _Scale;
+	}
+	
+	private function GetScale() : CV2D
+	{
+		return m_Scale;
+	}
+	
 	/* 
 	 * Rotation
 	 */
@@ -149,9 +170,7 @@ class C2DQuad extends CDrawObject
 	public function SetRotation( _Rad : Float )
 	{
 		// NB : Y axis is inverted, so angles are clockwise instead of counterclockwise
-		trace( _Rad + " % " + 2 + " * " + Math.PI );
 		m_Rotation = _Rad % ( 2 * Math.PI );
-		trace( m_Rotation );
 	}
 	
 	public function GetRotation() : Float
