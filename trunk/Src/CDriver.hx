@@ -12,7 +12,7 @@ package ;
 #elseif js
 	typedef C2DImage		= driver.js.renderer.C2DImageJS;
 	typedef CTextField		= driver.js.renderer.CTextFieldJS;
-	typedef C2DCamera		= renderer.C2DCamera;
+	typedef C2DCamera		= renderer.camera.C2DCamera;
 #end
 
 /*
