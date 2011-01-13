@@ -75,16 +75,26 @@ class C2DContainer extends C2DQuad
 		return -1;
 	}
 	
+	public override function SetTHECamera( _Camera : C2DCamera ): Void
+	{
+		super.SetTHECamera( _Camera );
+		for ( i_Object in m_2DObjects )
+		{
+			i_Object.SetTHECamera( _Camera );
+		}
+	}
+	
 	/* 
 	 * Position
 	 */
 	public override function SetPosition( _Pos : CV2D ) : Void
 	{
-		var l_ObjPos : CV2D = new CV2D( 0, 0 );
+		var l_ObjPos	: CV2D = new CV2D( 0, 0 );
+		var l_Delta		: CV2D = new CV2D(	_Pos.x - GetPosition().x ,
+											_Pos.y - GetPosition().y );
 		for ( i_Object in m_2DObjects )
 		{
-			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition().x,
-							_Pos.y + i_Object.GetPosition().y - GetPosition().y );
+			CV2D.Add( l_ObjPos, i_Object.GetPosition(), l_Delta );
 			i_Object.SetPosition( l_ObjPos );
 		}
 		super.SetPosition( _Pos );
@@ -97,8 +107,6 @@ class C2DContainer extends C2DQuad
 											_Pos.y - GetPosition( { x : 0.5, y : 0.5 } ).y );
 		for ( i_Object in m_2DObjects )
 		{
-			//l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition( { x : 0.5, y : 0.5 } ).x,
-				//			_Pos.y + i_Object.GetPosition().y - GetPosition( { x : 0.5, y : 0.5 } ).y );
 			CV2D.Add( l_ObjPos, i_Object.GetPosition(), l_Delta );
 			i_Object.SetPosition( l_ObjPos );
 		}
@@ -107,11 +115,12 @@ class C2DContainer extends C2DQuad
 	
 	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
-		var l_ObjPos : CV2D = new CV2D( 0, 0 );
+		var l_ObjPos	: CV2D = new CV2D( 0, 0 );
+		var l_Delta		: CV2D = new CV2D(	_Pos.x - GetPosition( { x : 0.0, y : 0.0 } ).x ,
+											_Pos.y - GetPosition( { x : 0.0, y : 0.0 } ).y );
 		for ( i_Object in m_2DObjects )
 		{
-			l_ObjPos.Set(	_Pos.x + i_Object.GetPosition().x - GetPosition( { x : 0.0, y : 0.0 } ).x,
-							_Pos.y + i_Object.GetPosition().y - GetPosition( { x : 0.0, y : 0.0 } ).y );
+			CV2D.Add( l_ObjPos, i_Object.GetPosition(), l_Delta );
 			i_Object.SetPosition( l_ObjPos );
 		}
 		super.SetTLPosition( _Pos );

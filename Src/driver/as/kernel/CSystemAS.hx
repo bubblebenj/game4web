@@ -11,6 +11,9 @@ import kernel.CSystem;
 import kernel.CTypes;
 import kernel.CMouse;
 
+import input.CKeyboard;
+import renderer.camera.C2DCamera;
+
 import rsc.CRscImage;
 import rsc.CRscText;
 
@@ -56,7 +59,8 @@ class CSystemAS extends CSystem
 		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
 		GetRscMan().AddBuilder( CRscText.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
 		GetRscMan().AddBuilder( CMouse.RSC_ID, 		m_RscASFactory );//new CRscASFactory() );
-		
+		GetRscMan().AddBuilder( CKeyboard.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
+
 		return SUCCESS;
 	}
 }

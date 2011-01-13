@@ -5,15 +5,14 @@
 
 package ;
 
-
 #if flash
 	typedef C2DImage		= driver.as.renderer.C2DImageAS;
 	typedef CTextField		= driver.as.renderer.CTextFieldAS;
-	
+	typedef C2DCamera		= driver.as.renderer.C2DCameraAS;
 #elseif js
 	typedef C2DImage		= driver.js.renderer.C2DImageJS;
 	typedef CTextField		= driver.js.renderer.CTextFieldJS;
-	
+	typedef C2DCamera		= renderer.C2DCamera;
 #end
 
 /*

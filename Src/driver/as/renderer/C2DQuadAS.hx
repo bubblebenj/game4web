@@ -65,8 +65,10 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
-	private function UpdateDisplayObjectMatrix() : Void
+	override public function Draw( _Vp : Int ) : Result 
 	{
+		super.Draw( _Vp );
+		
 		if ( m_DisplayObject != null )
 		{
 			var l_Matrix	: Matrix	= new Matrix();
@@ -89,44 +91,17 @@ class C2DQuadAS extends C2DQuad
 			l_Matrix.tx	+= GetPosition().x * Glb.GetSystem().m_Display.m_Height;
 			l_Matrix.ty	+= GetPosition().y * Glb.GetSystem().m_Display.m_Height;
 			
+			
+			
+			// Add camera transformation
+			if ( m_Camera != null )
+			{
+				//trace( m_Camera.m_Coordinate.ToString() + " " );
+				l_Matrix.concat( cast( m_Camera, C2DCameraAS ).GetMatrix() );
+			}
+			
 			m_DisplayObject.transform.matrix = l_Matrix;
-		}		
-	}
-	
-	override public function SetPosition( _Pos : CV2D ) : Void
-	{
-		super.SetPosition( _Pos );
-		UpdateDisplayObjectMatrix();
-	}
-	
-	override public function SetCenterPosition( _Pos : CV2D ) : Void 
-	{
-		super.SetCenterPosition( _Pos );
-		UpdateDisplayObjectMatrix();
-	}
-	
-	override public function SetTLPosition( _Pos : CV2D ) : Void
-	{
-		super.SetTLPosition( _Pos );
-		UpdateDisplayObjectMatrix();
-	}
-	
-	override public function SetSize( _Size : CV2D ) : Void
-	{
-		super.SetSize( _Size );
-		UpdateDisplayObjectMatrix();
-	}
-	
-	override public function Draw( _Vp : Int ) : Result 
-	{
-		super.Draw( _Vp );
-		
-		//if( m_DisplayObject != null )
-		//{
-			//SetVisible( m_Visible );
-			//m_DisplayObject.width	= GetSize().x * Glb.GetSystem().m_Display.m_Height;
-			//m_DisplayObject.height	= GetSize().y * Glb.GetSystem().m_Display.m_Height;
-		//}
+		}
 		
 		return SUCCESS;
 	}
@@ -138,48 +113,6 @@ class C2DQuadAS extends C2DQuad
 		{
 			m_DisplayObject.alpha = _Value;
 		}
-	}
-	
-	private function Rotate( _Rad : Float ) : Void
-	{
-		if ( ( _Rad % ( 2 * Constants.PI ) ) != 0 )
-		{
-			//var l_RotationMatrix	= new Matrix();
-			//l_RotationMatrix.rotate( _Rad );
-			
-			//var l_Matrix : Matrix	= m_DisplayObject.transform.matrix;
-			//
-			//l_Matrix.concat(l_RotationMatrix);
-			//
-			//l_Matrix.tx	-= GetPosition().x;
-			//l_Matrix.ty	-= GetPosition().y;
-			//trace( "Rotate("+ CTrigo.RadToDeg(_Rad) );
-			//l_Matrix.rotate( _Rad );
-			//l_Matrix.tx	+= GetPosition().x;
-			//l_Matrix.ty	+= GetPosition().y;
-			//
-			//m_DisplayObject.transform.matrix = l_Matrix;
-		}
-	}
-	
-	public override function SetRotation( _Rad : Float ) : Void
-	{
-		var l_Rotation : Float	= m_Rotation;
-		//trace( "SetRotation(" + _Rad +"\t > "+ CTrigo.RadToDeg( _Rad ));
-		//m_DisplayObject.rotation = CTrigo.RadToDeg( m_Rotation );
-		//Rotate( _Rad - GetRotation() );
-		
-		super.SetRotation( _Rad );
-		UpdateDisplayObjectMatrix();
-		//l_Rotation -=	m_Rotation;
-		//var m_RotationMatrix = m_DisplayObject.transform.matrix;
-		//m_RotationMatrix.tx	-= GetPosition().x;
-		//m_RotationMatrix.ty	-= GetPosition().y;
-		//m_RotationMatrix.rotate( l_Rotation );
-		//m_RotationMatrix.tx	+= GetPosition().x;
-		//m_RotationMatrix.ty	+= GetPosition().y;
-		//m_DisplayObject.transform.matrix = m_RotationMatrix;
-		
 	}
 	
 	public function IsLoaded()	: Bool

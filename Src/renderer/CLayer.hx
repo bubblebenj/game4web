@@ -19,28 +19,44 @@ import math.Registers;
 
 import renderer.C2DQuad;
 import renderer.camera.C2DCamera;
+import driver.as.renderer.C2DCameraAS;
+
+import rsc.CRscMan;
 
 
 
 class CLayer extends C2DContainer
 {
-	public 	var m_Camera	: C2DCamera;
+	private	static var m_HalfScreen	: CV2D = new CV2D( 0.5 * Glb.GetSystem().m_Display.GetAspectRatio(), 0.5 );
+	
+	private var w_Pos				: CV2D;
 	
 	public function new()
 	{
 		super();
-		m_Camera		= new C2DCamera();
+		m_Camera	= new C2DCameraAS();
+		SetTHECamera( m_Camera );
+		m_Camera.m_Name	= m_Name;
+		m_Pivot			= new CV2D( 0, 0 );
+		w_Pos			= new CV2D( 0, 0 );
 	}
 	
-	public function SetTHECamera( _Camera: C2DCamera ): Void
+	public override function AddElement( _Object : C2DQuad ) : Result
 	{
-		m_Camera	= _Camera;
-		SetCenterPosition( m_Camera.m_Coordinate );
-	}
+		var l_Res = super.AddElement( _Object );
+		if ( l_Res == SUCCESS )
+		{
+			_Object.SetTHECamera( m_Camera );
+			return SUCCESS;
+		}
+		return l_Res;
+	}	
 	
 	public function MoveTHECamera( _Pos : CV2D )
 	{
 		m_Camera.SetPosition( _Pos );
-		SetCenterPosition( m_Camera.m_Coordinate );
+		//CV2D.Sub( w_Pos, CV2D.ZERO, m_Camera.m_Coordinate );
+		//CV2D.Sub( w_Pos, w_Pos, m_HalfScreen );
+		//SetPosition( w_Pos );
 	}
 }
