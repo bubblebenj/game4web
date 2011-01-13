@@ -87,8 +87,6 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			m_Loading	= false;
 			CreateBitmap();
 			
-
-			
 			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
 			
 			// initializing Scale value

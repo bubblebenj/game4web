@@ -4,12 +4,18 @@
  */
 
 package renderer.camera;
+
 import math.CV2D;
 
-class C2DCamera 
-{
+import rsc.CRsc;
+import rsc.CRscMan;
+import kernel.Glb;
+
+class C2DCamera
+{	
 	public var m_Coordinate : CV2D;
 	public var m_Scale		: Float;
+	public var m_Name		: String;
 	
 	public function new() 
 	{

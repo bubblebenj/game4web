@@ -5,11 +5,14 @@
 
 package renderer;
 
+import CDriver;
+
 import math.Constants;
 import math.CV2D;
 import math.CRect2D;
 import math.Registers;
-import renderer.camera.C2DCamera;
+import rsc.CRscMan;
+import kernel.Glb;
 
 class C2DQuad extends CDrawObject
 {
@@ -19,6 +22,7 @@ class C2DQuad extends CDrawObject
 	private var	m_Rotation	: Float;
 	private var m_Scale		: CV2D;
 
+	public	var m_Camera	: C2DCamera;
 		
 	public function new() 
 	{
@@ -27,9 +31,8 @@ class C2DQuad extends CDrawObject
 		m_Pivot		= new CV2D( 0.5, 0.5 ); // Center
 		m_Scale		= new CV2D( 0, 0 );
 		m_Rotation	= 0;
+		//m_Camera	= new C2DCamera();
 	}
-	
-	
 	
 	/* Need to be acces via another function - maybe a bad idea ^^ */
 	private function Intersects( _Point : CV2D ) : Bool
@@ -48,6 +51,11 @@ class C2DQuad extends CDrawObject
 			&&		_Point.x <= l_BR.x
 			&&		_Point.y <= l_BR.y;
 		}
+	}
+	
+	public function SetTHECamera( _Camera : C2DCamera ): Void
+	{
+		m_Camera	= _Camera;
 	}
 	
 	/*
