@@ -61,7 +61,7 @@ class Utils
 	}
 	
 	
-	/* Maximum base 16 */
+	/* Maximum base 16, NbDigits allow to add 0 left to the number to complete to have NbDigits char */
 	public static function IntToStr( _Nb : Int, ?_Base : Int = 10 ) : String
 	{	
 		if ( _Base > 16 )

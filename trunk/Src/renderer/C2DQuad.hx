@@ -131,8 +131,7 @@ class C2DQuad extends CDrawObject
 			m_Scale.Set(	_Size.x * m_Scale.x / GetSize().x,
 							_Size.y * m_Scale.y / GetSize().y );
 		}
-		var l_PivotCoord	= new CV2D( GetPosition().x, GetPosition().y );
-		trace( GetPosition().ToString());
+		var l_PivotCoord	= CV2D.NewCopy( GetPosition() );
 		m_Rect.m_Size.Copy( _Size );
 		SetPosition( l_PivotCoord );
 	}

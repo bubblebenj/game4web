@@ -125,7 +125,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	
 	public inline function GetRGB( _Pixel : CV2D ) : UInt
 	{
-		trace ( Utils.IntToStr( GetARGB(_Pixel) , 16 ) );
+		trace ( Utils.IntToStr( GetARGB(_Pixel), 16 ) );
 		return GetARGB( _Pixel ) % 0x1000000;
 	}
 	

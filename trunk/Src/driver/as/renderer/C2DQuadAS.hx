@@ -65,31 +65,31 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
+	private static var s_Matrix	= new Matrix();
 	override public function Draw( _Vp : Int ) : Result 
 	{
 		super.Draw( _Vp );
 		
 		if ( m_DisplayObject != null )
 		{
-			var l_Matrix	: Matrix	= new Matrix();
-			l_Matrix.identity();
+			s_Matrix.identity();
 			
 			// Set size
-			l_Matrix.scale( GetScale().x ,
+			s_Matrix.scale( GetScale().x ,
 							GetScale().y );
 			
 			// place pivot at origine
 			var l_Pivot	= new CV2D( GetPosition().x - GetTL().x,
 			                        GetPosition().y - GetTL().y );
-			l_Matrix.tx	-= ( GetPosition().x - GetTL().x ) * Glb.GetSystem().m_Display.m_Height;
-			l_Matrix.ty	-= ( GetPosition().y - GetTL().y ) * Glb.GetSystem().m_Display.m_Height;
+			s_Matrix.tx	-= ( GetPosition().x - GetTL().x ) * Glb.GetSystem().m_Display.m_Height;
+			s_Matrix.ty	-= ( GetPosition().y - GetTL().y ) * Glb.GetSystem().m_Display.m_Height;
 			
 			// Set rotation
-			l_Matrix.rotate( m_Rotation );
+			s_Matrix.rotate( m_Rotation );
 			
 			// place object at the good place
-			l_Matrix.tx	+= GetPosition().x * Glb.GetSystem().m_Display.m_Height;
-			l_Matrix.ty	+= GetPosition().y * Glb.GetSystem().m_Display.m_Height;
+			s_Matrix.tx	+= GetPosition().x * Glb.GetSystem().m_Display.m_Height;
+			s_Matrix.ty	+= GetPosition().y * Glb.GetSystem().m_Display.m_Height;
 			
 			
 			
@@ -97,10 +97,10 @@ class C2DQuadAS extends C2DQuad
 			if ( m_Camera != null )
 			{
 				//trace( m_Camera.m_Coordinate.ToString() + " " );
-				l_Matrix.concat( cast( m_Camera, C2DCameraAS ).GetMatrix() );
+				s_Matrix.concat( cast( m_Camera, C2DCameraAS ).GetMatrix() );
 			}
 			
-			m_DisplayObject.transform.matrix = l_Matrix;
+			m_DisplayObject.transform.matrix = s_Matrix;
 		}
 		
 		return SUCCESS;
