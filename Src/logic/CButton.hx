@@ -82,7 +82,7 @@ class CButton extends C2DContainer
 	
 	public function MouseOver() : Bool
 	{
-		return Intersects( Glb.GetInputManager().GetMousePosition() );
+		return Intersects( Glb.GetInputManager().GetMouse().GetPosition() );
 	}
 	
 	public override function Update() : Result
@@ -95,12 +95,12 @@ class CButton extends C2DContainer
 		}
 		else
 		{
-			if ( Glb.GetInputManager().IsMouseDown() )
+			if ( Glb.GetInputManager().GetMouse().IsDown() )
 			{
 				m_InteractFSM.m_CurrentActuator = B_TC_PRESSED;
 			}
 		}
-		if ( ! Glb.GetInputManager().IsMouseDown() )
+		if ( ! Glb.GetInputManager().GetMouse().IsDown() )
 		{
 			m_InteractFSM.m_CurrentActuator = B_TC_RELEASED;
 		}

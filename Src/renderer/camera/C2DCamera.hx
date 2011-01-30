@@ -32,4 +32,20 @@ class C2DCamera
 	{
 		m_Scale = _Value;
 	}
+	
+	public function GetProjectionPoint( _V2D : CV2D ) : CV2D
+	{
+		var l_V2D	= CV2D.NewCopy( _V2D );
+		CV2D.Sub(	l_V2D, l_V2D, m_Coordinate );
+		CV2D.Scale( l_V2D, m_Scale,	l_V2D );
+		return l_V2D;
+	}
+	
+	public function GetWorldPosition( _V2D : CV2D ) : CV2D
+	{
+		var l_V2D	= CV2D.NewCopy( _V2D );
+		CV2D.Scale( l_V2D, 1 / m_Scale,	l_V2D );
+		CV2D.Add(	l_V2D, l_V2D, m_Coordinate );
+		return l_V2D;
+	}
 }
