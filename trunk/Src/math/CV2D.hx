@@ -51,6 +51,14 @@ class CV2D
 	{
 		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? true : false;
 	}
+
+	public static inline function Normalize( _InOut : CV2D )
+	{
+		var l_InvLen = 1.0 / _InOut.Norm();
+		
+		_InOut.x *= l_InvLen;
+		_InOut.y *= l_InvLen;
+	}
 	
 	public inline function Norm2()
 	{
@@ -114,9 +122,14 @@ class CV2D
 		return ("( "+_V2D.x+" , "+_V2D.y+" )");
 	}
 	
+	public static inline function GetDistance2( _V0 : CV2D, _V1 :  CV2D ) : Float
+	{
+		return Math.pow( (_V1.x - _V0.x), 2 ) + Math.pow( (_V1.y - _V0.y), 2 );
+	}
+	
 	public static inline function GetDistance( _V0 : CV2D, _V1 :  CV2D ) : Float
 	{
-		return Math.sqrt( Math.pow( (_V1.x - _V0.x), 2 ) + Math.pow( (_V1.y - _V0.y), 2 ) );
+		return Math.sqrt( GetDistance2( _V0 , _V1 ) );
 	}
 	
 	public static inline var ZERO 		: CV2D = new CV2D(0, 0);

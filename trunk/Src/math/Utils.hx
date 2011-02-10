@@ -72,8 +72,13 @@ class Utils
 		{
 			var l_Digits	: Array<String> = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
 			var l_StrNb	= "";
-			var l_End	: Bool = false;
-			
+			var l_End		: Bool	= false;
+			var l_IsNegatif	: Bool	= false; 
+			if ( _Nb < 0 )
+			{
+				l_IsNegatif	= true;
+				_Nb	= -_Nb;
+			}
 			while( ! l_End )
 			{
 				if ( _Nb >= _Base )
@@ -87,6 +92,10 @@ class Utils
 					l_StrNb = l_Digits[_Nb] + l_StrNb;
 					l_End	= true;
 				}
+			}
+			if ( l_IsNegatif )
+			{
+				l_StrNb	= "-" + l_StrNb;
 			}
 			return l_StrNb;
 		}
