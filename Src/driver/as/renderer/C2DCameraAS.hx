@@ -7,6 +7,7 @@ package driver.as.renderer;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
+import kernel.CDebug;
 
 import math.CV2D;
 
@@ -49,14 +50,18 @@ class C2DCameraAS extends C2DCamera
 		return m_Matrix;
 	}
 	
-	public override function GetProjectionPoint( _V2D : CV2D ) : CV2D
+	public override function GetProjectionPoint( _WorldV2D : CV2D, _PointOut : CV2D ) : Void
 	{
-		var l_flashV2D : Point	= new Point(	-_V2D.x * Glb.GetSystem().m_Display.m_Height,
-												-_V2D.y * Glb.GetSystem().m_Display.m_Height);
+		var l_flashV2D : Point	= new Point(	-_WorldV2D.x * Glb.GetSystem().m_Display.m_Height,
+												-_WorldV2D.y * Glb.GetSystem().m_Display.m_Height);
 		var l_Matrix 			= m_Matrix;
 		l_Matrix.invert();
 		l_flashV2D				= m_Matrix.transformPoint( l_flashV2D );
-		var l_V2D		: CV2D	= new CV2D( -l_flashV2D.x / Glb.GetSystem().m_Display.m_Height, -l_flashV2D.y / Glb.GetSystem().m_Display.m_Height );
-		return l_V2D;
+		_PointOut.Set( -l_flashV2D.x / Glb.GetSystem().m_Display.m_Height, -l_flashV2D.y / Glb.GetSystem().m_Display.m_Height );
+	}
+	
+	public override function GetWorldPosition( _CameraV2D : CV2D, _PointOut : CV2D ) : Void
+	{
+		CDebug.ASSERT( true );
 	}
 }

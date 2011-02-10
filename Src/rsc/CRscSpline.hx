@@ -482,14 +482,14 @@ class	CRscSpline extends CRsc
 		var l_iClosest		: Int	= 0;
 		var	l_Dist2Closest	: Float	= Math.POSITIVE_INFINITY;
 		
-		for ( i in 0 ... l_NbSamples +1 )
+		for ( i in 0 ... l_NbSamples )
 		{
 			GetPositionFromDistance( l_Step * i, l_P );
 			var l_Dist2 : Float	= CV3D.OperatorMinus( l_P, _Pos ).Norm2();
 			if ( l_Dist2 < l_Dist2Closest )
 			{
 				l_Dist2Closest	= l_Dist2;
-				l_Closest		= l_P;
+				l_Closest.Copy( l_P );
 				l_iClosest		= i;
 			}
 		}
@@ -517,12 +517,12 @@ class	CRscSpline extends CRsc
 				GetPositionFromDistance( ( l_iClosest + 1 ) * l_Step, l_PNext );
 				if ( CV3D.OperatorMinus( l_PPrev, _Pos ).Norm2() < CV3D.OperatorMinus( l_PNext, _Pos ).Norm2() )
 				{
-					l_P2		= l_PPrev;
+					l_P2.Copy( l_PPrev );
 					l_iClosest2 = l_iClosest - 1;
 				}
 				else
 				{
-					l_P2		= l_PNext;
+					l_P2.Copy( l_PNext );
 					l_iClosest2 = l_iClosest + 1;
 				}
 			}

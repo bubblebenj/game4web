@@ -11,7 +11,9 @@ import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.sampler.NewObjectSample;
+import math.CRect2D;
 import math.CV4D;
 import math.Registers;
 import math.Utils;
@@ -75,6 +77,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		if ( l_BitmapData != null )
 		{
 			m_DisplayObject	= new Bitmap( l_BitmapData );
+			cast( m_DisplayObject, Bitmap ).smoothing	= true;
 		}
 	}
 	
@@ -123,28 +126,20 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		return cast( m_DisplayObject, Bitmap ).bitmapData;
 	}
 	
-	public inline function GetRGB( _Pixel : CV2D ) : UInt
+	public inline function GetRGB( _Point : CV2D ) : Int
 	{
-		trace ( Utils.IntToStr( GetARGB(_Pixel), 16 ) );
-		return GetARGB( _Pixel ) % 0x1000000;
+		return GetARGB( _Point ) % 0x1000000;
 	}
-	
-	public function GetARGB( _Pixel : CV2D ) : UInt
+
+	public function GetARGB( _Point : CV2D ) : Int
 	{
-		var l_LocalCoord : CV2D = new CV2D( 0, 0 );
-		CV2D.Sub( l_LocalCoord, _Pixel, GetTL() );
+		var l_BitmapData	= cast( m_DisplayObject, Bitmap ).bitmapData;
+		var l_V2D	= Registers.V2_8;
+		GetNonTransformedPoint( _Point, l_V2D );
+		CV2D.Scale( l_V2D, Glb.GetSystem().m_Display.m_Height, l_V2D );
+		var l_Color	= l_BitmapData.getPixel32( Std.int( l_V2D.x ), Std.int( l_V2D.y ) );
 		
-		/* a try to make it through rotation... FAILURE */
-		//var l_x : Int = Utils.RoundNearest( Math.cos( -m_Rotation ) * l_LocalCoord.x 	+ 	Math.sin( -m_Rotation ) * l_LocalCoord.y	+	GetSize().x * 0.5 );
-		//var l_y : Int = Utils.RoundNearest( Math.cos( -m_Rotation ) * l_LocalCoord.y 	- 	Math.sin( -m_Rotation ) * l_LocalCoord.x	+	GetSize().y * 0.5 );
-		
-		l_LocalCoord.x *= GetBitmapData().width / GetSize().x;
-		l_LocalCoord.y *= GetBitmapData().height / GetSize().y;
-		
-		var l_x = Utils.RoundNearest( l_LocalCoord.x );
-		var l_y = Utils.RoundNearest( l_LocalCoord.y );
-		
-		return cast( m_DisplayObject, Bitmap ).bitmapData.getPixel32( l_x, l_y ) ;
+		return l_Color;
 	}
 	
 	// Debug functions
