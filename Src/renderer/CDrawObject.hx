@@ -57,18 +57,18 @@ class CDrawObject
 	
 	public function SetVisible( _Vis : Bool ) : Void 
 	{
-		m_Visible = _Vis;
-		
-		if( m_Visible )
+		if ( _Vis != m_Visible )
 		{
-			trace( "add" );
-			Glb.g_System.GetRenderer().AddToScene( this );
-		}
-		else
-		{
-			trace( "remove" );
-			Glb.g_System.GetRenderer().RemoveFromScene( this );
-		}
+			m_Visible = _Vis;
+			if( m_Visible )
+			{
+				Glb.g_System.GetRenderer().AddToScene( this );
+			}
+			else
+			{
+				Glb.g_System.GetRenderer().RemoveFromScene( this );
+			}
+		}	
 	}
 	
 	public function IsVisible() : Bool 
