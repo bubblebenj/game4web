@@ -71,6 +71,11 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		return l_Res;
 	}
 	
+	public function GetRsc() : CRscImage
+	{
+		return m_RscImage;
+	}
+	
 	public function CreateBitmap() : Void
 	{
 		var l_BitmapData = m_RscImage.GetBitmapData();
