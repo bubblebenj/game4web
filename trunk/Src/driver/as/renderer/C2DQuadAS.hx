@@ -46,12 +46,15 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function Shut() : Result
 	{
-		super.Shut();
 		Glb.GetRendererAS().RemoveFromScene( this );
 		if ( m_DisplayObject != null )
 		{
-			Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			if ( m_Activated )
+			{
+				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			}
 		}
+		super.Shut();
 		return SUCCESS;
 	}
 	
@@ -115,7 +118,7 @@ class C2DQuadAS extends C2DQuad
 		}
 	}
 	
-	public function IsLoaded()	: Bool
+	public override function IsLoaded()	: Bool
 	{
 		return  ( m_DisplayObject != null ) ? true : false;
 	}

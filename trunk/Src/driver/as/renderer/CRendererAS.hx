@@ -29,7 +29,7 @@ class CRendererAS extends CRenderer
 	{
 		super.Initialize();
 		
-		trace("CRendererAS::init");
+		//trace("CRendererAS::init");
 		return SUCCESS;
 	}
 	
