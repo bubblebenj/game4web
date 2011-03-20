@@ -75,6 +75,11 @@ class CMenuGraph extends CRsc			// C&D Menu
 		m_FSM.Initialize( _NodeId );
 	}
 	
+	public function GetCurrentState() : NodeId
+	{
+		return m_FSM.GetCurrentState();
+	}
+	
 	public function Update()	: Void
 	{
 		
@@ -151,7 +156,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		if ( _Id == null )
 		{
 			_Id = "Transition_"+_SrcNode.GetId() +"_to_"+ _TgtNode.GetId();
-			CDebug.CONSOLEMSG( " No Transition Id specified trying \"" + _Id +"\" " );
+			//CDebug.CONSOLEMSG( " No Transition Id specified trying \"" + _Id +"\" " );
 		}
 		
 		if ( m_Actuators.exists( _Id ) )
@@ -230,7 +235,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 		// then making transition
 		for ( i_FMenuNode in l_FGraph.nodes.page )
 		{
-			trace( i_FMenuNode.att.id );
+			//trace( i_FMenuNode.att.id );
 			RecurseDiv( GetMenuNode( i_FMenuNode.att.id ).GetContainer(), i_FMenuNode, null, GetMenuNode( i_FMenuNode.att.id ) );
 		}
 		m_Loaded = true;
@@ -282,7 +287,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 	
 	private function ApplyStyle( _Object : C2DQuad, _FObject : Fast, _ObjectParent : C2DContainer )
 	{		
-		trace( " " + _ObjectParent +" - " + _Object + " >");
+		//trace( " " + _ObjectParent +" - " + _Object + " >");
 		var FStyle		: Fast = new Fast( Xml.parse( m_MenuStyle.m_Text ).firstElement() );
 		
 		//var l_ParentSize		: CV2D = new CV2D( 0, 0 );
@@ -305,7 +310,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			{
 				if ( i_FStyle.att.name == _FObject.att.type )
 				{
-					trace( "\t > SET TYPE STYLE > " + i_FStyle.att.name );
+					//trace( "\t > SET TYPE STYLE > " + i_FStyle.att.name );
 					SetStyle( _Object, i_FStyle, /* l_ParentSize, l_ParentCoordinate */ _ObjectParent);
 				}
 			}
@@ -317,7 +322,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			{	
 				if ( i_FStyle.att.name == _FObject.att.id )
 				{
-					trace( "\t >  SET ID STYLE  > " + i_FStyle.att.name );
+					//trace( "\t >  SET ID STYLE  > " + i_FStyle.att.name );
 					SetStyle( _Object, i_FStyle, /* l_ParentSize, l_ParentCoordinate */ _ObjectParent);
 				}
 			}

@@ -34,7 +34,7 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 		m_DisplayObject			= new TextField();
 		cast( m_DisplayObject, TextField ).text	= m_Text;
 		#if DebugInfo
-			cast( m_DisplayObject, TextField ).border	= true;
+			//cast( m_DisplayObject, TextField ).border	= true;
 		#end
 		cast( m_DisplayObject, TextField ).selectable	= false;
 	}

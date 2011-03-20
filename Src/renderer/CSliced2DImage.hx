@@ -74,6 +74,11 @@ class CSliced2DImage extends C2DContainer, implements I2DImage
 		return SUCCESS;
 	}
 	
+	public function GetRsc() : CRscImage
+	{
+		return m_RscImage;
+	}
+	
 	public function SetUV( _u : CV2D , _v : CV2D )	: Void	{}
 	
 	public function GetARGB( _xy : CV2D )			: Int

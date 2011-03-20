@@ -52,6 +52,10 @@ class C2DQuad extends CDrawObject
 			&&		_Point.y <= l_BR.y;
 		}
 	}
+	public function IsLoaded() : Bool
+	{
+		return true;
+	}
 	
 	public function SetTHECamera( _Camera : C2DCamera ): Void
 	{

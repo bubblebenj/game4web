@@ -83,7 +83,7 @@ class CRscMan
 		if (	_SingleLoad != true 
 			&& 	_Path != null )
 		{
-			CDebug.CONSOLEMSG("searching resource : >" + _Path+"<");
+			//CDebug.CONSOLEMSG("searching resource : >" + _Path+"<");
 
 			var l_CandRsc : CRsc = m_Repository.get( _Type + "_" + _Path);
 			if (l_CandRsc != null
@@ -111,7 +111,7 @@ class CRscMan
 				l_Rsc.SetSingleLoaded( (_SingleLoad != true) ? false : _SingleLoad );
 				
 				m_Repository.set(_Type+"_"+_Path, l_Rsc);
-				CDebug.CONSOLEMSG("Adding resource : " + _Path);
+				//CDebug.CONSOLEMSG("Adding resource : " + _Path);
 			}
 			
 			return l_Rsc;

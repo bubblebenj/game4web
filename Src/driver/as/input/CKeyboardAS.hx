@@ -25,7 +25,7 @@ class  CKeyboardAS extends CKeyboard
 	public function KeyDown( _Event : KeyboardEvent )	: Void
 	{
 		m_UpArray.Set( _Event.keyCode, false);
-		CDebug.CONSOLEMSG("KeyboardEvent.KEY_DOWN :" + _Event.keyCode);                           
+		//CDebug.CONSOLEMSG("KeyboardEvent.KEY_DOWN :" + _Event.keyCode);                           
 	}
 	
 	/*

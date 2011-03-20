@@ -31,6 +31,13 @@ class Utils
 		}
 	}
 	
+	public static function PosMod( _Dividend : Int, _Divisor : Int ) : Int
+	{
+		var l_Res	= _Dividend % _Divisor;
+		if ( l_Res < 0 ) { l_Res += _Divisor; }
+		return l_Res;
+	}
+	
 	public static function Clamp( _A : Float, _Min : Float, _Max : Float ) : Float
 	{
 		//return Math.min( _Max, Math.max( _A, _Min ) );
@@ -62,16 +69,17 @@ class Utils
 	
 	
 	/* Maximum base 16, NbDigits allow to add 0 left to the number to complete to have NbDigits char */
-	public static function IntToStr( _Nb : Int, ?_Base : Int = 10 ) : String
-	{	
+	public static function IntToStr(	_Nb		: Int, ?_Base : Int = 10 ) : String
+	{								var	_StrNb	: String;
 		if ( _Base > 16 )
 		{
 			return null;
 		}
 		else
 		{
+			_StrNb	= "";
 			var l_Digits	: Array<String> = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
-			var l_StrNb	= "";
+			
 			var l_End		: Bool	= false;
 			var l_IsNegatif	: Bool	= false; 
 			if ( _Nb < 0 )
@@ -83,22 +91,38 @@ class Utils
 			{
 				if ( _Nb >= _Base )
 				{
-					l_StrNb = l_Digits[ _Nb % _Base ] + l_StrNb;
+					_StrNb = l_Digits[ _Nb % _Base ] + _StrNb;
 					_Nb		= Math.floor( _Nb / _Base );
 					
 				}
 				else
 				{
-					l_StrNb = l_Digits[_Nb] + l_StrNb;
+					_StrNb = l_Digits[_Nb] + _StrNb;
 					l_End	= true;
 				}
 			}
 			if ( l_IsNegatif )
 			{
-				l_StrNb	= "-" + l_StrNb;
+				_StrNb	= "-" + _StrNb;
 			}
-			return l_StrNb;
+			return _StrNb;
 		}
 	}
 	
+	// Add extra zero before the string representation of an Int
+	public static function FillWithZero(	_StrNb			: String, _MinNbDigits : Int )
+	{								var		_ResultStrNb	: String	= "";
+		
+		var l_MissingZero	: Int		= _MinNbDigits - _StrNb.length;
+		
+		if ( l_MissingZero > 0 )
+		{
+			for ( i in 0 ... l_MissingZero )
+			{
+				_ResultStrNb += "0";
+			}
+		}
+		_ResultStrNb += _StrNb;
+		return _ResultStrNb;
+	}
 }
