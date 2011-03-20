@@ -48,14 +48,14 @@ class CSystemAS extends CSystem
 		m_Display.m_Width	= flash.Lib.current.stage.stageWidth;
 		m_Display.m_Height  = flash.Lib.current.stage.stageHeight;
 		
-		trace("Init OK");
+		//trace("Init OK");
 		return SUCCESS;
 	}
 	
 	// Binding type with its factory
 	public override function InitializeRscBuilders() : Result
 	{
-		CDebug.CONSOLEMSG("Builders created");
+		//CDebug.CONSOLEMSG("Builders created");
 		GetRscMan().AddBuilder( CRscImage.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
 		GetRscMan().AddBuilder( CRscText.RSC_ID, 	m_RscASFactory );//new CRscASFactory() );
 		GetRscMan().AddBuilder( CMouse.RSC_ID, 		m_RscASFactory );//new CRscASFactory() );

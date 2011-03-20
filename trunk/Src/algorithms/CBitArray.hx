@@ -29,7 +29,7 @@ class CBitArray
 		}
 	}
 	
-	public function Copy( _Arr : CBitArray)
+	public function Copy( _Arr : CBitArray )
 	{
 		var l_RealLength = Length();
 		for( i in 0...l_RealLength)

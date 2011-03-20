@@ -18,6 +18,8 @@ interface I2DImage
 	
 	public function SetRsc( _RscImg : CRscImage )	: Result	{}
 	
+	public function GetRsc()						: CRscImage	{}
+	
 	public function SetUV( _u : CV2D , _v : CV2D )	: Void	{}
 	
 	public function SetAlpha( _Value : Float )		: Void	{}

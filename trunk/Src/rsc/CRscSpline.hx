@@ -5,6 +5,7 @@ package rsc;
  * @author bdubois
  */
 
+ import driver.as.renderer.C2DQuadAS;
  import flash.display.Shape;
  import flash.display.Sprite;
  import haxe.xml.Fast;
@@ -169,20 +170,6 @@ class	CRscSpline extends CRsc
 	public function GetLength	()	: Float
 	{
 		return	m_Length;
-	}
-
-	public function GetPosFromLength	( _PosPtr : CV3D, _PathLen : Float ) : Void
-	{
-		//ASSERT(_PosPtr);
-		GetPositionFromDistance	( _PathLen, _PosPtr	);
-	}
-
-	public function GetLengthFromPos	( _LenPtr : Float, _DistPtr : Float, _Pos : CV3D	) : Void
-	{
-		//_Pos;
-		//_DistPtr;
-		//_LenPtr;
-		//ASSERT(0);
 	}
 
 	//	***************************
@@ -373,75 +360,6 @@ class	CRscSpline extends CRsc
 	{
 		FastGetPositionFromDistance( _Distance, _TgtPoint, _TgtTan );
 		return;
-
-	/*
-		U32	l_Segment	=	FindForwardSegmentFromDistance	(	_Distance	);
-		if (l_Segment == Constants.INT_MAX)
-		{
-			ASSERT(0);
-			return;
-		}
-		const	Segment&	l_CurSegLen	=	m_CumulLength	[	l_Segment	];
-
-		ASSERT	(	(	_Distance	>=	l_CurSegLen.Start	)
-					&&	(	_Distance	<=	m_Length			)	);
-
-			*******************************************
-			***	Distance to go in this segment :	***	
-			*******************************************
-		F32	l_DistanceInSegment	=	(	_Distance	-	l_CurSegLen.Start	);
-
-			***********************
-			***	Scan segment :	***
-			***********************
-		const	SplineNode&	l_CurSeg	=	m_Nodes	[	l_Segment	];
-		V3D							l_CurrentPosition	=	l_CurSeg.m_Position;
-		*_TgtPoint	=	l_CurSeg.Point;
-
-		F32			l_SegLength			=	0.0f;
-		F32			l_Ratio				=	0.0f;
-		F32			l_RatioFound		=	1.0f;
-
-		V3D			l_NextPosition;
-		V3D			l_DiffPos;
-		V3D			l_NextTangent;
-		F32			l_NormDPosition;	// Norm(CurrentPosition - NextPosition)
-
-		U32				l_NumPart	=	U32	(	1.f	/	m_Resolution	);
-
-		for	(	U32	l_EachPart=0;	(	l_EachPart	<	l_NumPart	);	l_EachPart++	)
-		{
-				***	Getting new point :
-			Interpolate	(	l_Segment,	(	l_Ratio	+	m_Resolution	),	&l_NextPosition,	_TgtTan	);
-
-				***	Distance to next point :
-			l_DiffPos	=	l_NextPosition;
-			l_DiffPos	-=	(*_TgtPoint);
-			l_NormDPosition	=	V3DLength(&l_DiffPos);
-
-				***	Still not enough ? :
-			if	(	l_DistanceInSegment	<	(	l_SegLength	+	l_NormDPosition	)	)
-			{
-					*******************************************
-					***	We've reach our point so leave :	***
-					*******************************************
-				*_TgtPoint	=	l_NextPosition;
-				l_RatioFound	=	(	l_Ratio
-									+	(	(	l_DistanceInSegment	-	l_SegLength	)
-										/	l_NormDPosition
-										)
-									*	m_Resolution
-									);
-				break;
-			}
-
-			l_SegLength	+=	l_NormDPosition;
-			l_Ratio		+=	m_Resolution;
-			*_TgtPoint	=	l_NextPosition;
-		}
-		Interpolate	(	l_Segment,	l_RatioFound,	_TgtPoint,	_TgtTan	);
-	*/
-
 	}
 
 	public function FastGetPositionFromDistance( _Distance : Float, _TgtPoint : CV3D, ?_TgtTan : CV3D = null ) : Void
@@ -473,7 +391,6 @@ class	CRscSpline extends CRsc
 	
 	public function GetDistanceFromPosition( _Pos : CV3D ) : Float		
 	{
-		//F32 l_D = 0;
 		var l_NbSamples		: Int	= CRscSpline.SPLINE_NB_SAMPLE;
 		var l_Step			: Float	= m_Length / l_NbSamples;
 
@@ -628,19 +545,9 @@ class	CRscSpline extends CRsc
 	{
 		m_State = E_STATE.STREAMING;
 		return m_XmlFile.Load( _Path );
-		
-			//***	Lock Whole File
-		//void * l_VFileData;
-		//l_VFileData = (void * )_File-> Lock(0, 0);
-		//S32	l_FileSize = _File-> GetLockedSize();
-		//
-		//Result l_Result = ReadBuffer((Char * ) l_VFileData, l_FileSize);
-		//
-		//_File-> UnLock();
-		//return l_Result;
 	}
 	
-	public function Update() : Void
+	public function Update() : Result
 	{
 		m_XmlFile.Update();
 		if ( m_XmlFile.IsLoaded() && m_Nodes == null )
@@ -648,15 +555,15 @@ class	CRscSpline extends CRsc
 			ReadFile();
 			m_State = E_STATE.STREAMED;
 		}
+		return SUCCESS;
 	}
-
+	
 	public function	ReadFile() : Result
 	{
 		var l_Xml		: Xml	= Xml.parse( m_XmlFile.m_Text );
 		var l_FSpline	: Fast	= new Fast( l_Xml.firstElement().firstElement() );
 		
-		//	***	Get Number of nodes
-		var l_NbNodes : Int = Std.parseInt( l_FSpline.att.nb_nodes );
+		var l_NbNodes : Int		= Std.parseInt(		l_FSpline.att.nb_nodes );
 		
 		//	***	Parse nodes
 		var l_Nodes : Array<SplineNode> = new Array<SplineNode>();
@@ -667,19 +574,19 @@ class	CRscSpline extends CRsc
 			var l_Point : CV3D = new CV3D ( Std.parseFloat( i_Node.node.point.att.x ),
 			                                Std.parseFloat( i_Node.node.point.att.y ),
 			                                Std.parseFloat( i_Node.node.point.att.z ) );
-			var l_In : CV3D = new CV3D ( 	Std.parseFloat( i_Node.node.In.att.x ),
+			var l_In	: CV3D = new CV3D ( Std.parseFloat( i_Node.node.In.att.x ),
 			                                Std.parseFloat( i_Node.node.In.att.y ),
 			                                Std.parseFloat( i_Node.node.In.att.z ) );
-			var l_Out : CV3D = new CV3D ( 	Std.parseFloat( i_Node.node.out.att.x ),
+			var l_Out	: CV3D = new CV3D ( Std.parseFloat( i_Node.node.out.att.x ),
 			                                Std.parseFloat( i_Node.node.out.att.y ),
 			                                Std.parseFloat( i_Node.node.out.att.z ) );
+			
 			l_Nodes[i]	= 
 			{
 				Point	: l_Point,
 				In		: l_In,
 				Out		: l_Out
 			}
-            
 			
 			//	310	Change from max
 			var l_PointYTmp		: Float	= 0;
@@ -697,7 +604,8 @@ class	CRscSpline extends CRsc
 		
 		//	***	Set the nodes
 		SetNodes( l_Nodes, l_NbNodes );
-
+		
+		m_State	= E_STATE.STREAMED;
 		return SUCCESS;
 	}
 

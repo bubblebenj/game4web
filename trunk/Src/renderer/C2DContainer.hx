@@ -42,24 +42,29 @@ class C2DContainer extends C2DQuad
 	
 	public function AddElement( _Object : C2DQuad ) : Result
 	{
-		var l_AlreadyExists : Bool = false;
-		
-		for ( i_2DObject in m_2DObjects )
+		if ( Lambda.exists( m_2DObjects, function( x ) { return x == _Object; } ) )
 		{
-			if ( i_2DObject == _Object )
-			{
-				CDebug.CONSOLEMSG( "This object has already been added to the container" );
-				l_AlreadyExists = true;
-			}
-		}
-		if ( l_AlreadyExists )
-		{
+			CDebug.CONSOLEMSG( "The object " + _Object + " has already been added to the container" );
 			return FAILURE;
 		}
 		else
 		{
 			m_2DObjects.push( _Object );
 			return SUCCESS;
+		}
+	}
+	
+	public function RemoveElement( _Object : C2DQuad ) : Result
+	{
+		if ( Lambda.exists( m_2DObjects, function( x ) { return x == _Object; } ) )
+		{
+			m_2DObjects.remove( _Object );
+			return SUCCESS;
+		}
+		else
+		{
+			CDebug.CONSOLEMSG( "0bject " + _Object + " doesn't exists in the container" );
+			return FAILURE;
 		}
 	}
 	
@@ -189,13 +194,18 @@ class C2DContainer extends C2DQuad
 		return SUCCESS;
 	}
 	
+	public override function IsLoaded() : Bool
+	{
+		return Lambda.foreach( m_2DObjects, function( x ) { return x.IsLoaded(); } );
+	}
+	
 	public override function Shut() : Result
 	{
-		super.Shut();
 		for ( i_Object in m_2DObjects )
 		{
 			i_Object.Shut();
 		}
+		super.Shut();
 		return SUCCESS;
 	}
 	

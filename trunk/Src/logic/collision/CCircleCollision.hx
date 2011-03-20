@@ -27,9 +27,9 @@ class CCircleCollision
 		}
 	}
 	
-	public static function Spline( _CirclePos : CV2D, _Radius : Float, _Spline : CRscSpline, _SplineScaleFactor : Float ) : Bool
+	public static function Spline( _CirclePos : CV2D, _Radius : Float, _Spline : CRscSpline ) : Bool
 	{
-		var l_TrackDist		: Float	= _Spline.GetDistanceFromPosition( new CV3D( _CirclePos.x * _SplineScaleFactor, 0, _CirclePos.y * _SplineScaleFactor ) );
+		var l_TrackDist		: Float	= _Spline.GetDistanceFromPosition( new CV3D( _CirclePos.x, 0, _CirclePos.y ) );
 		var l_V3DTrackPos	: CV3D	= new CV3D( 0, 0, 0 ); 
 		_Spline.GetPositionFromDistance( l_TrackDist, l_V3DTrackPos );
 		
@@ -37,9 +37,23 @@ class CCircleCollision
 		l_TrackPos.Set( l_V3DTrackPos.x, l_V3DTrackPos.z );
 		
 		var l_CirclePos		: CV2D	= Registers.V2_9;
-		l_CirclePos.Set( _CirclePos.x * _SplineScaleFactor, _CirclePos.y * _SplineScaleFactor );
+		l_CirclePos.Set( _CirclePos.x, _CirclePos.y );
 		
 		return CCircleCollision.Point( l_CirclePos, _Radius, l_TrackPos );
+	}
+	
+	public static  inline function Circle( _CircleAPos : CV2D, _CircleARadius : Float, _CircleBPos : CV2D, _CircleBRadius : Float) : Bool
+	{
+		var l_Dist2	: Float	= CV2D.GetDistance2( _CircleAPos, _CircleBPos );
+		var l_Rad2	: Float	= ( _CircleARadius + _CircleBRadius ) * ( _CircleARadius + _CircleBRadius );
+		if ( l_Dist2 < l_Rad2 )
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 }
