@@ -14,7 +14,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\G4W\Src" />
+    <class path="..\..\Src" />
   </classpaths>
   <!-- Build options -->
   <build>
