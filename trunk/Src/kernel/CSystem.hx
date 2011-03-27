@@ -1,6 +1,8 @@
 
 package kernel;
 
+import flash.events.Event;
+import flash.Lib;
 import kernel.CTypes;
 import haxe.Timer;
 import haxe.TimerQueue;
@@ -49,11 +51,7 @@ class CSystem
 		m_GameDeltaTime = 0;
 		m_ForceFPS = 0;
 		
-		m_BeforeDraw = null;
-		m_AfterDraw = null;
-		
-		m_BeforeUpdate = null;
-		m_AfterUpdate = null;
+		m_Process = null;
 		
 		m_RscMan = null;
 		m_Renderer = null;
@@ -61,6 +59,8 @@ class CSystem
 		m_InputManager	= null;
 		
 		m_Display = new CDisplay();
+		
+		m_IsPaused = false;
 		
 		//CDebug.CONSOLEMSG("Master system newed");
 	}
@@ -75,10 +75,21 @@ class CSystem
 		return SUCCESS;
 	}
 	
+	#if flash
+	public static  function ClosedStaticUpdate(e)	: Void
+	{
+		 Glb.StaticUpdate();
+	}
+	#end
+	
 	public function MainLoop()
 	{
 		// Glb.StaticUpdate actually do g_System.Update();
+		#if flash
+		Lib.current.addEventListener( Event.ENTER_FRAME, ClosedStaticUpdate );
+		#else
 		m_SysTimer.add( Glb.StaticUpdate );
+		#end
 	}
 	
 	public function Update()
@@ -98,7 +109,7 @@ class CSystem
 				m_FrameDeltaTime = 1.0 / m_ForceFPS;
 			}
 			
-			if(m_IsPaused)
+			if(!m_IsPaused)
 			{
 				m_GameDeltaTime = m_FrameDeltaTime;	
 			}
@@ -111,31 +122,31 @@ class CSystem
 			
 			
 			
-			if( m_BeforeUpdate != null)
+			if( m_Process != null)
 			{
-				m_BeforeUpdate();
+				m_Process.BeforeUpdate();
 			}
 			
 			//trace("CSystem::Bf Updt");
 			
-			if( m_AfterUpdate != null)
+			if( m_Process != null)
 			{
-				m_AfterUpdate();
+				m_Process.AfterUpdate();
 			}
 			
 			//trace("CSystem::Af Updt");
-			if( m_BeforeDraw != null)
+			if( m_Process != null)
 			{
-				m_BeforeDraw();
+				m_Process.BeforeDraw();
 			}
 			
 			//trace("CSystem::rd Updt");
 			m_Renderer.Update();
 			
 			//trace("CSystem::af Drw");
-			if( m_AfterDraw != null)
+			if( m_Process != null)
 			{
-				m_AfterDraw();
+				m_Process.AfterDraw();
 			}
 			
 			GetInputManager().Update();
@@ -143,7 +154,11 @@ class CSystem
 		
 		
 		//trace("CSystem::Adding timer");
+		#if flash
+		
+		#else
 		m_SysTimer.add( Glb.StaticUpdate );
+		#end
 	}
 	
 	
@@ -176,11 +191,7 @@ class CSystem
 		return SUCCESS;
 	}
 	
-	public var m_BeforeDraw		: Void -> Result;
-	public var m_AfterDraw		: Void -> Result;
-	
-	public var m_BeforeUpdate	: Void -> Result;
-	public var m_AfterUpdate	: Void -> Result;
+	public var m_Process : SystemProcess;
 	
 	public static inline var FRAMERATE : Int = 60;
 	public static inline var DT : Float = 1.0 / FRAMERATE;
@@ -194,7 +205,7 @@ class CSystem
 	
 			var m_FrameCount : Int;
 	
-			var m_IsPaused : Bool;
+	public 	var m_IsPaused : Bool;
 	
 			var m_SysTimer : haxe.TimerQueue;  
 	

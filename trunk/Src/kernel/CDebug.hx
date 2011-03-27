@@ -6,7 +6,9 @@ class CDebug
 	{
 		if ( _Obj == false )//|| _Obj == null )
 		{
-			haxe.Log.trace( "Assert in "+pos.className+"::"+pos.methodName,pos );
+			#if debug
+			haxe.Log.trace( "Assert in " + pos.className + "::" + pos.methodName, pos );
+			#end
 		}
 	}
 	
@@ -14,12 +16,16 @@ class CDebug
 	{
 		if ( true )
 		{
-			haxe.Log.trace( "Break in "+pos.className+"::"+pos.methodName+":"+  _Str, pos );
+			#if debug
+			haxe.Log.trace( "Break in " + pos.className + "::" + pos.methodName + ":" +  _Str, pos );
+			#end
 		}
 	}
 	
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
+		#if debug
 		haxe.Log.trace( _Msg , pos);
+		#end
 	}
 }

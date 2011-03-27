@@ -18,7 +18,7 @@ class Glb
 	#if		js
 		public static var g_SystemJS : CSystemJS = new CSystemJS();
 		public static var g_System 	= g_SystemJS;
-	#elseif flash10
+	#elseif flash
 		public static var g_SystemAS : CSystemAS = new CSystemAS();
 		public static var g_System 	= g_SystemAS;
 	#else

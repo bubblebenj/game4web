@@ -40,7 +40,8 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	{
 		super();
 		m_Loading		= false;
-		m_DisplayObject	= new Bitmap( new BitmapData( 8, 8, false, 0x00FF00 ) );
+		m_DisplayObject	= new Bitmap( new BitmapData( 8, 8, false, 0x00000000 ) );
+		m_DisplayObject.alpha = 0;
 		m_RscImage		= null;
 		m_Visible		= false;
 		m_UV			= new CV4D( 0, 0, 1, 1 );
@@ -60,6 +61,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		
 		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
 		
+		CDebug.ASSERT(l_Res == SUCCESS );
 		return l_Res;
 	}
 	
@@ -74,6 +76,20 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 	public function GetRsc() : CRscImage
 	{
 		return m_RscImage;
+	}
+
+	public override function IsLoaded()	: Bool
+	{
+		var l_IsLoaded = ( m_DisplayObject != null ) ? true : false;
+		
+		if ( null != m_RscImage )
+		{
+			return l_IsLoaded && m_RscImage.IsStreamed();
+		}
+		else 
+		{
+			return l_IsLoaded;
+		}
 	}
 	
 	public function CreateBitmap() : Void
@@ -98,7 +114,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
 			
 			// initializing Scale value
-			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height,
+			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
 								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
 			m_Scale.Set( 1, 1 );
 			
@@ -126,7 +142,17 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		return SUCCESS;
 	}
 	
-	private function GetBitmapData() : BitmapData
+	public function GetBitmap() : Bitmap
+	{
+		return cast( m_DisplayObject, Bitmap );
+	}
+	
+	public function GetDisplayObject() : DisplayObject
+	{
+		return m_DisplayObject;
+	}
+	
+	public function GetBitmapData() : BitmapData
 	{
 		return cast( m_DisplayObject, Bitmap ).bitmapData;
 	}

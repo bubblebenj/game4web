@@ -7,6 +7,7 @@ package driver.as.renderer;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.ColorTransform;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Transform;
@@ -16,14 +17,20 @@ import kernel.Glb;
 import math.Constants;
 import math.CTrigo;
 import renderer.camera.C2DCamera;
+import flash.display.BlendMode;
+
+import kernel.CDebug;
 
 import math.CV2D;
 import renderer.C2DQuad;
+
+import renderer.CMaterial;
 
 class C2DQuadAS extends C2DQuad
 {
 	public	var m_DisplayObject	: DisplayObject;	// container
 	private var	m_Matrix		: Matrix;
+
 	
 	public function new() 
 	{
@@ -34,13 +41,15 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function Activate() : Result
 	{
-		super.Activate();
-		Glb.GetRendererAS().AddToScene( this );
-		if ( m_DisplayObject != null )
+		if ( !m_Activated )
 		{
-			Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			Glb.GetRendererAS().AddToScene( this );
+			if ( m_DisplayObject != null )
+			{
+				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+			}
+			return super.Activate();
 		}
-		
 		return SUCCESS;
 	}
 	
@@ -60,13 +69,10 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
-		if ( _Vis != m_Visible )
+		super.SetVisible( _Vis );
+		if( m_DisplayObject != null )
 		{
-			super.SetVisible( _Vis );
-			if( m_DisplayObject != null )
-			{
-				m_DisplayObject.visible = _Vis;
-			}
+			m_DisplayObject.visible = _Vis;
 		}
 	}
 	
@@ -75,7 +81,7 @@ class C2DQuadAS extends C2DQuad
 	{
 		super.Draw( _Vp );
 		
-		if ( m_DisplayObject != null )
+		if ( m_DisplayObject != null && IsLoaded())
 		{
 			// Object matrix
 				m_Matrix.identity();
@@ -104,6 +110,25 @@ class C2DQuadAS extends C2DQuad
 			}
 			
 			m_DisplayObject.transform.matrix = s_Matrix;
+			if ( null == m_DisplayObject.transform.colorTransform )
+			{
+				m_DisplayObject.transform.colorTransform = new ColorTransform();
+			}
+			m_DisplayObject.transform.colorTransform.color = m_Color.ToRGBA32();
+			
+			switch(m_Blend)
+			{
+				case MBM_OPAQUE:
+					m_DisplayObject.blendMode = BlendMode.NORMAL;	
+				case MBM_BLEND:
+					m_DisplayObject.blendMode = BlendMode.NORMAL;	
+					
+				case MBM_ADD:
+					m_DisplayObject.blendMode = BlendMode.ADD;
+					
+				case MBM_SUB:
+					m_DisplayObject.blendMode = BlendMode.SUBTRACT;
+			}
 		}
 		
 		return SUCCESS;
@@ -120,7 +145,7 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function IsLoaded()	: Bool
 	{
-		return  ( m_DisplayObject != null ) ? true : false;
+		return ( m_DisplayObject != null ) ? true : false;
 	}
 	
 	public function GetNonTransformedPoint( _WorldV2D : CV2D, _PointOut : CV2D ) : Void
@@ -141,11 +166,11 @@ class C2DQuadAS extends C2DQuad
 		super.DebugInfo( _Prefix );
 		if ( m_DisplayObject != null )
 		{
-			trace( _Prefix + " " + this +", "+ m_DisplayObject +", \t Pos: [" + m_DisplayObject.x +", "+ m_DisplayObject.y +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]");
+			CDebug.CONSOLEMSG( _Prefix + " " + this +", "+ m_DisplayObject +", \t Pos: [" + m_DisplayObject.x +", "+ m_DisplayObject.y +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]");
 		}
 		else
 		{
-			trace( _Prefix + " " + this + "m_DisplayObject not initialize" );
+			CDebug.CONSOLEMSG( _Prefix + " " + this + "m_DisplayObject not initialized" );
 		}
 	}
 }

@@ -13,6 +13,7 @@ import math.CRect2D;
 import math.Registers;
 import rsc.CRscMan;
 import kernel.Glb;
+import renderer.CMaterial;
 
 class C2DQuad extends CDrawObject
 {
@@ -22,15 +23,20 @@ class C2DQuad extends CDrawObject
 	private var	m_Rotation	: Float;
 	private var m_Scale		: CV2D;
 
-	public	var m_Camera	: C2DCamera;
+	public var m_Camera	: C2DCamera;
+	
+	public var m_Color : CColor;
+	public var m_Blend : MAT_BLEND_MODE;
 		
 	public function new() 
 	{
 		super();
 		m_Rect		= new CRect2D();
 		m_Pivot		= new CV2D( 0.5, 0.5 ); // Center
-		m_Scale		= new CV2D( 0, 0 );
+		m_Scale		= new CV2D( 0,0 );
 		m_Rotation	= 0;
+		m_Color = new CColor();
+		m_Blend = MAT_BLEND_MODE.MBM_BLEND;
 		//m_Camera	= new C2DCamera();
 	}
 	
@@ -164,7 +170,7 @@ class C2DQuad extends CDrawObject
 		SetTLPosition( _TL );
 	}
 	
-	private function SetScale( _Scale : CV2D )
+	public function SetScale( _Scale : CV2D )
 	{
 		m_Scale	= _Scale;
 	}
