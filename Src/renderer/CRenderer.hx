@@ -182,8 +182,6 @@ class CRenderer
 	
 	public function AddToScene( _Obj : CDrawObject )
 	{
-		var l_Exists : Bool = false;
-
 		m_Scene.push( _Obj );			
 	}
 	

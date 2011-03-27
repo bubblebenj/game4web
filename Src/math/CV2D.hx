@@ -24,22 +24,25 @@ class CV2D
 		y = _xy.y;
 	}
 	
-	public static inline function Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
+	public static inline function Add( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  CV2D
 	{
 		_VOut.x = _V0.x + _V1.x;
 		_VOut.y = _V0.y + _V1.y;
+		return _VOut;
 	}
 	
-	public static inline function Sub( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  Void
+	public static inline function Sub( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  CV2D
 	{
 		_VOut.x = _V0.x - _V1.x;
 		_VOut.y = _V0.y - _V1.y;
+		return _VOut;
 	}
 	
-	public static inline function Scale( _VOut : CV2D, _a : Float, _V : CV2D ) :  Void
+	public static inline function Scale( _VOut : CV2D, _a : Float, _V : CV2D ) :  CV2D
 	{
 		_VOut.x = _a * _V.x;
 		_VOut.y	= _a * _V.y;
+		return _VOut;
 	}
 	
 	public static inline function AreEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
@@ -52,12 +55,14 @@ class CV2D
 		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? true : false;
 	}
 
-	public static inline function Normalize( _InOut : CV2D )
+	public static inline function Normalize( _InOut : CV2D ) : CV2D
 	{
 		var l_InvLen = 1.0 / _InOut.Norm();
 		
 		_InOut.x *= l_InvLen;
 		_InOut.y *= l_InvLen;
+		
+		return _InOut;
 	}
 	
 	public inline function Norm2()

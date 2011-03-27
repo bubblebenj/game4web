@@ -59,6 +59,16 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
+	public function SendToFront(  _DisplayObj : DisplayObject )
+	{
+		m_SceneAS.setChildIndex( _DisplayObj,m_SceneAS.numChildren-1 );
+	}
+	
+	public function SendToBack(  _DisplayObj : DisplayObject )
+	{
+		m_SceneAS.setChildIndex( _DisplayObj, 0 );
+	}
+	
 	public function AddToSceneAS(  _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );

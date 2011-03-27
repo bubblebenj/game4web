@@ -8,6 +8,7 @@ package driver.as.rsc;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.display.Loader;
 import flash.net.URLRequest;
 import math.CV2D;
@@ -28,7 +29,9 @@ class CRscImageAS extends CRscImage
 	
 	public function Initialize() : Result
 	{
+		//init is fired earlier
 		m_ImgLoader.contentLoaderInfo.addEventListener(Event.INIT, onLoaded);
+		m_ImgLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError );
 		m_ImgLoader.load( new URLRequest( m_Path ) );
 		m_State			= STREAMING;
 		return SUCCESS;
@@ -40,10 +43,20 @@ class CRscImageAS extends CRscImage
 		Initialize();
 	}
 	
+	public function onIOError( _Event : Event )	: Void
+	{
+		m_ImgLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
+		
+		m_State			= INVALID;
+		CDebug.CONSOLEMSG("Img failed to load " + m_Path);
+	}
+	
 	public function onLoaded( _Event : Event )	: Void
 	{
+		m_ImgLoader.contentLoaderInfo.removeEventListener(Event.INIT, onLoaded);
+
 		m_State			= STREAMED;
-		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
+		CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
 	public function GetBitmapData() : BitmapData

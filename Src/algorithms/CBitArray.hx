@@ -9,16 +9,23 @@ import kernel.CDebug;
 
 class CBitArray 
 {
-
-	public function new( _i : Int ) 
+	static inline var MAGNITUDE_BIT = 4;
+	static inline var MAGNITUDE = 16;
+	
+	public function new( _Bits : Int ) 
 	{
 		m_Array = new Array<Int>();
-		m_Array[_i] = 0;
+		
+		var l_Size = (_Bits >> MAGNITUDE_BIT) + 1;
+		for ( i in 0...l_Size)
+		{
+			m_Array[i] = 0;
+		}
 	}
 	
 	public function Length( ) 
 	{
-		return m_Array.length * 31;
+		return m_Array.length * MAGNITUDE;
 	}
 	
 	public function Fill( _Val : Bool)
@@ -29,36 +36,34 @@ class CBitArray
 		}
 	}
 	
+	public function GetRaw() : Array<Int>
+	{
+		return m_Array;
+	}
+	
 	public function Copy( _Arr : CBitArray )
 	{
-		var l_RealLength = Length();
-		for( i in 0...l_RealLength)
+		for( i in 0...m_Array.length)
 		{
-			Set(i, _Arr.Is(i));
+			m_Array[i] = _Arr.GetRaw()[i];
 		}
 	}
 	
 	public function Set( _Index : Int , _Val : Bool )
-	{
-		var l_Index = Std.int(_Index / 31);
-		var l_Offset = _Index%31;
-		
-		//CDebug.CONSOLEMSG("BitArray::Set::" + l_Index + "-" + l_Offset);
-		
+	{		
 		if ( _Val)
 		{
-			m_Array[ Std.int(_Index / 31) ] |= (1 << (_Index%31));
+			m_Array[ _Index >>  MAGNITUDE_BIT] |= (1 << (_Index % MAGNITUDE));
 		}
 		else
 		{
-			m_Array[ Std.int(_Index / 31)] &= ~(1 << (_Index%31));
+			m_Array[ _Index >>  MAGNITUDE_BIT ] &= ~(1 << (_Index%MAGNITUDE));
 		}
 	}
 	
-	public function Is( _Index : Int ) : Bool
+	public inline function Is( _Index : Int ) : Bool
 	{
-		
-		return m_Array[Std.int(_Index / 31)] & (1<<(_Index%31)) != 0;
+		return m_Array[_Index >> MAGNITUDE_BIT] & (1<<(_Index%MAGNITUDE)) != 0;
 	}
 
 	private var m_Array : Array<Int>;

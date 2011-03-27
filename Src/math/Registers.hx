@@ -30,10 +30,13 @@ class Registers
 	public static var V11 : CV3D = new CV3D(0, 0, 0);
 	
 	//user use
+	public static var V2_0 : CV2D = new CV2D(0,0);
+	public static var V2_1 : CV2D = new CV2D(0, 0);
+	public static var V2_2 : CV2D = new CV2D(0, 0);
+	
 	public static var V2_8 : CV2D = new CV2D(0,0);
 	public static var V2_9 : CV2D = new CV2D(0,0);
-	public static var V2_0 : CV2D = new CV2D(0,0);
-	public static var V2_1 : CV2D = new CV2D(0,0);
+	
 	
 	//engine use
 	public static var M0 : CMatrix44 = new CMatrix44();
