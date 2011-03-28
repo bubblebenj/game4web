@@ -5,6 +5,7 @@
 
 package math;
 
+import algorithms.CPool;
 import math.CV3D;
 import math.CV2D;
 import math.CMatrix44;
@@ -49,4 +50,6 @@ class Registers
 	public static var M5 : CMatrix44 = new CMatrix44();
 	public static var M6 : CMatrix44 = new CMatrix44();
 	public static var M7 : CMatrix44 = new CMatrix44();
+	
+	public static var V2DPool : CPool<CV2D> = new CPool( 64, new CV2D(0,0) );
 }

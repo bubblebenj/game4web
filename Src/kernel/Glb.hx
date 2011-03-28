@@ -6,7 +6,7 @@ import tools.transition.CTween;
 	import driver.js.kernel.CSystemJS;
 	import driver.js.renderer.CRendererJS;
 	
-#elseif	flash10
+#elseif	flash
 	import driver.as.kernel.CSystemAS;
 	import driver.as.renderer.CRendererAS;
 #end

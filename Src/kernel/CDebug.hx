@@ -8,6 +8,7 @@ class CDebug
 		{
 			#if debug
 			haxe.Log.trace( "Assert in " + pos.className + "::" + pos.methodName, pos );
+			throw _Obj;
 			#end
 		}
 	}
@@ -18,6 +19,7 @@ class CDebug
 		{
 			#if debug
 			haxe.Log.trace( "Break in " + pos.className + "::" + pos.methodName + ":" +  _Str, pos );
+			throw _Str;
 			#end
 		}
 	}
