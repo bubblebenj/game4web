@@ -9,23 +9,16 @@ import kernel.CDebug;
 
 class CBitArray 
 {
-	static inline var MAGNITUDE_BIT = 4;
-	static inline var MAGNITUDE = 16;
-	
-	public function new( _Bits : Int ) 
+
+	public function new( _i : Int ) 
 	{
 		m_Array = new Array<Int>();
-		
-		var l_Size = (_Bits >> MAGNITUDE_BIT) + 1;
-		for ( i in 0...l_Size)
-		{
-			m_Array[i] = 0;
-		}
+		m_Array[_i] = 0;
 	}
 	
 	public function Length( ) 
 	{
-		return m_Array.length * MAGNITUDE;
+		return m_Array.length * 31;
 	}
 	
 	public function Fill( _Val : Bool)
@@ -49,21 +42,30 @@ class CBitArray
 		}
 	}
 	
+	public function toString()
+	{
+		return m_Array.toString();
+	}
+	
 	public function Set( _Index : Int , _Val : Bool )
-	{		
+	{
+		var l_Index = Std.int(_Index / 31);
+		var l_Offset = _Index%31;
+		
 		if ( _Val)
 		{
-			m_Array[ _Index >>  MAGNITUDE_BIT] |= (1 << (_Index % MAGNITUDE));
+			m_Array[ Std.int(_Index / 31) ] |= (1 << (_Index%31));
 		}
 		else
 		{
-			m_Array[ _Index >>  MAGNITUDE_BIT ] &= ~(1 << (_Index%MAGNITUDE));
+			m_Array[ Std.int(_Index / 31)] &= ~(1 << (_Index%31));
 		}
 	}
 	
-	public inline function Is( _Index : Int ) : Bool
+	public function Is( _Index : Int ) : Bool
 	{
-		return m_Array[_Index >> MAGNITUDE_BIT] & (1<<(_Index%MAGNITUDE)) != 0;
+		
+		return m_Array[Std.int(_Index / 31)] & (1<<(_Index%31)) != 0;
 	}
 
 	private var m_Array : Array<Int>;

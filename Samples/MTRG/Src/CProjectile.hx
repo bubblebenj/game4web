@@ -106,7 +106,7 @@ class CProjectile implements BSphered
 	
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
-		
+		CDebug.CONSOLEMSG("Proj coll");
 	}
 	
 	public function Reset() : Void 
@@ -152,7 +152,7 @@ class CLaser extends  CProjectile
 				var l_Aster : CAsteroid = cast _Collider;
 				l_Aster.m_Hp -= 10;
 			default:
-				kernel.CDebug.CONSOLEMSG("COLL");
+				CDebug.CONSOLEMSG("COLL");
 		}
 	}
 	
@@ -190,8 +190,8 @@ class CLaser extends  CProjectile
 		m_DisplayObject = new Sprite();
 		(cast m_DisplayObject).addChild(l_PrimaryShape);
 		Glb.GetRendererAS().AddToSceneAS(m_DisplayObject);
+		Glb.GetRendererAS().SendToFront(m_DisplayObject);
 		
 		m_DisplayObject.visible = false;
 	}
-
 }

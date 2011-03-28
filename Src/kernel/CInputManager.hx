@@ -32,12 +32,12 @@ class CInputManager
 
 	}
 	
-	public inline function GetMouse()
+	public inline function GetMouse() : CMouse
 	{
 		return m_Mouse;
 	}
 	
-	public inline function GetKeyboard()
+	public inline function GetKeyboard() : CKeyboard
 	{
 		return m_Keyboard;
 	}

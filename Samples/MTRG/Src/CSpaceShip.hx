@@ -87,7 +87,7 @@ class CSpaceShip implements Updatable
 		
 		l_Vec[i++] = 0; 	l_Vec[i++] = 8;
 		
-		l_Vec[i++] = +24; 	l_Vec[i++] = 32;
+		l_Vec[i++] = 24; 	l_Vec[i++] = 32;
 		
 		l_Vec[i++] = 0; 	l_Vec[i++] = -16; 
 		
@@ -153,6 +153,8 @@ class CSpaceShip implements Updatable
 			ls.Initialize();
 			m_LaserPool.push(  ls );
 		}
+		
+		
 	}
 	
 	public function GetPosH( _Vec : CV2D )
@@ -172,7 +174,10 @@ class CSpaceShip implements Updatable
 	{
 		if (!m_LaserPool.isEmpty())
 		{
+			var l_Len = m_LaserPool.length;
+			
 			var l_NewOne = m_LaserPool.pop();
+			CDebug.ASSERT( l_Len > m_LaserPool.length);
 			
 			l_NewOne.visible = true;
 			
@@ -181,6 +186,7 @@ class CSpaceShip implements Updatable
 			Registers.V2_2.Set( 0, -1 );
 			
 			var l_To = CV2D.Add( Registers.V2_2, l_From , Registers.V2_2 );
+			
 			l_NewOne.Fire(l_From, l_To, BASE_LASER_SPEED );
 			
 			m_LaserTracker.add(l_NewOne);
