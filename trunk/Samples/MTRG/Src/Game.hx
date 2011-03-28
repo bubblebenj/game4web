@@ -8,6 +8,7 @@ import flash.geom.ColorTransform;
 import flash.Lib;
 import haxe.FastList;
 import haxe.Public;
+import input.CKeyCodes;
 
 import flash.display.BitmapData;
 import flash.display.Bitmap;
@@ -145,6 +146,22 @@ class Game
 	
 	public function Update()
 	{
+		
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_ENTER)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_ENTER))
+		{
+			
+			if (m_State == GS_RUNNING)
+			{
+				m_State = GS_PAUSED;
+			}
+			else if (m_State == GS_PAUSED)
+			{
+				m_State = GS_RUNNING;
+			}
+		}
+		
+		
 		switch(m_State)
 		{
 			case GS_FIRST_FRAME: m_State = GS_LOADING;
@@ -165,14 +182,17 @@ class Game
 			case GS_INVALID: CDebug.CONSOLEMSG("Fatal error");  return;
 		}
 		
+		
 		for(a in m_Asteroids)
 		{
 			a.Update();
 		}
 		
+		
 		m_Ship.Update();
 		
 		m_CollMan.Update();
+		
 	}
 	
 	public function Shut()

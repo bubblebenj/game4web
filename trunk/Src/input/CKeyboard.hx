@@ -7,6 +7,7 @@ package input;
 
 import algorithms.CBitArray;
 import kernel.CTypes;
+import kernel.CDebug;
 
 import rsc.CRsc;
 import rsc.CRscMan;
