@@ -51,10 +51,13 @@ enum ZOrder
 	ZO_SPACESHIP;
 }
 
+
 class Game 
 {
 	var m_BG : CBG;
 	var m_Asteroids : FastList< CAsteroid >;
+	
+	public var m_Tasks : List<CTimedTask>;
 	
 	public var m_Ship : CSpaceShip;
 	public var m_CollMan : CCollManager;
@@ -71,6 +74,7 @@ class Game
 		m_Ship = null;
 		m_State = GS_INVALID;
 		m_CollMan = null;
+		m_Tasks = null;
 	}
 	
 	public function IsLoaded() : Bool
@@ -96,6 +100,10 @@ class Game
 	
 	public function Initialize()
 	{	
+		#if debug
+		CCollManager.UnitTest();
+		#end
+		m_Tasks = new List<CTimedTask>();
 		m_CollMan = new CCollManager();
 		
 		m_BG = new CBG();
@@ -122,7 +130,7 @@ class Game
 			{
 				a.x += ((Math.random() < 0.5) ? -1:1)  * ( Math.random() * CAsteroid.MAX_WIDTH - CAsteroid.MAX_WIDTH * 0.5);
 			}
-			a.y = MTRG.HEIGHT / 2 + (Math.random() - 0.5) * MTRG.ASTEROIDS_HEIGHT;
+			a.y = MTRG.HEIGHT * 0.5 + (Math.random() - 0.5) * MTRG.ASTEROIDS_HEIGHT;
 			//a.y = 300;
 			a.visible = true;
 			i++;
@@ -146,11 +154,9 @@ class Game
 	
 	public function Update()
 	{
-		
-		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_ENTER)
-		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_ENTER))
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_P)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_P))
 		{
-			
 			if (m_State == GS_RUNNING)
 			{
 				m_State = GS_PAUSED;
@@ -161,6 +167,11 @@ class Game
 			}
 		}
 		
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_F1)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_F1))
+		{
+			CDebug.CONSOLEMSG( m_CollMan.toString() );
+		}
 		
 		switch(m_State)
 		{
@@ -181,17 +192,20 @@ class Game
 			
 			case GS_INVALID: CDebug.CONSOLEMSG("Fatal error");  return;
 		}
-		
-		
+				
 		for(a in m_Asteroids)
 		{
 			a.Update();
 		}
 		
-		
 		m_Ship.Update();
-		
 		m_CollMan.Update();
+		
+		m_Tasks =  Lambda.filter( 
+									Lambda.map(m_Tasks, function( t) { return ( t.Update() == false ) ? t : null;} ),
+									function(x) { return x != null; }
+									);
+								
 		
 	}
 	

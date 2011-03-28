@@ -42,7 +42,6 @@ class CProjectile implements BSphered
 	public var CollSameClass : Bool;
 	
 	
-	
 	///////////////////
 	public function new() 
 	{
@@ -55,6 +54,7 @@ class CProjectile implements BSphered
 		CenterX = 0;
 		CenterY = 0;
 		CollSameClass = false;
+		CollClass = Invalid;
 	}
 	
 	public function SetVisible( v ) : Bool
@@ -81,7 +81,7 @@ class CProjectile implements BSphered
 		CenterX = m_Pos.x;
 		CenterY = m_Pos.y;
 		
-		Radius = 8 / MTRG.HEIGHT;
+		Radius = 8.0 / MTRG.HEIGHT;
 		
 		if ( 	(m_Pos.y <= 0) 
 		||		(m_Pos.y >= 1) )
@@ -129,8 +129,9 @@ class CProjectile implements BSphered
 			kernel.CDebug.BREAK("Projectile targeting wrong");
 		}
 		
-		m_Pos = _From;
+		m_Pos.Copy(_From);
 		m_DisplayObject.visible = true;
+		MTRG.s_Instance.m_Gameplay.m_CollMan.Add( this );
 	}
 }
 
@@ -142,6 +143,7 @@ class CLaser extends  CProjectile
 		super();
 		CollClass = SpaceShipShoots;
 		CollSameClass = false;
+		Radius = 2.0 / Glb.GetSystem().m_Display.GetAspectRatio();
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
@@ -151,6 +153,7 @@ class CLaser extends  CProjectile
 			case Asteroids:
 				var l_Aster : CAsteroid = cast _Collider;
 				l_Aster.m_Hp -= 10;
+				OnDestroy();
 			default:
 				CDebug.CONSOLEMSG("COLL");
 		}

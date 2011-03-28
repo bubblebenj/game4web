@@ -34,6 +34,7 @@ enum ShapeIndex
 }
 
 import CProjectile;
+import algorithms.CPool;
 
 class CSpaceShip implements Updatable
 {
@@ -47,10 +48,8 @@ class CSpaceShip implements Updatable
 	
 	public var 	m_ShootSpin : Float;
 	
-	public static inline var MAX_LASERS = 16;
-	var m_LaserPool : List< CLaser >;
-	
-	var m_LaserTracker : List< CLaser >;
+	public static inline var MAX_LASERS = 64;
+	var m_LaserPool : CPool< CLaser >;
 	
 	public function new() 
 	{
@@ -60,7 +59,7 @@ class CSpaceShip implements Updatable
 		m_AiTick = 0.5;
 		m_Bhv = AI_Idle;
 		m_LaserPool = null;
-		m_LaserTracker = null;
+		
 		m_ShootSpin = 0;
 	}
 
@@ -145,16 +144,9 @@ class CSpaceShip implements Updatable
 		SetLinearPos( 0.5 );
 		SetShapeIndex(SHOOT);
 		
-		m_LaserTracker = new List<CLaser>();
-		m_LaserPool = new List<CLaser>();
-		for (i in 0...MAX_LASERS )
-		{
-			var ls = new CLaser();
-			ls.Initialize();
-			m_LaserPool.push(  ls );
-		}
-		
-		
+
+		m_LaserPool = new CPool<CLaser>( MAX_LASERS, new CLaser());
+		Lambda.iter( m_LaserPool.Free(), function(ls) ls.Initialize() );
 	}
 	
 	public function GetPosH( _Vec : CV2D )
@@ -166,31 +158,32 @@ class CSpaceShip implements Updatable
 	
 	public function DeleteLaser( _Ls : CLaser )
 	{
-		m_LaserTracker.remove( _Ls );
-		m_LaserPool.add(_Ls);
+		m_LaserPool.Destroy( _Ls );
 	}
 	
 	public function Shoot()
 	{
-		if (!m_LaserPool.isEmpty())
+		//if (!m_LaserPool.isEmpty())
 		{
-			var l_Len = m_LaserPool.length;
+			//var l_Len = m_LaserPool.length;
 			
-			var l_NewOne = m_LaserPool.pop();
-			CDebug.ASSERT( l_Len > m_LaserPool.length);
+			var l_NewOne = m_LaserPool.Create();
 			
 			l_NewOne.visible = true;
 			
-			var l_From : CV2D = Registers.V2_1 ;
-			GetPosH( l_From );
-			Registers.V2_2.Set( 0, -1 );
+			var l_From : CV2D = Registers.V2DPool.Create();
+			var l_To: CV2D = Registers.V2DPool.Create();
 			
-			var l_To = CV2D.Add( Registers.V2_2, l_From , Registers.V2_2 );
+			GetPosH( l_From );
+			l_To.Set( 0, -1 );
+			
+			CV2D.Add( l_To , l_From , l_To );
 			
 			l_NewOne.Fire(l_From, l_To, BASE_LASER_SPEED );
 			
-			m_LaserTracker.add(l_NewOne);
-			//CDebug.CONSOLEMSG("SHOOT " + l_From +  ":" + l_To);
+			Registers.V2DPool.Destroy( l_From );
+			Registers.V2DPool.Destroy( l_To );
+		
 			SetShapeIndex(SHOOT);
 		}
 	}
@@ -289,7 +282,7 @@ class CSpaceShip implements Updatable
 			m_ShootSpin = 0;
 		}
 		
-		for(ls in m_LaserTracker )
+		for(ls in m_LaserPool.Used() )
 		{
 			ls.Update();
 		}
