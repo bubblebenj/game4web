@@ -4,7 +4,7 @@
  */
 
 package ;
-import driver.as.renderer.C2DQuadAS;
+
 import flash.display.BlendMode;
 import flash.display.GradientType;
 import flash.display.SpreadMethod;
@@ -114,7 +114,7 @@ class CSpaceShip implements Updatable
 		//build shooting shape
 		{
 			var l_PrimaryShape : Shape = new Shape();
-			var l_GradientMatrix = new Matrix();
+			var l_GradientMatrix : Matrix = new Matrix();
 			
 			l_PrimaryShape.graphics.lineStyle(3, 0xF2F807, 1.0);
 			l_PrimaryShape.graphics.drawTriangles( l_Vec );
@@ -175,6 +175,8 @@ class CSpaceShip implements Updatable
 			//var l_Len = m_LaserPool.length;
 			
 			var l_NewOne = m_LaserPool.Create();
+			
+			if ( l_NewOne == null ) return;
 			
 			l_NewOne.visible = true;
 			
@@ -289,7 +291,7 @@ class CSpaceShip implements Updatable
 			m_ShootSpin = 0;
 		}
 		
-		for(ls in m_LaserPool.Used() )
+		for(ls in Lambda.list(m_LaserPool.Used()) )
 		{
 			ls.Update();
 		}

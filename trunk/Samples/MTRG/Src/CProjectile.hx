@@ -96,12 +96,12 @@ class CProjectile implements BSphered
 	
 	public function OnDestroy()
 	{
-		
+		CDebug.BREAK("should not happen");
 	}
 	
 	public function OnLost()
 	{
-		
+		CDebug.BREAK("should not happen");
 	}
 	
 	public function OnCollision( _Collider : BSphered ) : Void
