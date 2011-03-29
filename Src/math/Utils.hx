@@ -38,7 +38,27 @@ class Utils
 		return l_Res;
 	}
 	
-	public static function Clamp( _A : Float, _Min : Float, _Max : Float ) : Float
+	public static inline function Clamp( _A : Float, _Min : Float, _Max : Float ) : Float
+	{
+		//return Math.min( _Max, Math.max( _A, _Min ) );
+		if ( _A < _Min )
+		{
+			return _Min;
+		}
+		else
+		{
+			if ( _A > _Max )
+			{
+				return _Max;
+			}
+			else
+			{
+				return _A;
+			}
+		}
+	}
+	
+	public static inline function Clampi( _A : Int, _Min :  Int, _Max : Int ) :  Int
 	{
 		//return Math.min( _Max, Math.max( _A, _Min ) );
 		if ( _A < _Min )

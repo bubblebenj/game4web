@@ -71,5 +71,11 @@ class CRscImageAS extends CRscImage
 		}
 	}
 	
+	
+	public override function GetDriverImage() : Dynamic
+	{
+		return GetBitmapData();
+	}
+	
 	private	var m_ImgLoader	: Loader;
 }

@@ -48,8 +48,10 @@ class CSpaceShip implements Updatable
 	
 	public var 	m_ShootSpin : Float;
 	
-	public static inline var MAX_LASERS = 64;
+	public static inline var MAX_LASERS = 16;
+	public static inline var MAX_BOULETTE = 128;
 	var m_LaserPool : CPool< CLaser >;
+	var m_BoulettePool : CPool< CBoulette >;
 	
 	public function new() 
 	{
@@ -159,6 +161,11 @@ class CSpaceShip implements Updatable
 	public function DeleteLaser( _Ls : CLaser )
 	{
 		m_LaserPool.Destroy( _Ls );
+	}
+	
+	public function DeleteBoulette( _Ls : CBoulette )
+	{
+		m_BoulettePool.Destroy( _Ls );
 	}
 	
 	public function Shoot()
