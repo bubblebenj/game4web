@@ -9,6 +9,7 @@ import flash.Lib;
 import haxe.FastList;
 import haxe.Public;
 import input.CKeyCodes;
+import rsc.CRscSitter;
 
 import flash.display.BitmapData;
 import flash.display.Bitmap;
@@ -26,6 +27,7 @@ import math.CV2D;
 import rsc.CRscImage;
 
 import renderer.CMaterial;
+import CMinion;
 
 import MTRG;
 
@@ -66,6 +68,10 @@ class Game
 	var m_Pad : CMinionPad;
 	var m_State : GameState;
 	
+	var m_SampleMinion: CMinion;
+	//
+	public var  m_RscSpaceInvader : CRscImage;
+	
 	public function new() 
 	{
 		m_BG = null;
@@ -75,11 +81,12 @@ class Game
 		m_State = GS_INVALID;
 		m_CollMan = null;
 		m_Tasks = null;
+		m_RscSpaceInvader = null;
 	}
 	
 	public function IsLoaded() : Bool
 	{
-		var l_Answer : Bool = m_BG.IsLoaded() && m_Pad.IsLoaded() && m_Ship.IsLoaded();
+		var l_Answer : Bool = m_BG.IsLoaded() && m_Pad.IsLoaded() && m_Ship.IsLoaded() && m_RscSpaceInvader.IsStreamed();
 		
 		//early escape
 		if (!l_Answer)
@@ -142,6 +149,11 @@ class Game
 		m_Ship.Initialize();
 		m_State = GS_FIRST_FRAME;
 		
+		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
+		
+		var l_Sitter = new CRscSitter();
+		m_SampleMinion = new CSpaceInvaderMinion();
+		
 	}
 	
 	public function OnLoaded()
@@ -177,6 +189,13 @@ class Game
 		{
 			case GS_FIRST_FRAME: m_State = GS_LOADING;
 			case GS_LOADING: 
+			
+			if (!m_SampleMinion.IsLoaded()
+			&&	m_RscSpaceInvader.IsStreamed() )
+			{
+				m_SampleMinion.Initialize();
+			}
+			
 			if ( IsLoaded())
 			{
 				OnLoaded(); 
@@ -205,7 +224,9 @@ class Game
 									Lambda.map(m_Tasks, function( t) { return ( t.Update() == false ) ? t : null;} ),
 									function(x) { return x != null; }
 									);
-								
+		
+		m_SampleMinion.Update();
+		m_SampleMinion.visible = true;
 		
 	}
 	

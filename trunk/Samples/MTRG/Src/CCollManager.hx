@@ -14,7 +14,6 @@ enum COLL_CLASSES
 {
 	Asteroids;
 	Aliens;
-	Mothership;
 	
 	AlienShoots;
 	SpaceShipShoots;
