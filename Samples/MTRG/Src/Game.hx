@@ -152,7 +152,7 @@ class Game
 		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
 		
 		var l_Sitter = new CRscSitter();
-		m_SampleMinion = new CSpaceInvaderMinion();
+		m_SampleMinion = new CCrossMinion();
 		
 	}
 	
@@ -194,6 +194,7 @@ class Game
 			&&	m_RscSpaceInvader.IsStreamed() )
 			{
 				m_SampleMinion.Initialize();
+				m_Pad.Populate();
 			}
 			
 			if ( IsLoaded())

@@ -32,6 +32,7 @@ class CPool<T>
 	
 	public function Destroy( _Old : T ) : Void
 	{
+		CDebug.ASSERT(_Old!=null);
 		var l_IsOk = m_UsedList.remove( _Old );
 		CDebug.ASSERT(l_IsOk);
 		

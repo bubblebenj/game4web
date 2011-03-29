@@ -6,13 +6,29 @@
 package ;
 
 import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.GradientType;
+import flash.display.Shape;
 import flash.display.Sprite;
 import CCollManager;
 import flash.geom.ColorTransform;
+import flash.geom.Matrix;
+import flash.Vector;
 import math.Utils;
 import kernel.CDebug;
 import kernel.Glb;
+
+enum EMinions
+{
+	SpaceInvaders;
+	Shielders;
+	Perforators;
+	Crossars;
+	
+	Count;
+}
 
 class CMinion extends Sprite , implements Updatable, implements BSphered
 {
@@ -144,29 +160,51 @@ class CSpaceInvaderMinion extends CMinion
 		super();
 	}
 	
+	
+	public static inline var SI_SIZE : Int = 64;
+	
 	public override function Initialize()
 	{
+		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
 		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
-		var l_Bmp = new Bitmap(  cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
+		var l_Bmp = new Sprite();
 		CDebug.ASSERT( l_Bmp != null );
 		m_ImgNormal = l_Bmp;
 		
+		l_Bmp.graphics.beginBitmapFill( cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage());
+		l_Bmp.graphics.drawRect(0, 0, 64, 64);
+		l_Bmp.graphics.endFill();
+		l_Bmp.x = - SI_SIZE / 2;
+		l_Bmp.y = - SI_SIZE / 2 ;
+		l_Bmp.scaleX = SI_SIZE / 64;
+		l_Bmp.scaleY = SI_SIZE / 64;
 		
-		l_Bmp.transform.colorTransform = new ColorTransform();
-		l_Bmp.transform.colorTransform.redMultiplier = 1;
-		l_Bmp.transform.colorTransform.greenMultiplier = 0;
-		l_Bmp.transform.colorTransform.blueMultiplier = 0;
-		l_Bmp.visible = true;
+		l_Bmp.transform.colorTransform = new ColorTransform(1,0,0);
 		
-		var l_BmpHit = new Bitmap( cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
+		var l_BmpHit = new Sprite( );
 		m_ImgHit = l_BmpHit;
 		
 		l_BmpHit.visible = false;
 		
-		addChild( m_ImgHit );
+		l_BmpHit.graphics.beginBitmapFill( cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage());
+		l_BmpHit.graphics.drawRect(0, 0, 64, 64);
+		l_BmpHit.graphics.endFill();
+		
+		l_BmpHit.x = - SI_SIZE / 2;
+		l_BmpHit.y = - SI_SIZE / 2 ;
+		l_BmpHit.scaleX = SI_SIZE / 64;
+		l_BmpHit.scaleY = SI_SIZE / 64;
+		
+		
+		//addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = true;
 		Glb.GetRendererAS().AddToSceneAS(this);
+	}
+	
+	public override function Update()
+	{
+		super.Update();
 	}
 	
 	public override function Shoot()
@@ -176,24 +214,223 @@ class CSpaceInvaderMinion extends CMinion
 	
 	public override function ProcessNextPosition()
 	{
-		//CDebug.BREAK("Override me");
-		x = MTRG.WIDTH / 2;
-		y = 100;
 	}
 	
 }
 
 class CSpaceCircleMinion extends CMinion
 {
+	public function new()
+	{
+		super();
+	}
 	
+	public override function Initialize()
+	{
+		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
+		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
+
+		//build standard shape
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			var l_GradientMatrix : Matrix = new Matrix();
+			
+			l_GradientMatrix.createGradientBox( 24,24, 0, -24,-24 );
+			l_PrimaryShape.graphics.beginGradientFill( GradientType.RADIAL, [0xCCC5BE , 0x302B1D], [1, 1], [0, 255],l_GradientMatrix, flash.display.SpreadMethod.PAD );
+			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			l_PrimaryShape.graphics.endFill();
+			
+			l_PrimaryShape.graphics.lineStyle(2, 0xCCC5BE);
+			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			
+			l_PrimaryShape.blendMode = BlendMode.NORMAL;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = true;
+			
+			m_ImgNormal = l_PrimaryShape;
+		}
+		
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			
+			l_PrimaryShape.graphics.beginFill( 0xEEEEEE );
+			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			l_PrimaryShape.graphics.endFill();
+			
+			l_PrimaryShape.blendMode = BlendMode.ADD;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = false;
+			
+			m_ImgHit = l_PrimaryShape;
+		}
+		
+		addChild( m_ImgHit );
+		addChild( m_ImgNormal);
+		visible = false;
+		Glb.GetRendererAS().AddToSceneAS(this);
+	}
+	
+	public override function Update()
+	{
+		super.Update();
+		
+		if ( IsLoaded() )
+		{
+			m_ImgNormal.rotationZ += 30 * Glb.g_System.GetGameDeltaTime();
+		}
+	}
+	
+	public override function Shoot()
+	{
+		
+	}
+	
+	public override function ProcessNextPosition()
+	{
+	
+	}
 }
 
 class CPerforatingMinion extends CMinion
 {
+	public function new()
+	{
+		super();
+	}
 	
+	public override function Initialize()
+	{
+		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
+		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
+		
+		var l_Vec : Vector<Float> = new Vector<Float>();
+		var i = 0;
+		l_Vec[i++] = 8; 	l_Vec[i++] = 0; 
+		l_Vec[i++] = 0; 	l_Vec[i++] = 64;
+		l_Vec[i++] = -8; 	l_Vec[i++] = 0;
+		
+		//build standard shape
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			
+			l_PrimaryShape.graphics.lineStyle(3, 0x888888, 1.0);
+			
+			l_PrimaryShape.graphics.beginFill( 0x3F522B );
+			l_PrimaryShape.graphics.drawTriangles( l_Vec );
+			l_PrimaryShape.graphics.endFill();
+			
+			l_PrimaryShape.blendMode = BlendMode.NORMAL;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = true;
+			
+			m_ImgNormal = l_PrimaryShape;
+		}
+		
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			
+			l_PrimaryShape.graphics.beginFill( 0xFFFFFF );
+			l_PrimaryShape.graphics.drawTriangles( l_Vec );
+			l_PrimaryShape.graphics.endFill();
+			
+			l_PrimaryShape.blendMode = BlendMode.NORMAL;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = false;
+			
+			m_ImgHit = l_PrimaryShape;
+		}
+		
+		addChild( m_ImgHit );
+		addChild( m_ImgNormal);
+		visible = true;
+		Glb.GetRendererAS().AddToSceneAS(this);
+	}
+	
+	public override function Update()
+	{
+		super.Update();
+	}
+	
+	public override function Shoot()
+	{
+		
+	}
+	
+	public override function ProcessNextPosition()
+	{
+	}
 }
 
 class CCrossMinion extends CMinion
 {
+	public function new()
+	{
+		super();
+	}
 	
+	public override function Initialize()
+	{
+		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
+		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
+
+		//build standard shape
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			var l_GradientMatrix : Matrix = new Matrix();
+			
+			l_PrimaryShape.graphics.lineStyle(3, 0xAAAAAA);
+			l_PrimaryShape.graphics.moveTo( -16, -16);
+			l_PrimaryShape.graphics.lineTo(  16, 16);
+			l_PrimaryShape.graphics.lineStyle(5, 0xBBBBBB);
+			l_PrimaryShape.graphics.moveTo( -16, 16);
+			l_PrimaryShape.graphics.lineTo(  16, -16);
+			
+			l_PrimaryShape.blendMode = BlendMode.NORMAL;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = true;
+			
+			m_ImgNormal = l_PrimaryShape;
+		}
+		
+		{
+			var l_PrimaryShape : Shape = new Shape();
+			
+			l_PrimaryShape.graphics.lineStyle(3, 0xFFFFFF);
+			l_PrimaryShape.graphics.moveTo( -16, -16);
+			l_PrimaryShape.graphics.lineTo(  16, 16);
+			l_PrimaryShape.graphics.lineStyle(5, 0xFFFFFF);
+			l_PrimaryShape.graphics.moveTo( -16, 16);
+			l_PrimaryShape.graphics.lineTo(  16, -16);
+			
+			l_PrimaryShape.blendMode = BlendMode.ADD;
+			l_PrimaryShape.cacheAsBitmap = true;
+			l_PrimaryShape.visible = false;
+			
+			m_ImgHit = l_PrimaryShape;
+		}
+		
+		addChild( m_ImgHit );
+		addChild( m_ImgNormal);
+		visible = true;
+		Glb.GetRendererAS().AddToSceneAS(this);
+	}
+	
+	public override function Update()
+	{
+		super.Update();
+		
+		if ( IsLoaded() )
+		{
+			m_ImgNormal.rotationZ += 5 * Glb.g_System.GetGameDeltaTime();
+		}
+	}
+	
+	public override function Shoot()
+	{
+		
+	}
+	
+	public override function ProcessNextPosition()
+	{
+	}
 }

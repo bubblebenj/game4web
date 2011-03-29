@@ -155,7 +155,7 @@ package ;
 		}
 		
 		{
-			m_ImgHit.graphics.beginFill( 0xFFFFFF );
+			m_ImgHit.graphics.beginFill( 0xEEEEEE );
 			BatchCreateShape(l_Arr, m_ImgHit);
 			m_ImgHit.alpha = 1.0;
 			m_ImgHit.blendMode = flash.display.BlendMode.ADD;
