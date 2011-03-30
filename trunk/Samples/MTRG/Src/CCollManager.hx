@@ -23,12 +23,11 @@ enum COLL_CLASSES
 //coord are expressed in AspectH
 interface BSphered
 {
-	public var CenterX : Float;
-	public var CenterY : Float;
-	public var Radius : Float;
+	public var m_Center: CV2D;
+	public var m_Radius : Float;
 	
-	public var CollClass : COLL_CLASSES;
-	public var CollSameClass : Bool;
+	public var m_CollClass : COLL_CLASSES;
+	public var m_CollSameClass : Bool;
 	
 	public function OnCollision( _Collider : BSphered ) : Void;	
 }
@@ -38,20 +37,18 @@ class TestCollidable implements BSphered
 {
 	public function new()
 	{
-		CenterX = 0;
-		CenterY = 0;
-		Radius = 0.5;
+		m_Center = new CV2D(0,0);
+		m_Radius = 0.5;
 		
-		CollClass = Invalid;
-		CollSameClass = true;
+		m_CollClass = Invalid;
+		m_CollSameClass = true;
 	}
 	
-	public var CenterX : Float;
-	public var CenterY : Float;
-	public var Radius : Float;
+	public var m_Center : CV2D;
+	public var m_Radius : Float;
 	
-	public var CollClass : COLL_CLASSES;
-	public var CollSameClass : Bool;
+	public var m_CollClass : COLL_CLASSES;
+	public var m_CollSameClass : Bool;
 	
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
@@ -79,15 +76,14 @@ class CCollManager
 		m_LastFrameHitCount = 0;
 	}
 	
-	public static inline function TestCircleCircle( _Bs0 : BSphered, _Bs1 : BSphered) : Bool
+	public static inline function TestCircleCircle( 	_V0 : CV2D, _R0 : Float,
+														_V1 : CV2D, _R1 : Float
+	) : Bool
 	{
-		var l_Radius2 = _Bs0.Radius + _Bs1.Radius;
+		var l_Radius2 = _R0 + _R1;
 		l_Radius2 *= l_Radius2;
 		
-		Registers.V2_1.Set(_Bs0.CenterX, _Bs0.CenterY );
-		Registers.V2_2.Set(_Bs1.CenterX, _Bs1.CenterY );
-		
-		var l_Diff :CV2D = CV2D.Sub( Registers.V2_0, Registers.V2_2 , Registers.V2_1 );
+		var l_Diff :CV2D = CV2D.Sub( Registers.V2_0, _V1 ,_V0 );
 		var l_Len2 = l_Diff.Norm2();
 		
 		return( l_Radius2 >= l_Len2 );
@@ -96,11 +92,11 @@ class CCollManager
 	public function Add( _o : BSphered )
 	{
 		CDebug.ASSERT(_o != null);
-		var l_index = Type.enumIndex( _o.CollClass );
+		var l_index = Type.enumIndex( _o.m_CollClass );
 		
 		for( i in 0...m_Objects.length)
 		{
-			if ( l_index < Type.enumIndex(m_Objects[i].CollClass))
+			if ( l_index < Type.enumIndex(m_Objects[i].m_CollClass))
 			{
 				m_Objects.insert( i , _o);
 				return;
@@ -141,7 +137,7 @@ class CCollManager
 		#if debug
 		for( i in 0...m_Objects.length-1)
 		{
-			CDebug.ASSERT( Type.enumIndex(m_Objects[i].CollClass) <=  Type.enumIndex(m_Objects[i + 1].CollClass) );
+			CDebug.ASSERT( Type.enumIndex(m_Objects[i].m_CollClass) <=  Type.enumIndex(m_Objects[i + 1].m_CollClass) );
 		}
 		#end
 		
@@ -151,10 +147,10 @@ class CCollManager
 			var l_Next = i + 1;
 			
 			
-			if(!c.CollSameClass)
+			if(!c.m_CollSameClass)
 			{
 				while (	(m_Objects[l_Next] != null)
-				&&		(c.CollClass == m_Objects[l_Next].CollClass))
+				&&		(c.m_CollClass == m_Objects[l_Next].m_CollClass))
 				{
 					l_Next++;
 				}
@@ -171,7 +167,7 @@ class CCollManager
 					
 					if ( 	
 							!m_CollideMap.Is(i * m_Objects.length + j ) 
-					&& 		TestCircleCircle(c,cprime ) )
+					&& 		TestCircleCircle(c.m_Center,c.m_Radius,cprime.m_Center,cprime.m_Radius ) )
 					{
 						//CDebug.CONSOLEMSG(">> (" + c.CenterX+"," + c.CenterY+") : "+c.Radius);
 						//CDebug.CONSOLEMSG("<< (" + cprime.CenterX+"," + cprime.CenterY+") : "+cprime.Radius);
@@ -216,26 +212,11 @@ class CCollManager
 		for (i in 0...m_Objects.length)
 		{
 			var c = m_Objects[i];
-			l_Str += "\n (" + c.CenterX + ","+c.CenterY+") : "+c.Radius;
+			l_Str += "\n (" + c.m_Center.x + ","+c.m_Center.y+") : "+c.m_Radius;
 		}
 		
 		return l_Str;
 	}
 	
-	
-	public static function UnitTest()
-	{
-		#if debug
-		var l_C0 :TestCollidable= new TestCollidable();
-		var l_C1 :TestCollidable= new TestCollidable();
-		CDebug.ASSERT( TestCircleCircle( l_C0, l_C1) == true );
-		
-		l_C0.CenterX = 1;
-		CDebug.ASSERT( TestCircleCircle( l_C0, l_C1) == true );
-		
-		l_C0.CenterX = 2;
-		CDebug.ASSERT( TestCircleCircle( l_C0, l_C1) == false );
-		#end
-	}
 	
 }

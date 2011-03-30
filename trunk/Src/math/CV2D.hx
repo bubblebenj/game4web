@@ -117,7 +117,7 @@ class CV2D
 	 * End Test
 	 */
 	
-	public inline function ToString( ?_NbDigits = 3 ) : String
+	public function toString( ?_NbDigits = 3 ) : String
 	{
 		return ("[ x="+Utils.CutDigits(x, _NbDigits)+",\t y="+Utils.CutDigits(y, _NbDigits)+" ]");
 	}

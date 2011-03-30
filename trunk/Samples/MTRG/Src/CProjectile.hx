@@ -34,12 +34,11 @@ class CProjectile implements BSphered
 	
 	public var visible(default, SetVisible) : Bool;
 	
-	public var CenterX : Float;
-	public var CenterY : Float;
-	public var Radius : Float;
+	public var m_Center : CV2D;
+	public var m_Radius : Float;
 	
-	public var CollClass : COLL_CLASSES;
-	public var CollSameClass : Bool;
+	public var m_CollClass : COLL_CLASSES;
+	public var m_CollSameClass : Bool;
 	
 	
 	///////////////////
@@ -51,10 +50,9 @@ class CProjectile implements BSphered
 		m_Speed = 0;
 		m_DisplayObject = null;
 		
-		CenterX = 0;
-		CenterY = 0;
-		CollSameClass = false;
-		CollClass = Invalid;
+		m_Center = new CV2D(0, 0);
+		m_CollSameClass = false;
+		m_CollClass = Invalid;
 	}
 	
 	public function SetVisible( v ) : Bool
@@ -78,10 +76,9 @@ class CProjectile implements BSphered
 	{
 		CV2D.Add( m_Pos, m_Pos , CV2D.Scale( Registers.V2_0 , Glb.GetSystem().GetGameDeltaTime() * m_Speed , m_Dir ));
 		
-		CenterX = m_Pos.x;
-		CenterY = m_Pos.y;
+		m_Center.Copy(  m_Pos );
 		
-		Radius = 8.0 / MTRG.HEIGHT;
+		m_Radius = 8.0 / MTRG.HEIGHT;
 		
 		if ( 	(m_Pos.y <= 0) 
 		||		(m_Pos.y >= 1) )
@@ -141,14 +138,16 @@ class CLaser extends  CProjectile
 	public function new()
 	{
 		super();
-		CollClass = SpaceShipShoots;
-		CollSameClass = false;
-		Radius = 2.0 / Glb.GetSystem().m_Display.GetAspectRatio();
+		
+		m_Center = new CV2D(0, 0);
+		m_CollClass = SpaceShipShoots;
+		m_CollSameClass = false;
+		m_Radius = 2.0 / MTRG.HEIGHT;
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
 	{
-		switch( _Collider.CollClass )
+		switch( _Collider.m_CollClass )
 		{
 			case Asteroids:
 				var l_Aster : CAsteroid = cast _Collider;
@@ -206,14 +205,14 @@ class CBoulette extends  CProjectile
 	public function new()
 	{
 		super();
-		CollClass = SpaceShipShoots;
-		CollSameClass = false;
-		Radius = 2.0 / Glb.GetSystem().m_Display.GetAspectRatio();
+		m_CollClass = SpaceShipShoots;
+		m_CollSameClass = false;
+		m_Radius = 2.0 / MTRG.HEIGHT;
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
 	{
-		switch( _Collider.CollClass )
+		switch( _Collider.m_CollClass )
 		{
 			case Asteroids:
 				var l_Aster : CAsteroid = cast _Collider;

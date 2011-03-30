@@ -8,7 +8,7 @@ package kernel;
 import math.CV2D;
 import math.Registers;
 
-import kernel.CMouse;
+import input.CMouse;
 import input.CKeyboard;
 
 import renderer.camera.C2DCamera;
