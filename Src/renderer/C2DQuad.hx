@@ -198,6 +198,6 @@ class C2DQuad extends CDrawObject
 	/* Debug functions */
 	public function DebugInfo( ?_Prefix : String ) : Void
 	{
-		trace( _Prefix +" " + this +", Pos: " + GetPosition().ToString()+ ", Pivot: " + GetPivot().ToString() + ", Sz: " + GetSize().ToString() );
+		trace( _Prefix +" " + this +", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() );
 	}
 }

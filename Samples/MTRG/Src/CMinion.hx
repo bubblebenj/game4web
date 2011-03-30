@@ -5,6 +5,7 @@
 
 package ;
 
+import algorithms.CPool;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
@@ -19,6 +20,7 @@ import flash.Vector;
 import math.Utils;
 import kernel.CDebug;
 import kernel.Glb;
+import math.CV2D;
 
 enum EMinions
 {
@@ -32,12 +34,11 @@ enum EMinions
 
 class CMinion extends Sprite , implements Updatable, implements BSphered
 {
-	public var CenterX : Float;
-	public var CenterY : Float;
-	public var Radius : Float;
+	public var m_Center : CV2D;
+	public var m_Radius : Float;
 	
-	public var CollClass : COLL_CLASSES;
-	public var CollSameClass : Bool;
+	public var m_CollClass : COLL_CLASSES;
+	public var m_CollSameClass : Bool;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
@@ -49,6 +50,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	private var m_ShootTimer : Float ;
 	
 	private var m_Level: Int;
+	public var m_HasAI : Bool;
 	
 	private function GetHp() : Int
 	{
@@ -73,12 +75,12 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		m_ShootDelay = 0;
 		m_ImgNormal = null;
 		m_ImgHit = null;
-		CollSameClass = false;
-		CollClass = Aliens;
-		CenterX = 0;
-		CenterY = 0;
-		Radius = 8 / MTRG.HEIGHT;
+		m_CollSameClass = false;
+		m_CollClass = Aliens;
+		m_Center = new CV2D(0,0);
+		m_Radius = 16 / MTRG.HEIGHT;
 		m_Level = 0;
+		m_HasAI = false;
 	}
 	
 	private function OnDestroy()
@@ -101,7 +103,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	
 	public function OnCollision( _Collider : BSphered  )
 	{
-		switch( _Collider.CollClass )
+		switch( _Collider.m_CollClass )
 		{
 			case SpaceShipShoots: CDebug.CONSOLEMSG("Minion collided shoot");
 			default: CDebug.CONSOLEMSG("Minion collided something");
@@ -125,10 +127,13 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	
 	public function Update()
 	{
-		ProcessNextPosition();
+		if ( m_HasAI )
+		{
+			ProcessNextPosition();
+		}
 		
-		//x = CenterX * MTRG.HEIGHT; // aka (m_Img.x /  MTRG.WIDTH) *  (MTRG.WIDTH / MTRG.HEIGHT);
-		//y = CenterY * MTRG.HEIGHT ;
+		x = m_Center.x * MTRG.HEIGHT; // aka (m_Img.x /  MTRG.WIDTH) *  (MTRG.WIDTH / MTRG.HEIGHT);
+		y = m_Center.y * MTRG.HEIGHT;
 		
 		m_ShootTimer += Glb.GetSystem().GetGameDeltaTime();
 		if ( m_ShootTimer >= m_ShootDelay )
@@ -150,6 +155,8 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	{
 		CDebug.BREAK("Override me");
 	}
+	
+	
 }
 
 class CSpaceInvaderMinion extends CMinion
@@ -159,12 +166,13 @@ class CSpaceInvaderMinion extends CMinion
 	{
 		super();
 	}
-	
-	
-	public static inline var SI_SIZE : Int = 64;
+
+	//putting inline causes compiler issue...oh my gosh
+	public var SI_SIZE : Int;
 	
 	public override function Initialize()
 	{
+		SI_SIZE = 64;
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
 		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
 		var l_Bmp = new Sprite();
@@ -198,7 +206,7 @@ class CSpaceInvaderMinion extends CMinion
 		
 		//addChild( m_ImgHit );
 		addChild( m_ImgNormal);
-		visible = true;
+		visible = false;
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
@@ -224,7 +232,7 @@ class CSpaceCircleMinion extends CMinion
 	{
 		super();
 	}
-	
+
 	public override function Initialize()
 	{
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
@@ -291,12 +299,15 @@ class CSpaceCircleMinion extends CMinion
 	}
 }
 
+import algorithms.CPool;
+
 class CPerforatingMinion extends CMinion
 {
 	public function new()
 	{
 		super();
 	}
+	
 	
 	public override function Initialize()
 	{
@@ -342,7 +353,7 @@ class CPerforatingMinion extends CMinion
 		
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
-		visible = true;
+		visible = false;
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
@@ -411,7 +422,7 @@ class CCrossMinion extends CMinion
 		
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
-		visible = true;
+		visible = false;
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
@@ -432,5 +443,71 @@ class CCrossMinion extends CMinion
 	
 	public override function ProcessNextPosition()
 	{
+	}
+}
+
+class CMinionHelper
+{
+	public function Create( _Orig : CMinion ) : CMinion
+	{
+		switch( Type.typeof(_Orig ))
+		{
+			case TClass(c):
+			switch(c)
+			{
+				case CPerforatingMinion: return m_CPerforatingMinionPool.Create();
+				case CCrossMinion: return m_CCrossMinionPool.Create();
+				case CSpaceCircleMinion: return m_CSpaceCircleMinionPool.Create();
+				case CSpaceInvaderMinion: return m_CSpaceInvaderMinionPool.Create();
+				default: CDebug.BREAK("Should not occur");  return null;
+			}
+			
+			default: return null;
+		}
+	}
+	
+	public function Delete( _Inst : CMinion ) : Void
+	{
+		switch( Type.typeof(_Inst ))
+		{
+			case TClass(a):
+			switch(a)
+			{
+				case CPerforatingMinion:m_CPerforatingMinionPool.Destroy(cast _Inst);
+				case CCrossMinion:m_CCrossMinionPool.Destroy(cast _Inst);
+				case CSpaceCircleMinion:m_CSpaceCircleMinionPool.Destroy(cast _Inst);
+				case CSpaceInvaderMinion: m_CSpaceInvaderMinionPool.Destroy( cast _Inst );
+				default : 
+			}
+			default : 
+		}
+	}
+	
+	
+	public var m_CCrossMinionPool :CPool<CCrossMinion>;
+	public var m_CPerforatingMinionPool : CPool<CPerforatingMinion>;
+	public var m_CSpaceCircleMinionPool : CPool<CSpaceCircleMinion>;
+	public var m_CSpaceInvaderMinionPool : CPool<CSpaceInvaderMinion>;
+	public var m_Initialized : Bool;
+	public function new()
+	{
+		m_CCrossMinionPool  = new CPool<CCrossMinion>( 32,new CCrossMinion() );
+		m_CPerforatingMinionPool  = new CPool<CPerforatingMinion>( 32,new CPerforatingMinion() );
+		m_CSpaceCircleMinionPool  = new CPool<CSpaceCircleMinion>( 32,new CSpaceCircleMinion() );
+        m_CSpaceInvaderMinionPool = new CPool<CSpaceInvaderMinion>( 32,new CSpaceInvaderMinion() );
+	}
+	
+	public function IsLoaded() : Bool 
+	{
+		return m_Initialized;
+	}
+	
+	public function Initialize()
+	{
+		Lambda.iter(m_CCrossMinionPool.Free() , function(k) { k.Initialize(); } );
+		Lambda.iter(m_CPerforatingMinionPool.Free() , function(k) { k.Initialize(); } );
+		Lambda.iter(m_CSpaceCircleMinionPool.Free() , function(k) { k.Initialize(); } );
+		Lambda.iter(m_CSpaceInvaderMinionPool.Free() , function(k) { k.Initialize(); } );
+		m_Initialized = true;
 	}
 }

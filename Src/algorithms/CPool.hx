@@ -34,9 +34,19 @@ class CPool<T>
 	{
 		CDebug.ASSERT(_Old!=null);
 		var l_IsOk = m_UsedList.remove( _Old );
-		CDebug.ASSERT(l_IsOk);
 		
-		m_FreeList.add(_Old);
+		#if debug
+		//already out it seems, ensure it is already freed before throwing away
+		if ( ! Lambda.has( m_UsedList , _Old ))
+		{
+			CDebug.ASSERT(l_IsOk);
+		}
+		#end
+		
+		if (l_IsOk)
+		{
+			m_FreeList.add(_Old);
+		}
 	}
 	
 	public function new(_Len : Int, _OriginalCopy : T ) 

@@ -9,7 +9,7 @@ import kernel.CDebug;
 import kernel.CInputManager;
 import kernel.CSystem;
 import kernel.CTypes;
-import kernel.CMouse;
+import input.CMouse;
 
 import input.CKeyboard;
 import renderer.camera.C2DCamera;

@@ -25,12 +25,11 @@ package ;
 	public var m_Rot : Float;
 	var m_RotAngle : Float;
 	
-	public var CenterX : Float;
-	public var CenterY : Float;
-	public var Radius : Float;
+	public var m_Center:CV2D;
+	public var m_Radius : Float;
 	
-	public var CollClass : COLL_CLASSES;
-	public var CollSameClass : Bool;
+	public var m_CollClass : COLL_CLASSES;
+	public var m_CollSameClass : Bool;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
@@ -71,7 +70,7 @@ package ;
 	
 	public function OnCollision( _Collider : BSphered  )
 	{
-		switch( _Collider.CollClass )
+		switch( _Collider.m_CollClass )
 		{
 			case SpaceShipShoots: CDebug.CONSOLEMSG("Asteroid collided shoot");
 			default: CDebug.CONSOLEMSG("Asteroid collided something");
@@ -84,11 +83,10 @@ package ;
 		m_ImgNormal = null;
 		m_ImgHit = null;
 		m_RotAngle = RandomEx.DiceF( - Math.PI * 8.0, Math.PI * 8);
-		Radius = 0.5 * MAX_WIDTH / MTRG.HEIGHT;
-		CenterX = 0;
-		CenterY = 0;
-		CollClass = Asteroids;
-		CollSameClass = false;
+		m_Radius = MAX_WIDTH / MTRG.HEIGHT * 0.5;
+		m_Center = new CV2D(0, 0);
+		m_CollClass = Asteroids;
+		m_CollSameClass = false;
 		m_Hp = 10;
 	}
 	
@@ -180,8 +178,8 @@ package ;
 	{
 		rotationZ += m_RotAngle * Glb.GetSystem().GetGameDeltaTime();
 		
-		CenterX = x / MTRG.HEIGHT; // aka (m_Img.x /  MTRG.WIDTH) *  (MTRG.WIDTH / MTRG.HEIGHT);
-		CenterY = y / MTRG.HEIGHT;
+		//Go to Aspect / Homogene base
+		m_Center.Set( x / MTRG.HEIGHT, y / MTRG.HEIGHT); // aka (m_Img.x /  MTRG.WIDTH) *  (MTRG.WIDTH / MTRG.HEIGHT);
 	}
 	
 	public function Shut()

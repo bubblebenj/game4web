@@ -6,14 +6,14 @@
 package driver.as.rscbuilders;
 
 import driver.as.input.CKeyboardAS;
-import driver.as.kernel.CMouseAS;
+import driver.as.input.CMouseAS;
 import driver.as.rsc.CRscImageAS;
 import driver.as.rsc.CRscTextAS;
 import driver.as.renderer.C2DCameraAS;
 
 import kernel.CTypes;
 import kernel.CDebug;
-import kernel.CMouse;
+import input.CMouse;
 import input.CKeyboard;
 import renderer.camera.C2DCamera;
 

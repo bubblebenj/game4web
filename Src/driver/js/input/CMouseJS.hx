@@ -3,7 +3,7 @@
  * @author Benjamin Dubois
  */
 
-package driver.js.kernel;
+package driver.js.input;
  
 import js.Dom;
 

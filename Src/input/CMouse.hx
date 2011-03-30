@@ -1,4 +1,4 @@
-﻿package kernel;
+﻿package input;
 
 /**
  * ...
@@ -9,6 +9,7 @@ import math.CV2D;
 import rsc.CRsc;
 import rsc.CRscMan;
  
+import kernel.Glb;
 /*
  * 
  * To mimic the behavior of the DS stylus that doesn't give 2D
@@ -27,7 +28,9 @@ class CMouse extends CRsc
 	}
 		
 	private	var m_Coordinate	: CV2D;
+	
 	private	var m_Down			: Bool;
+	
 	private	var m_Out			: Bool; // True if the mouse in outside the game context
 	
 	private var w_Coordinate	: CV2D;
@@ -62,4 +65,6 @@ class CMouse extends CRsc
 	{
 		m_Coordinate.Set( -1.0, -1.0 );
 	}
+	
+
 }

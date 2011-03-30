@@ -1,4 +1,4 @@
-﻿package driver.as.kernel;
+﻿package driver.as.input;
 
 /**
  * ...
@@ -9,7 +9,8 @@ import flash.events.MouseEvent;
 import flash.events.Event;
 import flash.Lib;
 import math.CV2D;
-import kernel.CMouse;
+import input.CMouse;
+import kernel.CDebug;
 
 class CMouseAS extends CMouse
 {
@@ -24,16 +25,19 @@ class CMouseAS extends CMouse
 		flash.Lib.current.stage.addEventListener( Event.MOUSE_LEAVE, 		Out );
 		/* The following line doesn't work. Use MOUSE_MOVE instead
 		 * flash.Lib.current.stage.addEventListener( MouseEvent.MOUSE_OVER, 	In );*/
+		CDebug.CONSOLEMSG("Created Mouse");
 	}
 
 	private function Down( _Event : MouseEvent ) : Void
 	{
 		m_Down		= true;
+		m_Coordinate.Set( Lib.current.stage.mouseX, Lib.current.stage.mouseY );
 	}
 	
 	private function Up	( _Event : MouseEvent ) : Void
 	{
 		m_Down		= false;
+		m_Coordinate.Set( Lib.current.stage.mouseX, Lib.current.stage.mouseY );
 	}
 	
 	private function Move( _Event : MouseEvent ) : Void
