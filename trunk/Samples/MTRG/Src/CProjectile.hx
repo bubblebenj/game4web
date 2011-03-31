@@ -41,6 +41,7 @@ class CProjectile implements BSphered
 	public var m_CollShape : COLL_SHAPE;
 	public var m_CollSameClass : Bool;
 	
+	public var m_Damage : Int;
 	
 	///////////////////
 	public function new() 
@@ -55,6 +56,7 @@ class CProjectile implements BSphered
 		m_CollSameClass = false;
 		m_CollClass = Invalid;
 		m_CollShape = Sphere;
+		m_Damage = 0;
 	}
 	
 	public function SetVisible( v ) : Bool
@@ -145,6 +147,7 @@ class CLaser extends  CProjectile
 		m_CollClass = SpaceShipShoots;
 		m_CollSameClass = false;
 		m_Radius = 2.0 / MTRG.HEIGHT;
+		m_Damage =  10;
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
@@ -154,16 +157,37 @@ class CLaser extends  CProjectile
 			case Asteroids:
 				var l_Aster : CAsteroid = cast _Collider;
 				l_Aster.m_Hp -= 10;
-				OnDestroy();
+				
+			case Aliens:
+				switch( Type.typeof( _Collider ) )
+				{
+					case TClass(a):
+					switch(a)
+					{
+						case CMothership: 
+						var l_Ms : CMothership = cast _Collider;
+						l_Ms.m_Hp -= 10;
+						
+						case CMinion: 
+						var l_Mn : CMinion = cast _Collider;
+						l_Mn.m_Hp -= 10;
+
+						default: 
+						CDebug.CONSOLEMSG("Typing err...");
+						
+					}
+					default:
+				}
 			default:
-				CDebug.CONSOLEMSG("COLL");
+				//CDebug.CONSOLEMSG("COLL");
 		}
+		OnDestroy();
 	}
 	
 	public override function OnLost()
 	{
 		OnDestroy();
-		kernel.CDebug.CONSOLEMSG("Laser Lost ");
+		//kernel.CDebug.CONSOLEMSG("Laser Lost ");
 	}
 	
 	public override function OnDestroy()
@@ -173,7 +197,7 @@ class CLaser extends  CProjectile
 		MTRG.s_Instance.m_Gameplay.m_Ship.DeleteLaser(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		
-		kernel.CDebug.CONSOLEMSG("Laser destroyed ");
+		//kernel.CDebug.CONSOLEMSG("Laser destroyed ");
 	}
 	
 	public override function Initialize()
@@ -207,9 +231,11 @@ class CBoulette extends  CProjectile
 	public function new()
 	{
 		super();
-		m_CollClass = SpaceShipShoots;
+		m_CollClass = AlienShoots;
 		m_CollSameClass = false;
 		m_Radius = 2.0 / MTRG.HEIGHT;
+		
+		m_Damage = 10;
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
@@ -228,7 +254,7 @@ class CBoulette extends  CProjectile
 	public override function OnLost()
 	{
 		OnDestroy();
-		kernel.CDebug.CONSOLEMSG("Laser Lost ");
+		//kernel.CDebug.CONSOLEMSG("Laser Lost ");
 	}
 	
 	public override function OnDestroy()
@@ -238,7 +264,7 @@ class CBoulette extends  CProjectile
 		MTRG.s_Instance.m_Gameplay.m_Ship.DeleteBoulette(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		
-		kernel.CDebug.CONSOLEMSG("Laser destroyed ");
+		//kernel.CDebug.CONSOLEMSG("Laser destroyed ");
 	}
 	
 	public override function Initialize()

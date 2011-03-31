@@ -47,6 +47,9 @@ class CSpaceShip implements Updatable
 	public var  m_Bhv : AIBhv; 
 	
 	public var 	m_ShootSpin : Float;
+	public var m_Hp(GetHp,SetHp) : Int;
+	private var _Hp : Int;
+	
 	
 	public static inline var MAX_LASERS = 16;
 	public static inline var MAX_BOULETTE = 128;
@@ -69,6 +72,28 @@ class CSpaceShip implements Updatable
 	public function IsLoaded() : Bool
 	{
 		return m_Ship != null;
+	}
+	
+	//////////////////////////////////
+	private function GetHp() : Int
+	{
+		return _Hp;
+	}
+	
+	//////////////////////////////////
+	private function SetHp(v : Int) : Int
+	{
+		_Hp = v;
+		if( _Hp <= 0 )
+		{
+			OnDestroy();
+		}
+		return _Hp;
+	}
+	
+	private function OnDestroy()
+	{
+		MTRG.s_Instance.m_Gameplay.GameOver(true);
 	}
 	
 	public function Initialize() : Void 

@@ -12,7 +12,7 @@ class CPool<T>
 	private var m_FreeList : List < T >;
 	private var m_UsedList : List < T >;
 	
-	public function Create() : T
+	public inline function Create() : T
 	{
 		var l_New = m_FreeList.pop();
 		CDebug.ASSERT(l_New != null);//not enough instances in pool
@@ -30,14 +30,14 @@ class CPool<T>
 		return m_FreeList;
 	}
 	
-	public function Destroy( _Old : T ) : Void
+	public inline function Destroy( _Old : T ) : Void
 	{
 		CDebug.ASSERT(_Old!=null);
 		var l_IsOk = m_UsedList.remove( _Old );
 		
 		#if debug
 		//already out it seems, ensure it is already freed before throwing away
-		if ( ! Lambda.has( m_UsedList , _Old ))
+		if( !Lambda.has( m_FreeList , _Old ))
 		{
 			CDebug.ASSERT(l_IsOk);
 		}

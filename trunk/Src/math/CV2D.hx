@@ -65,12 +65,12 @@ class CV2D
 		return _InOut;
 	}
 	
-	public inline function Norm2()
+	public inline function Norm2() : Float
 	{
 		return x * x + y * y;
 	}
 	
-	public inline function Norm()
+	public inline function Norm() : Float
 	{
 		return Math.sqrt(x * x + y * y);
 	}
@@ -129,7 +129,7 @@ class CV2D
 	
 	public static inline function GetDistance2( _V0 : CV2D, _V1 :  CV2D ) : Float
 	{
-		return Math.pow( (_V1.x - _V0.x), 2 ) + Math.pow( (_V1.y - _V0.y), 2 );
+		return ( (_V1.x - _V0.x) * (_V1.x - _V0.x) ) + ( (_V1.y - _V0.y) * (_V1.y - _V0.y) );
 	}
 	
 	public static inline function GetDistance( _V0 : CV2D, _V1 :  CV2D ) : Float

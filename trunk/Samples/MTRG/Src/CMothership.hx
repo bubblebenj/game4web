@@ -27,6 +27,8 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	public var m_CollShape : COLL_SHAPE;
 	
 	private var m_ScanShape : Shape;
+	public var m_Hp(GetHp,SetHp) : Int;
+	private var _Hp : Int;
 	
 	////////////////////////////////////////////////////////////
 	public function new() 
@@ -34,25 +36,53 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		super();
 		m_Center = new CV2D(0, 0);
 		m_Radius = 64;
-		m_CollShape = AARect(32);
+		m_CollShape = AARect(16.0/MTRG.HEIGHT);
 		m_CollClass = Aliens;
 		m_CollSameClass = false;
+		m_Hp = 100;
+	}
+	
+	//////////////////////////////////
+	private function GetHp() : Int
+	{
+		return _Hp;
+	}
+	
+	//////////////////////////////////
+	private function SetHp(v : Int) : Int
+	{
+		_Hp = v;
+		if( _Hp <= 0 )
+		{
+			OnDestroy();
+		}
+		return _Hp;
+	}
+	
+	public function OnDestroy() : Void
+	{
+		MTRG.s_Instance.m_Gameplay.GameOver(false);
 	}
 	
 	////////////////////////////////////////////////////////////
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
-		CDebug.CONSOLEMSG("Mothership hit");
+		//CDebug.CONSOLEMSG("Mothership hit");
+		//CDebug.CONSOLEMSG("Mothership hit");
 	}
 	
-	public static inline var MS_SIZE_X = 256;
-	public static inline var MS_SIZE_Y = 32;
+	public var MS_SIZE_X : Int;
+	public var MS_SIZE_Y : Int;
 	
 	////////////////////////////////////////////////////////////
 	public function Initialize()
 	{
+		MS_SIZE_X = 256;
+		MS_SIZE_Y = 32;
+	
 		var l_Shape  :Shape = new Shape(); 
 		
+		m_Radius = 128.0 / MTRG.HEIGHT;
 		
 		l_Shape.graphics.beginFill(0x787878); 
 		l_Shape.graphics.drawEllipse( - MS_SIZE_X * 0.5, MS_SIZE_Y*0.25, MS_SIZE_X, MS_SIZE_Y*0.5);
@@ -90,13 +120,18 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		
 		visible = true;
 		Glb.GetRendererAS().AddToSceneAS( this );
+		
+		m_Center.Set( 	(MTRG.BOARD_WIDTH / 2 + MTRG.BOARD_X) / MTRG.HEIGHT,
+						64 / MTRG.HEIGHT);
+						
+		MTRG.s_Instance.m_Gameplay.m_CollMan.Add(this);
 	}
 	
 	////////////////////////////////////////////////////////////
 	public function Update()
 	{
-		x = MTRG.BOARD_WIDTH / 2 + MTRG.BOARD_X;
-		y = 64;
+		x = m_Center.x * MTRG.HEIGHT;
+		y = m_Center.y * MTRG.HEIGHT;
 		
 		m_ScanShape.x += Glb.GetSystem().GetGameDeltaTime() * 70;
 		if (m_ScanShape.x> MS_SIZE_X * 0.5 - 32)

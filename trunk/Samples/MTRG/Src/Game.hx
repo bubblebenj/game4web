@@ -10,9 +10,12 @@ import CMinion;
 import flash.display.BlendMode;
 import flash.display.Shape;
 import haxe.FastList;
+import haxe.Log;
 import input.CKeyCodes;
 import kernel.CDebug;
 import kernel.Glb;
+import math.CV2D;
+import math.Registers;
 import MTRG;
 import rsc.CRscImage;
 import rsc.CRscSitter;
@@ -117,6 +120,8 @@ class Game
 	public function Initialize()
 	{	
 	
+		Log.setColor(0xFF0000);
+		
 		m_Tasks = new List<CTimedTask>();
 		m_CollMan = new CCollManager();
 		
@@ -169,6 +174,11 @@ class Game
 		m_Mothership.Initialize();
 	}
 	
+	public function GameOver( _Win : Bool )
+	{
+		CDebug.CONSOLEMSG("You " + (_Win ? "WIN" : "LOSE")+ "!!!");
+	}
+	
 	public function OnLoaded()
 	{
 		Glb.GetRendererAS().SendToBack( m_BG.GetDisplayObject() ) ;
@@ -207,6 +217,24 @@ class Game
 		/*
 		 * */
 		
+		#if debug
+		if( Glb.GetInputManager().GetMouse().IsDown())
+		{
+			if( CCollManager.TestCircleRect( Glb.GetInputManager().GetMouse().GetPosition(), 1 / MTRG.HEIGHT,
+							CV2D.Sub( Registers.V2_0, m_Mothership.m_Center, new CV2D(128 / MTRG.HEIGHT,16/ MTRG.HEIGHT)),
+							CV2D.Add( Registers.V2_1, m_Mothership.m_Center, new CV2D(128 / MTRG.HEIGHT,16/ MTRG.HEIGHT))
+						))
+			{
+				CDebug.CONSOLEMSG("Touched");
+			}
+			else
+			{
+				CDebug.CONSOLEMSG("Missed");
+			}
+		}
+		#end
+		
+		#if debug
 		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_P)
 		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_P))
 		{
@@ -225,6 +253,7 @@ class Game
 		{
 			CDebug.CONSOLEMSG( m_CollMan.toString() );
 		}
+		#end
 		
 		switch(m_State)
 		{
