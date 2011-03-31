@@ -66,6 +66,8 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		m_Radius = 8 / MTRG.HEIGHT;
 		m_Level = 0;
 		m_HasAI = false;
+		
+		m_Hp = 20;
 	}
 	
 	//////////////////////////////////
@@ -498,13 +500,15 @@ class CMinionHelper
 		switch( Type.typeof(_Inst ))
 		{
 			case TClass(a):
-			switch(a)
 			{
-				case CPerforatingMinion:m_CPerforatingMinionPool.Destroy(cast _Inst);
-				case CCrossMinion:m_CCrossMinionPool.Destroy(cast _Inst);
-				case CSpaceCircleMinion:m_CSpaceCircleMinionPool.Destroy(cast _Inst);
-				case CSpaceInvaderMinion: m_CSpaceInvaderMinionPool.Destroy( cast _Inst );
-				default : 
+				switch(a)
+				{
+					case CPerforatingMinion:m_CPerforatingMinionPool.Destroy(cast _Inst);
+					case CCrossMinion:m_CCrossMinionPool.Destroy(cast _Inst);
+					case CSpaceCircleMinion:m_CSpaceCircleMinionPool.Destroy(cast _Inst);
+					case CSpaceInvaderMinion: m_CSpaceInvaderMinionPool.Destroy( cast _Inst );
+					default : 
+				}
 			}
 			default : 
 		}

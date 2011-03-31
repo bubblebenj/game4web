@@ -90,26 +90,80 @@ class CCollManager
 														_V1 : CV2D, _R1 : Float
 	) : Bool
 	{
-		var l_Radius2 = _R0 + _R1;
+		var l_Radius2 :Float= _R0 + _R1;
 		l_Radius2 *= l_Radius2;
-		
-		var l_Diff :CV2D = CV2D.Sub( Registers.V2_0, _V1 ,_V0 );
-		var l_Len2 = l_Diff.Norm2();
-		
+		var l_DiffX :Float=  _V1.x - _V0.x;
+		var l_DiffY :Float=  _V1.y - _V0.y;
+		var l_Len2 :Float = l_DiffX * l_DiffX +  l_DiffY * l_DiffY;
+		return( l_Radius2 >= l_Len2 );
+	}
+	
+	public static inline function TestCircleVtx( 	_V0 : CV2D, _R0 : Float,
+													_V1 : CV2D
+	) : Bool
+	{
+		var l_Radius2 :Float= _R0*_R0;
+		var l_DiffX :Float=  _V1.x - _V0.x;
+		var l_DiffY :Float=  _V1.y - _V0.y;
+		var l_Len2 :Float = l_DiffX * l_DiffX +  l_DiffY * l_DiffY;
 		return( l_Radius2 >= l_Len2 );
 	}
 	
 	//P0 = TL  P1 = BR
-	public static inline function TestCircleRect( 	_V0 : CV2D, _R0 : Float,
-													_P0 : CV2D, _P1 : CV2D
+	public static function TestCircleRect( 	_V0 : CV2D, _R0 : Float,
+											_P0 : CV2D, _P1 : CV2D
 	) : Bool
 	{
-		if (_P0.x < _V0.x + _R0
-		&&	_P1.x > _V0.x - _R0
-		&&	_P0.y < _V0.y + _R0
-		&&	_P1.y > _V0.x - _R0)
+		var l_RectCenter : CV2D  = Registers.V2DPool.Create();
+		
+		CV2D.Add( l_RectCenter , _P0, _P1);
+		CV2D.Scale( l_RectCenter, 0.5, l_RectCenter);
+
+		var l_IsInBS : Bool = TestCircleCircle(l_RectCenter, CV2D.GetDistance( _P0, l_RectCenter) , _V0, _R0);
+		
+		Registers.V2DPool.Destroy(l_RectCenter);
+		
+		if (!l_IsInBS)
 		{
-			return true;
+			return false;
+		}
+		
+		trace("v:" +_V0+ "r:"+_R0);
+		trace("p0:" +_P0+ "p1:"+_P1);
+
+		var l_Res=( 	_V0.x - _R0 < _P1.x 
+		&& 				_V0.x + _R0 > _P0.x 
+		&&				_V0.y + _R0 > _P0.y 
+		&& 				_V0.y - _R0 < _P1.y );
+	
+		
+		return l_Res;
+	}
+	
+	public static function TestRectRect( 	_P00 : CV2D, _P01 : CV2D,
+											_P10 : CV2D, _P11 : CV2D
+	) : Bool
+	{
+		
+		//easy dude
+		if ( _P00.x > _P11.x)
+		{
+			return false;
+		}
+		
+		if ( _P01.x < _P10.x)
+		{
+			return false;
+		}
+		
+		if ( _P01.y < _P10.y)
+		{
+			return false;
+		}
+		
+		if ( _P00.y > _P11.y)
+		{
+			return false;
 		}
 		
 		return true;
@@ -149,6 +203,39 @@ class CCollManager
 				break;
 			}
 		}
+	}
+	
+	public static function IsColliding( _O0 : BSphered, _O1 : BSphered) : Bool
+	{
+		return switch(_O0.m_CollShape )
+		{
+			case Sphere:
+				TestCircleCircle(_O0.m_Center, _O0.m_Radius, _O1.m_Center, _O1.m_Radius ) ;
+			
+			case AARect(r0):
+				switch( _O1.m_CollShape)
+				{
+					case Sphere: 
+						var l_Vec : CV2D = Registers.V2DPool.Create();
+						l_Vec.Set(_O0.m_Radius, r0);
+						CV2D.Add( l_Vec, _O0.m_Center, l_Vec);
+						var l_Res = TestCircleRect(_O1.m_Center, _O1.m_Radius, _O0.m_Center, l_Vec ) ;
+						Registers.V2DPool.Destroy(l_Vec);
+						l_Res;
+						
+					case AARect(r1):
+						var l_V0: CV2D = Registers.V2DPool.Create();
+						var l_V1: CV2D = Registers.V2DPool.Create();
+						l_V0.Set(_O0.m_Radius, r0);
+						l_V1.Set(_O1.m_Radius, r1);
+						CV2D.Add( l_V0, _O0.m_Center, l_V0);
+						CV2D.Add( l_V1, _O1.m_Center, l_V1);
+						var l_Res = TestRectRect(_O1.m_Center, l_V0, _O1.m_Center, l_V1 ) ;
+						Registers.V2DPool.Destroy(l_V0);
+						Registers.V2DPool.Destroy(l_V1);
+						l_Res;
+				}
+		};
 	}
 	
 	public function Update()
@@ -192,9 +279,8 @@ class CCollManager
 					m_LastFrameTestCount++;
 					#end
 					
-					if ( 	
-							!m_CollideMap.Is(i * m_Objects.length + j ) 
-					&& 		TestCircleCircle(c.m_Center,c.m_Radius,cprime.m_Center,cprime.m_Radius ) )
+					if ( 	!m_CollideMap.Is(i * m_Objects.length + j ) 
+					&&		IsColliding(c,cprime))
 					{
 						//CDebug.CONSOLEMSG(">> (" + c.CenterX+"," + c.CenterY+") : "+c.Radius);
 						//CDebug.CONSOLEMSG("<< (" + cprime.CenterX+"," + cprime.CenterY+") : "+cprime.Radius);
