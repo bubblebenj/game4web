@@ -50,6 +50,7 @@ class CSpaceShip implements Updatable
 	
 	public static inline var MAX_LASERS = 16;
 	public static inline var MAX_BOULETTE = 128;
+	
 	var m_LaserPool : CPool< CLaser >;
 	var m_BoulettePool : CPool< CBoulette >;
 	

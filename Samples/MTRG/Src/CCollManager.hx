@@ -10,7 +10,7 @@ import kernel.CDebug;
 import math.CV2D;
 import math.Registers;
 
-enum COLL_CLASSES
+enum COLL_CLASS
 {
 	Asteroids;
 	Aliens;
@@ -20,14 +20,22 @@ enum COLL_CLASSES
 	Invalid;
 }
 
+enum COLL_SHAPE
+{	
+	Sphere;
+	AARect( _Height : Float);//append to radius
+}
+
 //coord are expressed in AspectH
 interface BSphered
 {
 	public var m_Center: CV2D;
 	public var m_Radius : Float;
 	
-	public var m_CollClass : COLL_CLASSES;
+	public var m_CollClass : COLL_CLASS;
 	public var m_CollSameClass : Bool;
+	
+	public var m_CollShape : COLL_SHAPE;
 	
 	public function OnCollision( _Collider : BSphered ) : Void;	
 }
@@ -42,12 +50,14 @@ class TestCollidable implements BSphered
 		
 		m_CollClass = Invalid;
 		m_CollSameClass = true;
+		m_CollShape = Sphere;
 	}
 	
 	public var m_Center : CV2D;
 	public var m_Radius : Float;
 	
-	public var m_CollClass : COLL_CLASSES;
+	public var m_CollClass : COLL_CLASS;
+	public var m_CollShape : COLL_SHAPE;
 	public var m_CollSameClass : Bool;
 	
 	public function OnCollision( _Collider : BSphered ) : Void
@@ -88,6 +98,23 @@ class CCollManager
 		
 		return( l_Radius2 >= l_Len2 );
 	}
+	
+	//P0 = TL  P1 = BR
+	public static inline function TestCircleRect( 	_V0 : CV2D, _R0 : Float,
+													_P0 : CV2D, _P1 : CV2D
+	) : Bool
+	{
+		if (_P0.x < _V0.x + _R0
+		&&	_P1.x > _V0.x - _R0
+		&&	_P0.y < _V0.y + _R0
+		&&	_P1.y > _V0.x - _R0)
+		{
+			return true;
+		}
+		
+		return true;
+	}
+	
 	
 	public function Add( _o : BSphered )
 	{

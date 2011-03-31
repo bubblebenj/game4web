@@ -34,7 +34,7 @@ class CMinionPad extends Sprite , implements Updatable
 		m_Img.graphics.lineStyle(3, 0x000000);
 		
 		var l_Margin = MARGIN;
-		m_Img.graphics.drawRoundRect(l_Margin, l_Margin, MTRG.BOARD_X - l_Margin, MTRG.HEIGHT - l_Margin * 2, 24,24);
+		m_Img.graphics.drawRoundRect(l_Margin, l_Margin, MTRG.BOARD_X - l_Margin, MTRG.HEIGHT * 0.5- l_Margin * 2, 24,24);
 		
 		m_Img.graphics.endFill();
 		
@@ -57,7 +57,7 @@ class CMinionPad extends Sprite , implements Updatable
 	{
 		var l_Margin = MARGIN;
 		var l_Top = 	l_Margin * 3;
-		var l_Bottom =  MTRG.HEIGHT - l_Margin * 3;
+		var l_Bottom =  MTRG.HEIGHT * 0.5 - l_Margin * 3;
 		
 		var i = 0;
 		
@@ -92,7 +92,7 @@ class CMinionPad extends Sprite , implements Updatable
 		{
 			if ( Glb.GetInputManager().GetMouse().IsDown()  )
 			{
-				CDebug.CONSOLEMSG("Down");
+				//CDebug.CONSOLEMSG("Down");
 				var l_MousePos :CV2D =  Glb.GetInputManager().GetMouse().GetPosition();
 				
 				for (m in m_MinionArray )

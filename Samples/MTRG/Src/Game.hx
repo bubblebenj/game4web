@@ -55,6 +55,7 @@ class Game
 	
 	public var m_Ship : CSpaceShip;
 	public var m_CollMan : CCollManager;
+	public var m_Mothership : CMothership;
 	
 	//UI
 	var m_Pad : CMinionPad;
@@ -89,6 +90,7 @@ class Game
 		m_PlaceLimit = 0.2;
 		
 		m_ActiveMonsterList = new List<CMinion>();
+		m_Mothership = new CMothership();
 	}
 	
 	public function IsLoaded() : Bool
@@ -163,6 +165,8 @@ class Game
 		m_PlacingLimitLine.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.visible = true;
 		Glb.GetRendererAS().AddToSceneAS(m_PlacingLimitLine);
+		
+		m_Mothership.Initialize();
 	}
 	
 	public function OnLoaded()
@@ -266,6 +270,8 @@ class Game
 									);
 									
 		Lambda.iter( Lambda.list( m_ActiveMonsterList), function(x) { x.Update(); } );
+		
+		m_Mothership.Update();
 	}
 	
 	public function Shut()
