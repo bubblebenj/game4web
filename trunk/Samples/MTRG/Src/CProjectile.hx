@@ -37,7 +37,8 @@ class CProjectile implements BSphered
 	public var m_Center : CV2D;
 	public var m_Radius : Float;
 	
-	public var m_CollClass : COLL_CLASSES;
+	public var m_CollClass : COLL_CLASS;
+	public var m_CollShape : COLL_SHAPE;
 	public var m_CollSameClass : Bool;
 	
 	
@@ -53,6 +54,7 @@ class CProjectile implements BSphered
 		m_Center = new CV2D(0, 0);
 		m_CollSameClass = false;
 		m_CollClass = Invalid;
+		m_CollShape = Sphere;
 	}
 	
 	public function SetVisible( v ) : Bool

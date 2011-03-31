@@ -37,7 +37,8 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	public var m_Center : CV2D;
 	public var m_Radius : Float;
 	
-	public var m_CollClass : COLL_CLASSES;
+	public var m_CollClass : COLL_CLASS;
+	public var m_CollShape : COLL_SHAPE;
 	public var m_CollSameClass : Bool;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
@@ -52,22 +53,6 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	private var m_Level: Int;
 	public var m_HasAI : Bool;
 	
-	private function GetHp() : Int
-	{
-		return _Hp;
-	}
-	
-	private function SetHp(v : Int) : Int
-	{
-		_Hp = v;
-		if( _Hp <= 0 )
-		{
-			OnDestroy();
-		}
-		return _Hp;
-	}
-	
-	
 	public function new() 
 	{
 		super();
@@ -78,11 +63,29 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		m_CollSameClass = false;
 		m_CollClass = Aliens;
 		m_Center = new CV2D(0,0);
-		m_Radius = 16 / MTRG.HEIGHT;
+		m_Radius = 8 / MTRG.HEIGHT;
 		m_Level = 0;
 		m_HasAI = false;
 	}
 	
+	//////////////////////////////////
+	private function GetHp() : Int
+	{
+		return _Hp;
+	}
+	
+	//////////////////////////////////
+	private function SetHp(v : Int) : Int
+	{
+		_Hp = v;
+		if( _Hp <= 0 )
+		{
+			OnDestroy();
+		}
+		return _Hp;
+	}
+
+	//////////////////////////////////
 	private function OnDestroy()
 	{
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
@@ -101,6 +104,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 																,0.1,0) );
 	}
 	
+	//////////////////////////////////
 	public function OnCollision( _Collider : BSphered  )
 	{
 		switch( _Collider.m_CollClass )
@@ -110,21 +114,25 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		}
 	}
 	
+	//////////////////////////////////
 	public function Initialize()
 	{
 		CDebug.BREAK("Override me");
 	}
 	
+	//////////////////////////////////
 	public function ProcessNextPosition()
 	{
 		CDebug.BREAK("Override me");
 	}
 	
+	//////////////////////////////////
 	public function IsLoaded()
 	{
 		return m_ImgNormal != null && m_ImgHit != null;
 	}
 	
+	//////////////////////////////////
 	public function Update()
 	{
 		if ( m_HasAI )
@@ -143,7 +151,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		}
 	}
 	
-	
+	//////////////////////////////////
 	public function Shut()
 	{
 		Glb.GetRendererAS().RemoveFromSceneAS(this);
@@ -151,6 +159,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		m_ImgHit = null;
 	}
 	
+	//////////////////////////////////
 	public function Shoot()
 	{
 		CDebug.BREAK("Override me");
@@ -161,7 +170,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 
 class CSpaceInvaderMinion extends CMinion
 {
-	
+	//////////////////////////////////
 	public function new()
 	{
 		super();
@@ -170,9 +179,10 @@ class CSpaceInvaderMinion extends CMinion
 	//putting inline causes compiler issue...oh my gosh
 	public var SI_SIZE : Int;
 	
+	//////////////////////////////////
 	public override function Initialize()
 	{
-		SI_SIZE = 64;
+		SI_SIZE = 32;
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
 		CDebug.ASSERT( null != MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage() );
 		var l_Bmp = new Sprite();
@@ -210,16 +220,19 @@ class CSpaceInvaderMinion extends CMinion
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
+	//////////////////////////////////
 	public override function Update()
 	{
 		super.Update();
 	}
 	
+	//////////////////////////////////
 	public override function Shoot()
 	{
 		
 	}
 	
+	//////////////////////////////////
 	public override function ProcessNextPosition()
 	{
 	}
@@ -233,6 +246,7 @@ class CSpaceCircleMinion extends CMinion
 		super();
 	}
 
+	//////////////////////////////////
 	public override function Initialize()
 	{
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
@@ -243,13 +257,13 @@ class CSpaceCircleMinion extends CMinion
 			var l_PrimaryShape : Shape = new Shape();
 			var l_GradientMatrix : Matrix = new Matrix();
 			
-			l_GradientMatrix.createGradientBox( 24,24, 0, -24,-24 );
+			l_GradientMatrix.createGradientBox( 12,12, 0, -12,-12 );
 			l_PrimaryShape.graphics.beginGradientFill( GradientType.RADIAL, [0xCCC5BE , 0x302B1D], [1, 1], [0, 255],l_GradientMatrix, flash.display.SpreadMethod.PAD );
-			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			l_PrimaryShape.graphics.drawCircle( 0, 0,12);
 			l_PrimaryShape.graphics.endFill();
 			
 			l_PrimaryShape.graphics.lineStyle(2, 0xCCC5BE);
-			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			l_PrimaryShape.graphics.drawCircle( 0, 0, 12);
 			
 			l_PrimaryShape.blendMode = BlendMode.NORMAL;
 			l_PrimaryShape.cacheAsBitmap = true;
@@ -262,7 +276,7 @@ class CSpaceCircleMinion extends CMinion
 			var l_PrimaryShape : Shape = new Shape();
 			
 			l_PrimaryShape.graphics.beginFill( 0xEEEEEE );
-			l_PrimaryShape.graphics.drawCircle( 0, 0, 24);
+			l_PrimaryShape.graphics.drawCircle( 0, 0, 21);
 			l_PrimaryShape.graphics.endFill();
 			
 			l_PrimaryShape.blendMode = BlendMode.ADD;
@@ -278,6 +292,7 @@ class CSpaceCircleMinion extends CMinion
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
+	//////////////////////////////////
 	public override function Update()
 	{
 		super.Update();
@@ -288,11 +303,13 @@ class CSpaceCircleMinion extends CMinion
 		}
 	}
 	
+	//////////////////////////////////
 	public override function Shoot()
 	{
 		
 	}
 	
+	//////////////////////////////////
 	public override function ProcessNextPosition()
 	{
 	
@@ -308,7 +325,7 @@ class CPerforatingMinion extends CMinion
 		super();
 	}
 	
-	
+	//////////////////////////////////
 	public override function Initialize()
 	{
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
@@ -316,9 +333,9 @@ class CPerforatingMinion extends CMinion
 		
 		var l_Vec : Vector<Float> = new Vector<Float>();
 		var i = 0;
-		l_Vec[i++] = 8; 	l_Vec[i++] = 0; 
-		l_Vec[i++] = 0; 	l_Vec[i++] = 64;
-		l_Vec[i++] = -8; 	l_Vec[i++] = 0;
+		l_Vec[i++] = 4; 	l_Vec[i++] = 0; 
+		l_Vec[i++] = 0; 	l_Vec[i++] = 32;
+		l_Vec[i++] = -4; 	l_Vec[i++] = 0;
 		
 		//build standard shape
 		{
@@ -357,16 +374,19 @@ class CPerforatingMinion extends CMinion
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
+	//////////////////////////////////
 	public override function Update()
 	{
 		super.Update();
 	}
 	
+	//////////////////////////////////
 	public override function Shoot()
 	{
 		
 	}
 	
+	//////////////////////////////////
 	public override function ProcessNextPosition()
 	{
 	}
@@ -374,11 +394,13 @@ class CPerforatingMinion extends CMinion
 
 class CCrossMinion extends CMinion
 {
+	//////////////////////////////////
 	public function new()
 	{
 		super();
 	}
 	
+	//////////////////////////////////
 	public override function Initialize()
 	{
 		var l_BmpData : BitmapData = cast MTRG.s_Instance.m_Gameplay.m_RscSpaceInvader.GetDriverImage();
@@ -390,11 +412,11 @@ class CCrossMinion extends CMinion
 			var l_GradientMatrix : Matrix = new Matrix();
 			
 			l_PrimaryShape.graphics.lineStyle(3, 0xAAAAAA);
-			l_PrimaryShape.graphics.moveTo( -16, -16);
-			l_PrimaryShape.graphics.lineTo(  16, 16);
+			l_PrimaryShape.graphics.moveTo( -8, -8);
+			l_PrimaryShape.graphics.lineTo(  8, 8);
 			l_PrimaryShape.graphics.lineStyle(5, 0xBBBBBB);
-			l_PrimaryShape.graphics.moveTo( -16, 16);
-			l_PrimaryShape.graphics.lineTo(  16, -16);
+			l_PrimaryShape.graphics.moveTo( -8, 8);
+			l_PrimaryShape.graphics.lineTo(  8, -8);
 			
 			l_PrimaryShape.blendMode = BlendMode.NORMAL;
 			l_PrimaryShape.cacheAsBitmap = true;
@@ -407,11 +429,11 @@ class CCrossMinion extends CMinion
 			var l_PrimaryShape : Shape = new Shape();
 			
 			l_PrimaryShape.graphics.lineStyle(3, 0xFFFFFF);
-			l_PrimaryShape.graphics.moveTo( -16, -16);
-			l_PrimaryShape.graphics.lineTo(  16, 16);
+			l_PrimaryShape.graphics.moveTo( -8, -8);
+			l_PrimaryShape.graphics.lineTo(  8, 8);
 			l_PrimaryShape.graphics.lineStyle(5, 0xFFFFFF);
-			l_PrimaryShape.graphics.moveTo( -16, 16);
-			l_PrimaryShape.graphics.lineTo(  16, -16);
+			l_PrimaryShape.graphics.moveTo( -8, 8);
+			l_PrimaryShape.graphics.lineTo(  8, -8);
 			
 			l_PrimaryShape.blendMode = BlendMode.ADD;
 			l_PrimaryShape.cacheAsBitmap = true;
@@ -426,21 +448,24 @@ class CCrossMinion extends CMinion
 		Glb.GetRendererAS().AddToSceneAS(this);
 	}
 	
+	//////////////////////////////////
 	public override function Update()
 	{
 		super.Update();
 		
 		if ( IsLoaded() )
 		{
-			m_ImgNormal.rotationZ += 5 * Glb.g_System.GetGameDeltaTime();
+			m_ImgNormal.rotationZ += 20 * Glb.g_System.GetGameDeltaTime();
 		}
 	}
 	
+	//////////////////////////////////
 	public override function Shoot()
 	{
 		
 	}
 	
+	//////////////////////////////////
 	public override function ProcessNextPosition()
 	{
 	}
@@ -448,6 +473,7 @@ class CCrossMinion extends CMinion
 
 class CMinionHelper
 {
+	//////////////////////////////////
 	public function Create( _Orig : CMinion ) : CMinion
 	{
 		switch( Type.typeof(_Orig ))
@@ -466,6 +492,7 @@ class CMinionHelper
 		}
 	}
 	
+	//////////////////////////////////
 	public function Delete( _Inst : CMinion ) : Void
 	{
 		switch( Type.typeof(_Inst ))
@@ -483,7 +510,7 @@ class CMinionHelper
 		}
 	}
 	
-	
+	//////////////////////////////////
 	public var m_CCrossMinionPool :CPool<CCrossMinion>;
 	public var m_CPerforatingMinionPool : CPool<CPerforatingMinion>;
 	public var m_CSpaceCircleMinionPool : CPool<CSpaceCircleMinion>;
@@ -497,11 +524,13 @@ class CMinionHelper
         m_CSpaceInvaderMinionPool = new CPool<CSpaceInvaderMinion>( 32,new CSpaceInvaderMinion() );
 	}
 	
+	//////////////////////////////////
 	public function IsLoaded() : Bool 
 	{
 		return m_Initialized;
 	}
 	
+	//////////////////////////////////
 	public function Initialize()
 	{
 		Lambda.iter(m_CCrossMinionPool.Free() , function(k) { k.Initialize(); } );

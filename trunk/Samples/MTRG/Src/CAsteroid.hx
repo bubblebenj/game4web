@@ -28,17 +28,37 @@ package ;
 	public var m_Center:CV2D;
 	public var m_Radius : Float;
 	
-	public var m_CollClass : COLL_CLASSES;
+	public var m_CollClass : COLL_CLASS;
+	public var m_CollShape : COLL_SHAPE;
 	public var m_CollSameClass : Bool;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
 	
+	
+	
+	////////////////////////////////////////////////
+	public function new() 
+	{
+		super();
+		m_ImgNormal = null;
+		m_ImgHit = null;
+		m_RotAngle = RandomEx.DiceF( - Math.PI * 8.0, Math.PI * 8);
+		m_Radius = MAX_WIDTH / MTRG.HEIGHT * 0.5;
+		m_Center = new CV2D(0, 0);
+		m_CollClass = Asteroids;
+		m_CollSameClass = false;
+		m_CollShape = Sphere;
+		m_Hp = 10;
+	}
+	
+	////////////////////////////////////////////////
 	private function GetHp() : Int
 	{
 		return _Hp;
 	}
 	
+	////////////////////////////////////////////////
 	private function SetHp(v : Int) : Int
 	{
 		_Hp = v;
@@ -49,6 +69,9 @@ package ;
 		return _Hp;
 	}
 	
+	
+	
+	////////////////////////////////////////////////
 	private function OnDestroy()
 	{
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
@@ -68,6 +91,7 @@ package ;
 																,0.1,0) );
 	}
 	
+	////////////////////////////////////////////////
 	public function OnCollision( _Collider : BSphered  )
 	{
 		switch( _Collider.m_CollClass )
@@ -77,19 +101,7 @@ package ;
 		}
 	}
 	
-	public function new() 
-	{
-		super();
-		m_ImgNormal = null;
-		m_ImgHit = null;
-		m_RotAngle = RandomEx.DiceF( - Math.PI * 8.0, Math.PI * 8);
-		m_Radius = MAX_WIDTH / MTRG.HEIGHT * 0.5;
-		m_Center = new CV2D(0, 0);
-		m_CollClass = Asteroids;
-		m_CollSameClass = false;
-		m_Hp = 10;
-	}
-	
+	////////////////////////////////////////////////
 	public static function BatchCreateShape( _Path : Array<CV2D> , _Sp : Shape )
 	{
 		_Sp.graphics.moveTo(_Path[0].x, _Path[0].y);
@@ -120,6 +132,7 @@ package ;
 		_Sp.graphics.lineTo(_Path[0].x, _Path[0].y);
 	}
 	
+	////////////////////////////////////////////////
 	public function Initialize()
 	{
 		m_ImgNormal = new Shape(); 
@@ -169,11 +182,14 @@ package ;
 		cacheAsBitmap = true;
 	}
 	
+	////////////////////////////////////////////////
 	public function IsLoaded()
 	{
 		return m_ImgNormal != null;
 	}
 	
+	
+	////////////////////////////////////////////////
 	public function Update()
 	{
 		rotationZ += m_RotAngle * Glb.GetSystem().GetGameDeltaTime();
@@ -182,6 +198,7 @@ package ;
 		m_Center.Set( x / MTRG.HEIGHT, y / MTRG.HEIGHT); // aka (m_Img.x /  MTRG.WIDTH) *  (MTRG.WIDTH / MTRG.HEIGHT);
 	}
 	
+	////////////////////////////////////////////////
 	public function Shut()
 	{
 		Glb.GetRendererAS().RemoveFromSceneAS(this);
