@@ -70,6 +70,7 @@ class Game
 	public var  m_DND : DNDState;
 	
 	public var 	m_MinionHelper: CMinionHelper;
+	public var	m_ProjectileHelper: CProjectileHelper;
 	
 	//game play
 	public var 	m_PlacingLimitLine : Shape;
@@ -172,6 +173,9 @@ class Game
 		Glb.GetRendererAS().AddToSceneAS(m_PlacingLimitLine);
 		
 		m_Mothership.Initialize();
+		
+		m_ProjectileHelper = new CProjectileHelper();
+		m_ProjectileHelper.Initialize();
 	}
 	
 	public function GameOver( _Win : Bool )
@@ -194,8 +198,7 @@ class Game
 			case DND_SOME(_Mob):
 			if (Glb.GetInputManager().GetMouse().GetPosition().y <= m_PlaceLimit )
 			{
-				_Mob.x = Glb.GetInputManager().GetMouse().GetPosition().x * MTRG.HEIGHT;
-				_Mob.y = Glb.GetInputManager().GetMouse().GetPosition().y * MTRG.HEIGHT;
+				_Mob.m_Center.Copy( Glb.GetInputManager().GetMouse().GetPosition() );
 				_Mob.visible = true;
 				m_ActiveMonsterList.add( _Mob );
 			}
@@ -290,6 +293,9 @@ class Game
 		
 		m_Pad.Update();
 		m_Ship.Update();
+		m_MinionHelper.Update();
+		m_Mothership.Update();
+		m_ProjectileHelper.Update();
 		m_CollMan.Update();
 		
 		//quick tasking filtering
@@ -300,7 +306,7 @@ class Game
 									
 		Lambda.iter( Lambda.list( m_ActiveMonsterList), function(x) { x.Update(); } );
 		
-		m_Mothership.Update();
+		
 	}
 	
 	public function Shut()

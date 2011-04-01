@@ -182,16 +182,11 @@ class CSpaceShip implements Updatable
 		_Vec.Set( m_Ship.x / MTRG.HEIGHT, m_Ship.y / MTRG.HEIGHT );
 	}
 	
-	public static inline var BASE_LASER_SPEED = 0.3;
+	public static inline var BASE_LASER_SPEED = 0.4;
 	
 	public function DeleteLaser( _Ls : CLaser )
 	{
 		m_LaserPool.Destroy( _Ls );
-	}
-	
-	public function DeleteBoulette( _Ls : CBoulette )
-	{
-		m_BoulettePool.Destroy( _Ls );
 	}
 	
 	public function Shoot()
@@ -302,13 +297,13 @@ class CSpaceShip implements Updatable
 					l_Goto = Utils.Clamp(l_Goto, 0, 1);
 					m_Bhv = AI_Goto( l_Goto );
 					m_AiTick = SHIP_AI_TICK_DURATION;
-					CDebug.CONSOLEMSG("Tick : pos = " + m_Pos +" => " + l_Goto);
+					//CDebug.CONSOLEMSG("Tick : pos = " + m_Pos +" => " + l_Goto);
 				}
 		}
 		
 		SetLinearPos(m_Pos);
-		
 		SetShapeIndex(STD);
+		
 		m_ShootSpin += Glb.GetSystem().GetGameDeltaTime();
 		
 		if (m_ShootSpin > 1.0 )
