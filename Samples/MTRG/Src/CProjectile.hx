@@ -24,8 +24,6 @@ import CCollManager;
 class CProjectile implements BSphered
 {
 	///////////////////
-	var m_Pos : CV2D;
-	var m_NextPos : CV2D;
 	
 	var m_Dir : CV2D;
 	var m_Speed : Float;
@@ -46,8 +44,6 @@ class CProjectile implements BSphered
 	///////////////////
 	public function new() 
 	{
-		m_Pos = new CV2D(0,0);
-		m_NextPos = new CV2D(0, 0);
 		m_Dir = new CV2D(0, 0);
 		m_Speed = 0;
 		m_DisplayObject = null;
@@ -78,20 +74,18 @@ class CProjectile implements BSphered
 	
 	public function Update()
 	{
-		CV2D.Add( m_Pos, m_Pos , CV2D.Scale( Registers.V2_0 , Glb.GetSystem().GetGameDeltaTime() * m_Speed , m_Dir ));
-		
-		m_Center.Copy(  m_Pos );
+		CV2D.Add( m_Center, m_Center , CV2D.Scale( Registers.V2_0 , Glb.GetSystem().GetGameDeltaTime() * m_Speed , m_Dir ));
 		
 		m_Radius = 8.0 / MTRG.HEIGHT;
 		
-		if ( 	(m_Pos.y <= 0) 
-		||		(m_Pos.y >= 1) )
+		if ( 	(m_Center.y <= 0) 
+		||		(m_Center.y >= 1) )
 		{
 			OnLost();
 		}
 		
-		m_DisplayObject.x = m_Pos.x * MTRG.HEIGHT;
-		m_DisplayObject.y = m_Pos.y * MTRG.HEIGHT;
+		m_DisplayObject.x = m_Center.x * MTRG.HEIGHT;
+		m_DisplayObject.y = m_Center.y * MTRG.HEIGHT;
 		//CDebug.CONSOLEMSG("upd lsr" + m_Pos.x +":"+ m_Pos.y);
 	}
 	
@@ -130,7 +124,7 @@ class CProjectile implements BSphered
 			kernel.CDebug.BREAK("Projectile targeting wrong");
 		}
 		
-		m_Pos.Copy(_From);
+		m_Center.Copy(_From);
 		m_DisplayObject.visible = true;
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Add( this );
 	}
@@ -261,7 +255,7 @@ class CBoulette extends  CProjectile
 	{
 		m_DisplayObject.visible = false;
 		
-		MTRG.s_Instance.m_Gameplay.m_Ship.DeleteBoulette(this);
+		MTRG.s_Instance.m_Gameplay.m_ProjectileHelper.m_CBoulettePool.Destroy(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		
 		//kernel.CDebug.CONSOLEMSG("Laser destroyed ");

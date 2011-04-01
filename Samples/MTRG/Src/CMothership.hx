@@ -62,12 +62,23 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	public function OnDestroy() : Void
 	{
 		MTRG.s_Instance.m_Gameplay.GameOver(false);
+		var l_This = this;
+		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
+																{
+																	l_This.blendMode = ADD;
+																	l_This.alpha = 1.0 - ratio;
+																	if (l_This.alpha == 0)
+																	{
+																		l_This.visible = false;
+																	}
+																}
+																,0.1,0) );
 	}
 	
 	////////////////////////////////////////////////////////////
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
-		//CDebug.CONSOLEMSG("Mothership hit");
+		CDebug.CONSOLEMSG("Mothership hit");
 		//CDebug.CONSOLEMSG("Mothership hit");
 	}
 	

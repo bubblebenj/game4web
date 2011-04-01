@@ -128,8 +128,8 @@ class CCollManager
 			return false;
 		}
 		
-		trace("v:" +_V0+ "r:"+_R0);
-		trace("p0:" +_P0+ "p1:"+_P1);
+		//trace("v:" +_V0+ "r:"+_R0);
+		//trace("p0:" +_P0+ "p1:"+_P1);
 
 		var l_Res=( 	_V0.x - _R0 < _P1.x 
 		&& 				_V0.x + _R0 > _P0.x 
@@ -216,11 +216,19 @@ class CCollManager
 				switch( _O1.m_CollShape)
 				{
 					case Sphere: 
-						var l_Vec : CV2D = Registers.V2DPool.Create();
-						l_Vec.Set(_O0.m_Radius, r0);
-						CV2D.Add( l_Vec, _O0.m_Center, l_Vec);
-						var l_Res = TestCircleRect(_O1.m_Center, _O1.m_Radius, _O0.m_Center, l_Vec ) ;
-						Registers.V2DPool.Destroy(l_Vec);
+						var l_V0 : CV2D = Registers.V2DPool.Create();
+						var l_V1 : CV2D = Registers.V2DPool.Create();
+						
+						l_V0.Set(-_O0.m_Radius, - r0 * 0.5);
+						l_V1.Set(_O0.m_Radius, r0 * 0.5);
+						
+						CV2D.Add( l_V0, _O0.m_Center, l_V0);
+						CV2D.Add( l_V1, _O0.m_Center, l_V1);
+						
+						var l_Res = TestCircleRect(_O1.m_Center, _O1.m_Radius,l_V0, l_V1  ) ;
+						Registers.V2DPool.Destroy(l_V0);
+						Registers.V2DPool.Destroy(l_V1);
+						
 						l_Res;
 						
 					case AARect(r1):
