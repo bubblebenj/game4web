@@ -29,8 +29,6 @@ class CBG  implements Public , implements Updatable
 		m_Img.Load( "./Data/BG.png" );
 		
 		m_Img.SetCenterPosition( new CV2D( Glb.GetSystem().m_Display.GetAspectRatio() * 0.5, 0.5));
-
-		m_Img.SetVisible(true);
 		
 		m_Img.Activate();
 		

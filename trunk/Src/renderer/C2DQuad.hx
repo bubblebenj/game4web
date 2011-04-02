@@ -130,7 +130,7 @@ class C2DQuad extends CDrawObject
 	 */
 	public function SetSize( _Size : CV2D ) : Void
 	{
-		if ( CV2D.AreEqual( m_Scale, CV2D.ZERO ) )
+		if ( CV2D.AreAbsEqual( m_Scale, CV2D.ZERO ) )
 		{
 			// initialize scale
 			m_Scale.Set( 1, 1 );

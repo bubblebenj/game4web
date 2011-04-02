@@ -41,6 +41,9 @@ class CSystem
 		return FRAMERATE;
 	}
 	
+	
+	public var m_SpeedFactor:Float;
+	
 	public function new()
 	{
 		m_FrameTime = 0;
@@ -60,6 +63,7 @@ class CSystem
 		m_Display = new CDisplay();
 		
 		m_IsPaused = false;
+		m_SpeedFactor =  1;
 		
 		//CDebug.CONSOLEMSG("Master system newed");
 	}
@@ -91,6 +95,7 @@ class CSystem
 		#end
 	}
 	
+	
 	public function Update()
 	{
 		//trace("CSystem::Update");
@@ -98,7 +103,7 @@ class CSystem
 		
 		//if (m_FrameCount > 20)
 		{
-			//TODO : fixme
+			//TODO : framerate is fixed now because we don't have highly dynamic gameplay by now
 			m_FrameDeltaTime = (DT);
 			
 			m_FrameTime += m_FrameDeltaTime;
@@ -116,6 +121,8 @@ class CSystem
 			{
 				m_GameDeltaTime = 0;
 			}
+			
+			m_GameDeltaTime *= m_SpeedFactor;
 			
 			m_GameTime += m_GameDeltaTime;
 			

@@ -35,8 +35,9 @@ enum ShapeIndex
 
 import CProjectile;
 import algorithms.CPool;
+import CCollManager;
 
-class CSpaceShip implements Updatable
+class CSpaceShip implements Updatable, implements BSphered
 {
 	public var m_AiTick : Float;
 	public var m_Ship : Sprite; 
@@ -50,6 +51,13 @@ class CSpaceShip implements Updatable
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
 	
+	public var m_Center: CV2D;
+	public var m_Radius : Float;
+	
+	public var m_CollClass : COLL_CLASS;
+	public var m_CollMask : Int;
+	
+	public var m_CollShape : COLL_SHAPE;
 	
 	public static inline var MAX_LASERS = 16;
 	public static inline var MAX_BOULETTE = 128;
@@ -67,6 +75,16 @@ class CSpaceShip implements Updatable
 		m_LaserPool = null;
 		
 		m_ShootSpin = 0;
+		m_CollClass = SpaceShip;
+		m_Radius = 2 / MTRG.HEIGHT;
+		m_CollShape = Sphere;
+		m_Center = new CV2D(0, 0);
+		
+		m_CollMask = (	(1 << Type.enumIndex(Asteroids))
+		|				(1 << Type.enumIndex(Aliens))
+		|				(1 << Type.enumIndex(AlienShoots)) );
+		
+		m_Hp = 100;
 	}
 
 	public function IsLoaded() : Bool
@@ -89,6 +107,12 @@ class CSpaceShip implements Updatable
 			OnDestroy();
 		}
 		return _Hp;
+	}
+	
+	//ship doesn handle anything
+	public function OnCollision( _Collider : BSphered ) : Void
+	{
+		
 	}
 	
 	private function OnDestroy()
@@ -171,7 +195,7 @@ class CSpaceShip implements Updatable
 		
 		SetLinearPos( 0.5 );
 		SetShapeIndex(SHOOT);
-		
+		m_Ship.visible = false;
 
 		m_LaserPool = new CPool<CLaser>( MAX_LASERS, new CLaser());
 		Lambda.iter( m_LaserPool.Free(), function(ls) ls.Initialize() );
@@ -243,6 +267,9 @@ class CSpaceShip implements Updatable
 		
 		m_Ship.x = l_Base.x;
 		m_Ship.y = l_Base.y;
+		
+		m_Center.x = l_Base.x / MTRG.HEIGHT;
+		m_Center.y = l_Base.y / MTRG.HEIGHT;
 	}
 	
 	public function Update() : Void

@@ -145,4 +145,20 @@ class Utils
 		_ResultStrNb += _StrNb;
 		return _ResultStrNb;
 	}
+	
+	public static inline function IsNear( _x : Float ,_y : Float , _Mag : Float) : Bool
+	{
+		return Math.abs( _x - _y  ) < _Mag;
+	}
+	
+	
+	public static inline function AbsEq( _x : Float ,_y : Float ) : Bool
+	{
+		return Math.abs( _x - _y  ) < Constants.EPSILON;
+	}
+	
+	public static inline function RelEq( _x : Float ,_y  : Float  ) : Bool
+	{
+		return Math.abs( _x - _y  ) < (Math.max(_x,_y) * Constants.EPSILON);
+	}
 }

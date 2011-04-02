@@ -1,3 +1,5 @@
+//de & bd
+
 package math;
 import renderer.CViewport;
 
@@ -31,6 +33,21 @@ class CV2D
 		return _VOut;
 	}
 	
+	public static inline function Incr( _VInOut : CV2D, _V1 :  CV2D ) :  CV2D
+	{
+		_VInOut.x += _V1.x;
+		_VInOut.y += _V1.y;
+		return _VInOut;
+	}
+	
+	public static inline function Decr( _VInOut : CV2D, CV2D, _V1 :  CV2D ) :  CV2D
+	{
+		_VInOut.x -= _V1.x;
+		_VInOut.y -= _V1.y;
+		return _VInOut;
+	}
+	
+	//computes _V0 - _V1
 	public static inline function Sub( _VOut : CV2D, _V0 : CV2D, _V1 :  CV2D ) :  CV2D
 	{
 		_VOut.x = _V0.x - _V1.x;
@@ -45,14 +62,20 @@ class CV2D
 		return _VOut;
 	}
 	
-	public static inline function AreEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
+	public static inline function AreAbsEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
 	{
-		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? false : true;
+		return Utils.AbsEq(_V0.x , _V1.x) && Utils.AbsEq(_V0.y , _V1.y);
 	}
 	
-	public static inline function AreNotEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
+	public static inline function AreRelEqual( _V0 : CV2D, _V1 :  CV2D ) : Bool
 	{
-		return ( _V0.x != _V1.x || _V0.y != _V1.y ) ? true : false;
+		return Utils.RelEq(_V0.x , _V1.x) && Utils.RelEq(_V0.y , _V1.y);
+	}
+	
+	
+	public static inline function IsNear( _V0 : CV2D, _V1 :  CV2D , _Mag : Float) : Bool
+	{
+		return GetDistance2( _V0, _V1) < _Mag * _Mag;
 	}
 
 	public static inline function Normalize( _InOut : CV2D ) : CV2D
@@ -61,6 +84,24 @@ class CV2D
 		
 		_InOut.x *= l_InvLen;
 		_InOut.y *= l_InvLen;
+		
+		return _InOut;
+	}
+	
+	public static inline function SafeNormalize( _InOut : CV2D , _Escape: CV2D ) : CV2D
+	{
+		var l_Norm :Float = _InOut.Norm();
+		if( l_Norm > Constants.EPSILON )
+		{
+			var l_InvLen = 1.0 / l_Norm;
+			
+			_InOut.x *= l_InvLen;
+			_InOut.y *= l_InvLen;
+		}
+		else
+		{
+			_InOut.Copy( _Escape);
+		}
 		
 		return _InOut;
 	}

@@ -5,6 +5,7 @@
 
 package ;
 import algorithms.CBitArray;
+import haxe.FastList;
 import kernel.CDebug;
 
 import math.CV2D;
@@ -14,6 +15,7 @@ enum COLL_CLASS
 {
 	Asteroids;
 	Aliens;
+	SpaceShip;
 	
 	AlienShoots;
 	SpaceShipShoots;
@@ -33,7 +35,7 @@ interface BSphered
 	public var m_Radius : Float;
 	
 	public var m_CollClass : COLL_CLASS;
-	public var m_CollSameClass : Bool;
+	public var m_CollMask : Int;
 	
 	public var m_CollShape : COLL_SHAPE;
 	
@@ -41,15 +43,15 @@ interface BSphered
 }
 
 #if debug
+
 class TestCollidable implements BSphered
 {
 	public function new()
 	{
 		m_Center = new CV2D(0,0);
 		m_Radius = 0.5;
-		
+		m_CollMask = 0;
 		m_CollClass = Invalid;
-		m_CollSameClass = true;
 		m_CollShape = Sphere;
 	}
 	
@@ -58,7 +60,8 @@ class TestCollidable implements BSphered
 	
 	public var m_CollClass : COLL_CLASS;
 	public var m_CollShape : COLL_SHAPE;
-	public var m_CollSameClass : Bool;
+	
+	public var m_CollMask : Int;
 	
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
@@ -79,7 +82,7 @@ class CCollManager
 	
 	public function new() 
 	{
-		m_Objects = new Array();
+		m_Objects = new Array<BSphered>();
 		m_CollideMap = new CBitArray(128);
 		m_DeleteQueue = new List<BSphered>();
 		m_LastFrameTestCount = 0;
@@ -268,39 +271,52 @@ class CCollManager
 			var c = m_Objects[i];
 			var l_Next = i + 1;
 			
-			
-			if(!c.m_CollSameClass)
-			{
-				while (	(m_Objects[l_Next] != null)
-				&&		(c.m_CollClass == m_Objects[l_Next].m_CollClass))
-				{
-					l_Next++;
-				}
-			}
-			
 			for( j in l_Next...m_Objects.length )
 			{
+				l_Next = j;
 				var cprime = m_Objects[j];
-				if( c != cprime )
+				var l_QuickEscape = false;
+				while(c.m_CollClass == m_Objects[l_Next].m_CollClass)
 				{
-					#if debug
-					m_LastFrameTestCount++;
-					#end
-					
-					if ( 	!m_CollideMap.Is(i * m_Objects.length + j ) 
-					&&		IsColliding(c,cprime))
+					l_Next++;
+					if (l_Next>=m_Objects.length)
 					{
-						//CDebug.CONSOLEMSG(">> (" + c.CenterX+"," + c.CenterY+") : "+c.Radius);
-						//CDebug.CONSOLEMSG("<< (" + cprime.CenterX+"," + cprime.CenterY+") : "+cprime.Radius);
-						c.OnCollision(cprime);
-						cprime.OnCollision(c);
-						
-						m_CollideMap.Set( i * m_Objects.length + j, true);
-						
-						#if debug
-						m_LastFrameHitCount++;
-						#end
+						l_QuickEscape = true;
+						break;
 					}
+				}
+				if (l_QuickEscape)
+				{
+					break;
+				}
+				
+				cprime = m_Objects[l_Next];
+				CDebug.ASSERT(cprime != null);
+				
+				if( (c.m_CollMask & (1 << Type.enumIndex( cprime.m_CollClass)) == 0)//optimize non interesting class sections
+				||	 m_CollideMap.Is(i * m_Objects.length + j )
+				)//already done
+				{
+					continue;//use continue to ease loop predictor
+				}
+				
+
+				#if debug
+				m_LastFrameTestCount++;
+				#end
+				
+				if ( IsColliding(c,cprime) )
+				{
+					//CDebug.CONSOLEMSG(">> (" + c.CenterX+"," + c.CenterY+") : "+c.Radius);
+					//CDebug.CONSOLEMSG("<< (" + cprime.CenterX+"," + cprime.CenterY+") : "+cprime.Radius);
+					c.OnCollision(cprime);
+					cprime.OnCollision(c);
+					
+					m_CollideMap.Set( i * m_Objects.length + j, true);
+					
+					#if debug
+					m_LastFrameHitCount++;
+					#end
 				}
 			}
 		}

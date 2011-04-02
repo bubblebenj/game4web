@@ -115,7 +115,9 @@ class Game
 		m_BG.m_Img.SetVisible(_onOff);
 		m_Pad.visible = _onOff;
 		m_Ship.m_Ship.visible = _onOff;
-		Lambda.iter( m_Asteroids, function( a ) { a.visible = _onOff;  });
+		Lambda.iter( m_Asteroids, function( a ) { a.visible = _onOff;  } );
+		m_PlacingLimitLine.visible = _onOff;
+		m_Mothership.visible = true;
 	}
 	
 	public function Initialize()
@@ -152,7 +154,6 @@ class Game
 			}
 			a.y = MTRG.HEIGHT * 0.5 + (Math.random() - 0.5) * MTRG.ASTEROIDS_HEIGHT;
 			//a.y = 300;
-			a.visible = true;
 			i++;
 			
 			m_CollMan.Add(a);
@@ -160,7 +161,6 @@ class Game
 		
 		m_Ship = new CSpaceShip();
 		m_Ship.Initialize();
-		m_State = GS_FIRST_FRAME;
 		
 		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
 		
@@ -169,26 +169,28 @@ class Game
 		m_PlacingLimitLine.graphics.lineStyle( 3, 0x00FF00, 0.75);
 		m_PlacingLimitLine.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
-		m_PlacingLimitLine.visible = true;
+		m_PlacingLimitLine.visible = false;
 		Glb.GetRendererAS().AddToSceneAS(m_PlacingLimitLine);
 		
 		m_Mothership.Initialize();
 		
 		m_ProjectileHelper = new CProjectileHelper();
 		m_ProjectileHelper.Initialize();
+		
+		m_State = GS_FIRST_FRAME;
 	}
+
 	
 	public function GameOver( _Win : Bool )
 	{
-		CDebug.CONSOLEMSG("You " + (_Win ? "WIN" : "LOSE")+ "!!!");
+		CDebug.CONSOLEMSG("You " + (_Win ? "WIN" : "LOSE") + "!!!");
+		MTRG.s_Instance.m_State = GS_END_SCREEN;
 	}
 	
 	public function OnLoaded()
 	{
 		Glb.GetRendererAS().SendToBack( m_BG.GetDisplayObject() ) ;
 		Glb.GetRendererAS().SendToFront( m_Pad.GetDisplayObject() ) ;
-		
-		CDebug.CONSOLEMSG("Loaded");
 	}
 	
 	public function PlaceCurrentDND()
@@ -200,6 +202,7 @@ class Game
 			{
 				_Mob.m_Center.Copy( Glb.GetInputManager().GetMouse().GetPosition() );
 				_Mob.visible = true;
+				_Mob.m_HasAI = true;
 				m_ActiveMonsterList.add( _Mob );
 			}
 			else
@@ -212,7 +215,11 @@ class Game
 		m_DND = DND_FREE;
 		//trace("PlaceCurrentDND");
 	}
-	
+
+	public function Start()
+	{
+		m_State = GS_FIRST_FRAME;
+	}
 
 	
 	public function Update()
@@ -228,27 +235,49 @@ class Game
 							CV2D.Add( Registers.V2_1, m_Mothership.m_Center, new CV2D(128 / MTRG.HEIGHT,16/ MTRG.HEIGHT))
 						))
 			{
-				CDebug.CONSOLEMSG("Touched");
+				//CDebug.CONSOLEMSG("Touched");
 			}
 			else
 			{
-				CDebug.CONSOLEMSG("Missed");
+				//CDebug.CONSOLEMSG("Missed");
 			}
 		}
 		#end
 		
 		#if debug
-		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_P)
-		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_P))
+		if( Glb.GetInputManager().GetMouse().IsDown())
 		{
-			if (m_State == GS_RUNNING)
+			if( CCollManager.TestCircleRect( Glb.GetInputManager().GetMouse().GetPosition(), 1 / MTRG.HEIGHT,
+							CV2D.Sub( Registers.V2_0, m_Mothership.m_Center, new CV2D(128 / MTRG.HEIGHT,16/ MTRG.HEIGHT)),
+							CV2D.Add( Registers.V2_1, m_Mothership.m_Center, new CV2D(128 / MTRG.HEIGHT,16/ MTRG.HEIGHT))
+						))
 			{
-				m_State = GS_PAUSED;
+				//CDebug.CONSOLEMSG("Touched");
 			}
-			else if (m_State == GS_PAUSED)
+			else
 			{
-				m_State = GS_RUNNING;
+				//CDebug.CONSOLEMSG("Missed");
 			}
+		}
+		#end
+		
+		#if debug
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_ADD)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_ADD))
+		{
+			Glb.g_System.m_SpeedFactor += 0.1;
+		}
+		
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_SUBTRACT)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_SUBTRACT))
+		{
+			Glb.g_System.m_SpeedFactor -= 0.1;
+		}
+		
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_MULTIPLY)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_MULTIPLY))
+		{
+			Glb.g_System.m_SpeedFactor = 1;
 		}
 		
 		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_F1)
@@ -268,13 +297,14 @@ class Game
 			{
 				m_MinionHelper.Initialize();
 				m_Pad.Populate();
+				OnLoaded();
 			}
 			
 			if ( IsLoaded())
 			{
 				OnLoaded(); 
 				//SetVisible(false);
-				m_State = GS_RUNNING;
+				//m_State = GS_RUNNING;
 			}
 			else
 			{

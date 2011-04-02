@@ -14,20 +14,24 @@ class CMinionHelper
 	//////////////////////////////////
 	public function Create( _Orig : CMinion ) : CMinion
 	{
+		var l_Res : CMinion = null;
 		switch( Type.typeof(_Orig ))
 		{
 			case TClass(c):
 			switch(c)
 			{
-				case CPerforatingMinion: return m_CPerforatingMinionPool.Create();
-				case CCrossMinion: return m_CCrossMinionPool.Create();
-				case CSpaceCircleMinion: return m_CSpaceCircleMinionPool.Create();
-				case CSpaceInvaderMinion: return m_CSpaceInvaderMinionPool.Create();
+				case CPerforatingMinion: l_Res= m_CPerforatingMinionPool.Create();
+				case CCrossMinion: l_Res= m_CCrossMinionPool.Create();
+				case CSpaceCircleMinion: l_Res= m_CSpaceCircleMinionPool.Create();
+				case CSpaceInvaderMinion: l_Res= m_CSpaceInvaderMinionPool.Create();
 				default: CDebug.BREAK("Should not occur");  return null;
 			}
 			
 			default: return null;
 		}
+		
+		//l_Res.visible = true;
+		return l_Res;
 	}
 	
 	//////////////////////////////////
