@@ -118,7 +118,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
 			m_Scale.Set( 1, 1 );
 			
-			if ( CV2D.AreNotEqual( l_Size, CV2D.ZERO ) )
+			if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
 			{
 				// Update size if a size was already set
 				var l_x : Float = 0;

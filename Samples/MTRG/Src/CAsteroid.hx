@@ -30,7 +30,7 @@ package ;
 	
 	public var m_CollClass : COLL_CLASS;
 	public var m_CollShape : COLL_SHAPE;
-	public var m_CollSameClass : Bool;
+	public var m_CollMask : Int;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
@@ -47,9 +47,18 @@ package ;
 		m_Radius = MAX_WIDTH / MTRG.HEIGHT * 0.5;
 		m_Center = new CV2D(0, 0);
 		m_CollClass = Asteroids;
-		m_CollSameClass = false;
+		
 		m_CollShape = Sphere;
 		m_Hp = 10;
+		
+		
+		
+		m_CollMask = 
+		(
+			( 1 << Type.enumIndex(Aliens) )
+		|	( 1 << Type.enumIndex(AlienShoots))
+		|	( 1 << Type.enumIndex(SpaceShip ))
+		|	( 1 << Type.enumIndex(SpaceShipShoots) ));
 	}
 	
 	////////////////////////////////////////////////
@@ -180,6 +189,7 @@ package ;
 		Glb.GetRendererAS().AddToSceneAS(this);
 		//visible = false;	
 		cacheAsBitmap = true;
+		visible = false;
 	}
 	
 	////////////////////////////////////////////////

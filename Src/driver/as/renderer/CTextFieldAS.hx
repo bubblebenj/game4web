@@ -8,6 +8,7 @@ package driver.as.renderer;
 import driver.as.rsc.CRscTextAS;
 import flash.text.TextField;
 import math.Registers;
+import math.Utils;
 
 import kernel.CTypes;
 import kernel.Glb;
@@ -61,13 +62,13 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
 			m_Scale.Set( 1, 1 );
 			
-			if ( CV2D.AreNotEqual( l_Size, CV2D.ZERO ) )
+			if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
 			{
 				// Update size if a size was already set
 				var l_x : Float = 0;
 				var l_y : Float = 0;
-				l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
-				l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
+				l_x	= ( Utils.AbsEq(l_Size.x , 0) ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
+				l_y	= ( Utils.AbsEq(l_Size.y , 0) ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
 				SetSize( new CV2D( l_x, l_y ) );
 			}
 			

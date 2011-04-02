@@ -43,7 +43,7 @@ class CMinionPad extends Sprite , implements Updatable
 		
 		m_Img.alpha = 0.2;
 		m_Img.cacheAsBitmap = true;
-		visible = true;
+		visible = false;
 		//visible = false;
 		
 		m_MinionArray = new Array<CMinion>();
@@ -51,6 +51,8 @@ class CMinionPad extends Sprite , implements Updatable
 		m_MinionArray[ Type.enumIndex( EMinions.Crossars ) ] = new CCrossMinion();
 		m_MinionArray[ Type.enumIndex( EMinions.Shielders ) ] = new CSpaceCircleMinion();
 		m_MinionArray[ Type.enumIndex( EMinions.Perforators ) ] = new CPerforatingMinion();
+		
+		Lambda.iter( m_MinionArray, function(m) m.visible = true  );
 	}
 	
 	public function Populate()
@@ -73,6 +75,9 @@ class CMinionPad extends Sprite , implements Updatable
 			m.Update();
 			
 			m.visible = true;
+			addChild(m);
+			//Glb.GetRendererAS().AddToSceneAS( m );
+			//Glb.GetRendererAS().SendToFront( m );
 			i++;
 		}
 	}

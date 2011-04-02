@@ -17,12 +17,12 @@ import CCollManager;
 
 class CMothership extends Sprite , implements CCollManager.BSphered
 {
-
 	public var m_Center: CV2D;
 	public var m_Radius : Float;
 	
 	public var m_CollClass : COLL_CLASS;
 	public var m_CollSameClass : Bool;
+	public var m_CollMask : Int;
 	
 	public var m_CollShape : COLL_SHAPE;
 	
@@ -38,8 +38,14 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		m_Radius = 64;
 		m_CollShape = AARect(16.0/MTRG.HEIGHT);
 		m_CollClass = Aliens;
-		m_CollSameClass = false;
+		
+		m_CollMask = (1 << Type.enumIndex(SpaceShipShoots));
+
+		#if debug
+		m_Hp = 1;
+		#else
 		m_Hp = 100;
+		#end
 	}
 	
 	//////////////////////////////////
@@ -51,14 +57,35 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	//////////////////////////////////
 	private function SetHp(v : Int) : Int
 	{
+		var l_OldHp = _Hp;
 		_Hp = v;
+		
 		if( _Hp <= 0 )
 		{
 			OnDestroy();
 		}
+		else if( v <= l_OldHp )
+		{
+			OnHit();
+		}
 		return _Hp;
 	}
 	
+	public function OnHit() : Void
+	{
+		var l_This = this;
+		//trace("onhit");
+		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
+																{
+																	l_This.blendMode = SUBTRACT;
+																	
+																	if (ratio >= 1.0)
+																	{
+																		l_This.blendMode = NORMAL;
+																	}
+																}
+																,0.1,0) );
+	}
 	public function OnDestroy() : Void
 	{
 		MTRG.s_Instance.m_Gameplay.GameOver(false);
@@ -72,7 +99,7 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 																		l_This.visible = false;
 																	}
 																}
-																,0.1,0) );
+																,0.2,0) );
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -129,7 +156,7 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		addChild(l_Shape);
 		addChild(m_ScanShape);
 		
-		visible = true;
+		visible = false;
 		Glb.GetRendererAS().AddToSceneAS( this );
 		
 		m_Center.Set( 	(MTRG.BOARD_WIDTH / 2 + MTRG.BOARD_X) / MTRG.HEIGHT,

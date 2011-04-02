@@ -37,7 +37,7 @@ class CProjectile implements BSphered
 	
 	public var m_CollClass : COLL_CLASS;
 	public var m_CollShape : COLL_SHAPE;
-	public var m_CollSameClass : Bool;
+	public var m_CollMask : Int;
 	
 	public var m_Damage : Int;
 	
@@ -49,10 +49,11 @@ class CProjectile implements BSphered
 		m_DisplayObject = null;
 		
 		m_Center = new CV2D(0, 0);
-		m_CollSameClass = false;
+		m_CollMask = 0;
 		m_CollClass = Invalid;
 		m_CollShape = Sphere;
 		m_Damage = 0;
+		m_CollMask = 0;
 	}
 	
 	public function SetVisible( v ) : Bool
@@ -139,9 +140,13 @@ class CLaser extends  CProjectile
 		
 		m_Center = new CV2D(0, 0);
 		m_CollClass = SpaceShipShoots;
-		m_CollSameClass = false;
+		
 		m_Radius = 2.0 / MTRG.HEIGHT;
 		m_Damage =  10;
+		
+		m_CollMask = 	(1 << Type.enumIndex( Aliens )) 
+		| 				(1 << Type.enumIndex( AlienShoots ))
+		|				(1 << Type.enumIndex( Asteroids ));
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
@@ -151,7 +156,7 @@ class CLaser extends  CProjectile
 			case Asteroids:
 				var l_Aster : CAsteroid = cast _Collider;
 				l_Aster.m_Hp -= 10;
-				
+			
 			case Aliens:
 				switch( Type.typeof( _Collider ) )
 				{
@@ -167,7 +172,8 @@ class CLaser extends  CProjectile
 						l_Mn.m_Hp -= 10;
 
 						default: 
-						CDebug.CONSOLEMSG("Typing err...");
+						var l_Mn : CMinion = cast _Collider;
+						l_Mn.m_Hp -= 10;
 						
 					}
 					default:
@@ -226,10 +232,13 @@ class CBoulette extends  CProjectile
 	{
 		super();
 		m_CollClass = AlienShoots;
-		m_CollSameClass = false;
+		
 		m_Radius = 2.0 / MTRG.HEIGHT;
 		
 		m_Damage = 10;
+		m_CollMask = ( 	(1 << Type.enumIndex(SpaceShip))
+					|	(1 << Type.enumIndex(SpaceShipShoots))
+					|	(1 << Type.enumIndex(Asteroids)));
 	}
 	
 	public override function OnCollision( _Collider : BSphered ) : Void
@@ -240,6 +249,17 @@ class CBoulette extends  CProjectile
 				var l_Aster : CAsteroid = cast _Collider;
 				l_Aster.m_Hp -= 10;
 				OnDestroy();
+				
+			case SpaceShip:
+				var l_Ship : CSpaceShip = cast _Collider;
+				l_Ship.m_Hp -= 10;
+				OnDestroy();
+				
+			case SpaceShipShoots:
+				var l_ShipShoot : CProjectile = cast _Collider;
+				l_ShipShoot.OnDestroy();
+				OnDestroy();
+				
 			default:
 				CDebug.CONSOLEMSG("COLL");
 		}
@@ -267,12 +287,12 @@ class CBoulette extends  CProjectile
 		var l_PrimaryShape : Shape = new Shape();
 		var l_GradientMatrix : Matrix = new Matrix();
 		
-		l_GradientMatrix.createGradientBox( 8, 32 );
+		l_GradientMatrix.createGradientBox( 4,4,0,-3,-3 );
 		
-		l_PrimaryShape.graphics.beginGradientFill( GradientType.RADIAL, [0xFFBB6E, 0xD90E00], [1, 1], [0, 255], l_GradientMatrix, SpreadMethod.PAD );
-		l_PrimaryShape.graphics.drawEllipse( 0, 0, 8, 32);
+		l_PrimaryShape.graphics.beginGradientFill( GradientType.RADIAL, [0xFFFFFF,0xFFFFFF, 0xD94F00], [1,1, 1], [0, 250, 255], l_GradientMatrix, SpreadMethod.PAD );
+		l_PrimaryShape.graphics.drawCircle( 0, 0, 4);
 		
-		l_PrimaryShape.blendMode = BlendMode.ADD;
+		//l_PrimaryShape.blendMode = BlendMode.NORMAL;
 		l_PrimaryShape.cacheAsBitmap = true;
 		l_PrimaryShape.visible = true;
 		
