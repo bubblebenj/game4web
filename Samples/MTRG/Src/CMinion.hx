@@ -1,7 +1,19 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
+
+ /**
+  * Gathers the minions base, and their variations, this is the short term motive, crush asteroids, produce mass of space invader 
+  * and crush the space ship
+  */
 
 package ;
 
@@ -25,13 +37,15 @@ import kernel.CDebug;
 import kernel.Glb;
 import math.CV2D;
 import CProjectile;
+import algorithms.CPool;
 
+////////////////////////////////////
 enum EMinions
 {
 	SpaceInvaders;
 	Shielders;
-	Perforators;
 	Crossars;
+	Perforators;
 	
 	Count;
 }
@@ -41,21 +55,43 @@ enum EMinions
 //this is the root of dance 
 class Constants
 {
+	////////////////////////////////////
 	public static var CUR_SV_DANCE : CV2D = new CV2D(0, 0);
 	public static inline var CIRCLE_SPEED : Float = 0.005;
+	public static inline var SV_SPEED : Float = 0.03;
 	public static inline var PERFORATOR_SPEED : Float = 0.1;
 	public static inline var CROSS_SPEED : Float =  0.3;
 	public static inline var BASE_SV_BOULETTE_SPEED : Float = 0.15; 
 	
+	////////////////////////////////////
+	static var SV_STATE_DURATION : Float = 1.0;
+	static var m_SvState : Int = 0;
+	static var m_SvTimer : Float = 0;
 	
+	////////////////////////////////////
 	public static function Update()
 	{
+		m_SvTimer += Glb.GetSystem().GetGameDeltaTime();
 		
+		if (m_SvTimer>SV_STATE_DURATION )
+		{
+			m_SvState =  (m_SvState + 1) % 3;
+			m_SvTimer = 0;
+		}
+		
+		switch(m_SvState)
+		{
+			case 0: CUR_SV_DANCE.Set(1, 0);
+			case 1: CUR_SV_DANCE.Set(0, 1);
+			case 2: CUR_SV_DANCE.Set(-1, 0);
+		}
 	}
 }
 
+////////////////////////////////////
 class CMinion extends Sprite , implements Updatable, implements BSphered
 {
+	////////////////////////////////////
 	public var m_Center : CV2D;
 	public var m_Radius : Float;
 	
@@ -77,6 +113,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	public var m_CollDmg : Int;
 	public var m_BaseHp : Int;
 	
+	////////////////////////////////////
 	public function new() 
 	{
 		super();
@@ -122,10 +159,11 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		return _Hp;
 	}
 
+	////////////////////////////////////
 	public function OnHit()
 	{
 		var l_This = this;
-		//trace("onhit");
+		//CDebug.CONSOLEMSG("onhit mn:" + _Hp);
 		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
 																{
 																	l_This.m_ImgNormal.blendMode = ADD;
@@ -138,7 +176,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 																,0.1,0) );
 	}
 	
-	
+	////////////////////////////////////
 	private function SetHasAi( _OnOff ) 
 	{
 		if (!m_HasAI&&_OnOff)
@@ -154,6 +192,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	//////////////////////////////////
 	private function OnDestroy()
 	{
+		//CDebug.CONSOLEMSG("Min dtryd " + this);
 		MTRG.s_Instance.m_Gameplay.m_MinionHelper.Delete(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 
@@ -179,11 +218,18 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 			case SpaceShip: 
 			var l_Ship :  CSpaceShip = cast _Collider;
 			l_Ship.m_Hp -= m_CollDmg;
-			
+			OnDestroy();//i am always destroyed
+			//CDebug.CONSOLEMSG("collided ship");
+
 			case Asteroids: 
-			m_Hp -= 100;
+			var l_Aster :  CAsteroid = cast _Collider;
+			l_Aster.m_Hp -= m_CollDmg;
+			OnDestroy();
+
+			case SpaceShipShoots:
+			//handled by projectile
 			
-			default: CDebug.CONSOLEMSG("Minion collided something ");
+			default: CDebug.BREAK("Minion collided something not expected");
 		}
 	}
 	
@@ -206,6 +252,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	}
 	
 	//////////////////////////////////
+	//processes ai and calls update and generic shoot procedures
 	public function Update()
 	{
 		if ( m_HasAI )
@@ -225,6 +272,12 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 				m_ShootTimer  = 0;
 			}
 		}
+		
+		if ((m_Center.x > 1.2 * Glb.g_System.m_Display.GetAspectRatio()) || (m_Center.x < -0.1)
+		||	(m_Center.y > 1.1) || (m_Center.y < -0.1))
+		{
+			OnDestroy();
+		}
 	}
 	
 	//////////////////////////////////
@@ -241,6 +294,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		CDebug.BREAK("Override me");
 	}
 	
+	//////////////////////////////////
 	public function Think()
 	{
 		
@@ -256,6 +310,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 }
 
 
+//////////////////////////////////
 class CSpaceInvaderMinion extends CMinion
 {
 	//////////////////////////////////
@@ -267,9 +322,8 @@ class CSpaceInvaderMinion extends CMinion
 
 	//putting inline causes compiler issue when bulding pools...oh my gosh
 	public var SI_SIZE : Int;
-	
-	
-	
+
+	//////////////////////////////////
 	public override function OnEnable()
 	{
 		super.OnEnable();
@@ -350,10 +404,12 @@ class CSpaceInvaderMinion extends CMinion
 	//////////////////////////////////
 	public override function ProcessNextPosition()
 	{
+		CV2D.Incr(m_Center, CV2D.Scale( Registers.V2_0, Glb.GetSystem().GetGameDeltaTime() * Constants.SV_SPEED, Constants.CUR_SV_DANCE ));
 	}
 	
 }
 
+//////////////////////////////////
 enum CircleBHV
 {
 	WanderMother;
@@ -362,22 +418,25 @@ enum CircleBHV
 
 class CSpaceCircleMinion extends CMinion
 {
+	
+	//////////////////////////////////
+	var m_ThinkTimer : Float;
+	var m_BHV : CircleBHV;
+	var m_Dir : CV2D;
+	
+	//////////////////////////////////
 	public function new()
 	{
 		super();
-		m_BaseHp = 30;
+		m_BaseHp = 50;
 	}
 
-	
-	
+	//////////////////////////////////
 	public override function OnEnable()
 	{
 		super.OnEnable();
 	}
 	
-	var m_ThinkTimer : Float ;
-	var m_BHV : CircleBHV;
-	var m_Dir : CV2D;
 	
 	//////////////////////////////////
 	public override function Initialize()
@@ -463,6 +522,7 @@ class CSpaceCircleMinion extends CMinion
 			l_Wander = false;  
 		}
 
+		//find a target near ms
 		if ( l_Wander )
 		{
 			var l_R0 = Registers.V2DPool.Create();
@@ -484,7 +544,7 @@ class CSpaceCircleMinion extends CMinion
 		{
 			m_BHV = Oscillate(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center.x, MTRG.s_Instance.m_Gameplay.m_Ship.m_Center.y );
 			
-			trace(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center);
+			//trace(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center);
 			m_ThinkTimer = 0.75;
 		}
 	}
@@ -499,13 +559,11 @@ class CSpaceCircleMinion extends CMinion
 			Think();
 		}
 		
-		
 		switch(m_BHV)
 		{
 			case WanderMother:
 			{
 				//wander freely always same winding
-				
 				var l_Temp = Registers.V2DPool.Create();
 				l_Temp.Set(0, 0);
 				var l_Dir = RandomEx.DiceF( 0, 0.5);
@@ -519,7 +577,7 @@ class CSpaceCircleMinion extends CMinion
 				
 			}
 			
-			//oscillate with target, it i particuliarly effficient to protect MS
+			//oscillate with target, it is particuliarly efficient to protect MS
 			case Oscillate(px, py):
 			{
 				var l_Temp = Registers.V2DPool.Create();
@@ -536,13 +594,11 @@ class CSpaceCircleMinion extends CMinion
 		
 		var l_R0 = Registers.V2DPool.Create();
 		CV2D.Incr(m_Center, CV2D.Scale( l_R0, Glb.g_System.GetGameDeltaTime() * Constants.CIRCLE_SPEED, m_Dir ));
-		Registers.V2DPool.Destroy(l_R0);
-		
-		
+		Registers.V2DPool.Destroy(l_R0);	
 	}
 }
 
-import algorithms.CPool;
+
 
 class CPerforatingMinion extends CMinion
 {
@@ -643,6 +699,7 @@ class CPerforatingMinion extends CMinion
 		
 		if( l_Dist > 0.35 )
 		{
+			//do a slight accel
 			m_Speed = Interp.SInterp( Math.pow( m_MatchingAngle, 0.5), 0, Constants.PERFORATOR_SPEED);
 		}
 		else
@@ -654,7 +711,7 @@ class CPerforatingMinion extends CMinion
 		var l_Delta = m_Speed *  Glb.g_System.GetGameDeltaTime();
 		if (l_Delta > l_Dist )
 		{
-			trace("warp d:" + l_Delta + " dis" + l_Dist);
+			//trace("warp d:" + l_Delta + " dis" + l_Dist);
 			m_Center = MTRG.s_Instance.m_Gameplay.m_Ship.m_Center;
 		}
 		else
@@ -760,7 +817,14 @@ class CCrossMinion extends CMinion
 		
 		if ( IsLoaded() )
 		{
-			m_ImgNormal.rotationZ += 20 * Glb.g_System.GetGameDeltaTime();
+			if (m_State == CS_IDLE )
+			{
+				m_ImgNormal.rotationZ += 120 * Glb.g_System.GetGameDeltaTime();
+			}
+			else
+			{
+				m_ImgNormal.rotationZ += 720* Glb.g_System.GetGameDeltaTime();
+			}
 		}
 	}
 	
@@ -775,8 +839,10 @@ class CCrossMinion extends CMinion
 	{
 		switch(m_State)
 		{
+			//do nothing
 			case CS_IDLE: 
 			
+			//process current salva
 			case CS_SALVA(n, dly):
 			if(dly - Glb.g_System.GetGameDeltaTime() >= 0)
 			{
@@ -790,7 +856,7 @@ class CCrossMinion extends CMinion
 										0, 0,
 										Glb.g_System.m_Display.GetAspectRatio(), 0.8
 										);
-					trace("heading to " + m_Target);
+					//CDebug.CONSOLESMG()("heading to " + m_Target);
 					m_State = CS_IDLE;
 				}
 				else
@@ -806,6 +872,7 @@ class CCrossMinion extends CMinion
 			}
 		}
 		
+		//move out
 		CV2D.Sub( Registers.V2_1, m_Target, m_Center );		
 		var l_Dist2 = Registers.V2_1.Norm2();
 		var l_Delta = Glb.g_System.GetGameDeltaTime() * Constants.CROSS_SPEED;

@@ -1,7 +1,18 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
+
+/*
+ * manages the projectiles and their variants
+ */ 
 
 package ;
 import flash.accessibility.Accessibility;
@@ -24,7 +35,6 @@ import CCollManager;
 class CProjectile implements BSphered
 {
 	///////////////////
-	
 	var m_Dir : CV2D;
 	var m_Speed : Float;
 	
@@ -56,6 +66,7 @@ class CProjectile implements BSphered
 		m_CollMask = 0;
 	}
 	
+	///////////////////
 	public function SetVisible( v ) : Bool
 	{
 		visible = v;
@@ -63,16 +74,20 @@ class CProjectile implements BSphered
 		return visible;
 	}
 	
+	///////////////////
 	public function Initialize()
 	{
 		
 	}
 	
+	///////////////////
 	public function Shut()
 	{
 		Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+		m_DisplayObject = null;
 	}
 	
+	///////////////////
 	public function Update()
 	{
 		CV2D.Add( m_Center, m_Center , CV2D.Scale( Registers.V2_0 , Glb.GetSystem().GetGameDeltaTime() * m_Speed , m_Dir ));
@@ -90,26 +105,31 @@ class CProjectile implements BSphered
 		//CDebug.CONSOLEMSG("upd lsr" + m_Pos.x +":"+ m_Pos.y);
 	}
 	
+	///////////////////
 	public function OnDestroy()
 	{
 		CDebug.BREAK("should not happen");
 	}
 	
+	///////////////////
 	public function OnLost()
 	{
 		CDebug.BREAK("should not happen");
 	}
 	
+	///////////////////
 	public function OnCollision( _Collider : BSphered ) : Void
 	{
 		CDebug.CONSOLEMSG("Proj coll");
 	}
 	
+	///////////////////
 	public function Reset() : Void 
 	{
 		
 	}
 	
+	///////////////////
 	public function Fire( _From : CV2D , _To : CV2D, _Speed : Float )
 	{
 		m_Dir.Copy( CV2D.Sub( Registers.V2_9, _To, _From) );
@@ -131,6 +151,7 @@ class CProjectile implements BSphered
 	}
 }
 
+///////////////////lasers are for shipsonly
 class CLaser extends  CProjectile
 {
 	///////////////////
@@ -149,6 +170,7 @@ class CLaser extends  CProjectile
 		|				(1 << Type.enumIndex( Asteroids ));
 	}
 	
+	///////////////////
 	public override function OnCollision( _Collider : BSphered ) : Void
 	{
 		switch( _Collider.m_CollClass )
@@ -184,12 +206,14 @@ class CLaser extends  CProjectile
 		OnDestroy();
 	}
 	
+	///////////////////
 	public override function OnLost()
 	{
 		OnDestroy();
 		//kernel.CDebug.CONSOLEMSG("Laser Lost ");
 	}
 	
+	///////////////////
 	public override function OnDestroy()
 	{
 		m_DisplayObject.visible = false;
@@ -200,6 +224,7 @@ class CLaser extends  CProjectile
 		//kernel.CDebug.CONSOLEMSG("Laser destroyed ");
 	}
 	
+	///////////////////
 	public override function Initialize()
 	{
 		super.Initialize();
@@ -224,7 +249,7 @@ class CLaser extends  CProjectile
 	}
 }
 
-
+//boulette's are minon only
 class CBoulette extends  CProjectile
 {
 	///////////////////
@@ -241,6 +266,7 @@ class CBoulette extends  CProjectile
 					|	(1 << Type.enumIndex(Asteroids)));
 	}
 	
+	///////////////////
 	public override function OnCollision( _Collider : BSphered ) : Void
 	{
 		switch( _Collider.m_CollClass )
@@ -265,12 +291,14 @@ class CBoulette extends  CProjectile
 		}
 	}
 	
+	///////////////////
 	public override function OnLost()
 	{
 		OnDestroy();
 		//kernel.CDebug.CONSOLEMSG("Laser Lost ");
 	}
 	
+	///////////////////
 	public override function OnDestroy()
 	{
 		m_DisplayObject.visible = false;
@@ -281,6 +309,7 @@ class CBoulette extends  CProjectile
 		//kernel.CDebug.CONSOLEMSG("Laser destroyed ");
 	}
 	
+	///////////////////
 	public override function Initialize()
 	{
 		super.Initialize();

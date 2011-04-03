@@ -63,4 +63,13 @@ class CPool<T>
 		m_UsedList.clear();
 	}
 	
+	public function Reset() 
+	{
+		for (o in m_UsedList)
+		{
+			m_FreeList.add( o );
+		}
+		m_UsedList.clear();
+	}
+	
 }

@@ -1,13 +1,28 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
 
+  
+ /**
+  * offers the dnd gameplay and manages mininon production
+  * also manages the next medium term motives : discovering the next minion category
+  */
+ 
 package ;
 import CMinion;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.text.TextField;
+import flash.text.TextFormat;
 import kernel.CDebug;
 import kernel.Glb;
 import Game;
@@ -17,7 +32,17 @@ import math.CV2D;
 class CMinionPad extends Sprite , implements Updatable
 {
 	var m_Img : Shape;
+	
 	var m_MinionArray : Array<CMinion>;
+	
+	//smooth diff curve with unit stepping on availability
+	var m_MinionAvail : Array < Int>;
+	var m_MinionCounter :  Array <TextField>;
+	var m_MinionCounterFormat : TextFormat;
+	
+	var m_AvailTimer : Float;
+	public static inline var m_AvailTimerDuration : Float = 1.0;
+	public static inline var AVAIL_INCR : Int = 4;
 	
 	public function new() 
 	{
@@ -29,13 +54,21 @@ class CMinionPad extends Sprite , implements Updatable
 	static inline var MARGIN : Int= 16;
 	public function Initialize()
 	{
+		m_MinionCounter = new Array<TextField>();
+		m_MinionCounterFormat = new TextFormat();
+		m_MinionAvail = new Array < Int>();
+		m_MinionCounterFormat.size = 16;
+		m_MinionCounterFormat.font = "arial";
+		m_MinionAvail[0] = 1;
+		m_AvailTimer = 0;
+	
 		m_Img = new Shape(); 
 		m_Img.graphics.beginFill( 0x777777 );
 		m_Img.graphics.lineStyle(3, 0x000000);
 		
+		//draws the ui
 		var l_Margin = MARGIN;
-		m_Img.graphics.drawRoundRect(l_Margin, l_Margin, MTRG.BOARD_X - l_Margin, MTRG.HEIGHT * 0.5- l_Margin * 2, 24,24);
-		
+		m_Img.graphics.drawRoundRect(l_Margin, l_Margin, MTRG.BOARD_X - l_Margin, MTRG.HEIGHT * 0.5- l_Margin * 1, 24,24);
 		m_Img.graphics.endFill();
 		
 		addChild(m_Img);
@@ -46,11 +79,14 @@ class CMinionPad extends Sprite , implements Updatable
 		visible = false;
 		//visible = false;
 		
+		//initialize tempalte of dnd
 		m_MinionArray = new Array<CMinion>();
 		m_MinionArray[ Type.enumIndex( EMinions.SpaceInvaders ) ] = new CSpaceInvaderMinion();
 		m_MinionArray[ Type.enumIndex( EMinions.Crossars ) ] = new CCrossMinion();
 		m_MinionArray[ Type.enumIndex( EMinions.Shielders ) ] = new CSpaceCircleMinion();
 		m_MinionArray[ Type.enumIndex( EMinions.Perforators ) ] = new CPerforatingMinion();
+		
+		m_MinionAvail[ m_MinionArray.length -1] = 0;
 		
 		Lambda.iter( m_MinionArray, function(m) m.visible = true  );
 	}
@@ -70,12 +106,19 @@ class CMinionPad extends Sprite , implements Updatable
 			//var l_Pos : Float = l_Top + i * ( 64 ) ;
 			m.Initialize();
 			
-			m.m_Center.Set( (MTRG.BOARD_X * 0.5 + l_Margin * 0.5) / MTRG.HEIGHT, (l_Pos) / MTRG.HEIGHT);
+			var l_NotHPosX = MTRG.BOARD_X * 0.5 + l_Margin * 0.5;
+			var l_NotHPosY = l_Pos;
+			m.m_Center.Set( l_NotHPosX/ MTRG.HEIGHT,  l_NotHPosY/ MTRG.HEIGHT);
 			
 			m.Update();
 			
 			m.visible = true;
 			addChild(m);
+			
+			m_MinionCounter[i] = new TextField();
+			m_MinionCounter[i].x = l_NotHPosX + 16;
+			m_MinionCounter[i].y = l_NotHPosY + 16;
+			addChild(m_MinionCounter[i]);
 			//Glb.GetRendererAS().AddToSceneAS( m );
 			//Glb.GetRendererAS().SendToFront( m );
 			i++;
@@ -91,8 +134,45 @@ class CMinionPad extends Sprite , implements Updatable
 		return m_Img != null;
 	}
 	
+	public function UpdateCounters()
+	{
+		
+		for(i in 0...m_MinionAvail.length)
+		{
+			if ( m_MinionCounter[i] == null) continue;
+			
+			m_MinionCounter[i].text = Std.string(m_MinionAvail[i]);
+			m_MinionCounter[i].setTextFormat( m_MinionCounterFormat );
+			m_MinionCounter[i].visible = true;
+		}
+	}
+	
+	public function UpdateAvailability()
+	{
+		m_AvailTimer += Glb.g_System.GetGameDeltaTime();
+		if (m_AvailTimer>m_AvailTimerDuration )
+		{
+			m_AvailTimer = 0;
+			m_MinionAvail[0]++;
+			
+			for(i in 0...m_MinionAvail.length-1)
+			{
+				if (m_MinionAvail[i]>=AVAIL_INCR)
+				{
+					m_MinionAvail[i] -= AVAIL_INCR;
+					
+					m_MinionAvail[i + 1]++;
+				}
+			}
+			
+			UpdateCounters();
+		}
+	}
+	
 	public function Update()
 	{
+		UpdateAvailability();
+		
 		if (MTRG.s_Instance.m_Gameplay.m_DND == DND_FREE)
 		{
 			if ( Glb.GetInputManager().GetMouse().IsDown()  )
@@ -100,11 +180,13 @@ class CMinionPad extends Sprite , implements Updatable
 				//CDebug.CONSOLEMSG("Down");
 				var l_MousePos :CV2D =  Glb.GetInputManager().GetMouse().GetPosition();
 				
+				var i = 0;
 				for (m in m_MinionArray )
 				{
 					//CDebug.CONSOLEMSG("minion: " + m.m_Center + ":" + m.m_Radius);
 					//CDebug.CONSOLEMSG("mouse: " + l_MousePos);
-					if( CCollManager.TestCircleCircle( m.m_Center, m.m_Radius, l_MousePos, 1.0 / MTRG.HEIGHT) )
+					if (( m_MinionAvail[i] > 0)
+					&&	CCollManager.TestCircleCircle( m.m_Center, m.m_Radius, l_MousePos, 1.0 / MTRG.HEIGHT) )
 					{
 						//CDebug.CONSOLEMSG("Down");
 						var l_New = MTRG.s_Instance.m_Gameplay.m_MinionHelper.Create(m);
@@ -114,13 +196,18 @@ class CMinionPad extends Sprite , implements Updatable
 						l_New.visible = true;
 						l_New.Update();
 						MTRG.s_Instance.m_Gameplay.m_DND = DND_SOME( l_New );
+						m_MinionAvail[i]--;//if dnd fails, minion instance is load
+						
+						UpdateCounters();
 						return;
 					}
+					i++;
 				}
 			}
 		}
 		else
 		{
+			//do the dnd 
 			switch(MTRG.s_Instance.m_Gameplay.m_DND )
 			{
 				case DND_SOME( _Mob ):
@@ -142,9 +229,10 @@ class CMinionPad extends Sprite , implements Updatable
 		}
 	}
 	
+	//
 	public function Shut()
 	{
-		Glb.GetRendererAS().RemoveFromSceneAS(m_Img);
+		Glb.GetRendererAS().RemoveFromSceneAS(this);
 		m_Img = null;
 	}
 }

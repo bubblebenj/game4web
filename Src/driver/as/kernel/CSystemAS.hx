@@ -5,6 +5,7 @@ package driver.as.kernel;
  * @author BDubois
  */
 
+import flash.utils.Timer;
 import kernel.CDebug;
 import kernel.CInputManager;
 import kernel.CSystem;
@@ -24,9 +25,22 @@ class CSystemAS extends CSystem
 {
 	private	var m_RscASFactory	: CRscASFactory;
 	
+	
+	public var m_FlashTimer : Timer;
+	public var m_PreviousTimer : Int;
+	
 	public function new()
 	{
 		super();
+		m_PreviousTimer = flash.Lib.getTimer();
+	}
+	
+	public override function GetDriverDt() : Float
+	{
+		var l_NewTimeMillis = flash.Lib.getTimer();
+		var l_Dt = ((cast(l_NewTimeMillis,Float)) - (cast(m_PreviousTimer,Float)))  / 1000.0;
+		m_PreviousTimer = l_NewTimeMillis;
+		return l_Dt;
 	}
 	
 	public override function Initialize() : Result

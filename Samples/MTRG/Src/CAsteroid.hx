@@ -1,7 +1,18 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
+
+ /****************************************************
+ * Asteroid management and creation class
+ ****************************************************/
 
 package ;
 
@@ -17,6 +28,7 @@ package ;
  
  class CAsteroid extends Sprite , implements Updatable, implements BSphered
 {
+	////////////////////////////////////////////////
 	public static inline var MAX_WIDTH : Int= 48;
 	
 	var m_ImgNormal : Shape;
@@ -34,8 +46,6 @@ package ;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
-	
-	
 	
 	////////////////////////////////////////////////
 	public function new() 

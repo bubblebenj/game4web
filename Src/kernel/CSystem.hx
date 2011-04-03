@@ -85,6 +85,11 @@ class CSystem
 	}
 	#end
 	
+	public function GetDriverDt() : Float
+	{
+		return DT;
+	}
+	
 	public function MainLoop()
 	{
 		// Glb.StaticUpdate actually do g_System.Update();
@@ -104,7 +109,7 @@ class CSystem
 		//if (m_FrameCount > 20)
 		{
 			//TODO : framerate is fixed now because we don't have highly dynamic gameplay by now
-			m_FrameDeltaTime = (DT);
+			m_FrameDeltaTime = GetDriverDt();
 			
 			m_FrameTime += m_FrameDeltaTime;
 			
@@ -223,6 +228,8 @@ class CSystem
 	private	var m_RscCommonFactory	: CRscCommonFactory;
 	
 	public 	var m_Display:  CDisplay;
+	
+	
 }
 
 

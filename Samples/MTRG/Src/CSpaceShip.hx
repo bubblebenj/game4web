@@ -16,7 +16,7 @@ import kernel.CDebug;
 import math.Constants;
 import math.Registers;
 import math.Utils;
-
+using Lambda;
 import kernel.Glb;
 
 import math.CV2D;
@@ -44,10 +44,11 @@ class CSpaceShip implements Updatable, implements BSphered
 	
 	private var m_Pos : Float ;
 	
-	public var  m_Shapes : Array<Shape>;
+	public var  m_Shape : Shape;
 	public var  m_Bhv : AIBhv; 
 	
 	public var 	m_ShootSpin : Float;
+	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
 	
@@ -62,21 +63,25 @@ class CSpaceShip implements Updatable, implements BSphered
 	public static inline var MAX_LASERS = 16;
 	public static inline var MAX_BOULETTE = 128;
 	
+	//imporvement, gather code and refactor with motherships
+	private var m_LifeBar : Shape;
+	private var m_LifeBarContainer : Shape;
+	
 	var m_LaserPool : CPool< CLaser >;
-	var m_BoulettePool : CPool< CBoulette >;
+	
+	private var m_MaxHp : Int;
 	
 	public function new() 
 	{
 		m_Ship = null;
 		m_Pos = 0.5;
-		m_Shapes = null;
 		m_AiTick = 0.5;
 		m_Bhv = AI_Idle;
 		m_LaserPool = null;
 		
 		m_ShootSpin = 0;
 		m_CollClass = SpaceShip;
-		m_Radius = 2 / MTRG.HEIGHT;
+		m_Radius = 8 / MTRG.HEIGHT;
 		m_CollShape = Sphere;
 		m_Center = new CV2D(0, 0);
 		
@@ -84,7 +89,8 @@ class CSpaceShip implements Updatable, implements BSphered
 		|				(1 << Type.enumIndex(Aliens))
 		|				(1 << Type.enumIndex(AlienShoots)) );
 		
-		m_Hp = 100;
+		m_MaxHp = 100;
+		m_Hp = m_MaxHp;
 	}
 
 	public function IsLoaded() : Bool
@@ -101,12 +107,35 @@ class CSpaceShip implements Updatable, implements BSphered
 	//////////////////////////////////
 	private function SetHp(v : Int) : Int
 	{
+		var l_OldHp = _Hp;
 		_Hp = v;
+		
 		if( _Hp <= 0 )
 		{
 			OnDestroy();
 		}
+		else if( v <= l_OldHp )
+		{
+			OnHit();
+		}
 		return _Hp;
+	}
+	
+	private function OnHit()
+	{
+		UpdateLifeBar();
+		//CDebug.CONSOLEMSG("Ship hit!");
+		var l_This = this;
+		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
+																{
+																	l_This.m_Ship.blendMode = SUBTRACT;
+																	
+																	if (ratio >= 1.0)
+																	{
+																		l_This.m_Ship.blendMode = NORMAL;
+																	}
+																}
+																,0.1,0) );
 	}
 	
 	//ship doesn handle anything
@@ -117,6 +146,8 @@ class CSpaceShip implements Updatable, implements BSphered
 	
 	private function OnDestroy()
 	{
+		UpdateLifeBar();
+		
 		MTRG.s_Instance.m_Gameplay.GameOver(true);
 	}
 	
@@ -125,7 +156,6 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_ShootSpin = 0;
 		m_Bhv = AI_Idle;
 		m_AiTick = 0.5;
-		m_Shapes = new Array<Shape>();
 		m_Ship = new Sprite();
 		
 		var l_Vec : Vector<Float> = new Vector<Float>();
@@ -142,9 +172,9 @@ class CSpaceShip implements Updatable, implements BSphered
 		
 		l_Vec[i++] = 0; 	l_Vec[i++] = -16; 
 		
-		//build standard shape
+		var l_PrimaryShape : Shape = new Shape();
 		{
-			var l_PrimaryShape : Shape = new Shape();
+		
 			var l_GradientMatrix = new Matrix();
 			
 			l_PrimaryShape.graphics.lineStyle(3, 0xF2F807, 1.0);
@@ -156,49 +186,49 @@ class CSpaceShip implements Updatable, implements BSphered
 			
 			l_PrimaryShape.blendMode = BlendMode.ADD;
 			l_PrimaryShape.cacheAsBitmap = true;
-			l_PrimaryShape.visible = false;
-			
-			m_Shapes[m_Shapes.length] = l_PrimaryShape;
+			l_PrimaryShape.visible = true;
 		}
 		
-		//build shooting shape
-		{
-			var l_PrimaryShape : Shape = new Shape();
-			var l_GradientMatrix : Matrix = new Matrix();
-			
-			l_PrimaryShape.graphics.lineStyle(3, 0xF2F807, 1.0);
-			l_PrimaryShape.graphics.drawTriangles( l_Vec );
-			
-			l_GradientMatrix.createGradientBox( 48,48, 0, -24,-36 );
-			l_PrimaryShape.graphics.beginGradientFill( GradientType.RADIAL, [0xFFBB6E, 0xD90E00], [1, 1], [0, 255],l_GradientMatrix, SpreadMethod.PAD );
-			
-			l_PrimaryShape.graphics.drawTriangles( l_Vec );
-			//l_PrimaryShape.graphics.drawRect( 200,200,100,100);
-			l_PrimaryShape.graphics.endFill();
-			
-			l_PrimaryShape.blendMode = BlendMode.ADD;
-			l_PrimaryShape.cacheAsBitmap = true;
-			l_PrimaryShape.visible = false;
-			
-			m_Shapes[m_Shapes.length] = l_PrimaryShape;
-		}
-		
-		var l_This = this ;
-		Lambda.iter( 	m_Shapes,
-						function(s)
-						{
-							l_This.m_Ship.addChild(s);
-						}
-					);
+		m_Ship.addChild(l_PrimaryShape);
+	
 		
 		Glb.GetRendererAS().AddToSceneAS( m_Ship );
 		
 		SetLinearPos( 0.5 );
-		SetShapeIndex(SHOOT);
 		m_Ship.visible = false;
 
 		m_LaserPool = new CPool<CLaser>( MAX_LASERS, new CLaser());
 		Lambda.iter( m_LaserPool.Free(), function(ls) ls.Initialize() );
+		MTRG.s_Instance.m_Gameplay.m_CollMan.Add(this);
+		
+		{
+			m_LifeBarContainer = new Shape();
+			m_LifeBarContainer.graphics.clear();
+			
+			m_LifeBarContainer.graphics.lineStyle(8, 0xFF0000);
+			m_LifeBarContainer.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
+			m_LifeBarContainer.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, MTRG.HEIGHT - 16);
+			m_LifeBarContainer.visible = false;
+			Glb.GetRendererAS().AddToSceneAS(m_LifeBarContainer);
+			
+			m_LifeBar = new Shape();
+			m_LifeBar.visible = false;
+			Glb.GetRendererAS().AddToSceneAS(m_LifeBar);
+			UpdateLifeBar();
+		}
+	}
+	
+	public function UpdateLifeBar()
+	{
+		if ( m_LifeBar != null)
+		{
+			m_LifeBar.graphics.clear();
+			m_LifeBar.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
+			m_LifeBar.graphics.lineStyle(8, 0x00FF00);
+			var l_width = MTRG.BOARD_WIDTH - 32;
+			m_LifeBar.graphics.lineTo( MTRG.BOARD_X + (l_width * (m_Hp / m_MaxHp)) ,MTRG.HEIGHT - 16);
+			m_LifeBar.cacheAsBitmap = true;
+		}
 	}
 	
 	public function GetPosH( _Vec : CV2D )
@@ -211,6 +241,13 @@ class CSpaceShip implements Updatable, implements BSphered
 	public function DeleteLaser( _Ls : CLaser )
 	{
 		m_LaserPool.Destroy( _Ls );
+	}
+	
+	public function SetVisible( _OnOff )
+	{
+		m_LifeBar.visible = _OnOff;
+		m_LifeBarContainer.visible = _OnOff;
+		m_Ship.visible = _OnOff;
 	}
 	
 	public function Shoot()
@@ -237,19 +274,9 @@ class CSpaceShip implements Updatable, implements BSphered
 			
 			Registers.V2DPool.Destroy( l_From );
 			Registers.V2DPool.Destroy( l_To );
-		
-			SetShapeIndex(SHOOT);
 		}
 	}
 	
-	public function SetShapeIndex( _i : ShapeIndex )
-	{
-		var l_Index = Type.enumIndex( _i );
-		for(i in 0...m_Shapes.length)
-		{
-			m_Shapes[i].visible = ( l_Index == i);
-		}
-	}
 	
 	public static inline var SHIP_BASELINE :Float =  MTRG.HEIGHT * 0.90;
 	
@@ -329,7 +356,6 @@ class CSpaceShip implements Updatable, implements BSphered
 		}
 		
 		SetLinearPos(m_Pos);
-		SetShapeIndex(STD);
 		
 		m_ShootSpin += Glb.GetSystem().GetGameDeltaTime();
 		
@@ -347,6 +373,13 @@ class CSpaceShip implements Updatable, implements BSphered
 	
 	public function Shut() : Void 
 	{
+		m_LaserPool.Free().iter( function(l) l.Shut() );
+		m_LaserPool.Used().iter( function(l) l.Shut() );
+		
+		m_LaserPool.Reset();
+		m_LaserPool = null;
+		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
+		Glb.GetRendererAS().RemoveFromSceneAS( m_Ship );
 		m_Ship = null;
 	}
 	

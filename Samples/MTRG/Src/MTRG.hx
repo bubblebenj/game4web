@@ -27,7 +27,7 @@ enum GAME_STAGE
 	GS_STARTING;
 	GS_BEGIN_SCREEN;
 	GS_RUNNING;
-	GS_END_SCREEN;
+	GS_END_SCREEN(_Won : Bool);
 }
 
 //does not work :-(
@@ -42,7 +42,6 @@ class MTRG implements SystemProcess
 	
 	
 	public var m_Stats : CStatistics;
-	public var m_Player : CPlayer;
 	
 	//public var m_BeginScreen :  BeginScreen;
 	public var m_BeginScreen :  Sprite;
@@ -57,7 +56,6 @@ class MTRG implements SystemProcess
 		s_Instance = this;
 	
 		m_Stats =  new CStatistics();
-		m_Player = new CPlayer();
 		
 		m_State = GS_INIT;
 		m_EndScreen =  null;
@@ -72,6 +70,11 @@ class MTRG implements SystemProcess
 		m_Gameplay.Initialize();
 	}
 	
+	public function Shut()
+	{
+		m_Gameplay.Shut();
+		m_Gameplay = null;
+	}
 
 	function UpdateGame()
 	{
@@ -106,8 +109,8 @@ class MTRG implements SystemProcess
 			case GS_RUNNING:
 				UpdateGame();
 				
-			case GS_END_SCREEN:
-				BuildEndScreen();
+			case GS_END_SCREEN(w):
+				BuildEndScreen(w);
 		}
 
 		return SUCCESS;
@@ -210,7 +213,13 @@ class MTRG implements SystemProcess
 				
 				if (Glb.GetInputManager().GetMouse().IsDown())
 				{
+					m_BeginScreen.visible = false;
 					Glb.GetRendererAS().RemoveFromSceneAS(m_BeginScreen);
+					m_BeginScreen = null;
+					m_BeginScreenBody = null;
+					m_BeginScreenBodyFormat = null;
+					
+					
 					m_Gameplay.Start();
 					m_Gameplay.SetVisible(true);
 					m_State = GS_RUNNING;
@@ -219,65 +228,98 @@ class MTRG implements SystemProcess
 				
 			}
 			
-			var l_CurText =  GetBeginText();
-			m_BeginScreenBody.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
-			m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
+			if(m_BeginScreenBody!= null)
+			{
+				var l_CurText =  GetBeginText();
+				m_BeginScreenBody.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
+				m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
+			}
 		}
 	}
 	
-	public function BuildEndScreen()
+	public function BuildEndScreen(_w)
 	{
 		if ( m_EndScreen == null )
 		{
+			Shut();
+			
 			m_EndScreen = new Sprite();
 			var l_Shape :Shape = new Shape();
 			l_Shape.graphics.beginFill(0xFFFFFF, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH- 48, MTRG.HEIGHT - 48,8,8);
-			
 			l_Shape.visible = true;
+			m_EndScreen.addChild(l_Shape);
 			
 			var l_Title = new TextField();
 			
 			l_Title.x = 48;
 			l_Title.y = 48;
-			l_Title.text = "You liked it ?";
-			l_Title.width = MTRG.HEIGHT - 48 - 32;
+			l_Title.text =  ((_w) ? "YOU WON" : "YOU LOST..." ) +"!\n\nYou liked it ?";
+			l_Title.width = MTRG.WIDTH - 48 - 32;
+			l_Title.height = 256;
 			l_Title.visible = true;
 			l_Title.textColor = 0x000000;
 			var l_Title0Format = new flash.text.TextFormat();
 			l_Title0Format.font = "Arial";
 			l_Title0Format.italic = true;
-			l_Title0Format.size = 48;
+			l_Title0Format.size = 45;
 			l_Title0Format.bold = true;
 			
 			l_Title.setTextFormat( l_Title0Format );
 			
-			var l_ClickHere = new TextField();
 			
+			var l_ClickHere = new TextField();
 			l_ClickHere.x = 48;
 			l_ClickHere.y = l_Title.y + 16 + l_Title.height;
-			
 			var l_FontBegin = "<font FACE=\"Arial\" SIZE=\"36\" COLOR=\"#FF0000\">";
 			var l_FontEnd = "</font>";
 			l_ClickHere.htmlText = 	l_FontBegin 
-					+  "<a href=\"mailto:david.elahee@gmail.com?subject=Recruitment&body=Hi David,\nSince your game really kicks ass a lot, we will recruit you!\nsign with your blood here ;-)\" >Click here to continue!</A>" 
+					+  "<a href=\"mailto:david.elahee@gmail.com?subject=Recruitment&body=Hi David,\nSince your game really kicks ass a lot, we will recruit you!\nsign with your blood here ;-)\" >david.elahee@gmail.com</A>" 
 					+ l_FontEnd;
 
-			l_ClickHere.width = MTRG.HEIGHT - 48 - 32;
+			l_ClickHere.width = MTRG.WIDTH- 48 - 32;
 			l_ClickHere.visible = true;
 			l_ClickHere.textColor = 0xFF1111;
-			var l_ClickHereFormat = new flash.text.TextFormat();
-			l_ClickHereFormat.font = "Arial";
-			l_ClickHereFormat.size = 36;
 			
-			m_EndScreen.addChild(l_Shape);
 			m_EndScreen.addChild(l_ClickHere);
+			
+			
+			var l_ClickSomewhereElse = new TextField();
+			l_ClickSomewhereElse.x = 48;
+			l_ClickSomewhereElse.y = l_ClickHere.y + 16 + l_ClickHere.height;
+			l_ClickSomewhereElse.text = "Click somewhere else to try again!";
+			l_ClickSomewhereElse.width = MTRG.WIDTH - 48 - 32;
+			l_ClickSomewhereElse.visible = true;
+			l_ClickSomewhereElse.textColor = 0x000000;
+			var l_ClickSomewhereElseFormat = new flash.text.TextFormat();
+			l_ClickSomewhereElseFormat.font = "Arial";
+			l_ClickSomewhereElseFormat.size = 24;
+			l_ClickSomewhereElse.setTextFormat( l_ClickSomewhereElseFormat );
+			
+			m_EndScreen.addChild(l_ClickSomewhereElse);
+			
 			m_EndScreen.addChild(l_Title);
 			m_EndScreen.visible = true;
 			Glb.GetRendererAS().AddToSceneAS(m_EndScreen);
 		}
+		else
+		{
+			if( Glb.GetInputManager().GetMouse().IsDown() )
+			{
+				Glb.GetRendererAS().RemoveFromSceneAS(m_EndScreen);
+				m_EndScreen = null;
+				
+				m_State = GS_INIT;
+				
+				
+			}
+		}
 	}
 
+	public function Reset()
+	{
+		
+	}
 	public function AfterDraw() : Result
 	{
 		return SUCCESS;

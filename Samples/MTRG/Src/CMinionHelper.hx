@@ -1,13 +1,27 @@
-/**
- * ...
- * @author DE
- */
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
+ * @author de
+ ****************************************************/
 
+ 
+ /**
+  * does the minion polling and mass processing
+  */
+
+  
 package ;
 
 import algorithms.CPool;
 import CMinion;
 import kernel.CDebug;
+using Lambda;
 
 class CMinionHelper
 {
@@ -37,6 +51,10 @@ class CMinionHelper
 	//////////////////////////////////
 	public function Delete( _Inst : CMinion ) : Void
 	{
+		if ( _Inst == null ) return;
+		
+		//disable the beast
+		_Inst.m_HasAI = false;
 		switch( Type.typeof(_Inst ))
 		{
 			case TClass(a):
@@ -78,15 +96,44 @@ class CMinionHelper
 	//////////////////////////////////
 	public function Initialize()
 	{
-		Lambda.iter(m_CCrossMinionPool.Free() , function(k) { k.Initialize(); } );
-		Lambda.iter(m_CPerforatingMinionPool.Free() , function(k) { k.Initialize(); } );
-		Lambda.iter(m_CSpaceCircleMinionPool.Free() , function(k) { k.Initialize(); } );
-		Lambda.iter(m_CSpaceInvaderMinionPool.Free() , function(k) { k.Initialize(); } );
+		m_CCrossMinionPool.Free().iter( function(k) { k.Initialize(); } );
+		m_CPerforatingMinionPool.Free().iter( function(k) { k.Initialize(); } );
+		m_CSpaceCircleMinionPool.Free().iter( function(k) { k.Initialize(); } );
+		m_CSpaceInvaderMinionPool.Free().iter( function(k) { k.Initialize(); } );
 		m_Initialized = true;
 	}
 	
+	//////////////////////////////////
 	public function Update()
 	{
+		m_CCrossMinionPool.Used().iter( function(k) { k.Update(); } );
+		m_CPerforatingMinionPool.Used().iter( function(k) { k.Update(); } );
+		m_CSpaceCircleMinionPool.Used().iter( function(k) { k.Update(); } );
+		m_CSpaceInvaderMinionPool.Used().iter( function(k) { k.Update(); } );
+		Constants.Update();
+	}
+	
+	//////////////////////////////////
+	public function Shut()
+	{
+		m_CCrossMinionPool.Free().iter( function(k) { k.Shut(); } );
+		m_CPerforatingMinionPool.Free().iter( function(k) { k.Shut(); } );
+		m_CSpaceCircleMinionPool.Free().iter( function(k) { k.Shut(); } );
+		m_CSpaceInvaderMinionPool.Free().iter( function(k) { k.Shut(); } );
 		
+		m_CCrossMinionPool.Used().iter( function(k) { k.Shut(); } );
+		m_CPerforatingMinionPool.Used().iter( function(k) { k.Shut(); } );
+		m_CSpaceCircleMinionPool.Used().iter( function(k) { k.Shut(); } );
+		m_CSpaceInvaderMinionPool.Used().iter( function(k) { k.Shut(); } );
+		
+		m_CCrossMinionPool.Reset();
+		m_CPerforatingMinionPool.Reset();
+		m_CSpaceCircleMinionPool.Reset();
+		m_CSpaceInvaderMinionPool.Reset();
+		
+		m_CCrossMinionPool = null;
+		m_CPerforatingMinionPool = null;
+		m_CSpaceCircleMinionPool = null;
+        m_CSpaceInvaderMinionPool = null;
 	}
 }
