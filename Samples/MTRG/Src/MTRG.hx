@@ -208,7 +208,12 @@ class MTRG implements SystemProcess
 		+		"Bss. : ...\n"
 		+		"Bss. : ...\n"
 		+		"Bss. : ...\n"
-		+		"Bss. : okay DRAG and DROP our troops and eliminate them!\n"
+		+		"Bss. : okay DRAG and DROP near our ship our troops and eliminate them!\n"
+		+		"Slv. : But... the repetitors are still bugged\n"
+		+		"Bss. : It's not a bug it's a feature maggot...!\n"
+		+		"Bss. : Our race can only survive if it proves it has a brain...\n"
+		+		"Bss. : And exploit minions carefully!\n"
+		+		"Slv. : Yes MASTTTTTAAAA!!!!\n"
 		+		"Bss. : GO GO GO!!!\n"
 		+		"\n\n\nClick to continue";
 	}
