@@ -1,11 +1,21 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
 
+ /* I don't know tweens well enough... it takes less time to do nearly the same by now and i hear it s*cks
+  * */
 package ;
 import kernel.Glb;
 
+////////////////////////////////////////////////////////////
 class CTimedTask 
 {
 	//takes a 0 ... 1 float 
@@ -14,6 +24,8 @@ class CTimedTask
 	var m_Delay : Float;
 	var m_QueuedDate : Float;
 	
+	
+	////////////////////////////////////////////////////////////
 	public function new( _OnTick, _Duration : Float, _Delay : Float ) 
 	{
 		m_OnTick = _OnTick;
@@ -22,6 +34,7 @@ class CTimedTask
 		m_QueuedDate = Glb.GetSystem().GetGameTime();
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function Dispose()
 	{
 		m_OnTick = null;
@@ -34,7 +47,7 @@ class CTimedTask
 	public function Update() : Bool
 	{
 		var l_CurrentT = Glb.GetSystem().GetGameTime();
-		if (l_CurrentT>m_Delay)
+		if (l_CurrentT> (m_Delay+ m_QueuedDate))
 		{
 			var l_Ratio = ((l_CurrentT) - (m_QueuedDate + m_Delay)) / m_Duration;
 			if( l_Ratio < 1.0)

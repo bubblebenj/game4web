@@ -1,14 +1,24 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
-
+ ****************************************************/
 package ;
 
+/*
+ * this class manages the gameplay and its time sequencing
+ * */
 
 import CMinion;
 import flash.display.BlendMode;
 import flash.display.Shape;
+import flash.media.Sound;
 import flash.system.System;
 import haxe.FastList;
 import haxe.Log;
@@ -21,7 +31,7 @@ import MTRG;
 import rsc.CRscImage;
 import rsc.CRscSitter;
 
-
+////////////////////gameplay sequencing (not same granularity as game
 enum GameState
 {
 	GS_INVALID;
@@ -31,6 +41,7 @@ enum GameState
 	GS_PAUSED;
 }
 
+////////////////////
 enum DNDState
 {
 	DND_FREE;
@@ -67,6 +78,7 @@ class Game
 	public var 	m_PlacingLimitLine : Shape;
 	public var 	m_PlaceLimit : Float;
 	
+	////////////////////////////////////////////////////////////
 	public function new() 
 	{
 		m_BG = null;
@@ -83,8 +95,12 @@ class Game
 		m_PlaceLimit = 0.2;
 
 		m_Mothership = new CMothership();
+		m_ProjectileHelper = null;
 	}
 	
+	
+	
+	////////////////////////////////////////////////////////////
 	public function IsLoaded() : Bool
 	{
 		var l_Answer : Bool = m_BG.IsLoaded() && m_Pad.IsLoaded() && m_Ship.IsLoaded() && m_RscSpaceInvader.IsStreamed() && m_MinionHelper.IsLoaded();
@@ -98,6 +114,7 @@ class Game
 		return l_Answer;
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function SetVisible( _onOff : Bool )
 	{
 		m_BG.m_Img.SetVisible(_onOff);
@@ -108,6 +125,7 @@ class Game
 		m_Mothership.SetVisible(_onOff);
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function Initialize()
 	{	
 		Log.setColor(0xFF0000);
@@ -153,7 +171,7 @@ class Game
 		
 		m_PlacingLimitLine = new Shape();
 		m_PlacingLimitLine.blendMode = BlendMode.ADD;
-		m_PlacingLimitLine.graphics.lineStyle( 3, 0x00FF00, 0.75);
+		m_PlacingLimitLine.graphics.lineStyle( 3, 0x00FF00, 0.15);
 		m_PlacingLimitLine.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.visible = false;
@@ -168,18 +186,22 @@ class Game
 	}
 
 	
+	////////////////////////////////////////////////////////////
 	public function GameOver( _Win : Bool )
 	{
 		CDebug.CONSOLEMSG("You " + (_Win ? "WIN" : "LOSE") + "!!!");
 		MTRG.s_Instance.m_State = GS_END_SCREEN(_Win);
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function OnLoaded()
 	{
 		Glb.GetRendererAS().SendToBack( m_BG.GetDisplayObject() ) ;
 		Glb.GetRendererAS().SendToFront( m_Pad.GetDisplayObject() ) ;
 	}
 	
+	
+	////////////////////////////////////////////////////////////
 	public function PlaceCurrentDND()
 	{
 		switch( m_DND)
@@ -199,15 +221,16 @@ class Game
 			default: CDebug.BREAK("Should not happen");
 		}
 		m_DND = DND_FREE;
-		//trace("PlaceCurrentDND");
+		//CDebug.CONSOLEMSG("PlaceCurrentDND");
 	}
 
+	////////////////////////////////////////////////////////////
 	public function Start()
 	{
 		m_State = GS_FIRST_FRAME;
 	}
 
-	
+	////////////////////////////////////////////////////////////
 	public function Update()
 	{
 		/*
@@ -321,6 +344,7 @@ class Game
 									);
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function Shut()
 	{
 		for(a in m_Asteroids)
@@ -346,6 +370,9 @@ class Game
 		
 		m_Mothership.Shut();
 		m_Mothership = null;
+		
+		m_ProjectileHelper.Shut();
+		m_ProjectileHelper = null;
 		
 		Glb.GetRendererAS().RemoveFromSceneAS(m_PlacingLimitLine);
 		System.gc();

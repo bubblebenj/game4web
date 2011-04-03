@@ -1,17 +1,33 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
 
 package ;
 
+
+////////////////////game sequencing
 import flash.display.BitmapData;
 import driver.as.renderer.C2DImageAS;
 import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.geom.Matrix;
 import flash.Lib;
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import haxe.TimerQueue;
@@ -40,9 +56,6 @@ class MTRG implements SystemProcess
 	public var m_Gameplay : Game;
 	public var m_LoadTimer : TimerQueue;
 	
-	
-	public var m_Stats : CStatistics;
-	
 	//public var m_BeginScreen :  BeginScreen;
 	public var m_BeginScreen :  Sprite;
 	public var m_BeginScreenBody :  TextField;
@@ -51,18 +64,56 @@ class MTRG implements SystemProcess
 	
 	public var m_Tasks : List<CTimedTask>;
 	
+	public static var WIDTH : Float = 600;
+	public static var HEIGHT : Float = 800;
+	public static var ASTEROIDS_HEIGHT : Float = 275;
+	public static var BOARD_X : Float = 100;
+	public static var BOARD_WIDTH : Float = WIDTH - BOARD_X;
+	
+	public var m_Music : Sound;
+	public var m_MusicChannel : SoundChannel;
+	public var m_MusicStarted : Bool;
+	public var m_SoundBank : CSoundBank;
+	
+	////////////////////////////////////////////////////////////
 	public function new() 
 	{
 		s_Instance = this;
-	
-		m_Stats =  new CStatistics();
-		
 		m_State = GS_INIT;
 		m_EndScreen =  null;
 		m_BeginScreen = null;
 		m_Tasks = new List<CTimedTask>();
+		m_Music = null;
+		m_SoundBank = null;
+		m_MusicStarted = false;
 	}
 	
+	public function PlayMusic()
+	{
+		if (m_Music ==null)
+		{
+			m_Music = new Sound(new URLRequest("Data/Lazer_Sword.mp3"));
+			
+			m_Music.addEventListener( Event.COMPLETE, OnLoadDone); 
+			m_Music.addEventListener(Event.SOUND_COMPLETE, OnSoundEnd);
+
+			m_Music.play();
+			m_SoundBank = new CSoundBank();
+		}
+	}
+	
+	function OnLoadDone(_):Void
+	{
+		
+	}
+	 
+	function OnSoundEnd(_):Void
+	{
+		m_MusicChannel = m_Music.play();
+	}
+	
+	////////////////////////////////////////////////////////////
+	//gentlemen... startup your engines !
 	public function Startup()
 	{
 		m_State = GS_STARTING;
@@ -70,17 +121,20 @@ class MTRG implements SystemProcess
 		m_Gameplay.Initialize();
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function Shut()
 	{
 		m_Gameplay.Shut();
 		m_Gameplay = null;
 	}
 
+	////////////////////////////////////////////////////////////
 	function UpdateGame()
 	{
 		m_Gameplay.Update();
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function AfterUpdate() : Result
 	{
 		m_Tasks =  Lambda.filter( 
@@ -90,15 +144,18 @@ class MTRG implements SystemProcess
 		return SUCCESS;
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function BeforeUpdate() : Result
 	{
 		
 		switch( s_Instance.m_State )
 		{
 			case GS_INIT:
+				
 				Startup();
 				
 			case GS_STARTING:
+				PlayMusic();
 				//m_State = GS_RUNNING;
 				//m_Gameplay.SetVisible(true);
 				m_State  = GS_BEGIN_SCREEN;
@@ -116,6 +173,7 @@ class MTRG implements SystemProcess
 		return SUCCESS;
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function GetBeginText():String
 	{
 		return 	"Slv. : ...Chief Chief we got a problem....\n"
@@ -133,11 +191,12 @@ class MTRG implements SystemProcess
 		+		"\n\n\nClick to continue";
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function BuildBeginScreen()
 	{
 		if ( m_BeginScreen == null )
 		{
-			trace("printing begin");
+			//CDebug.CONSOLEMSG("printing begin");
 			m_BeginScreen = new Sprite();
 			var l_Shape : Shape = new Shape();
 			l_Shape.graphics.beginFill(0xB2A568, 0.8);
@@ -198,7 +257,7 @@ class MTRG implements SystemProcess
 		}
 		else
 		{
-			//trace("other " + m_BeginScreen);
+			//CDebug.CONSOLEMSG	("other " + m_BeginScreen);
 			if (m_BeginScreen.alpha <1)
 			{
 				m_BeginScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
@@ -237,6 +296,7 @@ class MTRG implements SystemProcess
 		}
 	}
 	
+	////////////////////////////////////////////////////////////
 	public function BuildEndScreen(_w)
 	{
 		if ( m_EndScreen == null )
@@ -316,10 +376,13 @@ class MTRG implements SystemProcess
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	public function Reset()
 	{
 		
 	}
+	
+	////////////////////////////////////////////////////////////
 	public function AfterDraw() : Result
 	{
 		return SUCCESS;
@@ -330,6 +393,7 @@ class MTRG implements SystemProcess
 		return SUCCESS;
 	}
 	
+	////////////////////////////////////////////////////////////
 	public static function main()
 	{
 		var l_MTRG = new MTRG();
@@ -357,10 +421,6 @@ class MTRG implements SystemProcess
 		}
 	}
 	
-	public static var WIDTH : Float = 600;
-	public static var HEIGHT : Float = 800;
-	public static var ASTEROIDS_HEIGHT : Float = 275;
-	public static var BOARD_X : Float = 100;
-	public static var BOARD_WIDTH : Float = WIDTH - BOARD_X;
+
 	
 }

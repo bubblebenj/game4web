@@ -29,6 +29,12 @@ import Game;
 import math.CV2D;
 
 
+enum TFS
+{
+	RED;
+	NORMAL;
+}
+
 class CMinionPad extends Sprite , implements Updatable
 {
 	var m_Img : Shape;
@@ -38,7 +44,7 @@ class CMinionPad extends Sprite , implements Updatable
 	//smooth diff curve with unit stepping on availability
 	var m_MinionAvail : Array < Int>;
 	var m_MinionCounter :  Array <TextField>;
-	var m_MinionCounterFormat : TextFormat;
+	var m_MinionCounterFormat : Array <TextFormat>;
 	
 	var m_AvailTimer : Float;
 	public static inline var m_AvailTimerDuration : Float = 1.0;
@@ -49,16 +55,27 @@ class CMinionPad extends Sprite , implements Updatable
 		super();
 		m_Img = null;
 		m_MinionArray = null;
+		m_MinionCounterFormat = null;
 	}
 	
 	static inline var MARGIN : Int= 16;
 	public function Initialize()
 	{
+		m_MinionCounterFormat = new Array<TextFormat>();
 		m_MinionCounter = new Array<TextField>();
-		m_MinionCounterFormat = new TextFormat();
 		m_MinionAvail = new Array < Int>();
-		m_MinionCounterFormat.size = 16;
-		m_MinionCounterFormat.font = "arial";
+		
+		m_MinionCounterFormat[Type.enumIndex(RED)] = new TextFormat();
+		m_MinionCounterFormat[Type.enumIndex(RED)].size = 18;
+		m_MinionCounterFormat[Type.enumIndex(RED)].font = "arial";
+		m_MinionCounterFormat[Type.enumIndex(RED)].color = 0xFF0000;
+		m_MinionCounterFormat[Type.enumIndex(RED)].bold = true;
+		
+		m_MinionCounterFormat[Type.enumIndex(NORMAL)] = new TextFormat();
+		m_MinionCounterFormat[Type.enumIndex(NORMAL)].size = 16;
+		m_MinionCounterFormat[Type.enumIndex(NORMAL)].font = "arial";
+		m_MinionCounterFormat[Type.enumIndex(NORMAL)].color = 0xFFF5C7;
+		
 		m_MinionAvail[0] = 1;
 		m_AvailTimer = 0;
 	
@@ -87,7 +104,25 @@ class CMinionPad extends Sprite , implements Updatable
 		m_MinionArray[ Type.enumIndex( EMinions.Perforators ) ] = new CPerforatingMinion();
 		
 		m_MinionAvail[ m_MinionArray.length -1] = 0;
+		m_MinionCounter[ m_MinionArray.length -1] = null;
 		
+		var l_Margin = MARGIN;
+		var l_Top = 	l_Margin * 3;
+		var l_Bottom =  MTRG.HEIGHT * 0.5 - l_Margin * 3;
+		
+		for (i in 0...m_MinionArray.length)
+		{
+			var l_Pos : Float = l_Top + i * ( l_Bottom - l_Top  ) / (m_MinionArray.length-1); 
+			var l_NotHPosX = MTRG.BOARD_X * 0.5 + l_Margin * 0.5;
+			var l_NotHPosY = l_Pos;
+			
+			m_MinionCounter[i] = new TextField();
+			m_MinionCounter[i].x = l_NotHPosX + 16;
+			m_MinionCounter[i].y = l_NotHPosY + 16;
+			m_MinionCounter[i].visible = true;
+			addChild(m_MinionCounter[i]);
+		}
+		UpdateCounters();
 		Lambda.iter( m_MinionArray, function(m) m.visible = true  );
 	}
 	
@@ -109,20 +144,14 @@ class CMinionPad extends Sprite , implements Updatable
 			var l_NotHPosX = MTRG.BOARD_X * 0.5 + l_Margin * 0.5;
 			var l_NotHPosY = l_Pos;
 			m.m_Center.Set( l_NotHPosX/ MTRG.HEIGHT,  l_NotHPosY/ MTRG.HEIGHT);
-			
 			m.Update();
 			
+			m_MinionCounter[i].visible = true;
 			m.visible = true;
 			addChild(m);
-			
-			m_MinionCounter[i] = new TextField();
-			m_MinionCounter[i].x = l_NotHPosX + 16;
-			m_MinionCounter[i].y = l_NotHPosY + 16;
-			addChild(m_MinionCounter[i]);
-			//Glb.GetRendererAS().AddToSceneAS( m );
-			//Glb.GetRendererAS().SendToFront( m );
 			i++;
 		}
+		UpdateCounters();
 	}
 	public function GetDisplayObject()
 	{
@@ -141,8 +170,14 @@ class CMinionPad extends Sprite , implements Updatable
 		{
 			if ( m_MinionCounter[i] == null) continue;
 			
+			var l_CurEnum = NORMAL;
+			if (m_MinionAvail[i] == 0)
+			{
+				l_CurEnum = RED;
+			}
+			
 			m_MinionCounter[i].text = Std.string(m_MinionAvail[i]);
-			m_MinionCounter[i].setTextFormat( m_MinionCounterFormat );
+			m_MinionCounter[i].setTextFormat( m_MinionCounterFormat[Type.enumIndex(l_CurEnum)] );
 			m_MinionCounter[i].visible = true;
 		}
 	}
@@ -232,6 +267,9 @@ class CMinionPad extends Sprite , implements Updatable
 	//
 	public function Shut()
 	{
+		m_MinionCounter = null;
+		m_MinionCounterFormat = null;
+		m_MinionAvail = null;
 		Glb.GetRendererAS().RemoveFromSceneAS(this);
 		m_Img = null;
 	}
