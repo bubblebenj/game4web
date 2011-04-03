@@ -397,6 +397,7 @@ class CSpaceInvaderMinion extends CMinion
 		CV2D.Add( l_To , m_Center , l_To );
 		
 		l_NewOne.Fire(m_Center, l_To, Constants.BASE_SV_BOULETTE_SPEED );
+		MTRG.s_Instance.m_SoundBank.PlayBouletteSound();
 		
 		Registers.V2DPool.Destroy( l_To );
 	}
@@ -544,7 +545,7 @@ class CSpaceCircleMinion extends CMinion
 		{
 			m_BHV = Oscillate(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center.x, MTRG.s_Instance.m_Gameplay.m_Ship.m_Center.y );
 			
-			//trace(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center);
+			//CDebug.CONSOLEMSG(  MTRG.s_Instance.m_Gameplay.m_Ship.m_Center);
 			m_ThinkTimer = 0.75;
 		}
 	}
@@ -711,7 +712,7 @@ class CPerforatingMinion extends CMinion
 		var l_Delta = m_Speed *  Glb.g_System.GetGameDeltaTime();
 		if (l_Delta > l_Dist )
 		{
-			//trace("warp d:" + l_Delta + " dis" + l_Dist);
+			//CDebug.CONSOLEMSG("warp d:" + l_Delta + " dis" + l_Dist);
 			m_Center = MTRG.s_Instance.m_Gameplay.m_Ship.m_Center;
 		}
 		else
@@ -722,7 +723,7 @@ class CPerforatingMinion extends CMinion
 		
 		var l_Angle = Math.atan2(m_Dir.x, m_Dir.y);
 		m_ImgNormal.rotationZ =  Interp.Lerp( m_MatchingAngle, m_ImgNormal.rotationZ , (- l_Angle * math.Constants.RAD_TO_DEG) );
-		//trace(l_Angle);
+		//CDebug.CONSOLEMSG(l_Angle);
 		Registers.V2DPool.Destroy(l_R0);
 		m_MatchingAngle += Glb.g_System.GetGameDeltaTime() * 0.85;
 		m_MatchingAngle = Utils.Clamp( m_MatchingAngle, 0, 1);
@@ -866,6 +867,7 @@ class CCrossMinion extends CMinion
 					{
 						l_NewOne.visible = true;
 						l_NewOne.Fire(m_Center, MTRG.s_Instance.m_Gameplay.m_Ship.m_Center, Constants.BASE_SV_BOULETTE_SPEED );
+						MTRG.s_Instance.m_SoundBank.PlayBouletteSound();
 					}
 					m_State = CS_SALVA(n - 1, 0.1 );
 				}

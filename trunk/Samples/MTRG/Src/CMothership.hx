@@ -102,7 +102,7 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		UpdateLifeBar();
 		
 		var l_This = this;
-		//trace("onhit");
+		//CDebug.CONSOLEMSG("onhit");
 		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
 																{
 																	l_This.blendMode = SUBTRACT;

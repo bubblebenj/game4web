@@ -1,42 +1,55 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
+
+ /*
+  * Space ship management, contains bhv ('d be odd to speak of ai ... :-))
+  * */
 
 package ;
 
+import algorithms.CPool;
+import CCollManager;
+import CProjectile;
 import flash.display.BlendMode;
 import flash.display.GradientType;
-import flash.display.SpreadMethod;
 import flash.display.Shape;
+import flash.display.SpreadMethod;
 import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.Vector;
 import kernel.CDebug;
+import kernel.Glb;
 import math.Constants;
 import math.Registers;
 import math.Utils;
 using Lambda;
-import kernel.Glb;
-
 import math.CV2D;
 
+////////////
 enum AIBhv
 {
 	AI_Goto( _Pos : Float );
 	AI_Idle;
 }
 
+////////////
 enum ShapeIndex
 {
 	STD;
 	SHOOT;
 }
 
-import CProjectile;
-import algorithms.CPool;
-import CCollManager;
 
+////////////
 class CSpaceShip implements Updatable, implements BSphered
 {
 	public var m_AiTick : Float;
@@ -61,16 +74,22 @@ class CSpaceShip implements Updatable, implements BSphered
 	public var m_CollShape : COLL_SHAPE;
 	
 	public static inline var MAX_LASERS = 16;
-	public static inline var MAX_BOULETTE = 128;
 	
 	//imporvement, gather code and refactor with motherships
 	private var m_LifeBar : Shape;
 	private var m_LifeBarContainer : Shape;
 	
+	//laser pool was historically here i haven pushed it back
 	var m_LaserPool : CPool< CLaser >;
-	
 	private var m_MaxHp : Int;
 	
+	public static inline var BASE_LASER_SPEED = 0.4;	
+	public static inline var SHIP_BASELINE :Float =  MTRG.HEIGHT * 0.90;
+	public static inline var SHIP_BASESPEED : Float = 0.1;
+	public static inline var SHIP_AI_TICK_DURATION : Float = 0.5;
+	
+	
+	////////////////////////////////
 	public function new() 
 	{
 		m_Ship = null;
@@ -93,6 +112,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Hp = m_MaxHp;
 	}
 
+	////////////////////////////////
 	public function IsLoaded() : Bool
 	{
 		return m_Ship != null;
@@ -121,6 +141,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		return _Hp;
 	}
 	
+	////////////////////////////////
 	private function OnHit()
 	{
 		UpdateLifeBar();
@@ -144,6 +165,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		
 	}
 	
+	////////////////////////////////
 	private function OnDestroy()
 	{
 		UpdateLifeBar();
@@ -151,6 +173,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		MTRG.s_Instance.m_Gameplay.GameOver(true);
 	}
 	
+	////////////////////////////////
 	public function Initialize() : Void 
 	{
 		m_ShootSpin = 0;
@@ -158,6 +181,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_AiTick = 0.5;
 		m_Ship = new Sprite();
 		
+		//build the ai ship triangles
 		var l_Vec : Vector<Float> = new Vector<Float>();
 		var i = 0;
 		l_Vec[i++] = 0; 	l_Vec[i++] = -16; 
@@ -194,9 +218,11 @@ class CSpaceShip implements Updatable, implements BSphered
 		
 		Glb.GetRendererAS().AddToSceneAS( m_Ship );
 		
+		//using a linear homogeneous pos is easier for ai... if i have time i ll enhance it a bits
 		SetLinearPos( 0.5 );
 		m_Ship.visible = false;
 
+		////////////////////////////////
 		m_LaserPool = new CPool<CLaser>( MAX_LASERS, new CLaser());
 		Lambda.iter( m_LaserPool.Free(), function(ls) ls.Initialize() );
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Add(this);
@@ -218,6 +244,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		}
 	}
 	
+	////////////////////////////////
 	public function UpdateLifeBar()
 	{
 		if ( m_LifeBar != null)
@@ -231,18 +258,20 @@ class CSpaceShip implements Updatable, implements BSphered
 		}
 	}
 	
+	////////////////////////////////rescaling to AspectH world
 	public function GetPosH( _Vec : CV2D )
 	{ 
 		_Vec.Set( m_Ship.x / MTRG.HEIGHT, m_Ship.y / MTRG.HEIGHT );
 	}
 	
-	public static inline var BASE_LASER_SPEED = 0.4;
-	
+
+	////////////////////////////////
 	public function DeleteLaser( _Ls : CLaser )
 	{
 		m_LaserPool.Destroy( _Ls );
 	}
 	
+	////////////////////////////////
 	public function SetVisible( _OnOff )
 	{
 		m_LifeBar.visible = _OnOff;
@@ -250,6 +279,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Ship.visible = _OnOff;
 	}
 	
+	////////////////////////////////
 	public function Shoot()
 	{
 		//if (!m_LaserPool.isEmpty())
@@ -259,6 +289,8 @@ class CSpaceShip implements Updatable, implements BSphered
 			var l_NewOne = m_LaserPool.Create();
 			
 			if ( l_NewOne == null ) return;
+			
+			MTRG.s_Instance.m_SoundBank.PlayLaserSound();
 			
 			l_NewOne.visible = true;
 			
@@ -277,12 +309,8 @@ class CSpaceShip implements Updatable, implements BSphered
 		}
 	}
 	
-	
-	public static inline var SHIP_BASELINE :Float =  MTRG.HEIGHT * 0.90;
-	
-	public static inline var SHIP_BASESPEED : Float = 0.1;
-	public static inline var SHIP_AI_TICK_DURATION : Float = 0.5;
-	
+
+	////////////////////////////////
 	public function SetLinearPos( _v : Float )
 	{
 		_v = Utils.Clamp(_v, 0, 1);
@@ -295,14 +323,17 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Ship.x = l_Base.x;
 		m_Ship.y = l_Base.y;
 		
+		//got to aspect H
 		m_Center.x = l_Base.x / MTRG.HEIGHT;
 		m_Center.y = l_Base.y / MTRG.HEIGHT;
 	}
 	
+	////////////////////////////////
 	public function Update() : Void
 	{
 		switch( m_Bhv )
 		{
+			////////////////////////////////
 			case AI_Goto(v):
 				if( Math.abs(v - m_Pos) < Constants.EPSILON )
 				{
@@ -326,6 +357,7 @@ class CSpaceShip implements Updatable, implements BSphered
 					}
 				}
 			
+			////////////////////////////////
 			case AI_Idle:
 				m_AiTick -= Glb.GetSystem().GetGameDeltaTime();
 				if( m_AiTick <= 0 )
@@ -342,6 +374,7 @@ class CSpaceShip implements Updatable, implements BSphered
 						l_sign = -1;
 					}
 					
+					//the ai chooses a stabilized point near the center to stick with and jumps from small fragments lefT/right
 					var l_Stabilized = l_sign * Math.random() * MTRG.BOARD_WIDTH * 0.25;
 					l_Stabilized += l_Stabilized;
 					l_Stabilized *= 0.5;
@@ -355,6 +388,8 @@ class CSpaceShip implements Updatable, implements BSphered
 				}
 		}
 		
+		
+		////////////////////////////////
 		SetLinearPos(m_Pos);
 		
 		m_ShootSpin += Glb.GetSystem().GetGameDeltaTime();
@@ -365,12 +400,14 @@ class CSpaceShip implements Updatable, implements BSphered
 			m_ShootSpin = 0;
 		}
 		
+		////////////////////////////////
 		for(ls in Lambda.list(m_LaserPool.Used()) )
 		{
 			ls.Update();
 		}
 	}
 	
+	////////////////////////////////
 	public function Shut() : Void 
 	{
 		m_LaserPool.Free().iter( function(l) l.Shut() );

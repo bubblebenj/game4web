@@ -157,8 +157,8 @@ class CCollManager
 			return false;
 		}
 		
-		//trace("v:" +_V0+ "r:"+_R0);
-		//trace("p0:" +_P0+ "p1:"+_P1);
+		//CDebug.CONSOLEMSG("v:" +_V0+ "r:"+_R0);
+		//CDebug.CONSOLEMSG("p0:" +_P0+ "p1:"+_P1);
 
 		var l_Res=( 	_V0.x - _R0 < _P1.x 
 		&& 				_V0.x + _R0 > _P0.x 
