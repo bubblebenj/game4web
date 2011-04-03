@@ -1,5 +1,11 @@
 
+MTRG , copyright by david elahee
+code is un der GPL V3
+
 for the music : http://music2ten.com/about/
 hubble for the BG
 menly.fr for the space invader template
 FXHome.com for sfx's
+win music :http://ff7.fr/musiques.php
+
+other sounds made by me thanks to http://www.superflashbros.net/as3sfxr/

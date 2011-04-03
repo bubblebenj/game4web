@@ -7,8 +7,25 @@
  * 
  * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
  * 
+	Copyright (C) 2011  David Elahee
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses
+	
  * @author de
  ****************************************************/
+
+
 
  /*
   * Space ship management, contains bhv ('d be odd to speak of ai ... :-))
@@ -145,6 +162,8 @@ class CSpaceShip implements Updatable, implements BSphered
 	private function OnHit()
 	{
 		UpdateLifeBar();
+		
+		MTRG.s_Instance.m_SoundBank.PlayShipZapSound();
 		//CDebug.CONSOLEMSG("Ship hit!");
 		var l_This = this;
 		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
@@ -417,6 +436,13 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_LaserPool = null;
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		Glb.GetRendererAS().RemoveFromSceneAS( m_Ship );
+		
+		Glb.GetRendererAS().RemoveFromSceneAS( m_LifeBar );
+		Glb.GetRendererAS().RemoveFromSceneAS( m_LifeBarContainer );
+		
+		m_LifeBar = null;
+		m_LifeBarContainer = null;
+		
 		m_Ship = null;
 	}
 	
