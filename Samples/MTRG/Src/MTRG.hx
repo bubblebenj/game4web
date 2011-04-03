@@ -7,8 +7,25 @@
  * 
  * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
  * 
+	Copyright (C) 2011  David Elahee
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses
+	
  * @author de
  ****************************************************/
+
+
 
 package ;
 
@@ -97,8 +114,13 @@ class MTRG implements SystemProcess
 			m_Music.addEventListener( Event.COMPLETE, OnLoadDone); 
 			m_Music.addEventListener(Event.SOUND_COMPLETE, OnSoundEnd);
 
-			m_Music.play();
+			m_MusicChannel = m_Music.play();
 			m_SoundBank = new CSoundBank();
+		}
+		else
+		{
+			m_SoundBank.StopBank();
+			m_MusicChannel = m_Music.play();
 		}
 	}
 	
@@ -358,21 +380,34 @@ class MTRG implements SystemProcess
 			
 			m_EndScreen.addChild(l_ClickSomewhereElse);
 			
+			m_EndScreen.alpha = 0;
 			m_EndScreen.addChild(l_Title);
 			m_EndScreen.visible = true;
 			Glb.GetRendererAS().AddToSceneAS(m_EndScreen);
 		}
 		else
 		{
-			if( Glb.GetInputManager().GetMouse().IsDown() )
+			if (m_EndScreen.alpha <1)
 			{
-				Glb.GetRendererAS().RemoveFromSceneAS(m_EndScreen);
-				m_EndScreen = null;
-				
-				m_State = GS_INIT;
-				
-				
+				m_EndScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
 			}
+			else
+			{
+				m_EndScreen.alpha = 1;
+			}
+			
+			if (m_EndScreen.alpha >= 1)
+			{
+				if( Glb.GetInputManager().GetMouse().IsDown() )
+				{
+					Glb.GetRendererAS().RemoveFromSceneAS(m_EndScreen);
+					m_EndScreen = null;
+					m_SoundBank.StopBank();
+					m_State = GS_INIT;
+				}
+			}
+			
+			
 		}
 	}
 
