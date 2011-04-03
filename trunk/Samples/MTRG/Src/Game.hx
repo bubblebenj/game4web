@@ -9,6 +9,7 @@ package ;
 import CMinion;
 import flash.display.BlendMode;
 import flash.display.Shape;
+import flash.system.System;
 import haxe.FastList;
 import haxe.Log;
 import input.CKeyCodes;
@@ -34,16 +35,6 @@ enum DNDState
 {
 	DND_FREE;
 	DND_SOME( _Mob : CMinion );
-}
-
-//might need to check those in
-enum ZOrder
-{
-	ZO_BG;
-	ZO_MINION_PAD;
-	ZO_MOTHERSHIP;
-	ZO_ASTEROIDS;
-	ZO_SPACESHIP;
 }
 
 //ok let s go
@@ -76,8 +67,6 @@ class Game
 	public var 	m_PlacingLimitLine : Shape;
 	public var 	m_PlaceLimit : Float;
 	
-	public var 	m_ActiveMonsterList : List<CMinion>; 
-	
 	public function new() 
 	{
 		m_BG = null;
@@ -92,8 +81,7 @@ class Game
 		m_MinionHelper = new CMinionHelper();
 		
 		m_PlaceLimit = 0.2;
-		
-		m_ActiveMonsterList = new List<CMinion>();
+
 		m_Mothership = new CMothership();
 	}
 	
@@ -114,15 +102,14 @@ class Game
 	{
 		m_BG.m_Img.SetVisible(_onOff);
 		m_Pad.visible = _onOff;
-		m_Ship.m_Ship.visible = _onOff;
+		m_Ship.SetVisible( _onOff );
 		Lambda.iter( m_Asteroids, function( a ) { a.visible = _onOff;  } );
 		m_PlacingLimitLine.visible = _onOff;
-		m_Mothership.visible = true;
+		m_Mothership.SetVisible(_onOff);
 	}
 	
 	public function Initialize()
 	{	
-	
 		Log.setColor(0xFF0000);
 		
 		m_Tasks = new List<CTimedTask>();
@@ -184,7 +171,7 @@ class Game
 	public function GameOver( _Win : Bool )
 	{
 		CDebug.CONSOLEMSG("You " + (_Win ? "WIN" : "LOSE") + "!!!");
-		MTRG.s_Instance.m_State = GS_END_SCREEN;
+		MTRG.s_Instance.m_State = GS_END_SCREEN(_Win);
 	}
 	
 	public function OnLoaded()
@@ -203,7 +190,6 @@ class Game
 				_Mob.m_Center.Copy( Glb.GetInputManager().GetMouse().GetPosition() );
 				_Mob.visible = true;
 				_Mob.m_HasAI = true;
-				m_ActiveMonsterList.add( _Mob );
 			}
 			else
 			{
@@ -265,13 +251,13 @@ class Game
 		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_ADD)
 		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_ADD))
 		{
-			Glb.g_System.m_SpeedFactor += 0.1;
+			Glb.g_System.m_SpeedFactor += 0.5;
 		}
 		
 		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_SUBTRACT)
 		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_SUBTRACT))
 		{
-			Glb.g_System.m_SpeedFactor -= 0.1;
+			Glb.g_System.m_SpeedFactor -= 0.5;
 		}
 		
 		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_MULTIPLY)
@@ -333,10 +319,6 @@ class Game
 									Lambda.map(m_Tasks, function( t) { return ( t.Update() == false ) ? t : null;} ),
 									function(x) { return x != null; }
 									);
-									
-		Lambda.iter( Lambda.list( m_ActiveMonsterList), function(x) { x.Update(); } );
-		
-		
 	}
 	
 	public function Shut()
@@ -357,7 +339,17 @@ class Game
 		m_Ship = null;
 		
 		m_CollMan  = null;
+		m_Tasks = null;
 		
+		m_MinionHelper.Shut();
+		m_MinionHelper = null;
+		
+		m_Mothership.Shut();
+		m_Mothership = null;
+		
+		Glb.GetRendererAS().RemoveFromSceneAS(m_PlacingLimitLine);
+		System.gc();
+		System.gc();
 	}
 	
 }

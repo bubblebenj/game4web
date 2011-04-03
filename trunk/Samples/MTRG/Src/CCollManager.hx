@@ -1,7 +1,24 @@
-/**
- * ...
+/****************************************************
+ * MTRG : Motion-Twin recruitment game
+ * A game by David Elahee
+ * 
+ * MTRG is a Space Invader RTS, the goal is to protect your mothership from
+ * the random AI that shoots on it.
+ * 
+ * Powered by Game4Web a cross-platform engine by David Elahee & Benjamin Dubois.
+ * 
  * @author de
- */
+ ****************************************************/
+
+ /****************************************************
+ * a simple and straightforward collision manager, it is way imprecise for highly 
+ * dynamic mobiles, it perform one computation for each new position neither analysing previous nor logically current one
+ * collision are performed on a class to class basis
+ * test are either in AArect/AArect, sphere/AArect, sphere/sphere
+ * Array are used because they are easier to develop in a straightforward way, also it is easier to perform an 
+ * ordered insertion
+ * possible improvements : use Oriented Rectangles / use fast list
+ ****************************************************/
 
 package ;
 import algorithms.CBitArray;
@@ -11,6 +28,7 @@ import kernel.CDebug;
 import math.CV2D;
 import math.Registers;
 
+//////////////////////////
 enum COLL_CLASS
 {
 	Asteroids;
@@ -22,13 +40,15 @@ enum COLL_CLASS
 	Invalid;
 }
 
+//////////////////////////
 enum COLL_SHAPE
 {	
 	Sphere;
 	AARect( _Height : Float);//append to radius
 }
 
-//coord are expressed in AspectH
+//////////////////////////
+//coord are expressed in Aspect / Homogene world
 interface BSphered
 {
 	public var m_Center: CV2D;
@@ -43,7 +63,7 @@ interface BSphered
 }
 
 #if debug
-
+//unit test class
 class TestCollidable implements BSphered
 {
 	public function new()
@@ -70,8 +90,10 @@ class TestCollidable implements BSphered
 }
 #end
 
+//////////////////////////////////////////////////
 class CCollManager 
 {
+	//////////////////////////////////////////////////
 	var m_Objects : Array<BSphered>;
 	var m_CollideMap : CBitArray;
 	var m_IsProcessing : Bool;
@@ -80,6 +102,7 @@ class CCollManager
 	public var m_LastFrameTestCount : Int;
 	public var m_LastFrameHitCount : Int;
 	
+	//////////////////////////////////////////////////
 	public function new() 
 	{
 		m_Objects = new Array<BSphered>();
@@ -89,6 +112,7 @@ class CCollManager
 		m_LastFrameHitCount = 0;
 	}
 	
+	//////////////////////////////////////////////////
 	public static inline function TestCircleCircle( 	_V0 : CV2D, _R0 : Float,
 														_V1 : CV2D, _R1 : Float
 	) : Bool
@@ -101,6 +125,7 @@ class CCollManager
 		return( l_Radius2 >= l_Len2 );
 	}
 	
+	//////////////////////////////////////////////////
 	public static inline function TestCircleVtx( 	_V0 : CV2D, _R0 : Float,
 													_V1 : CV2D
 	) : Bool
@@ -112,6 +137,7 @@ class CCollManager
 		return( l_Radius2 >= l_Len2 );
 	}
 	
+	//////////////////////////////////////////////////
 	//P0 = TL  P1 = BR
 	public static function TestCircleRect( 	_V0 : CV2D, _R0 : Float,
 											_P0 : CV2D, _P1 : CV2D
@@ -143,6 +169,9 @@ class CCollManager
 		return l_Res;
 	}
 	
+	//////////////////////////////////////////////////
+	//uses SAT
+	//////////////////////////////////////////////////
 	public static function TestRectRect( 	_P00 : CV2D, _P01 : CV2D,
 											_P10 : CV2D, _P11 : CV2D
 	) : Bool
@@ -172,7 +201,7 @@ class CCollManager
 		return true;
 	}
 	
-	
+	//not so good ordered insert, i should find a bsearch impl
 	public function Add( _o : BSphered )
 	{
 		CDebug.ASSERT(_o != null);
@@ -190,6 +219,7 @@ class CCollManager
 		m_Objects.push( _o );
 	}
 	
+	//////////////////////////////////////////////////
 	public function Remove(_o : BSphered )
 	{
 		if( m_IsProcessing )
@@ -208,6 +238,7 @@ class CCollManager
 		}
 	}
 	
+	//////////////////////////////////////////////////
 	public static function IsColliding( _O0 : BSphered, _O1 : BSphered) : Bool
 	{
 		return switch(_O0.m_CollShape )
@@ -249,8 +280,10 @@ class CCollManager
 		};
 	}
 	
+	////////////////////////
 	public function Update()
 	{
+		//protect reentrancy issues
 		m_IsProcessing = true;
 		m_CollideMap.Fill(false);
 		
@@ -259,6 +292,7 @@ class CCollManager
 		m_LastFrameHitCount = 0;
 		#end
 		
+		//assert invariants
 		#if debug
 		for( i in 0...m_Objects.length-1)
 		{
@@ -271,11 +305,14 @@ class CCollManager
 			var c = m_Objects[i];
 			var l_Next = i + 1;
 			
+			//parse all (not noticeable for 500 lessobjects
 			for( j in l_Next...m_Objects.length )
 			{
 				l_Next = j;
 				var cprime = m_Objects[j];
 				var l_QuickEscape = false;
+				
+				//preop same object collision
 				while(c.m_CollClass == m_Objects[l_Next].m_CollClass)
 				{
 					l_Next++;
@@ -293,6 +330,7 @@ class CCollManager
 				cprime = m_Objects[l_Next];
 				CDebug.ASSERT(cprime != null);
 				
+				//opt invalid masking objects
 				if( (c.m_CollMask & (1 << Type.enumIndex( cprime.m_CollClass)) == 0)//optimize non interesting class sections
 				||	 m_CollideMap.Is(i * m_Objects.length + j )
 				)//already done
@@ -322,6 +360,7 @@ class CCollManager
 		}
 		m_IsProcessing = false;
 		
+		//reentrants deletion
 		if (m_DeleteQueue.length != 0)
 		{
 			for( b in m_DeleteQueue )
@@ -341,6 +380,8 @@ class CCollManager
 		#end
 	}
 	
+	
+	////////////////////////eases debug
 	public function toString() : String
 	{
 		var l_Str = "CollMan";

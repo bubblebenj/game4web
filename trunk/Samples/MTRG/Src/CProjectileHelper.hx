@@ -7,6 +7,7 @@ package ;
 
 import algorithms.CPool;
 import CProjectile;
+using Lambda;
 
 class CProjectileHelper 
 {
@@ -20,12 +21,20 @@ class CProjectileHelper
 	
 	public function Initialize()
 	{
-		Lambda.iter(m_CBoulettePool.Free() , function(k) { k.Initialize(); } );
+		m_CBoulettePool.Free().iter( function(k) { k.Initialize(); } );
 		m_Initialized = true;
 	}
 	
 	public function Update()
 	{
 		Lambda.iter( Lambda.list( m_CBoulettePool.Used() ), function(k) k.Update()  );
+	}
+	
+	public function Shut()
+	{
+		m_CBoulettePool.Free().iter( function(k) { k.Shut(); } );
+		m_CBoulettePool.Used().iter( function(k) { k.Shut(); } );
+		m_CBoulettePool.Reset();
+		m_CBoulettePool = null;
 	}
 }

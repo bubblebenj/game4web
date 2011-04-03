@@ -76,6 +76,9 @@ class CRendererAS extends CRenderer
 	
 	public function RemoveFromSceneAS( _DisplayObj : DisplayObject )
 	{
-		m_SceneAS.removeChild( _DisplayObj );
+		if (m_SceneAS.contains( _DisplayObj ) )
+		{
+			m_SceneAS.removeChild( _DisplayObj );
+		}
 	}
 }
