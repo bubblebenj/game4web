@@ -1,0 +1,4 @@
+-cp ../Src
+
+-neko ../build/Neko/CMainServer.n
+-main CMainServer

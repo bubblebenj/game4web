@@ -1,0 +1,5 @@
+-cp Src
+-cp ..\G4W\Src
+-swf9 Build\SWF\MTRG.swf
+-swf-header 600:800:60:000000
+-main MTRG
