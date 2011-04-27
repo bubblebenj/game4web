@@ -44,7 +44,7 @@ class CText
 	
 	public function IsLoaded() : Bool
 	{
-		return m_RscText.IsStreamed() && ! m_Loading;
+		return ( m_RscText != null ) ? m_RscText.IsStreamed() && (! m_Loading) : false;
 	}
 	
 	private	var m_Loading	: Bool;

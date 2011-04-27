@@ -9,7 +9,7 @@ class LambdaEx
 {
 
 	/**
-	 * 
+	 *
 	 **/
 	public static function firstOrDefault<Elem>( it : Iterable<Elem>, predicate : Elem -> Bool, ? elt : Elem ) : Elem 
 	{

@@ -128,6 +128,18 @@ class C2DQuad extends CDrawObject
 	/* 
 	 * Size
 	 */
+	/* /!\ Not tested
+	 * Set as the "original" size -> scale = (1,1) */
+	//public function SetSizeForceScale( _Size : CV2D ) : Void
+	//{
+		//m_Scale.Set( 1, 1 );
+		//
+		//var l_PivotCoord	= CV2D.NewCopy( GetPosition() );
+		//m_Rect.m_Size.Copy( _Size );
+		//SetPosition( l_PivotCoord );
+	//}
+	 
+	/* Set size and adjust scale */
 	public function SetSize( _Size : CV2D ) : Void
 	{
 		if ( CV2D.AreAbsEqual( m_Scale, CV2D.ZERO ) )
@@ -168,16 +180,6 @@ class C2DQuad extends CDrawObject
 		m_Rect.m_Size.Set(	_BR.x - _TL.x,
 							_BR.y - _TL.y );
 		SetTLPosition( _TL );
-	}
-	
-	public function SetScale( _Scale : CV2D )
-	{
-		m_Scale	= _Scale;
-	}
-	
-	private function GetScale() : CV2D
-	{
-		return m_Scale;
 	}
 	
 	/* 

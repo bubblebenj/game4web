@@ -12,9 +12,14 @@ typedef TLoader =
 	function Update() : Result;
 }
 
+typedef TStreamable =
+{
+	function IsStreamed() : Bool;
+}
+
 typedef RscAndLoader =
 {
-	var m_Rsc		: CRsc;
+	var m_Rsc		: TStreamable;
 	var m_Loader	: TLoader;
 }
 
@@ -36,7 +41,7 @@ class CRscSitter
 		m_State		= FREE;
 	}
 	
-	public function Add( _Rsc : CRsc, _Loader : TLoader ) : Void
+	public function Add( _Rsc : TStreamable, _Loader : TLoader ) : Void
 	{
 		m_RscList.add( { m_Rsc : _Rsc, m_Loader : _Loader } );
 		m_State		= SITTING;
