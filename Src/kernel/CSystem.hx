@@ -1,8 +1,10 @@
-
 package kernel;
 
-import flash.events.Event;
-import flash.Lib;
+#if flash
+	import flash.events.Event;
+	import flash.Lib;
+#end
+
 import kernel.CTypes;
 import haxe.Timer;
 import haxe.TimerQueue;
@@ -94,9 +96,9 @@ class CSystem
 	{
 		// Glb.StaticUpdate actually do g_System.Update();
 		#if flash
-		Lib.current.addEventListener( Event.ENTER_FRAME, ClosedStaticUpdate );
+			Lib.current.addEventListener( Event.ENTER_FRAME, ClosedStaticUpdate );
 		#else
-		m_SysTimer.add( Glb.StaticUpdate );
+			m_SysTimer.add( Glb.StaticUpdate );
 		#end
 	}
 	

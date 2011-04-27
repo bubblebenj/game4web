@@ -571,15 +571,15 @@ class	CRscSpline extends CRsc
 		var i : Int = 0;
 		for (i_Node in l_FSpline.nodes.node )
 		{
-			var l_Point : CV3D = new CV3D ( Std.parseFloat( i_Node.node.point.att.x ),
-			                                Std.parseFloat( i_Node.node.point.att.y ),
-			                                Std.parseFloat( i_Node.node.point.att.z ) );
+			var l_Point : CV3D = new CV3D ( Std.parseFloat( i_Node.node.Point.att.x ),
+			                                Std.parseFloat( i_Node.node.Point.att.y ),
+			                                Std.parseFloat( i_Node.node.Point.att.z ) );
 			var l_In	: CV3D = new CV3D ( Std.parseFloat( i_Node.node.In.att.x ),
 			                                Std.parseFloat( i_Node.node.In.att.y ),
 			                                Std.parseFloat( i_Node.node.In.att.z ) );
-			var l_Out	: CV3D = new CV3D ( Std.parseFloat( i_Node.node.out.att.x ),
-			                                Std.parseFloat( i_Node.node.out.att.y ),
-			                                Std.parseFloat( i_Node.node.out.att.z ) );
+			var l_Out	: CV3D = new CV3D ( Std.parseFloat( i_Node.node.Out.att.x ),
+			                                Std.parseFloat( i_Node.node.Out.att.y ),
+			                                Std.parseFloat( i_Node.node.Out.att.z ) );
 			
 			l_Nodes[i]	= 
 			{

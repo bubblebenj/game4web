@@ -21,12 +21,12 @@ class CBimapCollision
 		if ( _ARGB != null )
 		{	
 			//trace( "0x" + Utils.IntToStr( _Bitmap.GetARGB( _Point ), 16 ) );
-			return ( _Bitmap.GetRGB( _Point ) == _ARGB ) ? true : false;
+			return ( _Bitmap.GetRGB( _Point ) == _ARGB );
 		}
 		else
 		{
 			//trace( "0x" + Utils.IntToStr( _Bitmap.GetARGB( _Point ), 16 ) + " >>> " + _Bitmap.GetARGB( _Point ));
-			return ( ( _Bitmap.GetARGB( _Point ) - _Bitmap.GetRGB( _Point ) ) == 0 ) ? true : false;
+			return ( ( _Bitmap.GetARGB( _Point ) - _Bitmap.GetRGB( _Point ) ) == 0 );
 		}
 	}
 	

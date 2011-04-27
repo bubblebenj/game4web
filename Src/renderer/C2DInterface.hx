@@ -97,14 +97,14 @@ class C2DInterface
 		if ( _Unit == RATIO )
 		{
 			/*\ if element size is (0, 0) will wait to fit parent size (keeping image ratio) */
-			if ( CV2D.AreEqual( l_Size, CV2D.ZERO ) &&  CV2D.AreEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
+			if ( CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) &&  CV2D.AreAbsEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
 			{
 				m_WaitObjSize = true;
 				return;
 			}
 			else
 			{
-				if ( CV2D.AreEqual( l_Size, CV2D.ZERO ) )	// fit inside parent keeping image ratio
+				if ( CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )	// fit inside parent keeping image ratio
 				{
 					var l_ImgRatio	= m_2DObject.GetSize().x / m_2DObject.GetSize().y;
 					if ( l_RefObjSize.x / l_RefObjSize.y > l_ImgRatio ) // Fit to parent height
@@ -129,7 +129,7 @@ class C2DInterface
 		
 		m_WaitObjSize = false;
 		// Now size is in pixels (if not already)
-		if ( CV2D.AreEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
+		if ( CV2D.AreAbsEqual( m_2DObject.GetSize(), CV2D.ZERO ) )
 		{
 			l_NewSize.Copy( l_Size );
 		}

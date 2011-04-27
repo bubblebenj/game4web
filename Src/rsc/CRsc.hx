@@ -31,7 +31,7 @@ class CRsc
 	
 	public inline function IsStreamed() : Bool
 	{
-		return ( m_State == STREAMED ) ? true : false;
+		return m_State == STREAMED;
 	}
 	
 	public function Copy( _InRsc : CRsc ) : Void 
