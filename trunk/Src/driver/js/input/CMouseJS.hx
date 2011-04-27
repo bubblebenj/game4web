@@ -8,7 +8,7 @@ package driver.js.input;
 import js.Dom;
 
 import math.CV2D;
-import kernel.CMouse;
+import input.CMouse;
 import kernel.Glb;
  
 class CMouseJS extends CMouse

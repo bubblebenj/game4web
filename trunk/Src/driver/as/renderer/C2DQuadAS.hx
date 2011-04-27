@@ -87,8 +87,8 @@ class C2DQuadAS extends C2DQuad
 				m_Matrix.identity();
 				
 				// Set size
-				m_Matrix.scale( GetScale().x ,
-								GetScale().y );
+				m_Matrix.scale( m_Scale.x ,
+								m_Scale.y );
 				
 				// place pivot at origine
 				m_Matrix.tx	-= ( GetPosition().x - GetTL().x ) * Glb.GetSystem().m_Display.m_Height;
