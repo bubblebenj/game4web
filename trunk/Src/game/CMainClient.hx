@@ -4,12 +4,12 @@
 import editor.CEditorPanel;
 import kernel.CSystem;
 import kernel.Glb;
-import kernel.CTypes;
-import kernel.CMouse;								// <--
+import kernel.CTypes;							// <--
 import kernel.CDebug;		
 
 import input.CKeyboard;
 import input.CKeyCodes;
+import input.CMouse;
 
 import algorithms.CBitArray;
 
@@ -241,7 +241,7 @@ class CMainClient
 			Glb.g_System.MainLoop();
 			
 			Glb.g_System.m_BeforeUpdate =  UpdateCallback;
-			Glb.g_System.m_BeforeDraw =  RenderCallback;
+			Glb.g_System.m_BeforeDraw	=  RenderCallback;
 		}
 	}
 }
