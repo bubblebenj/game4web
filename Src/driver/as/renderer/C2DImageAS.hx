@@ -65,7 +65,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		return l_Res;
 	}
 	
-	public function SetRsc( _Rsc : CRscImage )	: Result
+	public	function SetRsc( _Rsc : CRscImage )	: Result
 	{
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
@@ -73,16 +73,16 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		return l_Res;
 	}
 	
-	public function GetRsc() : CRscImage
-	{
-		return m_RscImage;
-	}
+	//public	function GetRsc() : CRscImage
+	//{
+		//return m_RscImage;
+	//}
 
-	public override function IsLoaded()	: Bool
+	public function IsStreamed()	: Bool
 	{
 		var l_IsLoaded = ( m_DisplayObject != null ) ? true : false;
 		
-		if ( null != m_RscImage )
+		if ( m_RscImage != null )
 		{
 			return l_IsLoaded && m_RscImage.IsStreamed();
 		}
@@ -92,7 +92,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage
 		}
 	}
 	
-	public function CreateBitmap() : Void
+	private function CreateBitmap() : Void
 	{
 		var l_BitmapData = m_RscImage.GetBitmapData();
 		if ( l_BitmapData != null )

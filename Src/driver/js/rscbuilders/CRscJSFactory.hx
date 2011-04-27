@@ -5,7 +5,7 @@
 
 package driver.js.rscbuilders;
 
-import driver.js.kernel.CMouseJS;
+import driver.js.input.CMouseJS;
 import driver.js.renderer.CMaterialJS;
 import driver.js.renderer.CPrimitiveJS;
 import driver.js.renderer.CRenderStatesJS;
@@ -16,10 +16,10 @@ import driver.js.renderer.CRscImageJS;
 import driver.js.input.CKeyboardJS;
 
 import kernel.CTypes;
-import kernel.CMouse;
 import kernel.CDebug;
 
 import input.CKeyboard;
+import input.CMouse;
 
 import renderer.CRscTexture;
 import renderer.CMaterial;

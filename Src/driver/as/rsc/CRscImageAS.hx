@@ -24,7 +24,7 @@ class CRscImageAS extends CRscImage
 	{
 		super();
 		m_ImgLoader	= new Loader();
-		m_State			= INVALID;
+		m_State		= INVALID;
 	}
 	
 	public function Initialize() : Result
@@ -61,16 +61,8 @@ class CRscImageAS extends CRscImage
 	
 	public function GetBitmapData() : BitmapData
 	{
-		if  ( m_State == STREAMED )
-		{
-			return cast( m_ImgLoader.content, Bitmap ).bitmapData;
-		}
-		else
-		{
-			return null;
-		}
+		return ( IsStreamed() ) ? cast( m_ImgLoader.content, Bitmap ).bitmapData : null;
 	}
-	
 	
 	public override function GetDriverImage() : Dynamic
 	{

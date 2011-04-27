@@ -12,13 +12,13 @@ import driver.js.rscbuilders.CRscJSFactory;
 import kernel.CInputManager;
 
 import input.CKeyboard;
+import input.CMouse;
 
 import kernel.CSystem;
 import kernel.CTypes;
 import kernel.CDisplay;
 import kernel.CDebug;
 import kernel.Glb;
-import kernel.CMouse;
 
 import renderer.CMaterial;
 import renderer.CRscTexture;

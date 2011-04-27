@@ -25,7 +25,6 @@ class CSystemAS extends CSystem
 {
 	private	var m_RscASFactory	: CRscASFactory;
 	
-	
 	public var m_FlashTimer : Timer;
 	public var m_PreviousTimer : Int;
 	
@@ -77,4 +76,6 @@ class CSystemAS extends CSystem
 
 		return SUCCESS;
 	}
+	
+	
 }
