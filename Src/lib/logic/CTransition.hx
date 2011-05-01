@@ -1,0 +1,6 @@
+﻿package logic;
+
+/**
+ * ...
+ * @author bdubois
+ */
