@@ -40,7 +40,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import kernel.CDebug;
+import CDebug;
 import kernel.Glb;
 import Game;
 import math.CV2D;

@@ -33,7 +33,7 @@ package ;
 
  import flash.display.Shape;
  import flash.display.Sprite;
- import kernel.CDebug;
+ import CDebug;
  import math.CV2D;
  import math.RandomEx;
  import renderer.CColor;

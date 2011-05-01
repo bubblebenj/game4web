@@ -51,8 +51,8 @@ import haxe.TimerQueue;
 
 import kernel.Glb;
 import kernel.CSystem;
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 
 enum GAME_STAGE
 {

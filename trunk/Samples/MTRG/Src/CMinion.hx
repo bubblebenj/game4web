@@ -50,7 +50,7 @@ import math.Interp;
 import math.RandomEx;
 import math.Registers;
 import math.Utils;
-import kernel.CDebug;
+import CDebug;
 import kernel.Glb;
 import math.CV2D;
 import CProjectile;

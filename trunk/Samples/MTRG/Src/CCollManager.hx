@@ -40,7 +40,7 @@
 package ;
 import algorithms.CBitArray;
 import haxe.FastList;
-import kernel.CDebug;
+import CDebug;
 
 import math.CV2D;
 import math.Registers;
