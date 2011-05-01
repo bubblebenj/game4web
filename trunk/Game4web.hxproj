@@ -13,8 +13,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="Src" />
     <class path="Src\game" />
+    <class path="Src\lib" />
+    <class path="Src\engine" />
   </classpaths>
   <!-- Build options -->
   <build>
