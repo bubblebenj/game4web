@@ -43,7 +43,7 @@ import flash.display.SpreadMethod;
 import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.Vector;
-import kernel.CDebug;
+import CDebug;
 import kernel.Glb;
 import math.Constants;
 import math.Registers;

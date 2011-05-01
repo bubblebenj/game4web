@@ -40,7 +40,7 @@ import flash.display.Sprite;
 import flash.display.GradientType;
 import flash.display.SpreadMethod;
 import flash.geom.Matrix;
-import kernel.CDebug;
+import CDebug;
 import math.Constants;
 import math.CV2D;
 import kernel.Glb;
@@ -159,7 +159,7 @@ class CProjectile implements BSphered
 		}
 		else 
 		{
-			kernel.CDebug.BREAK("Projectile targeting wrong");
+			CDebug.BREAK("Projectile targeting wrong");
 		}
 		
 		m_Center.Copy(_From);

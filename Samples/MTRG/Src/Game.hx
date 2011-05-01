@@ -40,13 +40,12 @@ import flash.system.System;
 import haxe.FastList;
 import haxe.Log;
 import input.CKeyCodes;
-import kernel.CDebug;
+import CDebug;
 import kernel.Glb;
 import math.CV2D;
 import math.Registers;
 import MTRG;
 import rsc.CRscImage;
-import rsc.CRscSitter;
 
 ////////////////////gameplay sequencing (not same granularity as game
 enum GameState
@@ -120,7 +119,7 @@ class Game
 	////////////////////////////////////////////////////////////
 	public function IsLoaded() : Bool
 	{
-		var l_Answer : Bool = m_BG.IsLoaded() && m_Pad.IsLoaded() && m_Ship.IsLoaded() && m_RscSpaceInvader.IsStreamed() && m_MinionHelper.IsLoaded();
+		var l_Answer : Bool = m_BG.IsLoaded() && m_Pad.IsLoaded() && m_Ship.IsLoaded() && m_RscSpaceInvader.IsReady() && m_MinionHelper.IsLoaded();
 		
 		//early escape
 		if (!l_Answer)
@@ -328,7 +327,7 @@ class Game
 			case GS_LOADING: 
 			
 			if (!m_MinionHelper.IsLoaded()
-			&&	m_RscSpaceInvader.IsStreamed() )
+			&&	m_RscSpaceInvader.IsReady() )
 			{
 				m_MinionHelper.Initialize();
 				m_Pad.Populate();

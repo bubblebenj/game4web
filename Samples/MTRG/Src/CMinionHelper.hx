@@ -37,7 +37,7 @@ package ;
 
 import algorithms.CPool;
 import CMinion;
-import kernel.CDebug;
+import CDebug;
 using Lambda;
 
 class CMinionHelper

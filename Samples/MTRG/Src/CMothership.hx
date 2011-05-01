@@ -37,7 +37,7 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.geom.Matrix;
 import kernel.Glb;
-import kernel.CDebug;
+import CDebug;
 import math.CV2D;
 
 import CCollManager;
