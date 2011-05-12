@@ -15,7 +15,7 @@ import kernel.Glb;
 import math.CV2D;
 import math.CV4D;
 import math.Registers;
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 import renderer.I2DImage;
 import rsc.CRscImage;
 import rsc.CRscMan;

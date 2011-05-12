@@ -2,7 +2,7 @@ package rsc;
 
 import kernel.CSystem;
 import kernel.Glb;
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 
 typedef RSC_TYPES = Int;
 

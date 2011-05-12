@@ -5,10 +5,28 @@ package tools;
  * @author bd
  */
 
-class Copy 
+class CCopy 
 {
-
-/** 
+	// Copy all std field of a class
+	public static function SuperficialClassCopy<T>( _src : T, _tgt : T ) : Void
+	{ 
+		for( i_field in Type.getInstanceFields( Type.getClass( _src ) ) ) 
+		{
+			var isStdType		=	Std.is( i_field, Int ) ||
+									Std.is( i_field, Float ) ||
+									Std.is( i_field, String );
+			var isNotAFunction	= ! Reflect.isFunction( i_field  );
+			
+			if ( isStdType || isNotAFunction ) // simple type, not a fonction 
+			{
+				Reflect.setField( _tgt, i_field, Reflect.field( _src, i_field ) );
+			}
+		}
+	} 
+	
+	
+	
+	/** 
     deep copy of anything 
    **/ 
 	public static function deepCopy<T>( v:T ) : T 

@@ -7,7 +7,7 @@ package tools;
 
 import kernel.Glb;
 import CTypes;
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 import rsc.CRsc;
 import rsc.CRscMan;
 import rsc.CRscText;

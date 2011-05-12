@@ -3,7 +3,7 @@
  * @author bd
  */
 
-package remote_data;
+package remotedata;
 
 import CTypes;
 import remotedata.IRemoteData;
@@ -40,7 +40,8 @@ class CRemoteDataMan
 		m_State				= FREE;
 	}
 	
-	public function Add( _RemoteData : IRemoteData, _Loader : TLoader ) : Void
+	// Typically if pure remoteData loader is not needed
+	public function Add( _RemoteData : IRemoteData, ?_Loader : TLoader ) : Void
 	{
 		m_RemoteDataList.add( { m_RemoteData : _RemoteData, m_Loader : _Loader } );
 		m_State		= SITTING;
@@ -54,7 +55,10 @@ class CRemoteDataMan
 			{
 				for ( i_RemoteDataAndLoader in m_RemoteDataList )
 				{
-					i_RemoteDataAndLoader.m_Loader.Update();
+					if ( i_RemoteDataAndLoader.m_Loader != null )
+					{
+						i_RemoteDataAndLoader.m_Loader.Update();
+					}
 					if ( i_RemoteDataAndLoader.m_RemoteData.IsReady() )
 					{
 						m_RemoteDataList.remove( i_RemoteDataAndLoader );
@@ -69,7 +73,7 @@ class CRemoteDataMan
 			{
 				m_State	= FREE;
 			}
-			default :
+			case FREE :
 			{
 				
 			}

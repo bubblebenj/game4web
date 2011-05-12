@@ -12,7 +12,7 @@ import tools.CXml;
 import math.CSpline;
 import math.CV3D;
 
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 import rsc.CRsc;
 
  

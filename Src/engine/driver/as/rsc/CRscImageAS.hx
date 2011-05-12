@@ -14,7 +14,7 @@ import flash.net.URLRequest;
 
 import CTypes;
 import CDebug;
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 import rsc.CRscImage;
 import rsc.CRsc;
 import math.CV2D;
