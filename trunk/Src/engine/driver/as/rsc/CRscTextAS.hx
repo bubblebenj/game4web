@@ -11,7 +11,7 @@ import flash.text.TextField;
 import flash.net.URLRequest;
 
 import CTypes;
-import remoteData.IRemoteData;
+import remotedata.IRemoteData;
 import rsc.CRsc;
 import rsc.CRscText;
 
