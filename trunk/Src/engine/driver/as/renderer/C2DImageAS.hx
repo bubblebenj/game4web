@@ -72,16 +72,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 
 	public override function IsReady()	: Bool
 	{
-		var l_IsLoaded = ( m_DisplayObject != null ) ? true : false;
-		
-		if ( m_RscImage != null )
-		{
-			return l_IsLoaded && m_RscImage.IsReady();
-		}
-		else 
-		{
-			return l_IsLoaded;
-		}
+		return m_state == READY;
 	}
 	
 	private function CreateBitmap() : Void
@@ -98,7 +89,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	{
 		if ( 	m_RscImage	!= null
 		&& 		m_RscImage.IsReady()
-		&&		IsReady() )
+		&&		m_DisplayObject	== null )
 		{
 			m_state	= READY;
 			CreateBitmap();
@@ -123,6 +114,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 			SetPosition( GetPosition() );
 			
 			SetVisible( m_Visible );
+			
 			if ( m_Activated )
 			{
 				if ( m_DisplayObject.parent == null )
