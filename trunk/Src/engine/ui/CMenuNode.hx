@@ -96,6 +96,7 @@ class CMenuNode				// C&D MenuState
 	public function FadeIn() : Void
 	{
 		Activate();
+		GetContainer().SetVisible( true );
 		var l_Tween = new CTween( m_EltsContainer.SetAlpha, 0, 1, 150, CLinear.Float_VaryIn, EnableButtons  );
 		l_Tween.Start();
 	}
@@ -103,8 +104,14 @@ class CMenuNode				// C&D MenuState
 	public function FadeOut() : Void
 	{
 		DisableButtons();
-		var l_Tween = new CTween( m_EltsContainer.SetAlpha, 1, 0, 250, CLinear.Float_VaryIn, m_EltsContainer.Shut );
+		var l_Tween = new CTween( m_EltsContainer.SetAlpha, 1, 0, 250, CLinear.Float_VaryIn, Unactivate );
 		l_Tween.Start();
+	}
+	
+	private function Unactivate() : Result
+	{
+		m_EltsContainer.Shut();
+		return SUCCESS;
 	}
 	
 	public function EnableButtons() : Void

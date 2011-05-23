@@ -260,7 +260,9 @@ class Game
 	{
 		/*
 		 * */
+//		trace ("GIGA blop");
 		
+		 
 		#if debug
 		if( Glb.GetInputManager().GetMouse().IsDown())
 		{

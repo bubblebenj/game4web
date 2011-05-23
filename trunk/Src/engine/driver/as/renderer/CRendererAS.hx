@@ -69,7 +69,7 @@ class CRendererAS extends CRenderer
 		m_SceneAS.setChildIndex( _DisplayObj, 0 );
 	}
 	
-	public function AddToSceneAS(  _DisplayObj : DisplayObject )
+	public function AddToSceneAS( _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}

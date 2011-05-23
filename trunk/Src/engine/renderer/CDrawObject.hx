@@ -15,6 +15,17 @@ import kernel.Glb;
 
 class CDrawObject 
 {
+			var 	m_Visible	: Bool;
+	private var		m_Alpha		: Float;
+			var		m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
+			a lot faster than removing it from the scene. Thus object should be remove from the scene only on shut request.*/
+	
+			var 	m_Transfo	: CMatrix44;
+	
+	public 	var		m_VpMask	: Int;
+			var		m_Cameras	: Array<CCamera>;
+	
+	
 	public function new()
 	{
 		m_VpMask	= Constants.INT_MAX;
@@ -33,7 +44,12 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
-		m_Activated	= true;
+		if ( ! m_Activated )
+		{
+			m_Activated	= true;
+			Glb.GetRenderer().AddToScene( this );
+		}
+		
 		return SUCCESS;
 	}
 	
@@ -52,23 +68,16 @@ class CDrawObject
 	{
 		/* bd : process draw requests in child objects
 		 * on driver side ? */
+		if ( Activate() == FAILURE )
+		{
+			return FAILURE;
+		}
 		return SUCCESS;
 	}
 	
 	public function SetVisible( _Vis : Bool ) : Void 
 	{
-		if ( _Vis != m_Visible )
-		{
-			m_Visible = _Vis;
-			if( m_Visible )
-			{
-				Glb.g_System.GetRenderer().AddToScene( this );
-			}
-			else
-			{
-				Glb.g_System.GetRenderer().RemoveFromScene( this );
-			}
-		}	
+		m_Visible = _Vis;
 	}
 	
 	public function IsVisible() : Bool 
@@ -100,14 +109,4 @@ class CDrawObject
 	{
 		m_Transfo.Copy(_Transfo);
 	}
-	
-			var 	m_Visible	: Bool;
-	private var		m_Alpha		: Float;
-			var		m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
-			a lot faster than removing it from the scene. Thus object should be remove from the scene only on shut request.*/
-	
-			var 	m_Transfo	: CMatrix44;
-	
-	public 	var		m_VpMask	: Int;
-			var		m_Cameras	: Array<CCamera>;
 }

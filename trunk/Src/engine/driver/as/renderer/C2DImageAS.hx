@@ -26,7 +26,13 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 {
 	private var m_RscImage	: CRscImageAS;	// content
 	
-	private	var m_state		: DATA_STATE;
+	public	var m_state( default, SetState )	: DATA_STATE;
+	
+	public	function SetState( _State : DATA_STATE ) : DATA_STATE
+	{
+		m_state	= _State;
+		return m_state;
+	}
 	
 	public function new()
 	{
@@ -43,7 +49,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	
 	public function SetUV( _u : CV2D , _v : CV2D ) : Void
 	{
-		m_UV.CopyV2D(_u, _v );
+		m_UV.CopyV2D( _u, _v );
 	}
 	
 	public function Load( _Path )	: Result
@@ -89,7 +95,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	{
 		if ( 	m_RscImage	!= null
 		&& 		m_RscImage.IsReady()
-		&&		m_DisplayObject	== null )
+		&&		m_state == SYNCING )
 		{
 			m_state	= READY;
 			CreateBitmap();

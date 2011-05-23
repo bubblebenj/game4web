@@ -226,7 +226,7 @@ class C2DContainer extends C2DQuad
 		{
 			_Prefix = "";
 		}
-		trace( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() );
+		trace( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() + ", Vis : " + m_Visible );
 	}
 	
 	public function ShowTree( ? _Depth : Int ) : Void

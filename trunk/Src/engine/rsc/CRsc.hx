@@ -8,10 +8,17 @@ typedef RSC_TYPES = Int;
 
 class CRsc implements IRemoteData
 {
-	var m_Ref				: Int;
-	var m_Path				: String;
-	var m_SingleLoad		: Bool;
-	public var m_state		: DATA_STATE;
+	var m_Ref									: Int;
+	var m_Path									: String;
+	var m_SingleLoad							: Bool;
+	
+	public	var m_state( default, SetState )	: DATA_STATE;
+	
+	public	function SetState( _State : DATA_STATE ) : DATA_STATE
+	{
+		m_state	= _State;
+		return m_state;
+	}
 	
 	public function new()
 	{
@@ -20,6 +27,8 @@ class CRsc implements IRemoteData
 		m_SingleLoad 	= false;
 		m_state			= REMOTE;
 	}
+	
+
 	
 	public inline function IsReady() : Bool
 	{

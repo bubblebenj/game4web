@@ -10,16 +10,16 @@ class CCopy
 	// Copy all std field of a class
 	public static function SuperficialClassCopy<T>( _src : T, _tgt : T ) : Void
 	{ 
-		for( i_field in Type.getInstanceFields( Type.getClass( _src ) ) ) 
+		for( i_fieldName in Type.getInstanceFields( Type.getClass( _src ) ) ) 
 		{
-			var isStdType		=	Std.is( i_field, Int ) ||
-									Std.is( i_field, Float ) ||
-									Std.is( i_field, String );
-			var isNotAFunction	= ! Reflect.isFunction( i_field  );
+			var isStdType		=	Std.is( Reflect.field( _src, i_fieldName ), Int ) ||
+									Std.is( Reflect.field( _src, i_fieldName ), Float ) ||
+									Std.is( Reflect.field( _src, i_fieldName ), String );
+			var isNotAFunction	= ! Reflect.isFunction( Reflect.field( _src, i_fieldName )  );
 			
-			if ( isStdType || isNotAFunction ) // simple type, not a fonction 
+			if ( isStdType && isNotAFunction ) // simple type, not a fonction 
 			{
-				Reflect.setField( _tgt, i_field, Reflect.field( _src, i_field ) );
+				Reflect.setField( _tgt, i_fieldName, Reflect.field( _src, i_fieldName ) );
 			}
 		}
 	} 
