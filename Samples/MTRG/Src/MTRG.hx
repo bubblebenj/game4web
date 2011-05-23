@@ -153,6 +153,7 @@ class MTRG implements SystemProcess
 	////////////////////////////////////////////////////////////
 	function UpdateGame()
 	{
+		//trace ("blop");
 		m_Gameplay.Update();
 	}
 	
@@ -309,7 +310,6 @@ class MTRG implements SystemProcess
 					m_Gameplay.Start();
 					m_Gameplay.SetVisible(true);
 					m_State = GS_RUNNING;
-					
 				}
 				
 			}
@@ -440,9 +440,9 @@ class MTRG implements SystemProcess
 
 		Lib.fscommand( "allowscale", "true");
 		Lib.fscommand( "showmenu", "false");
-		
-		//WIDTH = Lib.fscommand.stage.width;
-		//HEIGHT = Lib.current.stage.height;
+
+		var WIDTH = Lib.current.stage.stageWidth;
+		var HEIGHT = Lib.current.stage.stageHeight;
 		
 		CDebug.CONSOLEMSG("w=" +WIDTH+ " h=" +HEIGHT);
 		if( Glb.g_System == null )

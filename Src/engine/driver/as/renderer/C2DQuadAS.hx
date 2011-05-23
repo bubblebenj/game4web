@@ -30,7 +30,6 @@ class C2DQuadAS extends C2DQuad
 {
 	public	var m_DisplayObject	: DisplayObject;	// container
 	private var	m_Matrix		: Matrix;
-
 	
 	public function new() 
 	{
@@ -43,7 +42,6 @@ class C2DQuadAS extends C2DQuad
 	{
 		if ( !m_Activated )
 		{
-			Glb.GetRendererAS().AddToScene( this );
 			if ( m_DisplayObject != null )
 			{
 				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
@@ -81,7 +79,7 @@ class C2DQuadAS extends C2DQuad
 	{
 		super.Draw( _Vp );
 		
-		if ( m_DisplayObject != null && IsReady())
+		if ( IsReady() )
 		{
 			// Object matrix
 				m_Matrix.identity();
@@ -145,7 +143,7 @@ class C2DQuadAS extends C2DQuad
 	
 	public override function IsReady()	: Bool
 	{
-		return ( m_DisplayObject != null ) ? true : false;
+		return m_DisplayObject != null;
 	}
 	
 	public function GetNonTransformedPoint( _WorldV2D : CV2D, _PointOut : CV2D ) : Void
@@ -166,7 +164,7 @@ class C2DQuadAS extends C2DQuad
 		super.DebugInfo( _Prefix );
 		if ( m_DisplayObject != null )
 		{
-			CDebug.CONSOLEMSG( _Prefix + " " + this +", "+ m_DisplayObject +", \t Pos: [" + m_DisplayObject.x +", "+ m_DisplayObject.y +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"]");
+			CDebug.CONSOLEMSG( _Prefix + " " + this +", "+ m_DisplayObject +", \t Pos: [" + m_DisplayObject.x +", "+ m_DisplayObject.y +"], Sz: [" + m_DisplayObject.width + " " + m_DisplayObject.height +"], Vis : " + m_Visible );
 		}
 		else
 		{
