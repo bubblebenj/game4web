@@ -1,4 +1,6 @@
 package;
+import haxe.BaseCode;
+import haxe.Stack;
 
 class CDebug
 {
@@ -9,7 +11,7 @@ class CDebug
 		if ( _Obj == false )//|| _Obj == null )
 		{
 			
-			haxe.Log.trace( "Assert in " + pos.className + "::" + pos.methodName, pos );
+			CDebug.CONSOLEMSG( "Assert in " + pos.className + "::" + pos.methodName, pos );
 			throw _Obj;
 		}
 	}
@@ -26,7 +28,7 @@ class CDebug
 		if ( true )
 		{
 			#if debug
-			haxe.Log.trace( "Break in " + pos.className + "::" + pos.methodName + ":" +  _Str, pos );
+			CDebug.CONSOLEMSG( "Break in " + pos.className + "::" + pos.methodName + ":" +  _Str, pos );
 			throw _Str;
 			#end
 		}
@@ -38,10 +40,24 @@ class CDebug
 	#end
 	
 	#if debug
+	public static function ERRORMSG( _Error : Dynamic, ?pos : haxe.PosInfos  )
+	{
+		CDebug.CONSOLEMSG( "ERROR \"" + _Error + "\" " + haxe.Stack.toString( haxe.Stack.exceptionStack() ), pos );
+	}
+	#else
+	public static inline function ERRORMSG( _Msg : String, ?pos : haxe.PosInfos  )
+	{
+	}
+	#end
+	
+	
+	#if debug
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
-		#if debug
-		haxe.Log.trace( _Msg , pos);
+		#if neko
+			neko.Web.logMessage( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
+		#else
+			haxe.Log.trace( _Msg , pos);
 		#end
 	}
 	#else

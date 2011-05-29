@@ -1,6 +1,7 @@
 package renderer;
 
 import haxe.FastList;
+import kernel.CDisplay;
 import math.CMatrix44;
 
 import tools.transition.CTween;
@@ -180,12 +181,60 @@ class CRenderer
 		return SUCCESS;
 	}
 	
-	public function AddToScene( _Obj : CDrawObject )
+	
+	public function insertAt( _list : List<CDrawObject>, _Index : Int, _Obj : CDrawObject ) : Void
 	{
-		m_Scene.push( _Obj );			
+		var l_ListLen	= _list.length;
+		
+		var l_NewList	= new List();
+		var l_Iter		= _list.iterator();
+		var l_DObj : CDrawObject;
+		
+		for (i in 0..._Index)
+		{
+			l_DObj	= l_Iter.next();
+			l_NewList.add( l_DObj );
+		}
+		
+		l_NewList.add( _Obj );
+		
+		for ( i in _Index ... l_ListLen )
+		{
+			l_DObj	= l_Iter.next();
+			l_NewList.add( l_DObj );
+		}
+		
+		_list	= l_NewList;
 	}
 	
-	public function RemoveFromScene(  _Obj : CDrawObject )
+	
+	public function AddToScene( _Obj : CDrawObject ) : Void
+	{
+		m_Scene.add( _Obj );
+		/*/
+		var i = 0;
+		for (x in m_Scene)
+		{
+			if (x.m_Priority >= _Obj.m_Priority)
+			{
+				break;
+			}
+			i++;
+		}//*/
+	}
+	
+	/*public function Subset( _l, _n )
+	{
+		var l_NewList = new List();
+		for ( x in _l )
+		{
+			l_NewList.push( _l );
+			n--;
+		}
+	}//*/
+	
+	
+	public function RemoveFromScene(  _Obj : CDrawObject ) : Void
 	{
 		m_Scene.remove(_Obj );
 	}

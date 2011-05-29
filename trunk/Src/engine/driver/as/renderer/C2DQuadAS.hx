@@ -28,16 +28,24 @@ import renderer.CMaterial;
 
 class C2DQuadAS extends C2DQuad
 {
-	public	var m_DisplayObject	: DisplayObject;	// container
+	//public	var m_DisplayObject	: DisplayObject;	// container
 	private var	m_Matrix		: Matrix;
 	
-	public function new() 
+	private	var m_DisplayObject( GetNativeAS, never ) : DisplayObject; 
+	
+	public	function new() 
 	{
 		super();
 		m_Matrix	= new Matrix();
 		m_Visible	= true;
 	}
 	
+	private function GetNativeAS() : DisplayObject
+	{
+		return cast ( m_Native, DisplayObject );
+	}
+	
+	/*
 	public override function Activate() : Result
 	{
 		if ( !m_Activated )
@@ -45,12 +53,16 @@ class C2DQuadAS extends C2DQuad
 			if ( m_DisplayObject != null )
 			{
 				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+				return super.Activate();
 			}
-			return super.Activate();
+			else
+			{
+				return FAILURE;
+			}
 		}
 		return SUCCESS;
-	}
-	
+	}//*/
+	/*/
 	public override function Shut() : Result
 	{
 		Glb.GetRendererAS().RemoveFromScene( this );
@@ -63,7 +75,7 @@ class C2DQuadAS extends C2DQuad
 		}
 		super.Shut();
 		return SUCCESS;
-	}
+	}//*/
 	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
