@@ -9,6 +9,7 @@ import driver.as.rsc.CRscTextAS;
 import flash.text.TextField;
 import math.Registers;
 import math.Utils;
+import remotedata.IRemoteData;
 
 import CTypes;
 import kernel.Glb;
@@ -20,37 +21,21 @@ import rsc.CRsc;
 import rsc.CRscMan;
 import rsc.CRscText;
 
-class CTextFieldAS extends C2DQuadAS, implements ITextField 
+class CTextFieldAS extends C2DQuadAS, implements ITextField
 {
+	private var m_Text		: String;
+	
 	public function new()
 	{
 		super();
-		m_DisplayObject	= null;
 		m_Visible		= false;
 		m_Text			= "";
+		Initialize();
 	}
 	
-	private function CreateTextField() : Void
+	public override function Initialize() : Result
 	{
-		m_DisplayObject			= new TextField();
-		cast( m_DisplayObject, TextField ).text	= m_Text;
-		#if DebugInfo
-			//cast( m_DisplayObject, TextField ).border	= true;
-		#end
-		cast( m_DisplayObject, TextField ).selectable	= false;
-	}
-	
-	public function SetText( _Text : String ) : Void
-	{
-		m_Text	= _Text;
-		if ( m_DisplayObject != null )
-		{
-			cast( m_DisplayObject, TextField ).text	= m_Text;
-		}
-	}
-	
-	public override function Update() : Result
-	{
+		super.Initialize();
 		if( m_DisplayObject == null )
 		{
 			CreateTextField();
@@ -75,16 +60,44 @@ class CTextFieldAS extends C2DQuadAS, implements ITextField
 			SetPosition( GetPosition() );
 			
 			SetVisible( m_Visible );
-			if ( m_Activated )
-			{
-				if ( m_DisplayObject.parent == null )
-				{
-					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-				}
-			}
+			//if ( m_Activated )
+			//{
+				//if ( m_DisplayObject.parent == null )
+				//{
+					//Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+				//}
+			//}
 		}
 		return SUCCESS;
 	}
 	
-	private var m_Text		: String;
+	private function GetTextField() : TextField
+	{
+		return cast( m_Native, TextField );
+	}
+	
+	private function CreateTextField() : Void
+	{
+		m_Native		= new TextField();
+		var l_TF		= GetTextField();
+		l_TF.text		= m_Text;
+		#if DebugInfo
+			l_TF.border	= true;
+		#end
+		l_TF.selectable	= false;
+	}
+	
+	public function SetText( _Text : String ) : Void
+	{
+		m_Text	= _Text;
+		if ( m_DisplayObject != null )
+		{
+			GetTextField().text	= m_Text;
+		}
+	}
+	
+	public override function Update() : Result
+	{
+		return SUCCESS;
+	}
 }

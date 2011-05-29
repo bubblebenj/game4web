@@ -15,24 +15,28 @@ import kernel.Glb;
 
 class CDrawObject 
 {
-			var 	m_Visible	: Bool;
-	private var		m_Alpha		: Float;
-			var		m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
+	public	var m_Priority	: Int;
+			var m_Visible	: Bool;
+	private var	m_Alpha		: Float;
+			var	m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
 			a lot faster than removing it from the scene. Thus object should be remove from the scene only on shut request.*/
 	
-			var 	m_Transfo	: CMatrix44;
+			var m_Transfo	: CMatrix44;
 	
-	public 	var		m_VpMask	: Int;
-			var		m_Cameras	: Array<CCamera>;
+	public 	var	m_VpMask	: Int;
+			var	m_Cameras	: Array<CCamera>;
+	public	var m_Native	: Dynamic;
 	
 	
 	public function new()
 	{
+		m_Priority	= 0;
 		m_VpMask	= Constants.INT_MAX;
 		m_Visible	= false;
 		m_Alpha		= 1;
 		m_Transfo	= new CMatrix44();
 		m_Transfo.Identity();
+		m_Native	= null;
 		
 		m_Cameras = new Array<CCamera>();
 	}
@@ -44,12 +48,11 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
-		if ( ! m_Activated )
+		if ( ! m_Activated && m_Native != null)
 		{
-			m_Activated	= true;
 			Glb.GetRenderer().AddToScene( this );
+			m_Activated	= true;
 		}
-		
 		return SUCCESS;
 	}
 	
@@ -60,7 +63,11 @@ class CDrawObject
 	
 	public function Shut() : Result
 	{
-		m_Activated	= false;
+		if ( m_Activated )
+		{
+			Glb.GetRenderer().RemoveFromScene( this );
+			m_Activated	= false;
+		}
 		return SUCCESS;
 	}
 	

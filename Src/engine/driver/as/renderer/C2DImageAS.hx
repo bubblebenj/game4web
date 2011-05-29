@@ -25,27 +25,25 @@ import rsc.CRsc;
 class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 {
 	private var m_RscImage	: CRscImageAS;	// content
-	
+	private var m_UV : CV4D;
 	public	var m_state( default, SetState )	: DATA_STATE;
+	
+	public function new()
+	{
+		super();
+		m_state			= REMOTE;
+		//m_Native		= new Bitmap( new BitmapData( 8, 8, false, 0x00000000 ) );
+		//GetBitmap().alpha = 0;
+		m_RscImage		= null;
+		m_Visible		= false;
+		m_UV			= new CV4D( 0, 0, 1, 1 );
+	}
 	
 	public	function SetState( _State : DATA_STATE ) : DATA_STATE
 	{
 		m_state	= _State;
 		return m_state;
 	}
-	
-	public function new()
-	{
-		super();
-		m_state			= REMOTE;
-		m_DisplayObject	= new Bitmap( new BitmapData( 8, 8, false, 0x00000000 ) );
-		m_DisplayObject.alpha = 0;
-		m_RscImage		= null;
-		m_Visible		= false;
-		m_UV			= new CV4D( 0, 0, 1, 1 );
-	}
-
-	private var m_UV : CV4D;
 	
 	public function SetUV( _u : CV2D , _v : CV2D ) : Void
 	{
@@ -86,8 +84,9 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		var l_BitmapData = m_RscImage.GetBitmapData();
 		if ( l_BitmapData != null )
 		{
-			m_DisplayObject	= new Bitmap( l_BitmapData );
-			cast( m_DisplayObject, Bitmap ).smoothing	= true;
+			var l_Bmp = new Bitmap( l_BitmapData );
+			m_Native = l_Bmp;
+			l_Bmp.smoothing	= true;
 		}
 	}
 	
@@ -97,7 +96,6 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		&& 		m_RscImage.IsReady()
 		&&		m_state == SYNCING )
 		{
-			m_state	= READY;
 			CreateBitmap();
 			
 			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
@@ -120,14 +118,8 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 			SetPosition( GetPosition() );
 			
 			SetVisible( m_Visible );
+			m_state	= READY;
 			
-			if ( m_Activated )
-			{
-				if ( m_DisplayObject.parent == null )
-				{
-					Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-				}
-			}
 		}
 		return SUCCESS;
 	}

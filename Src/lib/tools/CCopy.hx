@@ -24,8 +24,6 @@ class CCopy
 		}
 	} 
 	
-	
-	
 	/** 
     deep copy of anything 
    **/ 

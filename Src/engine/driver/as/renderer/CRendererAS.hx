@@ -17,7 +17,6 @@ import renderer.CViewport;
 class CRendererAS extends CRenderer
 {
 	private var m_SceneAS	: MovieClip;
-
 	
 	public function new()
 	{
@@ -69,12 +68,30 @@ class CRendererAS extends CRenderer
 		m_SceneAS.setChildIndex( _DisplayObj, 0 );
 	}
 	
-	public function AddToSceneAS( _DisplayObj : DisplayObject )
+	public override function AddToScene( _Obj : CDrawObject ) : Void
+	{
+		CDebug.ASSERT( _Obj != null);
+		CDebug.ASSERT( _Obj.m_Native != null);
+
+		super.AddToScene( _Obj );
+				
+		for ( i_Child in 0 ... m_SceneAS.numChildren )
+		{
+			m_SceneAS.removeChildAt( 0 );
+		}
+		
+		for ( i_Child in m_Scene )
+		{
+			m_SceneAS.addChild( cast ( i_Child.m_Native, DisplayObject ) );
+		}
+	}
+	
+	private function AddToSceneAS( _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}
 	
-	public function RemoveFromSceneAS( _DisplayObj : DisplayObject )
+	private function RemoveFromSceneAS( _DisplayObj : DisplayObject )
 	{
 		if (m_SceneAS.contains( _DisplayObj ) )
 		{
