@@ -24,14 +24,16 @@ import renderer.camera.C2DCamera;
 
 class C2DContainer extends C2DQuad
 {
-	public 	var m_Name		: String;
-	private var m_2DObjects	: Array<C2DQuad>;
+	public 	var m_Name				: String;
+	private var m_2DObjects			: Array<C2DQuad>;
+	private	var m_AllEltActivated	: Bool;
 	
 	public function new()
 	{
 		super();
-		m_Name			= "anonymous";
-		m_2DObjects		= new Array<C2DQuad>();
+		m_Name				= "anonymous";
+		m_2DObjects			= new Array<C2DQuad>();
+		m_AllEltActivated	= false;
 		SetSize( CV2D.ONE );
 	}
 	
@@ -186,10 +188,21 @@ class C2DContainer extends C2DQuad
 	
 	public override function Activate() : Result
 	{
-		super.Activate();
+		// by-passing super.activate();
+		m_Activated	= true;
+		
+		var l_CntActivatedElements	: Int = 0;
 		for ( i_Object in m_2DObjects )
 		{
 			i_Object.Activate();
+			if ( i_Object.m_Activated )
+			{
+				l_CntActivatedElements++;
+			}
+		}
+		if ( l_CntActivatedElements == m_2DObjects.length )
+		{
+			m_AllEltActivated = true;
 		}
 		return SUCCESS;
 	}
@@ -215,6 +228,11 @@ class C2DContainer extends C2DQuad
 		for ( i_Object in m_2DObjects )
 		{
 			i_Object.Update();
+		}
+		
+		if ( m_Activated && ! m_AllEltActivated )
+		{
+			Activate();
 		}
 		return SUCCESS;
 	}

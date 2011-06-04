@@ -60,7 +60,7 @@ class CRendererAS extends CRenderer
 	
 	public function SendToFront(  _DisplayObj : DisplayObject )
 	{
-		m_SceneAS.setChildIndex( _DisplayObj,m_SceneAS.numChildren-1 );
+		m_SceneAS.setChildIndex( _DisplayObj, m_SceneAS.numChildren-1 );
 	}
 	
 	public function SendToBack(  _DisplayObj : DisplayObject )
@@ -70,8 +70,8 @@ class CRendererAS extends CRenderer
 	
 	public override function AddToScene( _Obj : CDrawObject ) : Void
 	{
-		CDebug.ASSERT( _Obj != null);
-		CDebug.ASSERT( _Obj.m_Native != null);
+		CDebug.ASSERT( _Obj != null );
+		CDebug.ASSERT( _Obj.m_Native != null );
 
 		super.AddToScene( _Obj );
 				
@@ -86,7 +86,7 @@ class CRendererAS extends CRenderer
 		}
 	}
 	
-	private function AddToSceneAS( _DisplayObj : DisplayObject )
+	/*/private function AddToSceneAS( _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}
@@ -97,5 +97,5 @@ class CRendererAS extends CRenderer
 		{
 			m_SceneAS.removeChild( _DisplayObj );
 		}
-	}
+	}//*/
 }

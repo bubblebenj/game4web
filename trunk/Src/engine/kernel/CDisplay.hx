@@ -7,15 +7,14 @@ package kernel;
 
 class CDisplay
 {
+	public var m_Width	: Int;
+	public var m_Height	: Int;
 
 	public function new() 
 	{
-		m_Width = 0;
-		m_Height = 0;
+		m_Width		= 0;
+		m_Height	= 0;
 	}
-	
-	public var m_Width : Float;
-	public var m_Height  : Float;
 	
 	public function GetAspectRatio() : Float
 	{

@@ -9,7 +9,7 @@ class CV2D
 	
 	public function new ( _x , _y )
 	{
-		x = _x; 
+		x = _x;
 		y = _y;
 	}
 	

@@ -19,6 +19,7 @@ class CKeyboardJS extends CKeyboard
 		m_Context	= js.Lib.document.body;
 		
 		m_Context.onkeydown 	= OnDown;
+		m_Context.onkeyup	 	= OnUp;
 		
 		if( null != m_Context)
 		{
@@ -29,17 +30,22 @@ class CKeyboardJS extends CKeyboard
 	
 	public function OnDown( _Evt : Event )
 	{
-		m_UpArray.Set(_Evt.keyCode, false);
+		if ( IsKeyUp( _Evt.keyCode ) )
+		{
+			m_NbKeyDown++;
+			m_UpArray.Set(_Evt.keyCode, false);
+		}
 		CDebug.CONSOLEMSG("OnDown :" +_Evt.keyCode);
 	}
 	
-	/*
+	
 	public function OnUp(  _Evt : Event)
 	{
+		( m_NbKeyDown < 1 ) ? 0 : m_NbKeyDown--;
 		m_UpArray.Set(_Evt.keyCode, true);
 		CDebug.CONSOLEMSG("OnUp :" +_Evt.keyCode);
 	}
-	
+	/*
 	public function OnPress(  _Evt : Event)
 	{
 		CDebug.CONSOLEMSG("OnPress :" +_Evt.keyCode);
