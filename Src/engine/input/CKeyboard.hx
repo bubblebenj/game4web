@@ -15,16 +15,18 @@ import rsc.CRscMan;
 
 class CKeyboard extends CRsc
 {
-	
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
 	public override function GetType() : Int
 	{
 		return RSC_ID;
 	}
 	
+	public	var m_NbKeyDown	: Int;
+	
 	public function new() 
 	{
 		super();
+		m_NbKeyDown			= 0;
 		m_UpArray			= new CBitArray( CKeyCodes.KEY_MAX );
 		m_UpArray.Fill(true);
 		
@@ -35,7 +37,7 @@ class CKeyboard extends CRsc
 	public function Update() : Result
 	{
 		m_PreviousUpArray.Copy( m_UpArray );
-		m_UpArray.Fill( true );
+		//m_UpArray.Fill( true ); // When holding a key in AS the event down is not triggered so the key will seem UP. JS && AS drivers patched too
 		return SUCCESS;
 	}
 	

@@ -211,19 +211,21 @@ class CRenderer
 	public function AddToScene( _Obj : CDrawObject ) : Void
 	{
 		m_Scene.add( _Obj );
-		/*/
+		//
 		var i = 0;
 		for (x in m_Scene)
 		{
 			if (x.m_Priority >= _Obj.m_Priority)
 			{
+				insertAt( m_Scene, i, _Obj );
 				break;
 			}
 			i++;
 		}//*/
 	}
 	
-	/*public function Subset( _l, _n )
+	/*/
+	public function Subset( _l, _n )
 	{
 		var l_NewList = new List();
 		for ( x in _l )

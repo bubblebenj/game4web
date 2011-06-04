@@ -48,7 +48,7 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
-		if ( ! m_Activated && m_Native != null)
+		if ( ! m_Activated && m_Native != null )
 		{
 			Glb.GetRenderer().AddToScene( this );
 			m_Activated	= true;

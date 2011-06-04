@@ -32,12 +32,12 @@ class C2DInterface
 	public function new( _Object : C2DQuad, ?_RefObj : C2DQuad ) 
 	{
 		Set2DObject( _Object );
-		m_WaitObjSize = false;
-		m_WaitRefObjSize = false;
+		m_WaitObjSize		= false;
+		m_WaitRefObjSize	= false;
 		
 		if ( _RefObj == null )
 		{
-			m_RefObj	= null;
+			m_RefObj		= null;
 		}
 		else
 		{
@@ -176,7 +176,7 @@ class C2DInterface
 		m_2DObject.SetPivot( l_Pos );
 	}
 	
-	public function SetEltPos( _Unit : E_Unit, _Pos : CV2D ) : Void
+	public function SetEltPos( _Unit : E_Unit, _Pos : CV2D, ?_UseParentPivotAsRef : Bool = false ) : Void
 	{
 		//le probleme est que la position de l'objet ne peut etre fait en ratio du parent si celui-ci a un taille nulle
 		
@@ -190,7 +190,14 @@ class C2DInterface
 		else
 		{
 			l_RefObjSize.Copy( m_RefObj.GetSize() );
-			l_RefObjPos.Copy( m_RefObj.GetTL() );
+			if ( _UseParentPivotAsRef )
+			{
+				l_RefObjPos.Copy( m_RefObj.GetPosition() );
+			}
+			else
+			{
+				l_RefObjPos.Copy( m_RefObj.GetTL() );
+			}
 		}
 		
 		var l_Pos			: CV2D	= new CV2D( _Pos.x, _Pos.y );
