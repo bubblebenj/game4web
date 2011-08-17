@@ -56,7 +56,11 @@ class CBitArray
 		}
 		else
 		{
-			m_Array[ Std.int(_Index / 31)] &= ~(1 << (_Index%31));
+			#if neko
+				CDebug.BREAK( "Neko target need you to implement CBitArray.Set( _Index : Int , _Val : Bool ) because Neko doesn't support ~ operator (31bit shit)" );
+			#else
+				m_Array[ Std.int(_Index / 31)] &= ~(1 << (_Index % 31));
+			#end
 		}
 	}
 	
