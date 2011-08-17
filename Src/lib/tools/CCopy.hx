@@ -12,13 +12,15 @@ class CCopy
 	{ 
 		for( i_fieldName in Type.getInstanceFields( Type.getClass( _src ) ) ) 
 		{
-			var isStdType		=	Std.is( Reflect.field( _src, i_fieldName ), Int ) ||
+			var isStdType		=	Std.is( Reflect.field( _src, i_fieldName ), Bool ) ||
+									Std.is( Reflect.field( _src, i_fieldName ), Int ) ||
 									Std.is( Reflect.field( _src, i_fieldName ), Float ) ||
 									Std.is( Reflect.field( _src, i_fieldName ), String );
 			var isNotAFunction	= ! Reflect.isFunction( Reflect.field( _src, i_fieldName )  );
 			
 			if ( isStdType && isNotAFunction ) // simple type, not a fonction 
 			{
+				//CDebug.CONSOLEMSG( i_fieldName + " : " + Reflect.field( _tgt, i_fieldName ) + " -> " + Reflect.field( _src, i_fieldName ) );
 				Reflect.setField( _tgt, i_fieldName, Reflect.field( _src, i_fieldName ) );
 			}
 		}
