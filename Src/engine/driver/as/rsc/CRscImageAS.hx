@@ -49,7 +49,7 @@ class CRscImageAS extends CRscImage
 		m_ImgLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
 		
 		m_state			= REMOTE;
-		CDebug.CONSOLEMSG("Img failed to load " + m_Path);
+		CDebug.ERRORMSG("Img failed to load " + m_Path);
 	}
 	
 	public function onLoaded( _Event : Event )	: Void
