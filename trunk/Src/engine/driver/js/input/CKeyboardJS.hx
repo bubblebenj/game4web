@@ -7,8 +7,8 @@ package driver.js.input;
 
 import js.Dom;
 
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 import input.CKeyboard;
 
 class CKeyboardJS extends CKeyboard

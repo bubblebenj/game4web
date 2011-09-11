@@ -5,10 +5,10 @@
 
 package driver.js.rsc;
 
-import kernel.CTypes;
+import CTypes;
 import kernel.Glb;
 import kernel.CSystem;
-import kernel.CDebug;
+import CDebug;
 
 import rsc.CRsc;
 import rsc.CRscMan;

@@ -11,8 +11,5 @@ import rsc.CRscText;
 
 interface ITextField
 {
-	public function SetText( _Text	: String )	: Void
-	{
-		
-	}
+	public function SetText( _Text	: String )	: Void;
 }

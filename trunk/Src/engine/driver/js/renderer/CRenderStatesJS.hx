@@ -10,7 +10,7 @@ import CGL;
 import driver.js.kernel.CSystemJS;
 
 import kernel.Glb;
-import kernel.CTypes;
+import CTypes;
 import renderer.CRenderStates;
 
 class CRenderStatesJS extends CRenderStates

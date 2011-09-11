@@ -7,8 +7,8 @@ package driver.js.rsc;
 
 import kernel.CSystem;
 import kernel.Glb;
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 
 import js.Dom;
 import rsc.CRsc;

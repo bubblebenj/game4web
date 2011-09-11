@@ -10,8 +10,8 @@ import driver.js.renderer.CViewportJS;
 import math.CMatrix44;
 
 import kernel.Glb;
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 
 import renderer.CRenderer;
 import renderer.CViewport;
