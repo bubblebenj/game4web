@@ -1,6 +1,6 @@
 package driver.js.renderer;
 
-import kernel.CTypes;
+import CTypes;
 import kernel.Glb;
 
 import renderer.C2DQuad;

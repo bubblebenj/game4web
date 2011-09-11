@@ -15,8 +15,8 @@ import driver.js.renderer.CRscImageJS;
 
 import driver.js.input.CKeyboardJS;
 
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 
 import input.CKeyboard;
 import input.CMouse;

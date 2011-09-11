@@ -5,12 +5,14 @@
 
 package driver.js.renderer;
 
-import kernel.CDebug;
+import CDebug;
 import kernel.CSystem;
 
 import rsc.CRsc;
 import rsc.CRscImage;
 import js.Dom;
+
+import remotedata.IRemoteData;
 
 class CRscImageJS extends CRscImage
 {
@@ -22,25 +24,25 @@ class CRscImageJS extends CRscImage
 		m_Img = null;
 	}
 	
-	public override function SetPath( _Path : String )
+	public override function SetPath( _Path : String ) : Void
 	{
 		super.SetPath(_Path);
 		
 		m_Img = untyped __js__("new Image()");
 		m_Img.src = _Path;
 		
-		var l_functor = function( x ) 
-		{ 
-			return function(_) ( 
+		var me = this;
+		var l_functor = 
+			function(_)  
 			{ 
 				CDebug.CONSOLEMSG("Streamed image : " + _Path );
-				x.m_State = E_STATE.STREAMED;  
-			}
-			);
-		};
+				me.m_state = READY;
+				
+			};
 		
-		m_State = E_STATE.STREAMING;
-		m_Img.onload = l_functor(this);
+		m_state = SYNCING;
+		m_Img.onload = l_functor;
+		
 	}
 	
 	public override function GetDriverImage() : Dynamic

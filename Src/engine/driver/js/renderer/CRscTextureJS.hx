@@ -11,15 +11,15 @@ import renderer.CRenderContext;
 import renderer.CRscShader;
 
 import kernel.CSystem;
-import kernel.CTypes;
+import CTypes;
 import kernel.Glb;
-import kernel.CDebug;
+import CDebug;
 
 import renderer.CRscTexture;
 
 import rsc.CRsc;
 import rsc.CRscImage;
-
+import remotedata.IRemoteData;
 import CGL;
 
 class CRscTextureJS extends CRscTexture
@@ -55,7 +55,7 @@ class CRscTextureJS extends CRscTexture
 			CDebug.CONSOLEMSG("GlError:PostCreateTexture:" + l_Err);
 		}
 		
-		m_State = STREAMED;
+		m_state = SYNCING;
 		m_InDevice = true;
 		CDebug.CONSOLEMSG("Created GL tex : "+ m_GlTexture);
 	}
@@ -70,7 +70,7 @@ class CRscTextureJS extends CRscTexture
 		super.Activate(_Stage);
 		
 		if (	m_GlTexture == null
-			&&	m_RscImage.m_State == E_STATE.STREAMED)
+			&&	m_RscImage.IsReady())
 		{
 			FinishGlTexture();
 		}
@@ -124,12 +124,12 @@ class CRscTextureJS extends CRscTexture
 			}
 		}
 		
-		if( IsInDevice() && IsStreamed())
+		if( IsInDevice() && IsReady())
 		{
 			return SUCCESS;
 		}
 		
-		CDebug.CONSOLEMSG("Failed to activate : Tex Status : IsInDevice: " + IsInDevice() + " Streamed " + IsStreamed() + " Image Steamed : " +m_RscImage.IsStreamed());
+		CDebug.CONSOLEMSG("Failed to activate : Tex Status : IsInDevice: " + IsInDevice() + " Streamed " + IsReady() + " Image Steamed : " +m_RscImage.IsReady());
 		
 		return FAILURE;
 	}

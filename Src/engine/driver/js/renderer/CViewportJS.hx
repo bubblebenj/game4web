@@ -8,8 +8,8 @@ package driver.js.renderer;
 import driver.js.kernel.CSystemJS;
 
 import kernel.Glb;
-import kernel.CTypes;
-import kernel.CDebug;
+import CTypes;
+import CDebug;
 import kernel.CDisplay;
 import kernel.CSystem;
 

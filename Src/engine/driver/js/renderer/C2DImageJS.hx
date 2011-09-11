@@ -24,10 +24,10 @@ import renderer.CRscTexture;
 import renderer.CMaterial;
 import renderer.CPrimitive;
 
-import kernel.CDebug;
+import CDebug;
 import kernel.CSystem;
 import kernel.Glb;
-import kernel.CTypes;
+import CTypes;
 
 import math.CMatrix44;
 import math.Registers;

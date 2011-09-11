@@ -9,8 +9,8 @@ import driver.js.kernel.CSystemJS;
 
 import kernel.CSystem;
 import kernel.Glb;
-import kernel.CDebug;
-import kernel.CTypes;
+import CDebug;
+import CTypes;
 
 import renderer.CPrimitive;
 

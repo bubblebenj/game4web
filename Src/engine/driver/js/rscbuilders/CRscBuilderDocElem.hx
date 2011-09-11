@@ -9,7 +9,7 @@ import driver.js.rsc.CRscVertexShader;
 import driver.js.rsc.CRscFragmentShader;
 import driver.js.rsc.CRscShaderProgram;
 
-import kernel.CDebug;
+import CDebug;
 
 import rsc.CRscBuilder;
 import rsc.CRsc;

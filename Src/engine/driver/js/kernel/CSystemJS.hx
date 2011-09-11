@@ -15,9 +15,9 @@ import input.CKeyboard;
 import input.CMouse;
 
 import kernel.CSystem;
-import kernel.CTypes;
+import CTypes;
 import kernel.CDisplay;
-import kernel.CDebug;
+import CDebug;
 import kernel.Glb;
 
 import renderer.CMaterial;
@@ -82,8 +82,8 @@ class CSystemJS extends CSystem
 		
 		CDebug.ASSERT(m_Display != null );
 		
-		m_Display.m_Width  = Glb.g_SystemJS.GetGL().GetViewportWidth();
-		m_Display.m_Height  = Glb.g_SystemJS.GetGL().GetViewportHeight();
+		m_Display.m_Width  = Std.int( Glb.g_SystemJS.GetGL().GetViewportWidth());
+		m_Display.m_Height  = Std.int( Glb.g_SystemJS.GetGL().GetViewportHeight());
 		
 		//TODO
 		//Inspect();
@@ -137,8 +137,8 @@ class CSystemJS extends CSystem
 	
 	public override function Update() : Void
 	{
-		m_Display.m_Width  = Glb.g_SystemJS.GetGL().GetViewportWidth();
-		m_Display.m_Height  = Glb.g_SystemJS.GetGL().GetViewportHeight();
+		m_Display.m_Width  = Std.int(Glb.g_SystemJS.GetGL().GetViewportWidth());
+		m_Display.m_Height  = Std.int(Glb.g_SystemJS.GetGL().GetViewportHeight());
 		
 		super.Update();
 	}
