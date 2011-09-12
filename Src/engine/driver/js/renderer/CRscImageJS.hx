@@ -29,7 +29,7 @@ class CRscImageJS extends CRscImage
 		super.SetPath(_Path);
 		
 		m_Img = untyped __js__("new Image()");
-		m_Img.src = _Path;
+		
 		
 		var me = this;
 		var l_functor = 
@@ -37,12 +37,12 @@ class CRscImageJS extends CRscImage
 			{ 
 				CDebug.CONSOLEMSG("Streamed image : " + _Path );
 				me.m_state = READY;
-				
 			};
 		
 		m_state = SYNCING;
+		//untyped __js__("m_Img.crossOrigin = '';");
 		m_Img.onload = l_functor;
-		
+		m_Img.src = _Path;
 	}
 	
 	public override function GetDriverImage() : Dynamic

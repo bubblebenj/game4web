@@ -35,7 +35,7 @@ class CKeyboardJS extends CKeyboard
 			m_NbKeyDown++;
 			m_UpArray.Set(_Evt.keyCode, false);
 		}
-		CDebug.CONSOLEMSG("OnDown :" +_Evt.keyCode);
+		//CDebug.CONSOLEMSG("OnDown :" +_Evt.keyCode);
 	}
 	
 	
@@ -43,7 +43,7 @@ class CKeyboardJS extends CKeyboard
 	{
 		( m_NbKeyDown < 1 ) ? 0 : m_NbKeyDown--;
 		m_UpArray.Set(_Evt.keyCode, true);
-		CDebug.CONSOLEMSG("OnUp :" +_Evt.keyCode);
+		//CDebug.CONSOLEMSG("OnUp :" +_Evt.keyCode);
 	}
 	/*
 	public function OnPress(  _Evt : Event)
