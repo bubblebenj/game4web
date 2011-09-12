@@ -39,9 +39,13 @@ class CRscTextureJS extends CRscTexture
 		var l_Gl = Glb.g_SystemJS.GetGL();
 		
 		m_GlTexture = l_Gl.CreateTexture();
+		
+		CDebug.ASSERT( m_GlTexture != null);
+		
 		l_Gl.BindTexture	(CGL.TEXTURE_2D, m_GlTexture);
+		
 		//l_Gl.PixelStorei	(CGL.UNPACK_FLIP_Y_WEBGL, CGL.TRUE );
-		l_Gl.TexImage2D		(CGL.TEXTURE_2D, 0, CGL.RGBA, CGL.RGBA, CGL.UNSIGNED_BYTE, cast( m_RscImage, CRscImageJS).GetDriverImage() );
+		l_Gl.TexImage2D		(CGL.TEXTURE_2D, 0, CGL.RGBA, CGL.RGBA, CGL.UNSIGNED_BYTE, m_RscImage.GetDriverImage() );
 		
 		//l_Gl.TexImage2D_2(CGL.TEXTURE_2D, 0, cast( m_RscImage, CRscImageJS).GetDriverImage(), true);
 		
@@ -55,7 +59,7 @@ class CRscTextureJS extends CRscTexture
 			CDebug.CONSOLEMSG("GlError:PostCreateTexture:" + l_Err);
 		}
 		
-		m_state = SYNCING;
+		m_state = READY;
 		m_InDevice = true;
 		CDebug.CONSOLEMSG("Created GL tex : "+ m_GlTexture);
 	}
