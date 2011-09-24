@@ -56,6 +56,7 @@ class CDebug
 	{
 		#if neko
 			neko.Web.logMessage( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
+			//neko.Lib.print( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
 		#else
 			haxe.Log.trace( _Msg , pos);
 		#end
