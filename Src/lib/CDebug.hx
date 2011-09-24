@@ -6,17 +6,21 @@ class CDebug
 {
 	//please oh mighty god of compilers do yar job
 	#if debug
-	public static function ASSERT( _Obj : Bool, ?pos : haxe.PosInfos  )
+	public static function ASSERT( _Obj : Bool, ?_Msg : String, ?pos : haxe.PosInfos  )
 	{
 		if ( _Obj == false )//|| _Obj == null )
 		{
 			
 			CDebug.CONSOLEMSG( "Assert in " + pos.className + "::" + pos.methodName, pos );
+			if ( _Msg != null )
+			{
+				CDebug.CONSOLEMSG( _Msg );
+			}
 			throw _Obj;
 		}
 	}
 	#else
-	public static inline function ASSERT( _Obj : Bool, ?pos : haxe.PosInfos  )
+	public static inline function ASSERT( _Obj : Bool, ?_Msg : String, ?pos : haxe.PosInfos  )
 	{
 		
 	}
