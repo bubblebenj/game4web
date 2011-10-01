@@ -32,7 +32,8 @@ enum ESitterState
 class CRemoteDataMan 
 {
 	private var	m_RemoteDataList	: List<RemoteDataAndLoader>;
-	private	var m_State				: ESitterState;
+	public	var m_State				: ESitterState;
+	//private	var m_State				: ESitterState;
 	
 	public function new() 
 	{
