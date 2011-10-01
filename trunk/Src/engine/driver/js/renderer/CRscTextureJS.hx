@@ -26,6 +26,7 @@ class CRscTextureJS extends CRscTexture
 {
 	var m_GlTexture : WebGLTexture;
 	var m_InDevice : Bool;
+	public static inline var VERBOSE : Bool = false;
 	
 	public function new() 
 	{
@@ -35,6 +36,20 @@ class CRscTextureJS extends CRscTexture
 	}
 	
 	public function FinishGlTexture() : Void
+	{
+		try
+		{
+			wrapGlTex();
+		}
+		catch (d:Dynamic)
+		{
+			CDebug.CONSOLEMSG("unable to cross domain ref img " + m_RscImage.GetPath());
+			m_state = INVALID;
+		}
+		
+	}
+	
+	public function wrapGlTex() : Void
 	{
 		var l_Gl = Glb.g_SystemJS.GetGL();
 		
@@ -63,6 +78,8 @@ class CRscTextureJS extends CRscTexture
 		m_InDevice = true;
 		CDebug.CONSOLEMSG("Created GL tex : "+ m_GlTexture);
 	}
+	
+	
 	
 	public function IsInDevice() : Bool
 	{
@@ -133,7 +150,10 @@ class CRscTextureJS extends CRscTexture
 			return SUCCESS;
 		}
 		
-		CDebug.CONSOLEMSG("Failed to activate : Tex Status : IsInDevice: " + IsInDevice() + " Streamed " + IsReady() + " Image Steamed : " +m_RscImage.IsReady());
+		if (VERBOSE )
+		{
+			CDebug.CONSOLEMSG("Failed to activate : Tex Status : IsInDevice: " + IsInDevice() + " Streamed " + IsReady() + " Image Steamed : " +m_RscImage.IsReady());
+		}
 		
 		return FAILURE;
 	}

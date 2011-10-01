@@ -17,7 +17,6 @@ class CPerspectiveCamera extends CCamera
 {
 	public function new() 
 	{
-		
 		m_Projection = new CMatrix44();
 		m_View = new CMatrix44();
 		
