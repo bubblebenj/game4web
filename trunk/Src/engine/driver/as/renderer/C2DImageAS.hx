@@ -119,6 +119,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 			
 			SetVisible( m_Visible );
 			m_state	= READY;
+			CDebug.CONSOLEMSG( "READY" );
 			
 		}
 		return SUCCESS;
@@ -160,6 +161,6 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	{
 		super.DebugInfo( _Prefix );
 		var l_Url		= ( m_RscImage	!= null)? m_RscImage.GetPath() : null;
-		trace( _Prefix +"path : " + l_Url );
+		CDebug.CONSOLEMSG( _Prefix +"path : " + l_Url );
 	}	
 }
