@@ -45,7 +45,7 @@ class CSpline
 {
 	public static var g_SplineDefaultResolution		: Float	= 0.05;
 	public static var LIGHTWEIGHT_SPLINE_SAMPLING	: Bool	= true;
-	public static var SPLINE_NB_SAMPLE				: Int	= 100;
+	public static var SPLINE_NB_SAMPLE				: Int	= 256;
 	
 	//	*******************************
 	//	***	Internal attributes :	***
