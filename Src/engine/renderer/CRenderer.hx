@@ -41,8 +41,6 @@ class CRenderer
 	
 	public var m_RenderContext(default, null) : CRenderContext;
 	
-	public var m_TwinList				: FastList<CTween>;
-	
 	public function new()
 	{
 		m_Vps = new Array<>();
@@ -61,8 +59,6 @@ class CRenderer
 		m_CurrentVPMatrix	= null;
 		
 		m_RenderContext		= new CRenderContext();
-		
-		m_TwinList			= new FastList<CTween>();
 	}
 	
 	public inline function GetViewProjection() : CMatrix44
@@ -166,9 +162,9 @@ class CRenderer
 			}
 		}
 		
-		for ( i in m_TwinList )
+		for ( i_Tween in CTween.m_TweenList )
 		{
-			i.Update();
+			i_Tween.Update();
 		}
 		
 		//trace("CRenderer:: end scn");
