@@ -31,10 +31,8 @@ class CDebug
 	{
 		if ( true )
 		{
-			#if debug
 			CDebug.CONSOLEMSG( "Break in " + pos.className + "::" + pos.methodName + ":" +  _Str, pos );
 			throw _Str;
-			#end
 		}
 	}
 	#else
