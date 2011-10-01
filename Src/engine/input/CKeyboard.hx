@@ -34,11 +34,9 @@ class CKeyboard extends CRsc
 		m_PreviousUpArray.Fill( true );
 	}
 	
-	public function Update() : Result
+	public override function Update()
 	{
 		m_PreviousUpArray.Copy( m_UpArray );
-		//m_UpArray.Fill( true ); // When holding a key in AS the event down is not triggered so the key will seem UP. JS && AS drivers patched too
-		return SUCCESS;
 	}
 	
 	public function IsKeyDown( _Kc : Int ) : Bool

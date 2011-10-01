@@ -6,6 +6,8 @@ import kernel.CSystem;
 import kernel.Glb;
 import CTypes;							// <--
 import CDebug;		
+import renderer.camera.CPerspectiveCamera;
+import rsc.CRscDAE;
 
 import input.CKeyboard;
 import input.CKeyCodes;
@@ -31,7 +33,7 @@ import rsc.CRscImage;
 
 import CDriver;
 import driver.js.renderer.C2DImageJS;
-import test.CSerializableQuad;
+
 
 #if js
 	import CGL;
@@ -53,7 +55,7 @@ typedef IntPair = {
 class CMainClient implements SystemProcess
 {
 	var m_Stage	: STAGE;
-	var m_Quad	: CSerializableQuad;
+	var m_Quad	: C2DImage;
 	//static var m_Mouse	: CMouse; 					// <--
 	var m_Cpt	: Int;						// <--
 	
@@ -85,8 +87,11 @@ class CMainClient implements SystemProcess
 		l_OrthoCam.SetNear( 0.1 );
 		l_OrthoCam.SetFar( 1000.0 );
 		
+		var l_PersCam : CPerspectiveCamera = cast Glb.g_System.GetRenderer().GetCamera( CRenderer.CAM_PERSPECTIVE_0 );
 		
-		m_Quad = new CSerializableQuad();
+		
+		
+		m_Quad = new C2DImage();
 		m_Quad.Initialize();
 		
 		m_Quad.SetCenterSize( CV2D.HALF, CV2D.ONE );
@@ -98,7 +103,9 @@ class CMainClient implements SystemProcess
 		
 		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://www.alsacreations.com/xmedia/doc/full/webgl.gif" ), CRscImage);
 		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://spidergl.org/examples/data/image0.png" ), CRscImage);
-		m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "../Data/Gfx/images/FX_EarthClod.png" ), CRscImage);
+		//m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "../Data/Gfx/images/FX_EarthClod.png" ), CRscImage);
+		
+		m_Img = cast( Glb.g_System.GetRscMan().Load( CRscImage.RSC_ID, "http://workspace.com/G4W/Data/Gfx/images/FX_EarthClod.png" ), CRscImage);
 		CDebug.ASSERT(m_Img!= null);
 		
 		m_Quad.SetRsc( m_Img );
@@ -124,9 +131,11 @@ class CMainClient implements SystemProcess
 		return SUCCESS;
 	}
 	
+	public static var DATA_ROOT :String = "http://workspace.com/G4W/Data/";
+	public var mesh : CRscDAE;
 	public function InitGame()
 	{
-		
+		mesh = cast Glb.g_System.GetRscMan().Load( CRscDAE.RSC_ID, DATA_ROOT + "Gfx/Teapot.dae");
 		
 		#if js
 		InitGameJS();
@@ -149,8 +158,11 @@ class CMainClient implements SystemProcess
 	
 	}
 	
+	
 	public function UpdateGame()
 	{
+		Glb.g_System.GetRscMan().Update();
+		
 		if (m_Cpt > 15)								// <--
 		{											// <--
 			//CDebug.CONSOLEMSG( m_Mouse.m_Coordinate.Trace() + " " + (( m_Mouse.m_Out ) ? " Out !" : " In " ) ); // <--

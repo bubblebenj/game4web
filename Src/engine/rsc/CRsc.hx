@@ -28,7 +28,15 @@ class CRsc implements IRemoteData
 		m_state			= REMOTE;
 	}
 	
+	public function Queue()
+	{
+		Glb.g_System.GetRscMan().AddToQueue( this );
+	}
 
+	public function Update()
+	{
+		
+	}
 	
 	public inline function IsReady() : Bool
 	{

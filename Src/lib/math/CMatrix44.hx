@@ -253,17 +253,19 @@ class CMatrix44
 		var mag = Math.sqrt(xx * xx + xy * xy + xz * xz);
 		if( Math.abs(mag) > math.Constants.EPSILON ) 
 		{
-			xx /= mag;
-			xy /= mag;
-			xz /= mag;
+			var imag = 1.0 / mag;
+			xx *= imag;
+			xy *= imag;
+			xz *= imag;
 		}
 
 		mag = Math.sqrt(yx * yx + yy * yy + yz * yz);
 		if( Math.abs(mag) > math.Constants.EPSILON) 
 		{
-			yx /= mag;
-			yy /= mag;
-			yz /= mag;
+			var imag = 1.0 / mag;
+			yx *= imag;
+			yy *= imag;
+			yz *= imag;
 		}
 
 		l_Matrix.Set(
