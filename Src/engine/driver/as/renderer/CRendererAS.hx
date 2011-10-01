@@ -86,7 +86,7 @@ class CRendererAS extends CRenderer
 		}
 	}
 	
-	/**/public function AddToSceneAS( _DisplayObj : DisplayObject )
+	/*public function AddToSceneAS( _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}

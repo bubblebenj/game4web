@@ -45,38 +45,6 @@ class C2DQuadAS extends C2DQuad
 		return cast ( m_Native, DisplayObject );
 	}
 	
-	/*
-	public override function Activate() : Result
-	{
-		if ( !m_Activated )
-		{
-			if ( m_DisplayObject != null )
-			{
-				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
-				return super.Activate();
-			}
-			else
-			{
-				return FAILURE;
-			}
-		}
-		return SUCCESS;
-	}//*/
-	/*/
-	public override function Shut() : Result
-	{
-		Glb.GetRendererAS().RemoveFromScene( this );
-		if ( m_DisplayObject != null )
-		{
-			if ( m_Activated )
-			{
-				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
-			}
-		}
-		super.Shut();
-		return SUCCESS;
-	}//*/
-	
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
 		super.SetVisible( _Vis );

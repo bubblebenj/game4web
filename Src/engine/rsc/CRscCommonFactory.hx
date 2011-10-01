@@ -22,7 +22,7 @@ class CRscCommonFactory extends CRscBuilder
 		
 		switch( _Type )
 		{
-			case CMenuDAE.RSC_ID:
+			case CRscDAE.RSC_ID:
 			l_Rsc =	new CRscDAE();
 			
 			default: trace("CRscASFactory :: Error: target type not found : " + _Type ); 

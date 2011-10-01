@@ -151,6 +151,7 @@ class Game
 		
 		m_BG = new CBG();
 		m_BG.Initialize();
+		CDebug.ASSERT( m_BG != null);
 		
 		m_Pad = new CMinionPad();
 		m_Pad.Initialize();
@@ -199,6 +200,7 @@ class Game
 		m_ProjectileHelper.Initialize();
 		
 		m_State = GS_FIRST_FRAME;
+		CDebug.CONSOLEMSG("Inited");
 	}
 
 	
@@ -329,7 +331,8 @@ class Game
 			case GS_LOADING: 
 			
 			if (!m_MinionHelper.IsLoaded()
-			&&	m_RscSpaceInvader.IsReady() )
+			&&	m_RscSpaceInvader.IsReady()
+			&&	m_BG.IsLoaded() )
 			{
 				m_MinionHelper.Initialize();
 				m_Pad.Populate();
