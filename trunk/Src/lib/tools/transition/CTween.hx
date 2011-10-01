@@ -19,6 +19,8 @@ enum TWIN_STATE
 
 class CTween
 {	
+	public static var m_TweenList	: FastList<CTween> = new FastList<CTween>();
+	
 	public	var m_State				: TWIN_STATE;
 	
 	public	var m_Handler			: Dynamic -> Void;
@@ -40,7 +42,7 @@ class CTween
 		InitCounter();
 		
 		Stop();
-		Glb.GetTweenList().add( this );
+		m_TweenList.add( this );
 	}
 	
 	//private var m_Obj				: Dynamic;
@@ -116,7 +118,7 @@ class CTween
 	
 	public function Remove() : Void
 	{
-		//m_TweenList.remove( _Name );
+		m_TweenList.remove( this );
 	}
 	
 	public function Update()
@@ -147,6 +149,10 @@ class CTween
 					m_EndFunction();
 				}
 				m_State = TW_STOPPED;
+			}
+			case TW_STOPPED :
+			{
+				Remove();
 			}
 			default :
 			{
