@@ -13,6 +13,29 @@ import renderer.camera.CCamera;
 import CTypes;
 import kernel.Glb;
 
+
+class DO<T> extends CDrawObject
+{
+	public function new( n : T)
+	{
+		super();
+		m_Native = n;
+	}
+	
+	public var o(get,set) : T;
+	
+	public function get() : T
+	{
+		return cast m_Native;
+	}
+	
+	public function set(v) : T
+	{
+		m_Native = v;
+		return m_Native;
+	}
+}
+
 class CDrawObject 
 {
 	public	var m_Priority	: Int;
@@ -27,6 +50,8 @@ class CDrawObject
 			var	m_Cameras	: Array<CCamera>;
 	public	var m_Native	: Dynamic;
 	
+	public var alpha(GetAlpha, SetAlpha) : Float;
+	public var visible(IsVisible, SetVisible) : Bool;
 	
 	public function new()
 	{
@@ -92,9 +117,10 @@ class CDrawObject
 		return m_Visible;
 	}
 	
-	public function SetAlpha( _Value : Float )		: Void
+	public function SetAlpha( _Value : Float )		: Float
 	{
 		m_Alpha 	= _Value;
+		return m_Alpha;
 	}
 	
 	public function GetAlpha() : Float

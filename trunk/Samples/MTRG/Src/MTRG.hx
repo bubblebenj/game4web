@@ -48,6 +48,7 @@ import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import haxe.TimerQueue;
+import renderer.CDrawObject;
 
 import kernel.Glb;
 import kernel.CSystem;
@@ -74,10 +75,10 @@ class MTRG implements SystemProcess
 	public var m_LoadTimer : TimerQueue;
 	
 	//public var m_BeginScreen :  BeginScreen;
-	public var m_BeginScreen :  Sprite;
-	public var m_BeginScreenBody :  TextField;
+	public var m_BeginScreen :  DO<Sprite>;
+	public var m_BeginScreenBody :  DO<TextField>;
 	public var m_BeginScreenBodyFormat :  TextFormat;
-	public var m_EndScreen :  Sprite;
+	public var m_EndScreen :  DO<Sprite>;
 	
 	public var m_Tasks : List<CTimedTask>;
 	
@@ -141,6 +142,7 @@ class MTRG implements SystemProcess
 		m_State = GS_STARTING;
 		m_Gameplay = new Game();
 		m_Gameplay.Initialize();
+		CDebug.CONSOLEMSG("startup");
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -225,7 +227,7 @@ class MTRG implements SystemProcess
 		if ( m_BeginScreen == null )
 		{
 			//CDebug.CONSOLEMSG("printing begin");
-			m_BeginScreen = new Sprite();
+			m_BeginScreen = new DO(new Sprite());
 			var l_Shape : Shape = new Shape();
 			l_Shape.graphics.beginFill(0xB2A568, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH - 48, MTRG.HEIGHT - 48, 8, 8);
@@ -256,31 +258,32 @@ class MTRG implements SystemProcess
 				l_Title.setTextFormat( l_Title0Format );
 			}
 			
-			m_BeginScreenBody= new TextField();
+			m_BeginScreenBody = new DO( new TextField() );
 			
-			m_BeginScreenBody.x = 48;
-			m_BeginScreenBody.y = l_Title.y + 16 + l_Title.height;
+			m_BeginScreenBody.o.x = 48;
+			m_BeginScreenBody.o.y = l_Title.y + 16 + l_Title.height;
 			
-			m_BeginScreenBody.height = 400;
-			m_BeginScreenBody.width = MTRG.HEIGHT - 48 - 32;
-			m_BeginScreenBody.visible = true;
+			m_BeginScreenBody.o.height = 400;
+			m_BeginScreenBody.o.width = MTRG.HEIGHT - 48 - 32;
+			m_BeginScreenBody.o.visible = true;
 			
-			m_BeginScreenBody.textColor = 0x7B69CC;
+			m_BeginScreenBody.o.textColor = 0x7B69CC;
 			
 			{
 				m_BeginScreenBodyFormat = new flash.text.TextFormat();
 				m_BeginScreenBodyFormat.font = "Arial";
 				m_BeginScreenBodyFormat.size = 16;
 				
-				m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );
+				m_BeginScreenBody.o.setTextFormat( m_BeginScreenBodyFormat );
 			}
 			
-			m_BeginScreen.addChild(l_Shape);
-			m_BeginScreen.addChild(l_Title);
-			m_BeginScreen.addChild(m_BeginScreenBody);
+			m_BeginScreen.o.addChild(l_Shape);
+			m_BeginScreen.o.addChild(l_Title);
+			m_BeginScreen.o.addChild(m_BeginScreenBody.o);
 			m_BeginScreen.alpha = 0;
 			m_BeginScreen.visible = true;
-			Glb.GetRendererAS().AddToSceneAS(m_BeginScreen);
+			
+			Glb.GetRenderer().AddToScene( m_BeginScreen );
 			//Glb.GetRendererAS().SendToBack( m_BeginScreen );
 		}
 		else
@@ -301,7 +304,7 @@ class MTRG implements SystemProcess
 				if (Glb.GetInputManager().GetMouse().IsDown())
 				{
 					m_BeginScreen.visible = false;
-					Glb.GetRendererAS().RemoveFromSceneAS(m_BeginScreen);
+					Glb.GetRendererAS().RemoveFromScene( m_BeginScreen );
 					m_BeginScreen = null;
 					m_BeginScreenBody = null;
 					m_BeginScreenBodyFormat = null;
@@ -317,8 +320,8 @@ class MTRG implements SystemProcess
 			if(m_BeginScreenBody!= null)
 			{
 				var l_CurText =  GetBeginText();
-				m_BeginScreenBody.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
-				m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
+				m_BeginScreenBody.o.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
+				m_BeginScreenBody.o.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
 			}
 		}
 	}
@@ -330,29 +333,29 @@ class MTRG implements SystemProcess
 		{
 			Shut();
 			
-			m_EndScreen = new Sprite();
+			m_EndScreen = new DO(new Sprite());
 			var l_Shape :Shape = new Shape();
 			l_Shape.graphics.beginFill(0xFFFFFF, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH- 48, MTRG.HEIGHT - 48,8,8);
 			l_Shape.visible = true;
-			m_EndScreen.addChild(l_Shape);
+			m_EndScreen.o.addChild(l_Shape);
 			
-			var l_Title = new TextField();
+			var l_Title = new DO(new TextField());
 			
-			l_Title.x = 48;
-			l_Title.y = 48;
-			l_Title.text =  ((_w) ? "YOU WON" : "YOU LOST..." ) +"!\n\nYou liked it ?";
-			l_Title.width = MTRG.WIDTH - 48 - 32;
-			l_Title.height = 256;
-			l_Title.visible = true;
-			l_Title.textColor = 0x000000;
+			l_Title.o.x = 48;
+			l_Title.o.y = 48;
+			l_Title.o.text =  ((_w) ? "YOU WON" : "YOU LOST..." ) +"!\n\nYou liked it ?";
+			l_Title.o.width = MTRG.WIDTH - 48 - 32;
+			l_Title.o.height = 256;
+			l_Title.o.visible = true;
+			l_Title.o.textColor = 0x000000;
 			var l_Title0Format = new flash.text.TextFormat();
 			l_Title0Format.font = "Arial";
 			l_Title0Format.italic = true;
 			l_Title0Format.size = 45;
 			l_Title0Format.bold = true;
 			
-			l_Title.setTextFormat( l_Title0Format );
+			l_Title.o.setTextFormat( l_Title0Format );
 			
 			
 			var l_ClickHere = new TextField();
@@ -388,7 +391,7 @@ class MTRG implements SystemProcess
 			m_EndScreen.alpha = 0;
 			m_EndScreen.addChild(l_Title);
 			m_EndScreen.visible = true;
-			Glb.GetRendererAS().AddToSceneAS(m_EndScreen);
+			Glb.GetRenderer().AddToScene( new CDrawObject(m_EndScreen)) ;
 		}
 		else
 		{
@@ -405,7 +408,7 @@ class MTRG implements SystemProcess
 			{
 				if( Glb.GetInputManager().GetMouse().IsDown() )
 				{
-					Glb.GetRendererAS().RemoveFromSceneAS(m_EndScreen);
+					Glb.GetRendererAS().RemoveFromScene(m_EndScreen);
 					m_EndScreen = null;
 					m_SoundBank.StopBank();
 					m_State = GS_INIT;
