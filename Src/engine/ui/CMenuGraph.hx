@@ -29,6 +29,7 @@ import renderer.C2DContainer;
 import renderer.C2DInterface;
 
 import tools.CXml;
+import swfclient.Globals;
 
 class CMenuGraph extends CRsc			// C&D Menu
 {
@@ -222,7 +223,7 @@ class CMenuGraph extends CRsc			// C&D Menu
 			if ( i_FMenuNode.att.id == "Stage" )
 			{
 				AddMenuNode( new CMenuNode( "Stage" ) );
-				GetMenuNode( "Stage" ).SetContainer( GameGlb.g_Stage );
+				GetMenuNode( "Stage" ).SetContainer( Globals.g_Stage );
 			}
 			else
 			{
