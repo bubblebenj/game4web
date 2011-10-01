@@ -38,7 +38,8 @@ class	CRscSpline extends CRsc
 	
 	public function Load( _Path : String ) : Result
 	{
-		m_state = SYNCING;
+		m_state		= SYNCING;
+		m_spline	= null;
 		return m_xmlFile.Load( _Path );
 	}
 	
