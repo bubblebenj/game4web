@@ -43,11 +43,6 @@ class Glb
 		}
 	#end
 	
-	public static inline function GetTweenList() : FastList<CTween>
-	{
-		return GetRenderer().m_TwinList;
-	}
-	
 	public static inline function GetSystem() 		: CSystem
 	{
 		return g_System;
