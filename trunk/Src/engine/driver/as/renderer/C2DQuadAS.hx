@@ -45,13 +45,14 @@ class C2DQuadAS extends C2DQuad
 		return cast ( m_Native, DisplayObject );
 	}
 	
-	public override function SetVisible( _Vis : Bool ) : Void
+	public override function SetVisible( v : Bool ) : Bool
 	{
-		super.SetVisible( _Vis );
+		super.SetVisible( v );
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.visible = _Vis;
+			m_DisplayObject.visible = v;
 		}
+		return v;
 	}
 	
 	private static var s_Matrix	= new Matrix();
@@ -112,13 +113,14 @@ class C2DQuadAS extends C2DQuad
 		return SUCCESS;
 	}
 	
-	public override function SetAlpha( _Value : Float ) : Void
+	public override function SetAlpha( v ) : Float
 	{
-		super.SetAlpha( _Value );
+		super.SetAlpha( v );
 		if ( m_DisplayObject != null )
 		{
-			m_DisplayObject.alpha = _Value;
+			m_DisplayObject.alpha = v;
 		}
+		return v;
 	}
 	
 	public override function IsReady()	: Bool

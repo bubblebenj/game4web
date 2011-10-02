@@ -31,10 +31,12 @@ class CRscImageAS extends CRscImage
 	public function Initialize() : Result
 	{
 		//init is fired earlier
+		m_state			= SYNCING;
+		
 		m_ImgLoader.contentLoaderInfo.addEventListener(Event.INIT, onLoaded);
 		m_ImgLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError );
 		m_ImgLoader.load( new URLRequest( m_Path ) );
-		m_state			= SYNCING;
+		
 		return SUCCESS;
 	}
 		
@@ -56,7 +58,7 @@ class CRscImageAS extends CRscImage
 	{
 		m_ImgLoader.contentLoaderInfo.removeEventListener(Event.INIT, onLoaded);
 
-		m_state			= READY;
+		SetState( READY );
 		CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	

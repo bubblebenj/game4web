@@ -54,9 +54,9 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	{
 		m_state	= SYNCING;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
-		
-		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
-		
+		var rsc = l_RscMan.Load( CRscImage.RSC_ID , _Path );
+		CDebug.ASSERT( rsc != null );
+		var l_Res = SetRsc( cast rsc );
 		CDebug.ASSERT(l_Res == SUCCESS );
 		return l_Res;
 	}
@@ -66,6 +66,18 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
+		if (m_RscImage.IsReady())
+		{
+			CDebug.CONSOLEMSG("1");
+			CreateBitmap();
+		}
+		else
+		{
+			CDebug.CONSOLEMSG("2");
+			m_RscImage.cbk.set( READY, CreateBitmap);
+			CDebug.ASSERT( m_RscImage.m_state != READY );
+		}
+			
 		return l_Res;
 	}
 	
@@ -88,43 +100,30 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 			m_Native = l_Bmp;
 			l_Bmp.smoothing	= true;
 		}
-	}
-	
-	public override function Update() : Result
-	{
-		if ( 	m_RscImage	!= null
-		&& 		m_RscImage.IsReady()
-		&&		m_state == SYNCING )
+		
+		var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
+			
+		// initializing Scale value
+		SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
+							m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
+		m_Scale.Set( 1, 1 );
+		
+		if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
 		{
-			CreateBitmap();
-			
-			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
-			
-			// initializing Scale value
-			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
-								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
-			m_Scale.Set( 1, 1 );
-			
-			if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
-			{
-				// Update size if a size was already set
-				var l_x : Float = 0;
-				var l_y : Float = 0;
-				l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
-				l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
-				SetSize( new CV2D( l_x, l_y ) );
-			}
-			
-			SetPosition( GetPosition() );
-			
-			SetVisible( m_Visible );
-			m_state	= READY;
-			CDebug.CONSOLEMSG( "READY" );
-			
+			// Update size if a size was already set
+			var l_x : Float = 0;
+			var l_y : Float = 0;
+			l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
+			l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
+			SetSize( new CV2D( l_x, l_y ) );
 		}
-		return SUCCESS;
+		
+		SetPosition( GetPosition() );
+		SetVisible( m_Visible );
+		m_state	= READY;
+		CDebug.CONSOLEMSG( "READY" );
 	}
-	
+
 	public function GetBitmap() : Bitmap
 	{
 		return cast( m_DisplayObject, Bitmap );

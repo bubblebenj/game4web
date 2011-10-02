@@ -34,8 +34,10 @@ package ;
 
 import CMinion;
 import flash.display.BlendMode;
+import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.media.Sound;
+import flash.sampler.NewObjectSample;
 import flash.system.System;
 import haxe.FastList;
 import haxe.Log;
@@ -45,6 +47,7 @@ import kernel.Glb;
 import math.CV2D;
 import math.Registers;
 import MTRG;
+import renderer.CDrawObject;
 import rsc.CRscImage;
 
 ////////////////////gameplay sequencing (not same granularity as game
@@ -91,7 +94,7 @@ class Game
 	public var	m_ProjectileHelper: CProjectileHelper;
 	
 	//game play
-	public var 	m_PlacingLimitLine : Shape;
+	public var 	m_PlacingLimitLine : DO<Shape>;
 	public var 	m_PlaceLimit : Float;
 	
 	////////////////////////////////////////////////////////////
@@ -186,13 +189,13 @@ class Game
 		
 		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
 		
-		m_PlacingLimitLine = new Shape();
-		m_PlacingLimitLine.blendMode = BlendMode.ADD;
-		m_PlacingLimitLine.graphics.lineStyle( 3, 0x00FF00, 0.15);
-		m_PlacingLimitLine.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
-		m_PlacingLimitLine.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
+		m_PlacingLimitLine = new DO(new Shape());
+		m_PlacingLimitLine.o.blendMode = BlendMode.ADD;
+		m_PlacingLimitLine.o.graphics.lineStyle( 3, 0x00FF00, 0.15);
+		m_PlacingLimitLine.o.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
+		m_PlacingLimitLine.o.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.visible = false;
-		Glb.GetRendererAS().AddToSceneAS(m_PlacingLimitLine);
+		Glb.GetRenderer().AddToScene(m_PlacingLimitLine);
 		
 		m_Mothership.Initialize();
 		
@@ -220,14 +223,7 @@ class Game
 		MTRG.s_Instance.m_State = GS_END_SCREEN(_Win);
 	}
 	
-	////////////////////////////////////////////////////////////
-	public function OnLoaded()
-	{
-		Glb.GetRendererAS().SendToBack( m_BG.GetDisplayObject() ) ;
-		Glb.GetRendererAS().SendToFront( m_Pad.GetDisplayObject() ) ;
-	}
-	
-	
+
 	////////////////////////////////////////////////////////////
 	public function PlaceCurrentDND()
 	{
@@ -336,14 +332,11 @@ class Game
 			{
 				m_MinionHelper.Initialize();
 				m_Pad.Populate();
-				OnLoaded();
 			}
 			
 			if ( IsLoaded())
 			{
-				OnLoaded(); 
-				//SetVisible(false);
-				//m_State = GS_RUNNING;
+				
 			}
 			else
 			{
@@ -404,7 +397,7 @@ class Game
 		m_ProjectileHelper.Shut();
 		m_ProjectileHelper = null;
 		
-		Glb.GetRendererAS().RemoveFromSceneAS(m_PlacingLimitLine);
+		Glb.GetRendererAS().RemoveFromScene(m_PlacingLimitLine);
 		System.gc();
 		System.gc();
 	}

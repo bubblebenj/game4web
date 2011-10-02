@@ -280,8 +280,8 @@ class MTRG implements SystemProcess
 			m_BeginScreen.o.addChild(l_Shape);
 			m_BeginScreen.o.addChild(l_Title);
 			m_BeginScreen.o.addChild(m_BeginScreenBody.o);
-			m_BeginScreen.alpha = 0;
-			m_BeginScreen.visible = true;
+			m_BeginScreen.o.alpha = 0;
+			m_BeginScreen.o.visible = true;
 			
 			Glb.GetRenderer().AddToScene( m_BeginScreen );
 			//Glb.GetRendererAS().SendToBack( m_BeginScreen );
@@ -289,22 +289,22 @@ class MTRG implements SystemProcess
 		else
 		{
 			//CDebug.CONSOLEMSG	("other " + m_BeginScreen);
-			if (m_BeginScreen.alpha <1)
+			if (m_BeginScreen.o.alpha <1)
 			{
-				m_BeginScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
+				m_BeginScreen.o.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
 			}
 			else
 			{
-				m_BeginScreen.alpha = 1;
+				m_BeginScreen.o.alpha = 1;
 			}
 			
-			if (m_BeginScreen.alpha >= 1)
+			if (m_BeginScreen.o.alpha >= 1)
 			{
 				
 				if (Glb.GetInputManager().GetMouse().IsDown())
 				{
-					m_BeginScreen.visible = false;
-					Glb.GetRendererAS().RemoveFromScene( m_BeginScreen );
+					m_BeginScreen.o.visible = false;
+					Glb.GetRenderer().RemoveFromScene( m_BeginScreen );
 					m_BeginScreen = null;
 					m_BeginScreenBody = null;
 					m_BeginScreenBodyFormat = null;
@@ -340,22 +340,22 @@ class MTRG implements SystemProcess
 			l_Shape.visible = true;
 			m_EndScreen.o.addChild(l_Shape);
 			
-			var l_Title = new DO(new TextField());
+			var l_Title = new TextField();
 			
-			l_Title.o.x = 48;
-			l_Title.o.y = 48;
-			l_Title.o.text =  ((_w) ? "YOU WON" : "YOU LOST..." ) +"!\n\nYou liked it ?";
-			l_Title.o.width = MTRG.WIDTH - 48 - 32;
-			l_Title.o.height = 256;
-			l_Title.o.visible = true;
-			l_Title.o.textColor = 0x000000;
+			l_Title.x = 48;
+			l_Title.y = 48;
+			l_Title.text =  ((_w) ? "YOU WON" : "YOU LOST..." ) +"!\n\nYou liked it ?";
+			l_Title.width = MTRG.WIDTH - 48 - 32;
+			l_Title.height = 256;
+			l_Title.visible = true;
+			l_Title.textColor = 0x000000;
 			var l_Title0Format = new flash.text.TextFormat();
 			l_Title0Format.font = "Arial";
 			l_Title0Format.italic = true;
 			l_Title0Format.size = 45;
 			l_Title0Format.bold = true;
 			
-			l_Title.o.setTextFormat( l_Title0Format );
+			l_Title.setTextFormat( l_Title0Format );
 			
 			
 			var l_ClickHere = new TextField();
@@ -371,7 +371,7 @@ class MTRG implements SystemProcess
 			l_ClickHere.visible = true;
 			l_ClickHere.textColor = 0xFF1111;
 			
-			m_EndScreen.addChild(l_ClickHere);
+			m_EndScreen.o.addChild(l_ClickHere);
 			
 			
 			var l_ClickSomewhereElse = new TextField();
@@ -386,12 +386,12 @@ class MTRG implements SystemProcess
 			l_ClickSomewhereElseFormat.size = 24;
 			l_ClickSomewhereElse.setTextFormat( l_ClickSomewhereElseFormat );
 			
-			m_EndScreen.addChild(l_ClickSomewhereElse);
+			m_EndScreen.o.addChild(l_ClickSomewhereElse);
 			
-			m_EndScreen.alpha = 0;
-			m_EndScreen.addChild(l_Title);
-			m_EndScreen.visible = true;
-			Glb.GetRenderer().AddToScene( new CDrawObject(m_EndScreen)) ;
+			m_EndScreen.o.alpha = 0;
+			m_EndScreen.o.addChild(l_Title);
+			m_EndScreen.o.visible = true;
+			Glb.GetRenderer().AddToScene( m_EndScreen);
 		}
 		else
 		{

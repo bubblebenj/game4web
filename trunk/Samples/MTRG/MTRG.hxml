@@ -1,0 +1,7 @@
+-cp src
+-cp ../../Src/engine
+-cp ../../Src/lib
+-swf WWW/SWF/MTRG.swf
+-swf-version 10
+-swf-header 600:800:60:000000
+-main MTRG
