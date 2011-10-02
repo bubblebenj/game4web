@@ -39,10 +39,11 @@ import flash.geom.Matrix;
 import kernel.Glb;
 import CDebug;
 import math.CV2D;
+import renderer.CDrawObject;
 
 import CCollManager;
 
-class CMothership extends Sprite , implements CCollManager.BSphered
+class CMothership extends Sprite, implements CCollManager.BSphered
 {
 	public var m_Center: CV2D;
 	public var m_Radius : Float;
@@ -54,8 +55,8 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	public var m_CollShape : COLL_SHAPE;
 	
 	private var m_ScanShape : Shape; 
-	private var m_LifeBar : Shape;
-	private var m_LifeBarContainer : Shape;
+	private var m_LifeBar : DO<Shape>;
+	private var m_LifeBarContainer : DO<Shape>;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
@@ -65,6 +66,8 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	
 	public var MS_SIZE_X : Int;
 	public var MS_SIZE_Y : Int;
+	
+	public var me : DO<CMothership>;
 	
 	//////////////////////////////////////////////////////////////////
 	public function SetVisible(_OnOff)
@@ -87,6 +90,8 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 
 		m_MaxHp = 100;
 		m_Hp = m_MaxHp;
+		
+		me = new DO(this);
 	}
 	
 	//////////////////////////////////
@@ -158,11 +163,11 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	{
 		m_ScanShape = null;
 		
-		Glb.GetRendererAS().RemoveFromSceneAS(m_LifeBar);
+		Glb.GetRenderer().RemoveFromScene(m_LifeBar);
 		m_LifeBar = null;
-		Glb.GetRendererAS().RemoveFromSceneAS(m_LifeBarContainer);
+		Glb.GetRenderer().RemoveFromScene(m_LifeBarContainer);
 		m_LifeBarContainer = null;
-		Glb.GetRendererAS().RemoveFromSceneAS(this);
+		Glb.GetRenderer().RemoveFromScene(me);
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -223,7 +228,8 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		addChild(m_ScanShape);
 		
 		visible = false;
-		Glb.GetRendererAS().AddToSceneAS( this );
+		me.m_Priority = Const.PRIO_FG;
+		Glb.GetRenderer().AddToScene( me );
 		
 		m_Center.Set( 	(MTRG.BOARD_WIDTH / 2 + MTRG.BOARD_X) / MTRG.HEIGHT,
 						64 / MTRG.HEIGHT);
@@ -232,18 +238,18 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 		
 		//prepare life bar
 		{
-			m_LifeBarContainer = new Shape();
-			m_LifeBarContainer.graphics.clear();
+			m_LifeBarContainer = new DO(new Shape());
+			m_LifeBarContainer.o.graphics.clear();
 			
-			m_LifeBarContainer.graphics.lineStyle(8, 0xFF0000);
-			m_LifeBarContainer.graphics.moveTo(MTRG.BOARD_X,0);
-			m_LifeBarContainer.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, 0);
-			m_LifeBarContainer.visible = false;
-			Glb.GetRendererAS().AddToSceneAS(m_LifeBarContainer);
+			m_LifeBarContainer.o.graphics.lineStyle(8, 0xFF0000);
+			m_LifeBarContainer.o.graphics.moveTo(MTRG.BOARD_X,0);
+			m_LifeBarContainer.o.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, 0);
+			m_LifeBarContainer.o.visible = false;
+			Glb.GetRenderer().AddToScene(m_LifeBarContainer);
 			
-			m_LifeBar = new Shape();
-			m_LifeBar.visible = false;
-			Glb.GetRendererAS().AddToSceneAS(m_LifeBar);
+			m_LifeBar = new DO(new Shape());
+			m_LifeBar.o.visible = false;
+			Glb.GetRenderer().AddToScene(m_LifeBar);
 			UpdateLifeBar();
 		}
 	}
@@ -253,12 +259,12 @@ class CMothership extends Sprite , implements CCollManager.BSphered
 	{
 		if ( m_LifeBar != null)
 		{
-			m_LifeBar.graphics.clear();
-			m_LifeBar.graphics.moveTo(MTRG.BOARD_X,0);
-			m_LifeBar.graphics.lineStyle(8, 0x00FF00);
+			m_LifeBar.o.graphics.clear();
+			m_LifeBar.o.graphics.moveTo(MTRG.BOARD_X,0);
+			m_LifeBar.o.graphics.lineStyle(8, 0x00FF00);
 			var l_width = MTRG.BOARD_WIDTH - 32;
-			m_LifeBar.graphics.lineTo( MTRG.BOARD_X + (l_width * (m_Hp / m_MaxHp)) ,0);
-			m_LifeBar.cacheAsBitmap = true;
+			m_LifeBar.o.graphics.lineTo( MTRG.BOARD_X + (l_width * (m_Hp / m_MaxHp)) ,0);
+			m_LifeBar.o.cacheAsBitmap = true;
 		}
 	}
 	

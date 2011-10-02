@@ -46,6 +46,7 @@ import math.CV2D;
 import kernel.Glb;
 import math.Registers;
 import math.Utils;
+import renderer.CDrawObject;
 
 import CCollManager;
 
@@ -55,7 +56,7 @@ class CProjectile implements BSphered
 	var m_Dir : CV2D;
 	var m_Speed : Float;
 	
-	var m_DisplayObject : DisplayObject;
+	var m_DisplayObject : DO<Sprite>;
 	
 	public var visible(default, SetVisible) : Bool;
 	
@@ -87,20 +88,24 @@ class CProjectile implements BSphered
 	public function SetVisible( v ) : Bool
 	{
 		visible = v;
-		m_DisplayObject.visible = v;
+		if (m_DisplayObject!=null)
+		{
+			m_DisplayObject.visible = v;
+			m_DisplayObject.o.visible = v;
+		}
 		return visible;
 	}
 	
 	///////////////////
 	public function Initialize()
 	{
-		
+		visible = false;
 	}
 	
 	///////////////////
 	public function Shut()
 	{
-		Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+		Glb.GetRenderer().RemoveFromScene( m_DisplayObject );
 		m_DisplayObject = null;
 	}
 	
@@ -117,21 +122,21 @@ class CProjectile implements BSphered
 			OnLost();
 		}
 		
-		m_DisplayObject.x = m_Center.x * MTRG.HEIGHT;
-		m_DisplayObject.y = m_Center.y * MTRG.HEIGHT;
+		m_DisplayObject.o.x = m_Center.x * MTRG.HEIGHT;
+		m_DisplayObject.o.y = m_Center.y * MTRG.HEIGHT;
 		//CDebug.CONSOLEMSG("upd lsr" + m_Pos.x +":"+ m_Pos.y);
 	}
 	
 	///////////////////
 	public function OnDestroy()
 	{
-		CDebug.BREAK("should not happen");
+		visible = false;
 	}
 	
 	///////////////////
 	public function OnLost()
 	{
-		CDebug.BREAK("should not happen");
+		visible = false;
 	}
 	
 	///////////////////
@@ -163,7 +168,7 @@ class CProjectile implements BSphered
 		}
 		
 		m_Center.Copy(_From);
-		m_DisplayObject.visible = true;
+		visible = true;
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Add( this );
 	}
 }
@@ -233,8 +238,7 @@ class CLaser extends  CProjectile
 	///////////////////
 	public override function OnDestroy()
 	{
-		m_DisplayObject.visible = false;
-		
+		super.OnDestroy();
 		MTRG.s_Instance.m_Gameplay.m_Ship.DeleteLaser(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		
@@ -257,12 +261,14 @@ class CLaser extends  CProjectile
 		l_PrimaryShape.cacheAsBitmap = true;
 		l_PrimaryShape.visible = true;
 		
-		m_DisplayObject = new Sprite();
-		(cast m_DisplayObject).addChild(l_PrimaryShape);
-		Glb.GetRendererAS().AddToSceneAS(m_DisplayObject);
-		Glb.GetRendererAS().SendToFront(m_DisplayObject);
+		m_DisplayObject = new DO(new Sprite());
+		m_DisplayObject.o.addChild(l_PrimaryShape);
 		
-		m_DisplayObject.visible = false;
+		m_DisplayObject.m_Priority = Const.PRIO_FG;
+		m_DisplayObject.Activate();
+		
+		//FIXME
+		m_DisplayObject.o.visible = false;
 	}
 }
 
@@ -318,8 +324,7 @@ class CBoulette extends  CProjectile
 	///////////////////
 	public override function OnDestroy()
 	{
-		m_DisplayObject.visible = false;
-		
+		super.OnDestroy();
 		MTRG.s_Instance.m_Gameplay.m_ProjectileHelper.m_CBoulettePool.Destroy(this);
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
 		
@@ -342,11 +347,12 @@ class CBoulette extends  CProjectile
 		l_PrimaryShape.cacheAsBitmap = true;
 		l_PrimaryShape.visible = true;
 		
-		m_DisplayObject = new Sprite();
-		(cast m_DisplayObject).addChild(l_PrimaryShape);
-		Glb.GetRendererAS().AddToSceneAS(m_DisplayObject);
-		Glb.GetRendererAS().SendToFront(m_DisplayObject);
+		m_DisplayObject = new DO(new Sprite());
+		m_DisplayObject.o.addChild(l_PrimaryShape);
 		
-		m_DisplayObject.visible = false;
+		m_DisplayObject.m_Priority = Const.PRIO_FG;
+		m_DisplayObject.Activate();
+		
+		m_DisplayObject.o.visible = false;
 	}
 }

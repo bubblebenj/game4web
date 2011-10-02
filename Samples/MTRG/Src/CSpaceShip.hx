@@ -48,9 +48,10 @@ import kernel.Glb;
 import math.Constants;
 import math.Registers;
 import math.Utils;
+import renderer.CDrawObject;
 using Lambda;
 import math.CV2D;
-
+import renderer.CDrawObject;
 ////////////
 enum AIBhv
 {
@@ -93,8 +94,8 @@ class CSpaceShip implements Updatable, implements BSphered
 	public static inline var MAX_LASERS = 16;
 	
 	//imporvement, gather code and refactor with motherships
-	private var m_LifeBar : Shape;
-	private var m_LifeBarContainer : Shape;
+	private var m_LifeBar : DO<Shape>;
+	private var m_LifeBarContainer : DO<Shape>;
 	
 	//laser pool was historically here i haven pushed it back
 	var m_LaserPool : CPool< CLaser >;
@@ -105,6 +106,7 @@ class CSpaceShip implements Updatable, implements BSphered
 	public static inline var SHIP_BASESPEED : Float = 0.1;
 	public static inline var SHIP_AI_TICK_DURATION : Float = 0.5;
 	
+	public var shipDo : DO<Sprite>;
 	
 	////////////////////////////////
 	public function new() 
@@ -199,6 +201,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Bhv = AI_Idle;
 		m_AiTick = 0.5;
 		m_Ship = new Sprite();
+		shipDo = new DO(m_Ship);
 		
 		//build the ai ship triangles
 		var l_Vec : Vector<Float> = new Vector<Float>();
@@ -235,7 +238,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Ship.addChild(l_PrimaryShape);
 	
 		
-		Glb.GetRendererAS().AddToSceneAS( m_Ship );
+		Glb.GetRendererAS().AddToScene( shipDo );
 		
 		//using a linear homogeneous pos is easier for ai... if i have time i ll enhance it a bits
 		SetLinearPos( 0.5 );
@@ -247,18 +250,18 @@ class CSpaceShip implements Updatable, implements BSphered
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Add(this);
 		
 		{
-			m_LifeBarContainer = new Shape();
-			m_LifeBarContainer.graphics.clear();
+			m_LifeBarContainer = new DO(new Shape());
+			m_LifeBarContainer.o.graphics.clear();
 			
-			m_LifeBarContainer.graphics.lineStyle(8, 0xFF0000);
-			m_LifeBarContainer.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
-			m_LifeBarContainer.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, MTRG.HEIGHT - 16);
-			m_LifeBarContainer.visible = false;
-			Glb.GetRendererAS().AddToSceneAS(m_LifeBarContainer);
+			m_LifeBarContainer.o.graphics.lineStyle(8, 0xFF0000);
+			m_LifeBarContainer.o.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
+			m_LifeBarContainer.o.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, MTRG.HEIGHT - 16);
+			m_LifeBarContainer.o.visible = false;
+			Glb.GetRendererAS().AddToScene(m_LifeBarContainer);
 			
-			m_LifeBar = new Shape();
-			m_LifeBar.visible = false;
-			Glb.GetRendererAS().AddToSceneAS(m_LifeBar);
+			m_LifeBar = new DO(new Shape());
+			m_LifeBar.o.visible = false;
+			Glb.GetRendererAS().AddToScene(m_LifeBar);
 			UpdateLifeBar();
 		}
 	}
@@ -268,12 +271,12 @@ class CSpaceShip implements Updatable, implements BSphered
 	{
 		if ( m_LifeBar != null)
 		{
-			m_LifeBar.graphics.clear();
-			m_LifeBar.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
-			m_LifeBar.graphics.lineStyle(8, 0x00FF00);
+			m_LifeBar.o.graphics.clear();
+			m_LifeBar.o.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
+			m_LifeBar.o.graphics.lineStyle(8, 0x00FF00);
 			var l_width = MTRG.BOARD_WIDTH - 32;
-			m_LifeBar.graphics.lineTo( MTRG.BOARD_X + (l_width * (m_Hp / m_MaxHp)) ,MTRG.HEIGHT - 16);
-			m_LifeBar.cacheAsBitmap = true;
+			m_LifeBar.o.graphics.lineTo( MTRG.BOARD_X + (l_width * (m_Hp / m_MaxHp)) ,MTRG.HEIGHT - 16);
+			m_LifeBar.o.cacheAsBitmap = true;
 		}
 	}
 	
@@ -435,15 +438,16 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_LaserPool.Reset();
 		m_LaserPool = null;
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
-		Glb.GetRendererAS().RemoveFromSceneAS( m_Ship );
+		Glb.GetRendererAS().RemoveFromScene( shipDo );
 		
-		Glb.GetRendererAS().RemoveFromSceneAS( m_LifeBar );
-		Glb.GetRendererAS().RemoveFromSceneAS( m_LifeBarContainer );
+		Glb.GetRendererAS().RemoveFromScene( m_LifeBar );
+		Glb.GetRendererAS().RemoveFromScene( m_LifeBarContainer );
 		
 		m_LifeBar = null;
 		m_LifeBarContainer = null;
 		
 		m_Ship = null;
+		shipDo = null;
 	}
 	
 }

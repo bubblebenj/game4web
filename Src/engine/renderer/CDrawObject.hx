@@ -38,7 +38,7 @@ class DO<T> extends CDrawObject
 
 class CDrawObject 
 {
-	public	var m_Priority	: Int;
+	public	var m_Priority(getPrio,setPrio)	: Int;
 			var m_Visible	: Bool;
 	private var	m_Alpha		: Float;
 			var	m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
@@ -66,6 +66,22 @@ class CDrawObject
 		m_Cameras = new Array<CCamera>();
 	}
 	
+	public function getPrio()
+	{
+		return m_Priority;
+	}
+	
+	public function setPrio(v) : Int
+	{
+		m_Priority = v;
+		if ( m_Activated)
+		{
+			Glb.GetRenderer().RemoveFromScene( this );
+			Glb.GetRenderer().AddToScene(this);
+		}
+		return m_Priority;
+	}
+	
 	public function Initialize() : Result
 	{
 		return SUCCESS;
@@ -73,7 +89,7 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
-		if ( ! m_Activated && m_Native != null )
+		if ( !m_Activated && m_Native != null )
 		{
 			Glb.GetRenderer().AddToScene( this );
 			m_Activated	= true;
@@ -107,9 +123,10 @@ class CDrawObject
 		return SUCCESS;
 	}
 	
-	public function SetVisible( _Vis : Bool ) : Void 
+	public function SetVisible( v : Bool ) : Bool 
 	{
-		m_Visible = _Vis;
+		m_Visible = v;
+		return v;
 	}
 	
 	public function IsVisible() : Bool 

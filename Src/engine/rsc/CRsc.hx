@@ -3,6 +3,7 @@ package rsc;
 import kernel.CSystem;
 import kernel.Glb;
 import remotedata.IRemoteData;
+import kernel.EnumHash;
 
 typedef RSC_TYPES = Int;
 
@@ -14,17 +15,29 @@ class CRsc implements IRemoteData
 	
 	public	var m_state( default, SetState )	: DATA_STATE;
 	
-	public	function SetState( _State : DATA_STATE ) : DATA_STATE
+	public var cbk								: EnumHash<DATA_STATE,Void->Void>; 
+	
+	public function SetState( s : DATA_STATE ) : DATA_STATE
 	{
-		m_state	= _State;
+		m_state	= s;
+		
+		var p = cbk.get(s);
+		if ( p != null )
+		{
+			CDebug.CONSOLEMSG("prc");
+			p();
+		}
+			
 		return m_state;
 	}
 	
+
 	public function new()
 	{
 		m_Ref			= 0;
 		m_Path 			= "";
 		m_SingleLoad 	= false;
+		cbk = new EnumHash(DATA_STATE);
 		m_state			= REMOTE;
 	}
 	

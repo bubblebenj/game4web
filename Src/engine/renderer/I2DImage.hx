@@ -22,7 +22,7 @@ interface I2DImage
 	
 	public function SetUV( _u : CV2D , _v : CV2D )	: Void;
 	
-	public function SetAlpha( _Value : Float )		: Void;
+	public function SetAlpha( v : Float )		: Float;
 	
 	public function GetARGB( _xy : CV2D )			: Int;
 	

@@ -44,6 +44,7 @@ import CDebug;
 import kernel.Glb;
 import Game;
 import math.CV2D;
+import renderer.CDrawObject;
 
 
 enum TFS
@@ -63,6 +64,8 @@ class CMinionPad extends Sprite , implements Updatable
 	var m_MinionCounter :  Array <TextField>;
 	var m_MinionCounterFormat : Array <TextFormat>;
 	
+	var me : DO<CMinionPad>;
+	
 	var m_AvailTimer : Float;
 	public static inline var m_AvailTimerDuration : Float = 1.0;
 	public static inline var AVAIL_INCR : Int = 4;
@@ -78,6 +81,7 @@ class CMinionPad extends Sprite , implements Updatable
 	static inline var MARGIN : Int= 16;
 	public function Initialize()
 	{
+		me = new DO(this);
 		m_MinionCounterFormat = new Array<TextFormat>();
 		m_MinionCounter = new Array<TextField>();
 		m_MinionAvail = new Array < Int>();
@@ -106,7 +110,7 @@ class CMinionPad extends Sprite , implements Updatable
 		m_Img.graphics.endFill();
 		
 		addChild(m_Img);
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRendererAS().AddToScene(me);
 		
 		m_Img.alpha = 0.2;
 		m_Img.cacheAsBitmap = true;
@@ -287,7 +291,7 @@ class CMinionPad extends Sprite , implements Updatable
 		m_MinionCounter = null;
 		m_MinionCounterFormat = null;
 		m_MinionAvail = null;
-		Glb.GetRendererAS().RemoveFromSceneAS(this);
+		Glb.GetRendererAS().RemoveFromScene(me);
 		m_Img = null;
 	}
 }

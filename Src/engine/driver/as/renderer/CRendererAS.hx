@@ -58,16 +58,17 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
-	public function SendToFront(  _DisplayObj : DisplayObject )
+	/*
+	public function SendToFront(  _DisplayObj : CDrawObject )
 	{
-		m_SceneAS.setChildIndex( _DisplayObj, m_SceneAS.numChildren-1 );
+		m_SceneAS.setChildIndex( cast _DisplayObj.m_Native, m_SceneAS.numChildren-1 );
 	}
 	
-	public function SendToBack(  _DisplayObj : DisplayObject )
+	public function SendToBack(  _DisplayObj : CDrawObject )
 	{
-		m_SceneAS.setChildIndex( _DisplayObj, 0 );
+		m_SceneAS.setChildIndex( cast _DisplayObj.m_Native, 0 );
 	}
-	
+	*/
 	public override function AddToScene( _Obj : CDrawObject ) : Void
 	{
 		CDebug.ASSERT( _Obj != null );

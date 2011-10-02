@@ -37,6 +37,7 @@ package ;
  import math.CV2D;
  import math.RandomEx;
  import renderer.CColor;
+ import renderer.CDrawObject;
 
  import CCollManager;
  import kernel.Glb;
@@ -61,6 +62,7 @@ package ;
 	
 	public var m_Hp(GetHp,SetHp) : Int;
 	private var _Hp : Int;
+	public var me : DO<CAsteroid>;
 	
 	////////////////////////////////////////////////
 	public function new() 
@@ -75,7 +77,7 @@ package ;
 		
 		m_CollShape = Sphere;
 		m_Hp = 10;
-		
+		me = new DO(this);
 		
 		
 		m_CollMask = 
@@ -212,7 +214,7 @@ package ;
 		
 		addChild(m_ImgNormal);
 		addChild(m_ImgHit);
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRenderer().AddToScene(me);
 		//visible = false;	
 		cacheAsBitmap = true;
 		visible = false;
@@ -237,7 +239,7 @@ package ;
 	////////////////////////////////////////////////
 	public function Shut()
 	{
-		Glb.GetRendererAS().RemoveFromSceneAS(this);
+		Glb.GetRendererAS().RemoveFromScene(me);
 		m_ImgNormal = null;
 		m_ImgHit = null;
 	}

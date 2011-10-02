@@ -55,6 +55,7 @@ import kernel.Glb;
 import math.CV2D;
 import CProjectile;
 import algorithms.CPool;
+import renderer.CDrawObject;
 
 ////////////////////////////////////
 enum EMinions
@@ -129,6 +130,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	public var m_HasAI(default, SetHasAi) : Bool;
 	public var m_CollDmg : Int;
 	public var m_BaseHp : Int;
+	public var me : DO<CMinion>;
 	
 	////////////////////////////////////
 	public function new() 
@@ -151,6 +153,8 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 		m_CollMask = ( 	(1 << Type.enumIndex(Asteroids))
 		|				(1 << Type.enumIndex(SpaceShip))
 		|				(1 << Type.enumIndex(SpaceShipShoots)));
+		
+		me = new DO( this );
 	}
 	
 	//////////////////////////////////
@@ -300,7 +304,7 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	//////////////////////////////////
 	public function Shut()
 	{
-		Glb.GetRendererAS().RemoveFromSceneAS(this);
+		Glb.GetRenderer().RemoveFromScene(me);
 		m_ImgNormal = null;
 		m_ImgHit = null;
 	}
@@ -385,7 +389,7 @@ class CSpaceInvaderMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRenderer().AddToScene(me);
 		
 		m_ShootDelay = 3;
 		
@@ -499,7 +503,7 @@ class CSpaceCircleMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRenderer().AddToScene(me);
 		m_Dir = new CV2D(0, 0);
 		m_BHV = WanderMother;
 		m_ThinkTimer = 0.5;
@@ -690,7 +694,7 @@ class CPerforatingMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRenderer().AddToScene(me);
 	}
 	
 	//////////////////////////////////
@@ -767,6 +771,7 @@ class CCrossMinion extends CMinion
 		m_ShootDelay = 5;
 		m_Target = new CV2D(0, 0);
 		m_BaseHp = 20;
+		
 	}
 	
 	public override function OnEnable()
@@ -825,7 +830,7 @@ class CCrossMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRendererAS().AddToSceneAS(this);
+		Glb.GetRenderer().AddToScene(me);
 	}
 	
 	//////////////////////////////////
