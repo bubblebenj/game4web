@@ -110,7 +110,7 @@ class CMinionPad extends Sprite , implements Updatable
 		m_Img.graphics.endFill();
 		
 		addChild(m_Img);
-		Glb.GetRendererAS().AddToScene(me);
+		me.Activate();
 		
 		m_Img.alpha = 0.2;
 		m_Img.cacheAsBitmap = true;
@@ -288,10 +288,18 @@ class CMinionPad extends Sprite , implements Updatable
 	//
 	public function Shut()
 	{
+		me.Shut();
+		Lambda.iter(m_MinionArray,
+		function(m)
+		{
+			m.Shut();
+		}
+		);
+		m_MinionArray = null;
 		m_MinionCounter = null;
 		m_MinionCounterFormat = null;
 		m_MinionAvail = null;
-		Glb.GetRendererAS().RemoveFromScene(me);
+		
 		m_Img = null;
 	}
 }

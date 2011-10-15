@@ -189,13 +189,13 @@ class Game
 		
 		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
 		
-		m_PlacingLimitLine = new DO(new Shape());
+		m_PlacingLimitLine = new DO(new Shape(),"pll");
 		m_PlacingLimitLine.o.blendMode = BlendMode.ADD;
 		m_PlacingLimitLine.o.graphics.lineStyle( 3, 0x00FF00, 0.15);
 		m_PlacingLimitLine.o.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.o.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.visible = false;
-		Glb.GetRenderer().AddToScene(m_PlacingLimitLine);
+		m_PlacingLimitLine.Activate();
 		
 		m_Mothership.Initialize();
 		
@@ -319,6 +319,12 @@ class Game
 		{
 			CDebug.CONSOLEMSG( m_CollMan.toString() );
 		}
+		
+		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_F2)
+		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_F2))
+		{
+			CDebug.CONSOLEMSG( Glb.g_System.GetRenderer().toString() );
+		}
 		#end
 		
 		switch(m_State)
@@ -370,6 +376,7 @@ class Game
 	////////////////////////////////////////////////////////////
 	public function Shut()
 	{
+		CDebug.CONSOLEMSG("shutting");
 		for(a in m_Asteroids)
 		{
 			a.Shut();
@@ -397,7 +404,8 @@ class Game
 		m_ProjectileHelper.Shut();
 		m_ProjectileHelper = null;
 		
-		Glb.GetRendererAS().RemoveFromScene(m_PlacingLimitLine);
+		m_PlacingLimitLine.Shut();
+		m_PlacingLimitLine = null;
 		System.gc();
 		System.gc();
 	}

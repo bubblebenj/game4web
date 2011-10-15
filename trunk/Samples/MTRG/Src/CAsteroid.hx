@@ -214,7 +214,8 @@ package ;
 		
 		addChild(m_ImgNormal);
 		addChild(m_ImgHit);
-		Glb.GetRenderer().AddToScene(me);
+		me.Activate();
+		
 		//visible = false;	
 		cacheAsBitmap = true;
 		visible = false;
@@ -239,7 +240,7 @@ package ;
 	////////////////////////////////////////////////
 	public function Shut()
 	{
-		Glb.GetRendererAS().RemoveFromScene(me);
+		me.Shut();
 		m_ImgNormal = null;
 		m_ImgHit = null;
 	}

@@ -82,10 +82,10 @@ class CMinionHelper
 					case CCrossMinion:m_CCrossMinionPool.Destroy(cast _Inst);
 					case CSpaceCircleMinion:m_CSpaceCircleMinionPool.Destroy(cast _Inst);
 					case CSpaceInvaderMinion: m_CSpaceInvaderMinionPool.Destroy( cast _Inst );
-					default : 
+					default : throw "err";
 				}
 			}
-			default : 
+			default : throw "err";
 		}
 	}
 	

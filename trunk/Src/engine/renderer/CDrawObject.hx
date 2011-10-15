@@ -16,10 +16,11 @@ import kernel.Glb;
 
 class DO<T> extends CDrawObject
 {
-	public function new( n : T)
+	public function new( n : T , ?name)
 	{
 		super();
 		m_Native = n;
+		m_Name = name;
 	}
 	
 	public var o(get,set) : T;
@@ -53,6 +54,13 @@ class CDrawObject
 	public var alpha(GetAlpha, SetAlpha) : Float;
 	public var visible(IsVisible, SetVisible) : Bool;
 	
+	public	var	m_Name : String;
+	
+	public function toString()
+	{
+		return m_Name;
+	}
+	
 	public function new()
 	{
 		m_Priority	= 0;
@@ -62,8 +70,15 @@ class CDrawObject
 		m_Transfo	= new CMatrix44();
 		m_Transfo.Identity();
 		m_Native	= null;
-		
+	
+		m_Activated = false;
 		m_Cameras = new Array<CCamera>();
+		m_Name = "";
+	}
+	
+	public function IsActivated()
+	{
+		return m_Activated;
 	}
 	
 	public function getPrio()
@@ -74,9 +89,10 @@ class CDrawObject
 	public function setPrio(v) : Int
 	{
 		m_Priority = v;
-		if ( m_Activated)
+		if ( m_Activated )
 		{
 			Glb.GetRenderer().RemoveFromScene( this );
+			m_Activated = false;
 			Glb.GetRenderer().AddToScene(this);
 		}
 		return m_Priority;
@@ -91,8 +107,14 @@ class CDrawObject
 	{
 		if ( !m_Activated && m_Native != null )
 		{
-			Glb.GetRenderer().AddToScene( this );
-			m_Activated	= true;
+			var r = Glb.GetRenderer().AddToScene( this );
+			
+			if ( r == SUCCESS) 
+			{
+				if( m_Name != null)
+					CDebug.CONSOLEMSG("Activated :" + m_Name);
+				m_Activated	= true;
+			}
 		}
 		return SUCCESS;
 	}

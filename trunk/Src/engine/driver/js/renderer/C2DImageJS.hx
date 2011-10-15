@@ -122,10 +122,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 		return l_Res;
 	}
 	
-	public override function SetAlpha( _Value : Float ) : Void
-	{
-		
-	}
+	
 	
 	public function CreateData()
 	{
@@ -330,7 +327,7 @@ class C2DImageJS  extends C2DQuad, implements I2DImage
 	private var m_Material : CMaterial;
 	
 	
-	public function Load( _Path )	: Result
+	public function Load( _Path , autoAct = true )	: Result
 	{
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
