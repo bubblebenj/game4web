@@ -238,7 +238,7 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_Ship.addChild(l_PrimaryShape);
 	
 		
-		Glb.GetRendererAS().AddToScene( shipDo );
+		shipDo.Activate();
 		
 		//using a linear homogeneous pos is easier for ai... if i have time i ll enhance it a bits
 		SetLinearPos( 0.5 );
@@ -251,17 +251,19 @@ class CSpaceShip implements Updatable, implements BSphered
 		
 		{
 			m_LifeBarContainer = new DO(new Shape());
+			m_LifeBarContainer.m_Priority = Const.PRIO_FG;
 			m_LifeBarContainer.o.graphics.clear();
 			
 			m_LifeBarContainer.o.graphics.lineStyle(8, 0xFF0000);
 			m_LifeBarContainer.o.graphics.moveTo(MTRG.BOARD_X,MTRG.HEIGHT - 16);
 			m_LifeBarContainer.o.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, MTRG.HEIGHT - 16);
 			m_LifeBarContainer.o.visible = false;
-			Glb.GetRendererAS().AddToScene(m_LifeBarContainer);
+			m_LifeBarContainer.Activate();
 			
 			m_LifeBar = new DO(new Shape());
 			m_LifeBar.o.visible = false;
-			Glb.GetRendererAS().AddToScene(m_LifeBar);
+			m_LifeBar.m_Priority = Const.PRIO_FG;
+			m_LifeBar.Activate();
 			UpdateLifeBar();
 		}
 	}
@@ -299,6 +301,10 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_LifeBar.visible = _OnOff;
 		m_LifeBarContainer.visible = _OnOff;
 		m_Ship.visible = _OnOff;
+		
+		m_LifeBar.o.visible = _OnOff;
+		m_LifeBarContainer.o.visible = _OnOff;
+		
 	}
 	
 	////////////////////////////////
@@ -438,10 +444,10 @@ class CSpaceShip implements Updatable, implements BSphered
 		m_LaserPool.Reset();
 		m_LaserPool = null;
 		MTRG.s_Instance.m_Gameplay.m_CollMan.Remove(this);
-		Glb.GetRendererAS().RemoveFromScene( shipDo );
 		
-		Glb.GetRendererAS().RemoveFromScene( m_LifeBar );
-		Glb.GetRendererAS().RemoveFromScene( m_LifeBarContainer );
+		shipDo.Shut();	
+		m_LifeBar.Shut();
+		m_LifeBarContainer.Shut();
 		
 		m_LifeBar = null;
 		m_LifeBarContainer = null;

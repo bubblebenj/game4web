@@ -4,6 +4,7 @@ import kernel.CSystem;
 import kernel.Glb;
 import remotedata.IRemoteData;
 import kernel.EnumHash;
+using Lambda;
 
 typedef RSC_TYPES = Int;
 
@@ -15,20 +16,42 @@ class CRsc implements IRemoteData
 	
 	public	var m_state( default, SetState )	: DATA_STATE;
 	
-	public var cbk								: EnumHash<DATA_STATE,Void->Void>; 
+			var cbk								: EnumHash<DATA_STATE,List<Void->Dynamic>>; 
 	
 	public function SetState( s : DATA_STATE ) : DATA_STATE
 	{
 		m_state	= s;
 		
-		var p = cbk.get(s);
-		if ( p != null )
+		var lp = cbk.get(s);
+		if ( lp != null )
 		{
 			CDebug.CONSOLEMSG("prc");
-			p();
+			lp.iter(function(p) p());
+			cbk.set(s,null);
 		}
 			
 		return m_state;
+	}
+	
+	public function AddStateCbk(s:DATA_STATE,proc : Void->Dynamic)
+	{
+		if( s == m_state )
+		{
+			proc(); return;
+		}
+		
+		if (cbk.get(s) == null)
+		{
+			var l = new List();
+			l.add(proc);
+			cbk.set(s, l);
+		}
+		else 
+		{
+			var l = cbk.get(s);
+			l.add(proc);
+			cbk.set(s, l);
+		}
 	}
 	
 

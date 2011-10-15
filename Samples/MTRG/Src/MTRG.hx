@@ -55,6 +55,8 @@ import kernel.CSystem;
 import CTypes;
 import CDebug;
 
+using Lambda;
+
 enum GAME_STAGE
 {
 	GS_INIT;
@@ -162,17 +164,27 @@ class MTRG implements SystemProcess
 	////////////////////////////////////////////////////////////
 	public function AfterUpdate() : Result
 	{
+		/*
 		m_Tasks =  Lambda.filter( 
 									Lambda.map(m_Tasks, function( t) { return ( t.Update() == false ) ? t : null;} ),
 									function(x) { return x != null; }
 									);
+		*/
+		m_Tasks = m_Tasks.fold( function( t, l : List<CTimedTask>){
+			if( !t.Update() )
+			{
+				l.add(t);
+			}
+			return l;
+		},
+		new List());
+				
 		return SUCCESS;
 	}
 	
 	////////////////////////////////////////////////////////////
 	public function BeforeUpdate() : Result
 	{
-		
 		switch( s_Instance.m_State )
 		{
 			case GS_INIT:
@@ -195,6 +207,7 @@ class MTRG implements SystemProcess
 				BuildEndScreen(w);
 		}
 
+		
 		return SUCCESS;
 	}
 	
@@ -283,7 +296,7 @@ class MTRG implements SystemProcess
 			m_BeginScreen.o.alpha = 0;
 			m_BeginScreen.o.visible = true;
 			
-			Glb.GetRenderer().AddToScene( m_BeginScreen );
+			m_BeginScreen.Activate();
 			//Glb.GetRendererAS().SendToBack( m_BeginScreen );
 		}
 		else
@@ -304,7 +317,7 @@ class MTRG implements SystemProcess
 				if (Glb.GetInputManager().GetMouse().IsDown())
 				{
 					m_BeginScreen.o.visible = false;
-					Glb.GetRenderer().RemoveFromScene( m_BeginScreen );
+					m_BeginScreen.Shut();
 					m_BeginScreen = null;
 					m_BeginScreenBody = null;
 					m_BeginScreenBodyFormat = null;
@@ -331,9 +344,16 @@ class MTRG implements SystemProcess
 	{
 		if ( m_EndScreen == null )
 		{
+			CDebug.CONSOLEMSG("shutting...");
 			Shut();
 			
-			m_EndScreen = new DO(new Sprite());
+			for( k in Glb.g_System.GetRenderer().m_Scene )
+			{
+				trace(k);
+			}
+			
+			m_EndScreen = new DO(new Sprite(),"ends");
+			
 			var l_Shape :Shape = new Shape();
 			l_Shape.graphics.beginFill(0xFFFFFF, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH- 48, MTRG.HEIGHT - 48,8,8);
@@ -391,24 +411,25 @@ class MTRG implements SystemProcess
 			m_EndScreen.o.alpha = 0;
 			m_EndScreen.o.addChild(l_Title);
 			m_EndScreen.o.visible = true;
-			Glb.GetRenderer().AddToScene( m_EndScreen);
+			m_EndScreen.visible = true;
+			m_EndScreen.Activate();
 		}
 		else
 		{
-			if (m_EndScreen.alpha <1)
+			if (m_EndScreen.o.alpha <1)
 			{
-				m_EndScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
+				m_EndScreen.o.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
 			}
 			else
 			{
-				m_EndScreen.alpha = 1;
+				m_EndScreen.o.alpha = 1;
 			}
 			
-			if (m_EndScreen.alpha >= 1)
+			if (m_EndScreen.o.alpha >= 1)
 			{
 				if( Glb.GetInputManager().GetMouse().IsDown() )
 				{
-					Glb.GetRendererAS().RemoveFromScene(m_EndScreen);
+					m_EndScreen.Shut();
 					m_EndScreen = null;
 					m_SoundBank.StopBank();
 					m_State = GS_INIT;

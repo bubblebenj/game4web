@@ -39,6 +39,11 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_UV			= new CV4D( 0, 0, 1, 1 );
 	}
 	
+	public function GetRsc()
+	{
+		return m_RscImage;
+	}
+	
 	public	function SetState( _State : DATA_STATE ) : DATA_STATE
 	{
 		m_state	= _State;
@@ -50,7 +55,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_UV.CopyV2D( _u, _v );
 	}
 	
-	public function Load( _Path )	: Result
+	public function Load( _Path, _autoActivate : Bool = true )	: Result
 	{
 		m_state	= SYNCING;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
@@ -58,6 +63,9 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		CDebug.ASSERT( rsc != null );
 		var l_Res = SetRsc( cast rsc );
 		CDebug.ASSERT(l_Res == SUCCESS );
+		
+		m_RscImage.AddStateCbk( READY, Activate );		
+		
 		return l_Res;
 	}
 	
@@ -66,18 +74,8 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
-		if (m_RscImage.IsReady())
-		{
-			CDebug.CONSOLEMSG("1");
-			CreateBitmap();
-		}
-		else
-		{
-			CDebug.CONSOLEMSG("2");
-			m_RscImage.cbk.set( READY, CreateBitmap);
-			CDebug.ASSERT( m_RscImage.m_state != READY );
-		}
-			
+		m_RscImage.AddStateCbk( READY, CreateBitmap );
+		
 		return l_Res;
 	}
 	
@@ -121,7 +119,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		SetPosition( GetPosition() );
 		SetVisible( m_Visible );
 		m_state	= READY;
-		CDebug.CONSOLEMSG( "READY" );
+		CDebug.CONSOLEMSG( "READY " + m_RscImage.GetPath() );
 	}
 
 	public function GetBitmap() : Bitmap

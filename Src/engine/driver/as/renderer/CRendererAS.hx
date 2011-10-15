@@ -69,13 +69,14 @@ class CRendererAS extends CRenderer
 		m_SceneAS.setChildIndex( cast _DisplayObj.m_Native, 0 );
 	}
 	*/
-	public override function AddToScene( _Obj : CDrawObject ) : Void
+	public override function AddToScene( _Obj : CDrawObject ) : Result
 	{
 		CDebug.ASSERT( _Obj != null );
 		CDebug.ASSERT( _Obj.m_Native != null );
 
-		super.AddToScene( _Obj );
+		var r = super.AddToScene( _Obj );
 				
+		if ( r == FAILURE) return FAILURE;
 		for ( i_Child in 0 ... m_SceneAS.numChildren )
 		{
 			m_SceneAS.removeChildAt( 0 );
@@ -84,6 +85,27 @@ class CRendererAS extends CRenderer
 		for ( i_Child in m_Scene )
 		{
 			m_SceneAS.addChild( cast ( i_Child.m_Native, DisplayObject ) );
+		}
+		return SUCCESS;
+	}
+	
+	public override function RemoveFromScene( _Obj : CDrawObject )
+	{
+		CDebug.ASSERT( _Obj != null );
+		CDebug.ASSERT( _Obj.m_Native != null );
+		
+		super.RemoveFromScene( _Obj );
+		
+		if (m_SceneAS.contains( cast _Obj.m_Native ) )
+		{
+			try
+			{
+				m_SceneAS.removeChild( cast _Obj.m_Native );
+			}
+			catch(d:Dynamic)
+			{
+				
+			}
 		}
 	}
 	

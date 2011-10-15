@@ -303,8 +303,9 @@ class CMinion extends Sprite , implements Updatable, implements BSphered
 	
 	//////////////////////////////////
 	public function Shut()
-	{
-		Glb.GetRenderer().RemoveFromScene(me);
+	{	
+		me.Shut();
+		me = null;
 		m_ImgNormal = null;
 		m_ImgHit = null;
 	}
@@ -389,7 +390,7 @@ class CSpaceInvaderMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRenderer().AddToScene(me);
+		me.Activate();
 		
 		m_ShootDelay = 3;
 		
@@ -503,7 +504,7 @@ class CSpaceCircleMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRenderer().AddToScene(me);
+		me.Activate();
 		m_Dir = new CV2D(0, 0);
 		m_BHV = WanderMother;
 		m_ThinkTimer = 0.5;
@@ -694,7 +695,7 @@ class CPerforatingMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRenderer().AddToScene(me);
+		me.Activate();
 	}
 	
 	//////////////////////////////////
@@ -830,7 +831,7 @@ class CCrossMinion extends CMinion
 		addChild( m_ImgHit );
 		addChild( m_ImgNormal);
 		visible = false;
-		Glb.GetRenderer().AddToScene(me);
+		me.Activate();
 	}
 	
 	//////////////////////////////////

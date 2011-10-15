@@ -75,6 +75,10 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 		visible = _OnOff;
 		m_LifeBar.visible = _OnOff;
 		m_LifeBarContainer.visible = _OnOff;
+	
+		me.o.visible = _OnOff;
+		m_LifeBar.o.visible = _OnOff;
+		m_LifeBarContainer.o.visible = _OnOff;
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -91,7 +95,7 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 		m_MaxHp = 100;
 		m_Hp = m_MaxHp;
 		
-		me = new DO(this);
+		me = new DO(this,"mother");
 	}
 	
 	//////////////////////////////////
@@ -142,8 +146,6 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 	{
 		UpdateLifeBar();
 		
-	
-		
 		MTRG.s_Instance.m_Gameplay.GameOver(false);
 		var l_This = this;
 		MTRG.s_Instance.m_Gameplay.m_Tasks.push( new CTimedTask(function(ratio)
@@ -163,11 +165,12 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 	{
 		m_ScanShape = null;
 		
-		Glb.GetRenderer().RemoveFromScene(m_LifeBar);
+		m_LifeBar.Shut();
 		m_LifeBar = null;
-		Glb.GetRenderer().RemoveFromScene(m_LifeBarContainer);
+		m_LifeBarContainer.Shut();
 		m_LifeBarContainer = null;
-		Glb.GetRenderer().RemoveFromScene(me);
+		me.Shut();
+		me = null;
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -229,7 +232,7 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 		
 		visible = false;
 		me.m_Priority = Const.PRIO_FG;
-		Glb.GetRenderer().AddToScene( me );
+		me.Activate();
 		
 		m_Center.Set( 	(MTRG.BOARD_WIDTH / 2 + MTRG.BOARD_X) / MTRG.HEIGHT,
 						64 / MTRG.HEIGHT);
@@ -238,18 +241,22 @@ class CMothership extends Sprite, implements CCollManager.BSphered
 		
 		//prepare life bar
 		{
-			m_LifeBarContainer = new DO(new Shape());
+			m_LifeBarContainer = new DO(new Shape(),"lb");
 			m_LifeBarContainer.o.graphics.clear();
+			m_LifeBarContainer.m_Priority = Const.PRIO_FG;
 			
 			m_LifeBarContainer.o.graphics.lineStyle(8, 0xFF0000);
-			m_LifeBarContainer.o.graphics.moveTo(MTRG.BOARD_X,0);
-			m_LifeBarContainer.o.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, 0);
+			
+			var y = 0;
+			m_LifeBarContainer.o.graphics.moveTo(MTRG.BOARD_X,y);
+			m_LifeBarContainer.o.graphics.lineTo(MTRG.BOARD_X + MTRG.BOARD_WIDTH - 32, y);
 			m_LifeBarContainer.o.visible = false;
-			Glb.GetRenderer().AddToScene(m_LifeBarContainer);
+			m_LifeBarContainer.Activate();
 			
 			m_LifeBar = new DO(new Shape());
 			m_LifeBar.o.visible = false;
-			Glb.GetRenderer().AddToScene(m_LifeBar);
+			m_LifeBar.m_Priority = Const.PRIO_FG;
+			m_LifeBar.Activate();
 			UpdateLifeBar();
 		}
 	}

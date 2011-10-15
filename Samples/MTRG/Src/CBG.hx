@@ -37,12 +37,12 @@ import driver.as.renderer.C2DImageAS;
 import haxe.Public;
 import kernel.Glb;
 import math.CV2D;
+import remotedata.IRemoteData;
 
 
 class CBG  implements Public , implements Updatable
 {
 	public var m_Img : C2DImageAS;
-
 
 	////////////////////////////////////////////////////////////
 	function new()
@@ -55,10 +55,20 @@ class CBG  implements Public , implements Updatable
 	{
 		m_Img = new C2DImageAS();
 		
+		m_Img.m_Name = "BG";
 		m_Img.Load( "Data/BG.png" );
-		m_Img.visible = true;
-		
 		m_Img.SetCenterPosition( new CV2D( Glb.GetSystem().m_Display.GetAspectRatio() * 0.5, 0.5));
+		m_Img.visible = true;
+		m_Img.m_Priority = Const.PRIO_BG;
+		
+		/*
+		m_Img.GetRsc().AddStateCbk( READY, 
+			function()
+			{
+				var r = m_Img.Activate();
+			}
+			);
+		*/
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -76,7 +86,6 @@ class CBG  implements Public , implements Updatable
 	////////////////////////////////////////////////////////////
 	function Update()
 	{
-		
 	}
 	
 	////////////////////////////////////////////////////////////

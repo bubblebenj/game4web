@@ -14,7 +14,7 @@ import rsc.CRscImage;
 
 interface I2DImage
 {
-	public function Load( _Path : String )			: Result;
+	public function Load( _Path : String, _autoActivate :Bool = true )			: Result;
 	
 	public function SetRsc( _RscImg : CRscImage )	: Result;
 	
