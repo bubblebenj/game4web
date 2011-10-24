@@ -14,7 +14,7 @@ import rsc.CRscImage;
 
 interface I2DImage
 {
-	public function Load( _Path : String, _autoActivate :Bool = true )			: Result;
+	public function Load( _Path : String )			: Result;
 	
 	public function SetRsc( _RscImg : CRscImage )	: Result;
 	
@@ -22,7 +22,7 @@ interface I2DImage
 	
 	public function SetUV( _u : CV2D , _v : CV2D )	: Void;
 	
-	public function SetAlpha( v : Float )		: Float;
+	public function SetAlpha( _Value : Float )		: Void;
 	
 	public function GetARGB( _xy : CV2D )			: Int;
 	

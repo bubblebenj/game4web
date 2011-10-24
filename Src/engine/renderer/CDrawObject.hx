@@ -13,33 +13,9 @@ import renderer.camera.CCamera;
 import CTypes;
 import kernel.Glb;
 
-
-class DO<T> extends CDrawObject
-{
-	public function new( n : T , ?name)
-	{
-		super();
-		m_Native = n;
-		m_Name = name;
-	}
-	
-	public var o(get,set) : T;
-	
-	public function get() : T
-	{
-		return cast m_Native;
-	}
-	
-	public function set(v) : T
-	{
-		m_Native = v;
-		return m_Native;
-	}
-}
-
 class CDrawObject 
 {
-	public	var m_Priority(getPrio,setPrio)	: Int;
+	public	var m_Priority	: Int;
 			var m_Visible	: Bool;
 	private var	m_Alpha		: Float;
 			var	m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
@@ -51,15 +27,6 @@ class CDrawObject
 			var	m_Cameras	: Array<CCamera>;
 	public	var m_Native	: Dynamic;
 	
-	public var alpha(GetAlpha, SetAlpha) : Float;
-	public var visible(IsVisible, SetVisible) : Bool;
-	
-	public	var	m_Name : String;
-	
-	public function toString()
-	{
-		return m_Name;
-	}
 	
 	public function new()
 	{
@@ -70,32 +37,8 @@ class CDrawObject
 		m_Transfo	= new CMatrix44();
 		m_Transfo.Identity();
 		m_Native	= null;
-	
-		m_Activated = false;
+		
 		m_Cameras = new Array<CCamera>();
-		m_Name = "";
-	}
-	
-	public function IsActivated()
-	{
-		return m_Activated;
-	}
-	
-	public function getPrio()
-	{
-		return m_Priority;
-	}
-	
-	public function setPrio(v) : Int
-	{
-		m_Priority = v;
-		if ( m_Activated )
-		{
-			Glb.GetRenderer().RemoveFromScene( this );
-			m_Activated = false;
-			Glb.GetRenderer().AddToScene(this);
-		}
-		return m_Priority;
 	}
 	
 	public function Initialize() : Result
@@ -105,16 +48,10 @@ class CDrawObject
 	
 	public function Activate() : Result
 	{
-		if ( !m_Activated && m_Native != null )
+		if ( ! m_Activated && m_Native != null )
 		{
-			var r = Glb.GetRenderer().AddToScene( this );
-			
-			if ( r == SUCCESS) 
-			{
-				if( m_Name != null)
-					CDebug.CONSOLEMSG("Activated :" + m_Name);
-				m_Activated	= true;
-			}
+			Glb.GetRenderer().AddToScene( this );
+			m_Activated	= true;
 		}
 		return SUCCESS;
 	}
@@ -145,10 +82,9 @@ class CDrawObject
 		return SUCCESS;
 	}
 	
-	public function SetVisible( v : Bool ) : Bool 
+	public function SetVisible( _Vis : Bool ) : Void 
 	{
-		m_Visible = v;
-		return v;
+		m_Visible = _Vis;
 	}
 	
 	public function IsVisible() : Bool 
@@ -156,10 +92,9 @@ class CDrawObject
 		return m_Visible;
 	}
 	
-	public function SetAlpha( _Value : Float )		: Float
+	public function SetAlpha( _Value : Float )		: Void
 	{
 		m_Alpha 	= _Value;
-		return m_Alpha;
 	}
 	
 	public function GetAlpha() : Float

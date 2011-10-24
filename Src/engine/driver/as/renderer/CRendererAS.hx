@@ -58,25 +58,23 @@ class CRendererAS extends CRenderer
 		return SUCCESS;
 	}
 	
-	/*
-	public function SendToFront(  _DisplayObj : CDrawObject )
+	public function SendToFront(  _DisplayObj : DisplayObject )
 	{
-		m_SceneAS.setChildIndex( cast _DisplayObj.m_Native, m_SceneAS.numChildren-1 );
+		m_SceneAS.setChildIndex( _DisplayObj, m_SceneAS.numChildren-1 );
 	}
 	
-	public function SendToBack(  _DisplayObj : CDrawObject )
+	public function SendToBack(  _DisplayObj : DisplayObject )
 	{
-		m_SceneAS.setChildIndex( cast _DisplayObj.m_Native, 0 );
+		m_SceneAS.setChildIndex( _DisplayObj, 0 );
 	}
-	*/
-	public override function AddToScene( _Obj : CDrawObject ) : Result
+	
+	public override function AddToScene( _Obj : CDrawObject ) : Void
 	{
 		CDebug.ASSERT( _Obj != null );
 		CDebug.ASSERT( _Obj.m_Native != null );
 
-		var r = super.AddToScene( _Obj );
+		super.AddToScene( _Obj );
 				
-		if ( r == FAILURE) return FAILURE;
 		for ( i_Child in 0 ... m_SceneAS.numChildren )
 		{
 			m_SceneAS.removeChildAt( 0 );
@@ -86,30 +84,9 @@ class CRendererAS extends CRenderer
 		{
 			m_SceneAS.addChild( cast ( i_Child.m_Native, DisplayObject ) );
 		}
-		return SUCCESS;
 	}
 	
-	public override function RemoveFromScene( _Obj : CDrawObject )
-	{
-		CDebug.ASSERT( _Obj != null );
-		CDebug.ASSERT( _Obj.m_Native != null );
-		
-		super.RemoveFromScene( _Obj );
-		
-		if (m_SceneAS.contains( cast _Obj.m_Native ) )
-		{
-			try
-			{
-				m_SceneAS.removeChild( cast _Obj.m_Native );
-			}
-			catch(d:Dynamic)
-			{
-				
-			}
-		}
-	}
-	
-	/*public function AddToSceneAS( _DisplayObj : DisplayObject )
+	/**/public function AddToSceneAS( _DisplayObj : DisplayObject )
 	{
 		m_SceneAS.addChild( _DisplayObj );
 	}

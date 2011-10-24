@@ -39,11 +39,6 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_UV			= new CV4D( 0, 0, 1, 1 );
 	}
 	
-	public function GetRsc()
-	{
-		return m_RscImage;
-	}
-	
 	public	function SetState( _State : DATA_STATE ) : DATA_STATE
 	{
 		m_state	= _State;
@@ -55,17 +50,14 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_UV.CopyV2D( _u, _v );
 	}
 	
-	public function Load( _Path, _autoActivate : Bool = true )	: Result
+	public function Load( _Path )	: Result
 	{
 		m_state	= SYNCING;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
-		var rsc = l_RscMan.Load( CRscImage.RSC_ID , _Path );
-		CDebug.ASSERT( rsc != null );
-		var l_Res = SetRsc( cast rsc );
+		
+		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
+		
 		CDebug.ASSERT(l_Res == SUCCESS );
-		
-		m_RscImage.AddStateCbk( READY, Activate );		
-		
 		return l_Res;
 	}
 	
@@ -73,8 +65,6 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	{
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
-		
-		m_RscImage.AddStateCbk( READY, CreateBitmap );
 		
 		return l_Res;
 	}
@@ -98,30 +88,43 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 			m_Native = l_Bmp;
 			l_Bmp.smoothing	= true;
 		}
-		
-		var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
-			
-		// initializing Scale value
-		SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
-							m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
-		m_Scale.Set( 1, 1 );
-		
-		if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
-		{
-			// Update size if a size was already set
-			var l_x : Float = 0;
-			var l_y : Float = 0;
-			l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
-			l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
-			SetSize( new CV2D( l_x, l_y ) );
-		}
-		
-		SetPosition( GetPosition() );
-		SetVisible( m_Visible );
-		m_state	= READY;
-		CDebug.CONSOLEMSG( "READY " + m_RscImage.GetPath() );
 	}
-
+	
+	public override function Update() : Result
+	{
+		if ( 	m_RscImage	!= null
+		&& 		m_RscImage.IsReady()
+		&&		m_state == SYNCING )
+		{
+			CreateBitmap();
+			
+			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
+			
+			// initializing Scale value
+			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
+								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
+			m_Scale.Set( 1, 1 );
+			
+			if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
+			{
+				// Update size if a size was already set
+				var l_x : Float = 0;
+				var l_y : Float = 0;
+				l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
+				l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
+				SetSize( new CV2D( l_x, l_y ) );
+			}
+			
+			SetPosition( GetPosition() );
+			
+			SetVisible( m_Visible );
+			m_state	= READY;
+			CDebug.CONSOLEMSG( "READY" );
+			
+		}
+		return SUCCESS;
+	}
+	
 	public function GetBitmap() : Bitmap
 	{
 		return cast( m_DisplayObject, Bitmap );

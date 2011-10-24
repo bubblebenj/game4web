@@ -45,14 +45,45 @@ class C2DQuadAS extends C2DQuad
 		return cast ( m_Native, DisplayObject );
 	}
 	
-	public override function SetVisible( v : Bool ) : Bool
+	/*
+	public override function Activate() : Result
 	{
-		super.SetVisible( v );
+		if ( !m_Activated )
+		{
+			if ( m_DisplayObject != null )
+			{
+				Glb.GetRendererAS().AddToSceneAS( m_DisplayObject );
+				return super.Activate();
+			}
+			else
+			{
+				return FAILURE;
+			}
+		}
+		return SUCCESS;
+	}//*/
+	/*/
+	public override function Shut() : Result
+	{
+		Glb.GetRendererAS().RemoveFromScene( this );
+		if ( m_DisplayObject != null )
+		{
+			if ( m_Activated )
+			{
+				Glb.GetRendererAS().RemoveFromSceneAS( m_DisplayObject );
+			}
+		}
+		super.Shut();
+		return SUCCESS;
+	}//*/
+	
+	public override function SetVisible( _Vis : Bool ) : Void
+	{
+		super.SetVisible( _Vis );
 		if( m_DisplayObject != null )
 		{
-			m_DisplayObject.visible = v;
+			m_DisplayObject.visible = _Vis;
 		}
-		return v;
 	}
 	
 	private static var s_Matrix	= new Matrix();
@@ -113,14 +144,13 @@ class C2DQuadAS extends C2DQuad
 		return SUCCESS;
 	}
 	
-	public override function SetAlpha( v ) : Float
+	public override function SetAlpha( _Value : Float ) : Void
 	{
-		super.SetAlpha( v );
+		super.SetAlpha( _Value );
 		if ( m_DisplayObject != null )
 		{
-			m_DisplayObject.alpha = v;
+			m_DisplayObject.alpha = _Value;
 		}
-		return v;
 	}
 	
 	public override function IsReady()	: Bool

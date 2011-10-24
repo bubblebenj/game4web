@@ -32,7 +32,6 @@ class CRenderContext
 	public static inline var RC_MATERIAL_STAGE		: Int = 1;
 	public static inline var RC_PRIMITIVE_STAGE 	: Int = 2;
 	public static inline var RC_RENDER_STATES_STAGE : Int = 3;
-	public static inline var VERBOSE : Bool = false;	
 	
 	public function new() 
 	{
@@ -152,7 +151,7 @@ class CRenderContext
 			var  l_ShdrActivation : Result = m_CurrentShader.Activate();
 			if(l_ShdrActivation==FAILURE)
 			{
-				if(VERBOSE) CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
+				CDebug.CONSOLEMSG("CGLQuad:unable to activate shdr");
 				return FAILURE;
 			}
 		}
@@ -165,7 +164,7 @@ class CRenderContext
 			var l_MatActivation : Result = m_CurrentMaterial.Activate();
 			if(l_MatActivation==FAILURE)
 			{
-				if(VERBOSE) CDebug.CONSOLEMSG("CGLQuad:unable to activate material");
+				CDebug.CONSOLEMSG("CGLQuad:unable to activate mat");
 				return FAILURE;
 			}
 		}
@@ -177,7 +176,7 @@ class CRenderContext
 			var  l_PrgmLink : Result = m_CurrentShader.LinkPrimitive( m_CurrentPrimitive );
 			if(l_PrgmLink==FAILURE)
 			{
-				if(VERBOSE)  CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
+				CDebug.CONSOLEMSG("CGLQuad:unable to link prim");
 				return FAILURE;
 			}
 		}
@@ -188,7 +187,7 @@ class CRenderContext
 			var  l_RsActivate : Result = m_CurrentRenderState.Activate();
 			if(l_RsActivate==FAILURE)
 			{
-				if(VERBOSE) CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
+				CDebug.CONSOLEMSG("CGLQuad:unable to activate rs");
 				return FAILURE;
 			}
 		}

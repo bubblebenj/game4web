@@ -48,14 +48,11 @@ import flash.net.URLRequest;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import haxe.TimerQueue;
-import renderer.CDrawObject;
 
 import kernel.Glb;
 import kernel.CSystem;
 import CTypes;
 import CDebug;
-
-using Lambda;
 
 enum GAME_STAGE
 {
@@ -71,16 +68,16 @@ enum GAME_STAGE
 
 class MTRG implements SystemProcess
 {
-	public static var s_Instance : MTRG; 
-	public var m_State : GAME_STAGE;
-	public var m_Gameplay : Game;
-	public var m_LoadTimer : TimerQueue;
+	public static var s_Instance	: MTRG; 
+	public var m_State				: GAME_STAGE;
+	public var m_Gameplay 			: Game;
+	public var m_LoadTimer			: TimerQueue;
 	
 	//public var m_BeginScreen :  BeginScreen;
-	public var m_BeginScreen :  DO<Sprite>;
-	public var m_BeginScreenBody :  DO<TextField>;
+	public var m_BeginScreen :  Sprite;
+	public var m_BeginScreenBody :  TextField;
 	public var m_BeginScreenBodyFormat :  TextFormat;
-	public var m_EndScreen :  DO<Sprite>;
+	public var m_EndScreen :  Sprite;
 	
 	public var m_Tasks : List<CTimedTask>;
 	
@@ -144,7 +141,6 @@ class MTRG implements SystemProcess
 		m_State = GS_STARTING;
 		m_Gameplay = new Game();
 		m_Gameplay.Initialize();
-		CDebug.CONSOLEMSG("startup");
 	}
 	
 	////////////////////////////////////////////////////////////
@@ -164,27 +160,17 @@ class MTRG implements SystemProcess
 	////////////////////////////////////////////////////////////
 	public function AfterUpdate() : Result
 	{
-		/*
 		m_Tasks =  Lambda.filter( 
 									Lambda.map(m_Tasks, function( t) { return ( t.Update() == false ) ? t : null;} ),
 									function(x) { return x != null; }
 									);
-		*/
-		m_Tasks = m_Tasks.fold( function( t, l : List<CTimedTask>){
-			if( !t.Update() )
-			{
-				l.add(t);
-			}
-			return l;
-		},
-		new List());
-				
 		return SUCCESS;
 	}
 	
 	////////////////////////////////////////////////////////////
 	public function BeforeUpdate() : Result
 	{
+		
 		switch( s_Instance.m_State )
 		{
 			case GS_INIT:
@@ -207,7 +193,6 @@ class MTRG implements SystemProcess
 				BuildEndScreen(w);
 		}
 
-		
 		return SUCCESS;
 	}
 	
@@ -240,7 +225,7 @@ class MTRG implements SystemProcess
 		if ( m_BeginScreen == null )
 		{
 			//CDebug.CONSOLEMSG("printing begin");
-			m_BeginScreen = new DO(new Sprite());
+			m_BeginScreen = new Sprite();
 			var l_Shape : Shape = new Shape();
 			l_Shape.graphics.beginFill(0xB2A568, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH - 48, MTRG.HEIGHT - 48, 8, 8);
@@ -271,53 +256,52 @@ class MTRG implements SystemProcess
 				l_Title.setTextFormat( l_Title0Format );
 			}
 			
-			m_BeginScreenBody = new DO( new TextField() );
+			m_BeginScreenBody= new TextField();
 			
-			m_BeginScreenBody.o.x = 48;
-			m_BeginScreenBody.o.y = l_Title.y + 16 + l_Title.height;
+			m_BeginScreenBody.x = 48;
+			m_BeginScreenBody.y = l_Title.y + 16 + l_Title.height;
 			
-			m_BeginScreenBody.o.height = 400;
-			m_BeginScreenBody.o.width = MTRG.HEIGHT - 48 - 32;
-			m_BeginScreenBody.o.visible = true;
+			m_BeginScreenBody.height = 400;
+			m_BeginScreenBody.width = MTRG.HEIGHT - 48 - 32;
+			m_BeginScreenBody.visible = true;
 			
-			m_BeginScreenBody.o.textColor = 0x7B69CC;
+			m_BeginScreenBody.textColor = 0x7B69CC;
 			
 			{
 				m_BeginScreenBodyFormat = new flash.text.TextFormat();
 				m_BeginScreenBodyFormat.font = "Arial";
 				m_BeginScreenBodyFormat.size = 16;
 				
-				m_BeginScreenBody.o.setTextFormat( m_BeginScreenBodyFormat );
+				m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );
 			}
 			
-			m_BeginScreen.o.addChild(l_Shape);
-			m_BeginScreen.o.addChild(l_Title);
-			m_BeginScreen.o.addChild(m_BeginScreenBody.o);
-			m_BeginScreen.o.alpha = 0;
-			m_BeginScreen.o.visible = true;
-			
-			m_BeginScreen.Activate();
+			m_BeginScreen.addChild(l_Shape);
+			m_BeginScreen.addChild(l_Title);
+			m_BeginScreen.addChild(m_BeginScreenBody);
+			m_BeginScreen.alpha = 0;
+			m_BeginScreen.visible = true;
+			Glb.GetRendererAS().AddToSceneAS(m_BeginScreen);
 			//Glb.GetRendererAS().SendToBack( m_BeginScreen );
 		}
 		else
 		{
 			//CDebug.CONSOLEMSG	("other " + m_BeginScreen);
-			if (m_BeginScreen.o.alpha <1)
+			if (m_BeginScreen.alpha <1)
 			{
-				m_BeginScreen.o.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
+				m_BeginScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
 			}
 			else
 			{
-				m_BeginScreen.o.alpha = 1;
+				m_BeginScreen.alpha = 1;
 			}
 			
-			if (m_BeginScreen.o.alpha >= 1)
+			if (m_BeginScreen.alpha >= 1)
 			{
 				
 				if (Glb.GetInputManager().GetMouse().IsDown())
 				{
-					m_BeginScreen.o.visible = false;
-					m_BeginScreen.Shut();
+					m_BeginScreen.visible = false;
+					Glb.GetRendererAS().RemoveFromSceneAS(m_BeginScreen);
 					m_BeginScreen = null;
 					m_BeginScreenBody = null;
 					m_BeginScreenBodyFormat = null;
@@ -333,8 +317,8 @@ class MTRG implements SystemProcess
 			if(m_BeginScreenBody!= null)
 			{
 				var l_CurText =  GetBeginText();
-				m_BeginScreenBody.o.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
-				m_BeginScreenBody.o.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
+				m_BeginScreenBody.text = l_CurText.substr(0, Std.int(l_CurText.length * m_BeginScreen.alpha));
+				m_BeginScreenBody.setTextFormat( m_BeginScreenBodyFormat );//so weird...crap...
 			}
 		}
 	}
@@ -344,21 +328,14 @@ class MTRG implements SystemProcess
 	{
 		if ( m_EndScreen == null )
 		{
-			CDebug.CONSOLEMSG("shutting...");
 			Shut();
 			
-			for( k in Glb.g_System.GetRenderer().m_Scene )
-			{
-				trace(k);
-			}
-			
-			m_EndScreen = new DO(new Sprite(),"ends");
-			
+			m_EndScreen = new Sprite();
 			var l_Shape :Shape = new Shape();
 			l_Shape.graphics.beginFill(0xFFFFFF, 0.8);
 			l_Shape.graphics.drawRoundRect( 32, 32, MTRG.WIDTH- 48, MTRG.HEIGHT - 48,8,8);
 			l_Shape.visible = true;
-			m_EndScreen.o.addChild(l_Shape);
+			m_EndScreen.addChild(l_Shape);
 			
 			var l_Title = new TextField();
 			
@@ -391,7 +368,7 @@ class MTRG implements SystemProcess
 			l_ClickHere.visible = true;
 			l_ClickHere.textColor = 0xFF1111;
 			
-			m_EndScreen.o.addChild(l_ClickHere);
+			m_EndScreen.addChild(l_ClickHere);
 			
 			
 			var l_ClickSomewhereElse = new TextField();
@@ -406,30 +383,29 @@ class MTRG implements SystemProcess
 			l_ClickSomewhereElseFormat.size = 24;
 			l_ClickSomewhereElse.setTextFormat( l_ClickSomewhereElseFormat );
 			
-			m_EndScreen.o.addChild(l_ClickSomewhereElse);
+			m_EndScreen.addChild(l_ClickSomewhereElse);
 			
-			m_EndScreen.o.alpha = 0;
-			m_EndScreen.o.addChild(l_Title);
-			m_EndScreen.o.visible = true;
+			m_EndScreen.alpha = 0;
+			m_EndScreen.addChild(l_Title);
 			m_EndScreen.visible = true;
-			m_EndScreen.Activate();
+			Glb.GetRendererAS().AddToSceneAS(m_EndScreen);
 		}
 		else
 		{
-			if (m_EndScreen.o.alpha <1)
+			if (m_EndScreen.alpha <1)
 			{
-				m_EndScreen.o.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
+				m_EndScreen.alpha += 1 * Glb.GetSystem().GetGameDeltaTime();
 			}
 			else
 			{
-				m_EndScreen.o.alpha = 1;
+				m_EndScreen.alpha = 1;
 			}
 			
-			if (m_EndScreen.o.alpha >= 1)
+			if (m_EndScreen.alpha >= 1)
 			{
 				if( Glb.GetInputManager().GetMouse().IsDown() )
 				{
-					m_EndScreen.Shut();
+					Glb.GetRendererAS().RemoveFromSceneAS(m_EndScreen);
 					m_EndScreen = null;
 					m_SoundBank.StopBank();
 					m_State = GS_INIT;

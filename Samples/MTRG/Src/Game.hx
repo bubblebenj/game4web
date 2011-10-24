@@ -34,10 +34,8 @@ package ;
 
 import CMinion;
 import flash.display.BlendMode;
-import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.media.Sound;
-import flash.sampler.NewObjectSample;
 import flash.system.System;
 import haxe.FastList;
 import haxe.Log;
@@ -47,7 +45,6 @@ import kernel.Glb;
 import math.CV2D;
 import math.Registers;
 import MTRG;
-import renderer.CDrawObject;
 import rsc.CRscImage;
 
 ////////////////////gameplay sequencing (not same granularity as game
@@ -94,7 +91,7 @@ class Game
 	public var	m_ProjectileHelper: CProjectileHelper;
 	
 	//game play
-	public var 	m_PlacingLimitLine : DO<Shape>;
+	public var 	m_PlacingLimitLine : Shape;
 	public var 	m_PlaceLimit : Float;
 	
 	////////////////////////////////////////////////////////////
@@ -154,7 +151,6 @@ class Game
 		
 		m_BG = new CBG();
 		m_BG.Initialize();
-		CDebug.ASSERT( m_BG != null);
 		
 		m_Pad = new CMinionPad();
 		m_Pad.Initialize();
@@ -189,13 +185,13 @@ class Game
 		
 		m_RscSpaceInvader = cast kernel.Glb.GetSystem().GetRscMan().Load( CRscImage.RSC_ID, "Data/spaceinvader.png" ); 
 		
-		m_PlacingLimitLine = new DO(new Shape(),"pll");
-		m_PlacingLimitLine.o.blendMode = BlendMode.ADD;
-		m_PlacingLimitLine.o.graphics.lineStyle( 3, 0x00FF00, 0.15);
-		m_PlacingLimitLine.o.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
-		m_PlacingLimitLine.o.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
+		m_PlacingLimitLine = new Shape();
+		m_PlacingLimitLine.blendMode = BlendMode.ADD;
+		m_PlacingLimitLine.graphics.lineStyle( 3, 0x00FF00, 0.15);
+		m_PlacingLimitLine.graphics.moveTo(MTRG.BOARD_X, m_PlaceLimit * MTRG.HEIGHT );
+		m_PlacingLimitLine.graphics.lineTo(MTRG.WIDTH, m_PlaceLimit * MTRG.HEIGHT );
 		m_PlacingLimitLine.visible = false;
-		m_PlacingLimitLine.Activate();
+		Glb.GetRendererAS().AddToSceneAS(m_PlacingLimitLine);
 		
 		m_Mothership.Initialize();
 		
@@ -203,7 +199,6 @@ class Game
 		m_ProjectileHelper.Initialize();
 		
 		m_State = GS_FIRST_FRAME;
-		CDebug.CONSOLEMSG("Inited");
 	}
 
 	
@@ -223,7 +218,14 @@ class Game
 		MTRG.s_Instance.m_State = GS_END_SCREEN(_Win);
 	}
 	
-
+	////////////////////////////////////////////////////////////
+	public function OnLoaded()
+	{
+		Glb.GetRendererAS().SendToBack( m_BG.GetDisplayObject() ) ;
+		Glb.GetRendererAS().SendToFront( m_Pad.GetDisplayObject() ) ;
+	}
+	
+	
 	////////////////////////////////////////////////////////////
 	public function PlaceCurrentDND()
 	{
@@ -319,12 +321,6 @@ class Game
 		{
 			CDebug.CONSOLEMSG( m_CollMan.toString() );
 		}
-		
-		if ( Glb.GetInputManager().GetKeyboard().IsKeyDown( CKeyCodes.KEY_F2)
-		&&	!Glb.GetInputManager().GetKeyboard().WasKeyDown(CKeyCodes.KEY_F2))
-		{
-			CDebug.CONSOLEMSG( Glb.g_System.GetRenderer().toString() );
-		}
 		#end
 		
 		switch(m_State)
@@ -333,16 +329,18 @@ class Game
 			case GS_LOADING: 
 			
 			if (!m_MinionHelper.IsLoaded()
-			&&	m_RscSpaceInvader.IsReady()
-			&&	m_BG.IsLoaded() )
+			&&	m_RscSpaceInvader.IsReady() )
 			{
 				m_MinionHelper.Initialize();
 				m_Pad.Populate();
+				OnLoaded();
 			}
 			
 			if ( IsLoaded())
 			{
-				
+				OnLoaded(); 
+				//SetVisible(false);
+				//m_State = GS_RUNNING;
 			}
 			else
 			{
@@ -376,7 +374,6 @@ class Game
 	////////////////////////////////////////////////////////////
 	public function Shut()
 	{
-		CDebug.CONSOLEMSG("shutting");
 		for(a in m_Asteroids)
 		{
 			a.Shut();
@@ -404,8 +401,7 @@ class Game
 		m_ProjectileHelper.Shut();
 		m_ProjectileHelper = null;
 		
-		m_PlacingLimitLine.Shut();
-		m_PlacingLimitLine = null;
+		Glb.GetRendererAS().RemoveFromSceneAS(m_PlacingLimitLine);
 		System.gc();
 		System.gc();
 	}
