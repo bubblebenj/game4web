@@ -37,7 +37,6 @@ class CMaterial extends CRsc
 		return RSC_ID;
 	}
 	
-	public static inline var VERBOSE : Bool = false;
 	public function new() 
 	{
 		super();
@@ -54,10 +53,7 @@ class CMaterial extends CRsc
 		{
 			if ( l_Texes.Activate() == FAILURE)
 			{
-				if(VERBOSE)
-				{
-					CDebug.CONSOLEMSG("V:Unable to activate texture");
-				}
+				CDebug.CONSOLEMSG("Unable to activate texture");
 				return FAILURE;
 			}
 		}

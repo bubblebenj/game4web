@@ -159,7 +159,7 @@ class CV2D
 	
 	public function toString( ?_NbDigits = 3 ) : String
 	{
-		return ("[ x="+Utils.CutDigits(x, _NbDigits)+",\t y="+Utils.CutDigits(y, _NbDigits)+" ]");
+		return ("[ x="+Utils.CutDigits(x, _NbDigits)+", y="+Utils.CutDigits(y, _NbDigits)+" ]");
 	}
 	
 	public static inline function ToStringStatic( _V2D : { x : Float, y : Float } ) : String

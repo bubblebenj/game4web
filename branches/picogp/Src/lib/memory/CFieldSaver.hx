@@ -5,8 +5,8 @@
 
 package memory;
 
-import CTypes;
-import CDebug;
+import kernel.CTypes;
+import kernel.CDebug;
 
 class CFieldSaver 
 {

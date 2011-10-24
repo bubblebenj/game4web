@@ -17,14 +17,16 @@ import renderer.camera.CCamera;
 import renderer.camera.CPerspectiveCamera;
 import renderer.camera.COrthoCamera;
 
-using Lambda;
+
+
 
 class CRenderer
 {
 	var	m_CurrentVPMatrix	: CMatrix44;
 	
-	public var m_Scene 			: Array<CDrawObject>;
-
+	var m_Scene 			: List<CDrawObject>;
+	var m_BackScene			: List<CDrawObject>;
+	
 	public var m_Vps		: Array<CViewport>;
 	public var m_Cameras	: Array<CCamera>;
 	
@@ -86,8 +88,9 @@ class CRenderer
 		m_Cameras[CAM_PERSPECTIVE_0]	= new CPerspectiveCamera();
 		m_Cameras[CAM_ORTHO_0]			= new COrthoCamera();
 		
-		m_Scene			= [];
-		
+		m_Scene			= new List<CDrawObject>();
+		m_BackScene		= new List<CDrawObject>();
+	
 		m_RenderContext.Reset();
 		
 		return SUCCESS;
@@ -107,11 +110,21 @@ class CRenderer
 			}
 		}
 		
+		m_BackScene.clear();
+		
+		for ( l_do in m_Scene)
+		{
+			m_BackScene.push(l_do);
+		}
+		
 		//CDebug.CONSOLEMSG(".");
-		for ( l_do in m_Scene )
+		for ( l_do in m_BackScene )
 		{
 			l_do.Update();
 		}
+		
+		m_Scene.clear();
+		m_Scene = m_BackScene.filter( function( _ ) { return true; } );
 		
 		return SUCCESS;
 	}
@@ -164,25 +177,47 @@ class CRenderer
 		return SUCCESS;
 	}
 	
-	public function AddToScene( _Obj : CDrawObject ) : Result
+	
+	public function insertAt( _list : List<CDrawObject>, _Index : Int, _Obj : CDrawObject ) : Void
 	{
-		if (_Obj.IsActivated()) return FAILURE;
-		m_Scene.push( _Obj );
-		m_Scene.sort( function(o1,o2)
-		{
-			if (o2.m_Priority < o1.m_Priority)
-			{
-				return -1;
-			}
-			else if (o2.m_Priority > o1.m_Priority)
-			{
-				return 1;
-			}
-			return 0;
-		}
-		);
+		var l_ListLen	= _list.length;
 		
-		return SUCCESS;
+		var l_NewList	= new List();
+		var l_Iter		= _list.iterator();
+		var l_DObj : CDrawObject;
+		
+		for (i in 0..._Index)
+		{
+			l_DObj	= l_Iter.next();
+			l_NewList.add( l_DObj );
+		}
+		
+		l_NewList.add( _Obj );
+		
+		for ( i in _Index ... l_ListLen )
+		{
+			l_DObj	= l_Iter.next();
+			l_NewList.add( l_DObj );
+		}
+		
+		_list	= l_NewList;
+	}
+	
+	
+	public function AddToScene( _Obj : CDrawObject ) : Void
+	{
+		m_Scene.add( _Obj );
+		//
+		var i = 0;
+		for (x in m_Scene)
+		{
+			if (x.m_Priority >= _Obj.m_Priority)
+			{
+				insertAt( m_Scene, i, _Obj );
+				break;
+			}
+			i++;
+		}//*/
 	}
 	
 	/*/
@@ -200,16 +235,5 @@ class CRenderer
 	public function RemoveFromScene(  _Obj : CDrawObject ) : Void
 	{
 		m_Scene.remove(_Obj );
-	}
-	
-	public function toString()
-	{
-		return m_Scene
-		.filter( function(d) return d.m_Name != null )
-		.map(
-		function( d )
-		{
-			return  d.m_Priority + " * " + d.toString();
-		}).join(" , ");
 	}
 }

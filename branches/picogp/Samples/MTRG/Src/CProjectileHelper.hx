@@ -53,7 +53,8 @@ class CProjectileHelper
 	public function Initialize()
 	{
 		m_CBoulettePool.Free().iter( function(k) { k.Initialize(); } );
-		m_Initialized = true;		
+		m_Initialized = true;
+		
 	}
 	
 	public function Update()

@@ -75,16 +75,6 @@ class CRscMan
 		return l_Rsc;
 	}
 	
-	public function Update()
-	{ 
-		m_SyncQueue = m_SyncQueue.filter( function(r) { r.Update(); return !r.IsReady(); } );
-	}
-	
-	public function AddToQueue(r)
-	{
-		m_SyncQueue.add(r);
-	}
-	
 	public function Load( _Type : RSC_TYPES, _Path : String, ?_SingleLoad : Bool ) : CRsc
 	{
 		CDebug.ASSERT(_Path != null );
@@ -137,13 +127,10 @@ class CRscMan
 	{
 		m_Repository = null;
 		m_Builders = null;
-		m_SyncQueue  = new List();
 	}
 	
 	var m_Repository 	: Hash<CRsc>;
 	var m_Builders 		: IntHash < CRscBuilder >;
-	
-	var m_SyncQueue 		: List<CRsc>;
 	
 	public static var RSC_COUNT	= 0;
 }

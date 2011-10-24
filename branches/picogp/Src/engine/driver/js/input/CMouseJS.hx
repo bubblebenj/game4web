@@ -53,6 +53,6 @@ class CMouseJS extends CMouse
 		m_Out		= false;
 	}
 	
-	// je sais c'est mal mais tellement moins chiant a minipuler
+	// je sais c'est mal mais tellement moins chiant a manipuler
 	private var m_Context	: HtmlDom;
 }

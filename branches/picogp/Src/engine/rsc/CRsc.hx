@@ -3,8 +3,6 @@ package rsc;
 import kernel.CSystem;
 import kernel.Glb;
 import remotedata.IRemoteData;
-import kernel.EnumHash;
-using Lambda;
 
 typedef RSC_TYPES = Int;
 
@@ -16,63 +14,21 @@ class CRsc implements IRemoteData
 	
 	public	var m_state( default, SetState )	: DATA_STATE;
 	
-			var cbk								: EnumHash<DATA_STATE,List<Void->Dynamic>>; 
-	
-	public function SetState( s : DATA_STATE ) : DATA_STATE
+	public	function SetState( _State : DATA_STATE ) : DATA_STATE
 	{
-		m_state	= s;
-		
-		var lp = cbk.get(s);
-		if ( lp != null )
-		{
-			CDebug.CONSOLEMSG("prc");
-			lp.iter(function(p) p());
-			cbk.set(s,null);
-		}
-			
+		m_state	= _State;
 		return m_state;
 	}
 	
-	public function AddStateCbk(s:DATA_STATE,proc : Void->Dynamic)
-	{
-		if( s == m_state )
-		{
-			proc(); return;
-		}
-		
-		if (cbk.get(s) == null)
-		{
-			var l = new List();
-			l.add(proc);
-			cbk.set(s, l);
-		}
-		else 
-		{
-			var l = cbk.get(s);
-			l.add(proc);
-			cbk.set(s, l);
-		}
-	}
-	
-
 	public function new()
 	{
 		m_Ref			= 0;
 		m_Path 			= "";
 		m_SingleLoad 	= false;
-		cbk = new EnumHash(DATA_STATE);
 		m_state			= REMOTE;
 	}
 	
-	public function Queue()
-	{
-		Glb.g_System.GetRscMan().AddToQueue( this );
-	}
 
-	public function Update()
-	{
-		
-	}
 	
 	public inline function IsReady() : Bool
 	{

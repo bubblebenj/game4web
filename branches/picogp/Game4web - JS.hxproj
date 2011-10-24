@@ -35,8 +35,7 @@
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
-    <hidden path="Src\engine\editor" />
-    <hidden path="Src\engine\driver\as" />
+    <!-- example: <hidden path="..." /> -->
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />

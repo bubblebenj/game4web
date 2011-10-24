@@ -8,12 +8,11 @@ package renderer;
 import renderer.CMaterial;
 import renderer.CPrimitive;
 
-class CMesh extends CDrawObject
+class CMesh extends CDrawObject;
 {
 
 	public function new() 
 	{
-		super();
 		m_Primitives = new Array<CPrimitive>();
 		m_Materials = new Array<CMaterial>();
 	}
