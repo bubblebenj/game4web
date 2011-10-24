@@ -1,0 +1,95 @@
+﻿body{
+	font-family			:calibri, serif;
+	font-size			:12px;
+	text-align			:center;
+	color				:#ffffff;
+	background-color	:#111111;
+	padding				:5px;
+	line-height			:150%;
+}
+
+/* pour que world-cell prenne 100% de la largeur de la page */
+#world-table{
+	display				:table;
+	width				:100%;
+	height				:100%;
+}
+
+div{
+	background-color	: transparent;
+}
+
+/* pour pouvoir centrer verticalement */
+#world-cell{
+	display				:table-cell;
+	text-align			:center;
+	vertical-align		:middle;
+	width				:100%;
+	height				:100%;
+}
+
+#global{
+	position			:relative;
+	display				:inline-block;
+	width				:1024px;/*768px; /* 640px; /* 512px; /* largeur obligatoire pour être centré */
+	height				:700px;/*576px; /*480px; /* 384px; */
+	background-color	:#222222;
+	color				:#EEEEEE;
+	background-repeat	:no-repeat;
+	text-align			:left;
+}
+
+
+#gamearea {
+	width				: 800px; /* 640px; /* 512px; /* largeur obligatoire pour être centré */
+	height				: 600px; /*480px; /* 384px; */
+	margin				: 50px;
+	margin-left			:auto;
+	margin-right		:auto;
+	padding				: 0px;
+	background-color	:#00FF99;
+	z-index				: 1;
+}
+
+.grid	{
+	position			: absolute;
+	width				: 25%;
+	height				: 25%;
+	border-style		: none;
+	z-index				: 0;
+}
+
+#Pos-1-1	{	left	:	 0%;	top	:	 0%;	background-color	: 	#696969;	}
+#Pos-1-2	{	left	:	 0%;	top	:	25%;	background-color	: 	#E38E5B;	}
+#Pos-1-3	{	left	:	 0%;	top	:	50%;	background-color	:	#696969;	}
+#Pos-1-4	{	left	:	 0%;	top	:	75%;	background-color	:	#E38E5B;	}
+
+#Pos-2-1	{	left	:	25%;	top	:	 0%;	background-color	:	#E38E5B;	}
+#Pos-2-2	{	left	:	25%;	top	:	25%;	background-color	:	#696969;	}
+#Pos-2-3	{	left	:	25%;	top	:	50%;	background-color	:	#E38E5B;	}
+#Pos-2-4	{	left	:	25%;	top	:	75%;	background-color	:	#696969;	}
+
+#Pos-3-1	{	left	:	50%;	top	:	 0%;	background-color	:	#696969;	}
+#Pos-3-2	{	left	:	50%;	top	:	25%;	background-color	:	#E38E5B;	}
+#Pos-3-3	{	left	:	50%;	top	:	50%;	background-color	:	#696969;	}
+#Pos-3-4	{	left	:	50%;	top	:	75%;	background-color	:	#E38E5B;	}
+
+#Pos-4-1	{	left	:	75%;	top	:	 0%;	background-color	:	#E38E5B;	}
+#Pos-4-2	{	left	:	75%;	top	:	25%;	background-color	:	#696969;	}
+#Pos-4-3	{	left	:	75%;	top	:	50%;	background-color	:	#E38E5B;	}
+#Pos-4-4	{	left	:	75%;	top	:	75%;	background-color	:	#696969;	}
+
+a{
+	color:#756FC4;
+	text-decoration:none;
+}
+
+a:hover
+{
+	color:#3C3CFF;
+	text-decoration:none;
+}
+
+img{
+	vertical-align:middle;
+}
