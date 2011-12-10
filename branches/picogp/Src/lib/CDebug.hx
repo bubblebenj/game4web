@@ -1,6 +1,7 @@
 package;
 import haxe.BaseCode;
 import haxe.Stack;
+import math.Utils;
 
 class CDebug
 {
@@ -56,6 +57,7 @@ class CDebug
 	#if debug
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
+		
 		#if neko
 			neko.Web.logMessage( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
 			//neko.Lib.print( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
