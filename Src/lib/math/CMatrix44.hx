@@ -12,7 +12,7 @@ import CGL;
 class CMatrix44 
 {	
 	#if js
-		public var m_Buffer : FloatArray;
+		//public var m_Buffer : FloatArray;
 	#else
 		public var m_Buffer : Array<Float>;
 	#end
