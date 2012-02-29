@@ -152,6 +152,19 @@ class C2DContainer extends C2DQuad
 		}
 	}
 	
+	/**
+	 * Need test
+	 * @param	_Scale
+	 */
+	public override function SetScale( _Scale : CV2D ) : Void
+	{
+		if ( _Scale.x != 0 && _Scale.y != 0 )
+		{
+			ScaleAndMoveChildren( _Scale );
+		}
+		super.SetScale( _Scale );
+	}
+	
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		if ( _Size.x != 0 && _Size.y != 0 )
@@ -244,7 +257,7 @@ class C2DContainer extends C2DQuad
 		{
 			_Prefix = "";
 		}
-		trace( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() + ", Vis : " + m_Visible );
+		CDebug.CONSOLEMSG( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() + ", Vis : " + m_Visible );
 	}
 	
 	public function ShowTree( ? _Depth : Int ) : Void
@@ -267,17 +280,13 @@ class C2DContainer extends C2DQuad
 		{
 			for ( i_Object in m_2DObjects )
 			{
-				//trace( Type.getClassName( Type.getClass( i_Object ) ) );
-				switch( Type.getClassName( Type.getClass( i_Object ) ) )
+				if( Std.is( i_Object, renderer.C2DContainer ) )
 				{
-					case "renderer.C2DContainer", "logic.CButton", "renderer.CLayer", "CTrack", "CStage", "CHUD" :
-					{
-						cast( i_Object, C2DContainer).ShowTree( (_Depth + 1) );
-					}
-					default	:
-					{
-						i_Object.DebugInfo( l_Tabs + "\t \t" );
-					}
+					cast( i_Object, C2DContainer).ShowTree( (_Depth + 1) );
+				}
+				else
+				{
+					i_Object.DebugInfo( l_Tabs + "\t \t" );
 				}
 			}
 		}

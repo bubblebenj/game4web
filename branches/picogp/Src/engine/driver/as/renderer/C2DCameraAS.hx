@@ -40,8 +40,8 @@ class C2DCameraAS extends C2DCamera
 	private function UpdateMatrix() : Void
 	{
 		m_Matrix.identity();
-		m_Matrix.tx	= -m_Coordinate.x * Glb.GetSystem().m_Display.m_Height + 0.5 * Glb.GetSystem().m_Display.m_Width;
-		m_Matrix.ty	= -m_Coordinate.y * Glb.GetSystem().m_Display.m_Height + 0.5 * Glb.GetSystem().m_Display.m_Height;
+		m_Matrix.tx	= -m_Coordinate.x * Glb.GetSystem().m_Display.m_Height + 0.5 * Glb.GetSystem().m_Display.m_Width * ( 1 / m_Scale );
+		m_Matrix.ty	= -m_Coordinate.y * Glb.GetSystem().m_Display.m_Height + 0.5 * Glb.GetSystem().m_Display.m_Height * ( 1 / m_Scale );
 		m_Matrix.scale( m_Scale, m_Scale );
 	}
 	
@@ -50,25 +50,26 @@ class C2DCameraAS extends C2DCamera
 		return m_Matrix;
 	}
 	
-	private static var s_FlashPoint	: Point	= new Point();
+	/**
+	 * // Doesn't actually world value should be divided by the world scale factor
+	 * 
+	 * Return the screen/viewport coordinates (cartesian homogenenized : height = 1)
+	 * @param	_WorldPos is the position of the object in the world
+	 * @param	_PointOut is the position of the object in the viewport
+	 */
 	public override function GetProjectionPoint( _WorldPos : CV2D, _PointOut : CV2D ) : Void
 	{
-		s_FlashPoint.x	=	-_WorldPos.x * Glb.GetSystem().m_Display.m_Height;
-		s_FlashPoint.y	=	-_WorldPos.y * Glb.GetSystem().m_Display.m_Height;
-		var l_Matrix 	= m_Matrix;
-		l_Matrix.invert();
-		s_FlashPoint	= m_Matrix.transformPoint( s_FlashPoint );
-		_PointOut.Set( -s_FlashPoint.x / Glb.GetSystem().m_Display.m_Height, -s_FlashPoint.y / Glb.GetSystem().m_Display.m_Height );
+		CDebug.CONSOLEMSG( "GetProjectionPoint( " + _WorldPos +", " + _PointOut +")" );
+		_PointOut.Set(	( _WorldPos.x - m_Coordinate.x + Glb.GetSystem().m_Display.GetAspectRatio() * 0.5 ),
+						( _WorldPos.y - m_Coordinate.y + 0.5 ) );
+		//_PointOut.Set(	( _WorldPos.x / worldScaleValue - m_Coordinate.x + Glb.GetSystem().m_Display.GetAspectRatio() * 0.5 ),
+						//( _WorldPos.y / worldScaleValue - m_Coordinate.y + 0.5 ) );
 	}
 	
 	public override function GetWorldPosition( _ViewportPos : CV2D, _PointOut : CV2D ) : Void
 	{
-		
-		CDebug.ASSERT( true );
-		//s_FlashPoint.x	=	-_ViewportPos.x * Glb.GetSystem().m_Display.m_Height;
-		//s_FlashPoint.y	=	-_ViewportPos.y * Glb.GetSystem().m_Display.m_Height;
-		//var l_Matrix 	= m_Matrix;
-		//s_FlashPoint	= m_Matrix.transformPoint( s_FlashPoint );
-		//_PointOut.Set( -s_FlashPoint.x / Glb.GetSystem().m_Display.m_Height, -s_FlashPoint.y / Glb.GetSystem().m_Display.m_Height );
+		CDebug.CONSOLEMSG( "GetWorldPosition( " + _ViewportPos +", " + _PointOut +")" );
+		_PointOut.Set(	( _ViewportPos.x + m_Coordinate.x - Glb.GetSystem().m_Display.GetAspectRatio() * 0.5 ),
+						( _ViewportPos.y + m_Coordinate.y - 0.5 ) );
 	}
 }
