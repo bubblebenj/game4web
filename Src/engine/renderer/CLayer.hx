@@ -27,9 +27,7 @@ import rsc.CRscMan;
 
 class CLayer extends C2DContainer
 {
-	private	static var m_HalfScreen	: CV2D = new CV2D( 0.5 * Glb.GetSystem().m_Display.GetAspectRatio(), 0.5 );
-	
-	private var w_Pos				: CV2D;
+	private	static var m_HalfScreen	: CV2D = new CV2D( 0.5 * Glb.GetSystem().m_Display.GetAspectRatio(), 0.5 );	
 	
 	public function new()
 	{
@@ -37,8 +35,6 @@ class CLayer extends C2DContainer
 		m_Camera	= new C2DCameraAS();
 		SetTHECamera( m_Camera );
 		m_Camera.m_Name	= m_Name;
-		m_Pivot			= new CV2D( 0, 0 );
-		w_Pos			= new CV2D( 0, 0 );
 	}
 	
 	public override function AddElement( _Object : C2DQuad ) : Result
@@ -52,11 +48,18 @@ class CLayer extends C2DContainer
 		return l_Res;
 	}	
 	
-	public function MoveTHECamera( _Pos : CV2D )
+	public function MoveTHECamera( _Pos : CV2D ) : Void
 	{
 		m_Camera.SetPosition( _Pos );
-		//CV2D.Sub( w_Pos, CV2D.ZERO, m_Camera.m_Coordinate );
-		//CV2D.Sub( w_Pos, w_Pos, m_HalfScreen );
-		//SetPosition( w_Pos );
+	}
+	
+	public function setZoom( _value : Float ) : Void
+	{
+		m_Camera.SetScale( _value );
+	}
+	
+	public function getZoom() : Float
+	{
+		return m_Camera.m_Scale;
 	}
 }

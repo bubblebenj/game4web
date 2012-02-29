@@ -5,6 +5,7 @@
 
 package renderer;
 
+import algorithms.CBitArray;
 import CDriver;
 
 import math.Constants;
@@ -33,7 +34,7 @@ class C2DQuad extends CDrawObject
 		super();
 		m_Rect		= new CRect2D();
 		m_Pivot		= new CV2D( 0.5, 0.5 ); // Center
-		m_Scale		= new CV2D( 0,0 );
+		m_Scale		= new CV2D( 0, 0 );
 		m_Rotation	= 0;
 		m_Color = new CColor();
 		m_Blend = MAT_BLEND_MODE.MBM_BLEND;
@@ -138,7 +139,17 @@ class C2DQuad extends CDrawObject
 		//m_Rect.m_Size.Copy( _Size );
 		//SetPosition( l_PivotCoord );
 	//}
-	 
+	
+	public function SetScale( _Scale : CV2D ) : Void
+	{
+		m_Scale.Copy( _Scale );
+	}
+	
+	public function GetScale() : CV2D
+	{
+		return m_Scale;
+	}
+	
 	/* Set size and adjust scale */
 	public function SetSize( _Size : CV2D ) : Void
 	{
