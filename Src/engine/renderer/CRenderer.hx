@@ -142,6 +142,10 @@ class CRenderer
 		
 	public function Update() : Result 
 	{
+		//var l_startTime	= Date.now();
+		//var l_dt		= Date.now().getTime() - l_startTime.getTime();
+		//CDebug.CONSOLEMSG( "Renderer update time : "+CTime.PrintFormattedTime( l_dt ) + " | " + l_dt );
+		
 		var l_BegRes : Result = BeginScene();
 		if ( l_BegRes == FAILURE )
 		{
@@ -173,7 +177,10 @@ class CRenderer
 		{
 			return FAILURE;
 		}
-
+		
+		//var l_dt		= Date.now().getTime() - l_startTime.getTime();
+		//CDebug.CONSOLEMSG( "Renderer update time : "+ tools.CTime.PrintFormattedTime( l_dt ) + " | " + l_dt );
+		
 		return SUCCESS;
 	}
 	

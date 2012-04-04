@@ -11,6 +11,9 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.display.Loader;
 import flash.net.URLRequest;
+import flash.utils.ByteArray;
+import haxe.io.BytesData;
+import haxe.io.BytesInput;
 
 import CTypes;
 import CDebug;
@@ -70,5 +73,17 @@ class CRscImageAS extends CRscImage
 		return GetBitmapData();
 	}
 	
+	public function loadBytes( _bytes : haxe.io.Bytes ) : Result
+	{
+		m_ImgLoader.loadBytes( _bytes.getData() );
+		CDebug.CONSOLEMSG( _bytes.length + "" );
+		
+		m_ImgLoader.contentLoaderInfo.removeEventListener(Event.INIT, onLoaded);
+
+		m_state			= READY;
+		
+		return SUCCESS;
+	}
+
 	private	var m_ImgLoader	: Loader;
 }
