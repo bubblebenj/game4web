@@ -6,6 +6,7 @@
 package ui;
 
 import haxe.xml.Fast;
+import swfclient.Globals;
 import Xml;
 
 import CDriver;
