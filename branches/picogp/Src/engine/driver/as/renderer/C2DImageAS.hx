@@ -52,7 +52,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	
 	public function Load( _Path )	: Result
 	{
-		m_state	= SYNCING;
+		//m_state	= SYNCING;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		
 		var l_Res = SetRsc( cast( l_RscMan.Load( CRscImage.RSC_ID , _Path ), CRscImageAS ) );
@@ -63,6 +63,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	
 	public	function SetRsc( _Rsc : CRscImage )	: Result
 	{
+		m_state = SYNCING;
 		m_RscImage = cast ( _Rsc, CRscImageAS );
 		var l_Res = (m_RscImage != null) ? SUCCESS : FAILURE;
 		
@@ -82,6 +83,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 	private function CreateBitmap() : Void
 	{
 		var l_BitmapData = m_RscImage.GetBitmapData();
+		CDebug.ASSERT( l_BitmapData != null, l_BitmapData + "" );
 		if ( l_BitmapData != null )
 		{
 			var l_Bmp = new Bitmap( l_BitmapData );
@@ -90,37 +92,43 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		}
 	}
 	
+	private function InitLoadedRsc() : Void
+	{
+		CreateBitmap();
+			
+		var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
+		
+		// initializing Scale value
+		SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
+							m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
+		m_Scale.Set( 1, 1 );
+		
+		if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
+		{
+			// Update size if a size was already set
+			var l_x : Float = 0;
+			var l_y : Float = 0;
+			l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
+			l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
+			SetSize( new CV2D( l_x, l_y ) );
+		}
+		
+		SetPosition( GetPosition() );
+		
+		SetVisible( m_Visible );
+		m_state	= READY;
+		//CDebug.CONSOLEMSG( "READY" );
+			
+	}
+	
 	public override function Update() : Result
 	{
 		if ( 	m_RscImage	!= null
 		&& 		m_RscImage.IsReady()
 		&&		m_state == SYNCING )
 		{
-			CreateBitmap();
-			
-			var l_Size : CV2D	= CV2D.NewCopy( GetSize() );
-			
-			// initializing Scale value
-			SetSize( new CV2D(	m_DisplayObject.width	/ Glb.GetSystem().m_Display.m_Height, 
-								m_DisplayObject.height	/ Glb.GetSystem().m_Display.m_Height) );
-			m_Scale.Set( 1, 1 );
-			
-			if ( !CV2D.AreAbsEqual( l_Size, CV2D.ZERO ) )
-			{
-				// Update size if a size was already set
-				var l_x : Float = 0;
-				var l_y : Float = 0;
-				l_x	= ( l_Size.x == 0 ) ? l_Size.y * m_DisplayObject.width / m_DisplayObject.height : l_Size.x;
-				l_y	= ( l_Size.y == 0 ) ? l_Size.x * m_DisplayObject.height / m_DisplayObject.width : l_Size.y;
-				SetSize( new CV2D( l_x, l_y ) );
-			}
-			
-			SetPosition( GetPosition() );
-			
-			SetVisible( m_Visible );
-			m_state	= READY;
-			CDebug.CONSOLEMSG( "READY" );
-			
+			CDebug.CONSOLEMSG( "loading rsc" );
+			InitLoadedRsc();
 		}
 		return SUCCESS;
 	}
