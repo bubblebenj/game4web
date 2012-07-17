@@ -15,6 +15,7 @@ import renderer.CRenderer;
 import rsc.CRscCommonFactory;
 import rsc.CRscMan;
 import rsc.CRsc;
+import tools.Profiler;
 
 class CSystem
 {
@@ -94,12 +95,14 @@ class CSystem
 	
 	public function MainLoop()
 	{
+		Profiler.get().begin("FRAME");
 		// Glb.StaticUpdate actually do g_System.Update();
 		#if flash
 			Lib.current.addEventListener( Event.ENTER_FRAME, ClosedStaticUpdate );
 		#else
 			m_SysTimer.add( Glb.StaticUpdate );
 		#end
+		Profiler.get().end("FRAME");
 	}
 	
 	
@@ -154,7 +157,9 @@ class CSystem
 			}
 			
 			//trace("CSystem::rd Updt");
+			Profiler.get().begin("DRAW");
 			m_Renderer.Update();
+			Profiler.get().end("DRAW");
 			
 			//trace("CSystem::af Drw");
 			if( m_Process != null)
