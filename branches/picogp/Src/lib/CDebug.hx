@@ -1,6 +1,6 @@
 package;
-import haxe.BaseCode;
-import haxe.Stack;
+import haxe.crypto.BaseCode;
+import haxe.CallStack;
 import math.Utils;
 
 class CDebug
@@ -45,7 +45,7 @@ class CDebug
 	#if debug
 	public static function ERRORMSG( _Error : Dynamic, ?pos : haxe.PosInfos  )
 	{
-		CDebug.CONSOLEMSG( "ERROR\n \"" + _Error + "\" " + haxe.Stack.toString( haxe.Stack.exceptionStack() ), pos );
+		CDebug.CONSOLEMSG( "ERROR\n \"" + _Error + "\" " + CallStack.toString( haxe.CallStack.exceptionStack() ), pos );
 	}
 	#else
 	public static inline function ERRORMSG( _Msg : String, ?pos : haxe.PosInfos  )

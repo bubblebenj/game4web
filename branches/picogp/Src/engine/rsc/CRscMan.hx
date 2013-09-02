@@ -11,8 +11,8 @@ class CRscMan
 {
 	public function Initialize() : Result
 	{
-		m_Repository = new Hash<CRsc>();
-		m_Builders = new IntHash <CRscBuilder>();
+		m_Repository = new Map<String, CRsc>();
+		m_Builders = new Map<Int, CRscBuilder>();
 		return SUCCESS;
 	}
 	
@@ -129,8 +129,8 @@ class CRscMan
 		m_Builders = null;
 	}
 	
-	var m_Repository 	: Hash<CRsc>;
-	var m_Builders 		: IntHash < CRscBuilder >;
+	var m_Repository 	: Map<String, CRsc>;
+	var m_Builders 		: Map<Int, CRscBuilder>;
 	
 	public static var RSC_COUNT	= 0;
 }

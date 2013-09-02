@@ -15,9 +15,9 @@ enum DATA_STATE
 
 interface IRemoteData 
 {
-	public	var m_state( default, SetState )	: DATA_STATE;
+	public	var m_state( default, set )	: DATA_STATE;
+	
+	public	function set_m_state( _State : DATA_STATE ) : DATA_STATE;
 	
 	public	function IsReady() : Bool;
-	
-	public	function SetState( _State : DATA_STATE ) : DATA_STATE;
 }

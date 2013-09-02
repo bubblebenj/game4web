@@ -21,7 +21,7 @@ import rsc.CRsc;
 import rsc.CRscMan;
 import rsc.CRscText;
 
-class CTextFieldAS extends C2DQuadAS, implements ITextField
+class CTextFieldAS extends C2DQuadAS implements ITextField
 {
 	private var m_Text		: String;
 	

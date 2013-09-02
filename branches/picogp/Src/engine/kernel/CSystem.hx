@@ -7,7 +7,6 @@ package kernel;
 
 import CTypes;
 import haxe.Timer;
-import haxe.TimerQueue;
 import kernel.Glb;
 import kernel.CDisplay;
 import math.Utils;
@@ -73,7 +72,7 @@ class CSystem
 	
 	public function Initialize() : Result
 	{
-		m_SysTimer = new TimerQueue( Utils.RoundNearest( DT * 1000 ));
+		m_SysTimer = new Timer( Utils.RoundNearest( DT * 1000 ));
 		
 		m_RscMan = new CRscMan();
 		m_RscMan.Initialize();
@@ -225,7 +224,7 @@ class CSystem
 	
 	public 	var m_IsPaused : Bool;
 	
-			var m_SysTimer : haxe.TimerQueue;  
+			var m_SysTimer : haxe.Timer;  
 	
 			var m_RscMan	: CRscMan;
 			var m_Renderer	: CRenderer;

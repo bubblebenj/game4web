@@ -31,7 +31,7 @@ class C2DQuadAS extends C2DQuad
 	//public	var m_DisplayObject	: DisplayObject;	// container
 	private var	m_Matrix		: Matrix;
 	
-	private	var m_DisplayObject( GetNativeAS, never ) : DisplayObject; 
+	private	var m_DisplayObject( get, never ) : DisplayObject; 
 	
 	public	function new() 
 	{
@@ -40,7 +40,7 @@ class C2DQuadAS extends C2DQuad
 		m_Visible	= true;
 	}
 	
-	private function GetNativeAS() : DisplayObject
+	private function get_m_DisplayObject() : DisplayObject
 	{
 		return cast ( m_Native, DisplayObject );
 	}

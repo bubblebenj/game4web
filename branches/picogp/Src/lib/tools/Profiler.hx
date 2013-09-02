@@ -24,7 +24,7 @@ class Profiler
 	
 	inline function new()
 	{
-		h = new Hash();
+		h = new Map<String, { start:Null<Float>, total:Float, hit : Int}>();
 		
 		#if !master
 		enable = true;
@@ -34,7 +34,7 @@ class Profiler
 	}
 	
 	public var enable : Bool;
-	var h : Hash< { start:Null<Float>, total:Float, hit : Int}>;
+	var h : Map<String, { start:Null<Float>, total:Float, hit : Int}>;
 	
 	public inline function begin( tag )
 	{
@@ -79,7 +79,7 @@ class Profiler
 	{
 		if ( enable )
 		{
-			h = new Hash();
+			h = new Map<String, { start:Null<Float>, total:Float, hit : Int}>();
 		}
 	}
 	
