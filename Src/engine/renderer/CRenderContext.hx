@@ -21,10 +21,10 @@ class CRenderContext
 {
 	public var m_CurrentViewport	: Int;
 	
-	public var m_CurrentMaterial	(default, SetActiveMaterial) 	: CMaterial;
-	public var m_CurrentShader 		(default, SetActiveShader)		: CRscShader;
-	public var m_CurrentPrimitive 	(default, SetActivePrimitive)	: CPrimitive;
-	public var m_CurrentRenderState (default, SetActiveRenderStates ): CRenderStates;
+	public var m_CurrentMaterial	( default, set ) : CMaterial;
+	public var m_CurrentShader 		( default, set ) : CRscShader;
+	public var m_CurrentPrimitive 	( default, set ) : CPrimitive;
+	public var m_CurrentRenderState ( default, set ) : CRenderStates;
 	
 	private var m_FlushFlags : Int;
 	
@@ -35,8 +35,18 @@ class CRenderContext
 	
 	public function new() 
 	{
-		m_CurrentViewport		= CRenderer.VP_FULLSCREEN;
-		
+		m_CurrentViewport = CRenderer.VP_FULLSCREEN;
+		Clear();
+	}
+	
+	public function Reset()
+	{
+		Clear();
+		ResetDevice(); // TODO ?
+	}
+	
+	public inline function Clear() : Void
+	{
 		m_CurrentMaterial		= null;
 		m_CurrentShader			= null;
 		m_CurrentPrimitive		= null;
@@ -44,23 +54,12 @@ class CRenderContext
 		m_FlushFlags			= 0xFFFF;
 	}
 	
-	public function Reset()
-	{
-		SetActiveMaterial( null );
-		SetActiveShader( null );
-		SetActivePrimitive( null );
-		SetActiveRenderStates(null);
-		m_FlushFlags = 0xFFFF;
-		
-		ResetDevice();
-	}
-	
 	public function ResetDevice()
 	{
 		
 	}
 	
-	public function SetActiveRenderStates( _Rs : CRenderStates ) : CRenderStates
+	public function set_m_CurrentRenderState( _Rs : CRenderStates ) : CRenderStates
 	{
 		if( _Rs != m_CurrentRenderState)
 		{
@@ -81,7 +80,7 @@ class CRenderContext
 		return m_CurrentRenderState;
 	}
 	
-	public function SetActivePrimitive( _Prim :  CPrimitive ) : CPrimitive
+	public function set_m_CurrentPrimitive( _Prim :  CPrimitive ) : CPrimitive
 	{
 		if( _Prim != m_CurrentPrimitive )
 		{
@@ -102,7 +101,7 @@ class CRenderContext
 		return m_CurrentPrimitive;
 	}
 	
-	public function SetActiveShader( _sh : CRscShader ) : CRscShader
+	public function set_m_CurrentShader( _sh : CRscShader ) : CRscShader
 	{
 		if( _sh != m_CurrentShader)
 		{
@@ -122,7 +121,7 @@ class CRenderContext
 		return m_CurrentShader;
 	}
 	
-	public function SetActiveMaterial( _Mat : CMaterial ) : CMaterial
+	public function set_m_CurrentMaterial( _Mat : CMaterial ) : CMaterial
 	{
 		if( _Mat != m_CurrentMaterial)
 		{

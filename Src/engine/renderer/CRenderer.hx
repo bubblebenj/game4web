@@ -1,6 +1,6 @@
 package renderer;
 
-import haxe.FastList;
+import haxe.ds.GenericStack;
 import kernel.CDisplay;
 import math.CMatrix44;
 
@@ -43,7 +43,7 @@ class CRenderer
 	
 	public function new()
 	{
-		m_Vps = new Array<>();
+		m_Vps = new Array<CViewport>();
 		
 		for( i in 0...VP_MAX)
 		{

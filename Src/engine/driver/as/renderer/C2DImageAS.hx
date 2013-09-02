@@ -22,11 +22,12 @@ import rsc.CRscMan;
 import rsc.CRsc;
 
 
-class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
+class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 {
 	private var m_RscImage	: CRscImageAS;	// content
 	private var m_UV : CV4D;
-	public	var m_state( default, SetState )	: DATA_STATE;
+	
+	public	var m_state( default, set )	: DATA_STATE;
 	
 	public function new()
 	{
@@ -39,7 +40,7 @@ class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
 		m_UV			= new CV4D( 0, 0, 1, 1 );
 	}
 	
-	public	function SetState( _State : DATA_STATE ) : DATA_STATE
+	public	function set_m_state( _State : DATA_STATE ) : DATA_STATE
 	{
 		m_state	= _State;
 		return m_state;

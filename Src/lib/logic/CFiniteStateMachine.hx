@@ -26,9 +26,9 @@ class CTransition < TState, TActuator >
 
 class CFiniteStateMachine < TState, TActuator >
 {
-	private	var m_CurrentState			: TState;
+	private	var m_CurrentState : TState;
 
-	public var m_CurrentActuator(GetActuator, SetActuator)		: TActuator;
+	@:isVar public var m_CurrentActuator( get, set ) : TActuator;
 	public	var m_TransitionList		: Array < CTransition < TState, TActuator > > ;
 	
 	/* /!\ No default state, be carefull to initialise the FSM before using it. */
@@ -42,7 +42,7 @@ class CFiniteStateMachine < TState, TActuator >
 		SetState( _State );
 	}	
 	
-	private function SetActuator( _Actuator	: TActuator )	: TActuator
+	private function set_m_CurrentActuator( _Actuator : TActuator ) : TActuator
 	{
 		m_CurrentActuator	= _Actuator;
 		if ( _Actuator != null )
@@ -52,14 +52,14 @@ class CFiniteStateMachine < TState, TActuator >
 		return m_CurrentActuator;
 	}
 	
-	public function GetCurrentState()	: TState
+	public function GetCurrentState() : TState
 	{
 		return m_CurrentState;
 	}
 	
-	private function GetActuator()	: TActuator
+	private function get_m_CurrentActuator()	: TActuator
 	{
-		return	m_CurrentActuator;
+		return m_CurrentActuator;
 	}
 	
 	/* A transition is identified by a couple : a source state and a trigger (a state transition condition)
