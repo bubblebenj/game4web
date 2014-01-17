@@ -22,7 +22,7 @@ import rsc.CRscMan;
 import rsc.CRsc;
 
 
-class C2DImageAS extends C2DQuadAS, implements I2DImage, implements IRemoteData
+class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 {
 	private var m_RscImage	: CRscImageAS;	// content
 	private var m_UV : CV4D;

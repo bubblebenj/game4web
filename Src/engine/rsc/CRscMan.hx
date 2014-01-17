@@ -140,8 +140,8 @@ class CRscMan
 		m_SyncQueue  = new List();
 	}
 	
-	var m_Repository 	: Hash<CRsc>;
-	var m_Builders 		: IntHash < CRscBuilder >;
+	var m_Repository 	: Map<String,CRsc>;
+	var m_Builders 		: Map<Int,CRscBuilder>;
 	
 	var m_SyncQueue 		: List<CRsc>;
 	

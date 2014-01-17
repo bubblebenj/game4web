@@ -1,6 +1,6 @@
 package kernel;
 
-import haxe.FastList;
+//import haxe.FastList;
 import tools.transition.CTween;
 #if		js
 	import driver.js.kernel.CSystemJS;
