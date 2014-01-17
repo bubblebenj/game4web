@@ -1,6 +1,6 @@
 package;
-import haxe.BaseCode;
-import haxe.Stack;
+import haxe.crypto.BaseCode;
+import haxe.CallStack;
 
 class CDebug
 {

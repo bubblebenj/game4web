@@ -3,7 +3,7 @@ package rsc;
 import kernel.CSystem;
 import kernel.Glb;
 import remotedata.IRemoteData;
-import kernel.EnumHash;
+
 using Lambda;
 
 typedef RSC_TYPES = Int;
@@ -16,7 +16,7 @@ class CRsc implements IRemoteData
 	
 	public	var m_state( default, SetState )	: DATA_STATE;
 	
-			var cbk								: EnumHash<DATA_STATE,List<Void->Dynamic>>; 
+			var cbk								: Map<DATA_STATE,List<Void->Dynamic>>; 
 	
 	public function SetState( s : DATA_STATE ) : DATA_STATE
 	{
@@ -60,7 +60,7 @@ class CRsc implements IRemoteData
 		m_Ref			= 0;
 		m_Path 			= "";
 		m_SingleLoad 	= false;
-		cbk = new EnumHash(DATA_STATE);
+		cbk				= new Map(DATA_STATE);
 		m_state			= REMOTE;
 	}
 	

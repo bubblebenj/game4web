@@ -5,7 +5,7 @@
 
 package tools.transition;
 
-import haxe.FastList;
+import haxe.ds.GenericStack;
 import kernel.Glb;
 //import feffects.Tween;
 
@@ -19,7 +19,7 @@ enum TWIN_STATE
 
 class CTween
 {	
-	public static var m_TweenList	: FastList<CTween> = new FastList<CTween>();
+	public static var m_TweenList	: GenericStack<CTween> = new GenericStack<CTween>();
 	
 	public	var m_State				: TWIN_STATE;
 	
