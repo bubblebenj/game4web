@@ -177,7 +177,7 @@ class CV2D
 		return Math.sqrt( GetDistance2( _V0 , _V1 ) );
 	}
 	
-	public static inline var ZERO 		: CV2D = new CV2D(0, 0);
-	public static inline var ONE 		: CV2D = new CV2D(1, 1);
-	public static inline var HALF 		: CV2D = new CV2D(0.5, 0.5);
+	public static var ZERO	(default, never)	: CV2D = new CV2D(0, 0);
+	public static var ONE	(default, never)	: CV2D = new CV2D(1, 1);
+	public static var HALF	(default, never)	: CV2D = new CV2D(0.5, 0.5);
 }
