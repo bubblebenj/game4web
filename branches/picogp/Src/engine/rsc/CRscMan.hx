@@ -38,7 +38,7 @@ class CRscMan
 	
 	public function Create( _Type : RSC_TYPES ) : CRsc
 	{
-		var l_Builder = m_Builders.get(_Type);
+		var l_Builder : CRscBuilder = m_Builders.get(_Type);
 		if (l_Builder == null )
 		{
 			CDebug.CONSOLEMSG("No builder for rsc type : " + _Type );

@@ -105,7 +105,7 @@ class CV4D
 		return ("CV4D( "+x+" , "+y+" , "+z+", "+w+")" );
 	}
 	
-	public static inline var ZERO 	: CV4D = new CV4D(0, 0 , 0 ,0);
-	public static inline var ONE 	: CV4D = new CV4D(1, 1 ,1 ,1);
-	public static inline var HALF 	: CV4D = new CV4D(0.5, 0.5,0.5,0.5);
+	public static var ZERO	(default, never) : CV4D = new CV4D(0, 0 , 0 ,0);
+	public static var ONE	(default, never) : CV4D = new CV4D(1, 1 ,1 ,1);
+	public static var HALF	(default, never) : CV4D = new CV4D(0.5, 0.5,0.5,0.5);
 }

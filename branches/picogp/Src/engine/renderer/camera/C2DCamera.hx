@@ -7,9 +7,6 @@ package renderer.camera;
 
 import math.CV2D;
 
-import rsc.CRsc;
-import rsc.CRscMan;
-import kernel.Glb;
 import CDebug;
 
 class C2DCamera

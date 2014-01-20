@@ -87,9 +87,9 @@ class CV3D
 		return l_VOut;
 	}
 	
-	public static inline var ZERO 	: CV3D = new CV3D(0, 0, 0);
-	public static inline var ONE 	: CV3D = new CV3D(1, 1, 1);
-	public static inline var HALF 	: CV3D = new CV3D(0.5, 0.5, 0.5);
+	public static var ZERO	(default, never) : CV3D = new CV3D(0, 0, 0);
+	public static var ONE	(default, never) : CV3D = new CV3D(1, 1, 1);
+	public static var HALF	(default, never) : CV3D = new CV3D(0.5, 0.5, 0.5);
 	
 	
 	/***/
