@@ -11,10 +11,17 @@ import remotedata.IRemoteData;
 class CRscDAE extends CRsc
 {
 	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
-	public override function GetType() : Int return RSC_ID
-	public var m_Meshes : Hash<CMesh>;
+	public override function GetType() : Int
+	{
+		return RSC_ID;
+	}
 	
-	public function new() super()
+	public var m_Meshes : Map<Int, CMesh>;
+	
+	public function new() {
+		super();
+	}
+	
 	var m_Buffer : CRscText;
 	
 	public var m_Xml : Fast;
@@ -23,8 +30,8 @@ class CRscDAE extends CRsc
 	{
 		super.SetPath(p);
 		m_Buffer = cast Glb.g_System.GetRscMan().Load( CRscText.RSC_ID, p );
-		m_state = SYNCING;
-		m_Meshes = new Hash();
+		m_State = SYNCING;
+		m_Meshes = new Map<Int, CMesh>();
 		Queue();
 	}
 	 
@@ -37,7 +44,7 @@ class CRscDAE extends CRsc
 			
 			
 			BuildMeshes();
-			m_state = READY;
+			m_State = READY;
 		}
 	}
 	

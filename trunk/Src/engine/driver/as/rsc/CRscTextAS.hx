@@ -22,14 +22,14 @@ class CRscTextAS extends CRscText
 	{
 		super();
 		m_TextLoader	= new URLLoader();
-		m_state			= REMOTE;
+		m_State			= REMOTE;
 	}
 	
 	public function Initialize() : Result
 	{
 		m_TextLoader.addEventListener(Event.COMPLETE, onLoaded);
 		m_TextLoader.load( new URLRequest( m_Path ) );
-		m_state			= SYNCING;
+		m_State			= SYNCING;
 		return SUCCESS;
 	}
 	
@@ -41,13 +41,13 @@ class CRscTextAS extends CRscText
 	
 	public function onLoaded( _Event : Event )	: Void
 	{
-		m_state			= READY;
+		m_State			= READY;
 		//CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	
 	public override function GetTextData() : String
 	{
-		if  ( m_state == READY )
+		if  ( m_State == READY )
 		{
 			return cast( m_TextLoader.data, String );
 		}

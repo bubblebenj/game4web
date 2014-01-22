@@ -14,13 +14,13 @@ class CRsc implements IRemoteData
 	var m_Path									: String;
 	var m_SingleLoad							: Bool;
 	
-	public	var m_state( default, SetState )	: DATA_STATE;
+	public	var m_State( default, set_m_State )	: DATA_STATE;
 	
 			var cbk								: Map<DATA_STATE,List<Void->Dynamic>>; 
 	
-	public function SetState( s : DATA_STATE ) : DATA_STATE
+	public function set_m_State( s : DATA_STATE ) : DATA_STATE
 	{
-		m_state	= s;
+		m_State	= s;
 		
 		var lp = cbk.get(s);
 		if ( lp != null )
@@ -30,12 +30,12 @@ class CRsc implements IRemoteData
 			cbk.set(s,null);
 		}
 			
-		return m_state;
+		return m_State;
 	}
 	
 	public function AddStateCbk(s:DATA_STATE,proc : Void->Dynamic)
 	{
-		if( s == m_state )
+		if( s == m_State )
 		{
 			proc(); return;
 		}
@@ -60,8 +60,8 @@ class CRsc implements IRemoteData
 		m_Ref			= 0;
 		m_Path 			= "";
 		m_SingleLoad 	= false;
-		cbk				= new Map(DATA_STATE);
-		m_state			= REMOTE;
+		cbk				= new Map<DATA_STATE,List<Void->Dynamic>>();
+		m_State			= REMOTE;
 	}
 	
 	public function Queue()
@@ -76,7 +76,7 @@ class CRsc implements IRemoteData
 	
 	public inline function IsReady() : Bool
 	{
-		return m_state == READY;
+		return m_State == READY;
 	}
 	
 	public function Copy( _InRsc : CRsc ) : Void 

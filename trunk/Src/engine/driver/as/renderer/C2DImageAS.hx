@@ -26,12 +26,12 @@ class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 {
 	private var m_RscImage	: CRscImageAS;	// content
 	private var m_UV : CV4D;
-	public	var m_state( default, SetState )	: DATA_STATE;
+	public	var m_State( default, set_m_State )	: DATA_STATE;
 	
 	public function new()
 	{
 		super();
-		m_state			= REMOTE;
+		m_State			= REMOTE;
 		//m_Native		= new Bitmap( new BitmapData( 8, 8, false, 0x00000000 ) );
 		//GetBitmap().alpha = 0;
 		m_RscImage		= null;
@@ -44,10 +44,10 @@ class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 		return m_RscImage;
 	}
 	
-	public	function SetState( _State : DATA_STATE ) : DATA_STATE
+	public	function set_m_State( _State : DATA_STATE ) : DATA_STATE
 	{
-		m_state	= _State;
-		return m_state;
+		m_State	= _State;
+		return m_State;
 	}
 	
 	public function SetUV( _u : CV2D , _v : CV2D ) : Void
@@ -57,7 +57,7 @@ class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 	
 	public function Load( _Path, _autoActivate : Bool = true )	: Result
 	{
-		m_state	= SYNCING;
+		m_State	= SYNCING;
 		var l_RscMan : CRscMan = Glb.g_System.GetRscMan();
 		var rsc = l_RscMan.Load( CRscImage.RSC_ID , _Path );
 		CDebug.ASSERT( rsc != null );
@@ -86,7 +86,7 @@ class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 
 	public override function IsReady()	: Bool
 	{
-		return m_state == READY;
+		return m_State == READY;
 	}
 	
 	private function CreateBitmap() : Void
@@ -117,8 +117,8 @@ class C2DImageAS extends C2DQuadAS implements I2DImage implements IRemoteData
 		}
 		
 		SetPosition( GetPosition() );
-		SetVisible( m_Visible );
-		m_state	= READY;
+		visible = m_Visible;
+		m_State	= READY;
 		CDebug.CONSOLEMSG( "READY " + m_RscImage.GetPath() );
 	}
 

@@ -24,7 +24,6 @@ import renderer.camera.C2DCamera;
 
 class C2DContainer extends C2DQuad
 {
-	public 	var m_Name				: String;
 	private var m_2DObjects			: Array<C2DQuad>;
 	private	var m_AllEltActivated	: Bool;
 	
