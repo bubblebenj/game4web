@@ -25,13 +25,13 @@ class CRscImageAS extends CRscImage
 	{
 		super();
 		m_ImgLoader	= new Loader();
-		m_state		= REMOTE;
+		m_State		= REMOTE;
 	}
 	
 	public function Initialize() : Result
 	{
 		//init is fired earlier
-		m_state			= SYNCING;
+		m_State			= SYNCING;
 		
 		m_ImgLoader.contentLoaderInfo.addEventListener(Event.INIT, onLoaded);
 		m_ImgLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError );
@@ -50,7 +50,7 @@ class CRscImageAS extends CRscImage
 	{
 		m_ImgLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onIOError);
 		
-		m_state			= REMOTE;
+		m_State = REMOTE;
 		CDebug.ERRORMSG("Img failed to load " + m_Path);
 	}
 	
@@ -58,7 +58,7 @@ class CRscImageAS extends CRscImage
 	{
 		m_ImgLoader.contentLoaderInfo.removeEventListener(Event.INIT, onLoaded);
 
-		SetState( READY );
+		m_State	= READY;
 		CDebug.CONSOLEMSG("Img loaded " + m_Path);
 	}
 	

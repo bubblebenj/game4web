@@ -36,10 +36,10 @@ class CRscImageJS extends CRscImage
 			function(_)  
 			{ 
 				CDebug.CONSOLEMSG("Streamed image : " + _Path );
-				me.m_state = READY;
+				me.m_State = READY;
 			};
 		
-		m_state = SYNCING;
+		m_State = SYNCING;
 		//untyped __js__("m_Img.crossOrigin = '';");
 		m_Img.onload = l_functor;
 		m_Img.src = _Path;

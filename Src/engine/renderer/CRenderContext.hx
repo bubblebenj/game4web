@@ -21,23 +21,33 @@ class CRenderContext
 {
 	public var m_CurrentViewport	: Int;
 	
-	public var m_CurrentMaterial	(default, SetActiveMaterial) 	: CMaterial;
-	public var m_CurrentShader 		(default, SetActiveShader)		: CRscShader;
-	public var m_CurrentPrimitive 	(default, SetActivePrimitive)	: CPrimitive;
-	public var m_CurrentRenderState (default, SetActiveRenderStates ): CRenderStates;
+	public var m_CurrentMaterial	(default, set_m_CurrentMaterial) 	: CMaterial;
+	public var m_CurrentShader 		(default, set_m_CurrentShader)		: CRscShader;
+	public var m_CurrentPrimitive 	(default, set_m_CurrentPrimitive)	: CPrimitive;
+	public var m_CurrentRenderState (default, set_m_CurrentRenderState ): CRenderStates;
 	
 	private var m_FlushFlags : Int;
 	
-	public static inline var RC_SHADER_STAGE		: Int = 0;
-	public static inline var RC_MATERIAL_STAGE		: Int = 1;
-	public static inline var RC_PRIMITIVE_STAGE 	: Int = 2;
-	public static inline var RC_RENDER_STATES_STAGE : Int = 3;
-	public static inline var VERBOSE : Bool = false;	
+	public static var RC_SHADER_STAGE			(default, never) : Int	= 0;
+	public static var RC_MATERIAL_STAGE			(default, never) : Int	= 1;
+	public static var RC_PRIMITIVE_STAGE 		(default, never) : Int	= 2;
+	public static var RC_RENDER_STATES_STAGE	(default, never) : Int	= 3;
+	public static var VERBOSE					(default, never) : Bool	= false;	
 	
 	public function new() 
 	{
 		m_CurrentViewport		= CRenderer.VP_FULLSCREEN;
-		
+		ResetProps();
+	}
+	
+	public function Reset()
+	{
+		ResetProps();
+		ResetDevice();
+	}
+	
+	private inline function ResetProps() : Void
+	{
 		m_CurrentMaterial		= null;
 		m_CurrentShader			= null;
 		m_CurrentPrimitive		= null;
@@ -45,23 +55,12 @@ class CRenderContext
 		m_FlushFlags			= 0xFFFF;
 	}
 	
-	public function Reset()
-	{
-		SetActiveMaterial( null );
-		SetActiveShader( null );
-		SetActivePrimitive( null );
-		SetActiveRenderStates(null);
-		m_FlushFlags = 0xFFFF;
-		
-		ResetDevice();
-	}
-	
 	public function ResetDevice()
 	{
 		
 	}
 	
-	public function SetActiveRenderStates( _Rs : CRenderStates ) : CRenderStates
+	public function set_m_CurrentRenderState( _Rs : CRenderStates ) : CRenderStates
 	{
 		if( _Rs != m_CurrentRenderState)
 		{
@@ -82,7 +81,7 @@ class CRenderContext
 		return m_CurrentRenderState;
 	}
 	
-	public function SetActivePrimitive( _Prim :  CPrimitive ) : CPrimitive
+	public function set_m_CurrentPrimitive( _Prim :  CPrimitive ) : CPrimitive
 	{
 		if( _Prim != m_CurrentPrimitive )
 		{
@@ -103,7 +102,7 @@ class CRenderContext
 		return m_CurrentPrimitive;
 	}
 	
-	public function SetActiveShader( _sh : CRscShader ) : CRscShader
+	public function set_m_CurrentShader( _sh : CRscShader ) : CRscShader
 	{
 		if( _sh != m_CurrentShader)
 		{
@@ -123,7 +122,7 @@ class CRenderContext
 		return m_CurrentShader;
 	}
 	
-	public function SetActiveMaterial( _Mat : CMaterial ) : CMaterial
+	public function set_m_CurrentMaterial( _Mat : CMaterial ) : CMaterial
 	{
 		if( _Mat != m_CurrentMaterial)
 		{

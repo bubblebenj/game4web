@@ -59,7 +59,7 @@ class CTextFieldAS extends C2DQuadAS implements ITextField
 			
 			SetPosition( GetPosition() );
 			
-			SetVisible( m_Visible );
+			visible = m_Visible;
 			//if ( m_Activated )
 			//{
 				//if ( m_DisplayObject.parent == null )

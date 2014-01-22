@@ -31,7 +31,7 @@ class C2DQuadAS extends C2DQuad
 	//public	var m_DisplayObject	: DisplayObject;	// container
 	private var	m_Matrix		: Matrix;
 	
-	private	var m_DisplayObject( GetNativeAS, never ) : DisplayObject; 
+	private	var m_DisplayObject( get_m_DisplayObject, never ) : DisplayObject; 
 	
 	public	function new() 
 	{
@@ -40,14 +40,15 @@ class C2DQuadAS extends C2DQuad
 		m_Visible	= true;
 	}
 	
-	private function GetNativeAS() : DisplayObject
+	private function get_m_DisplayObject() : DisplayObject
 	{
+		// GetNativeAS
 		return cast ( m_Native, DisplayObject );
 	}
 	
-	public override function SetVisible( v : Bool ) : Bool
+	public override function set_visible( v : Bool ) : Bool
 	{
-		super.SetVisible( v );
+		super.visible = v;
 		if( m_DisplayObject != null )
 		{
 			m_DisplayObject.visible = v;
@@ -113,9 +114,9 @@ class C2DQuadAS extends C2DQuad
 		return SUCCESS;
 	}
 	
-	public override function SetAlpha( v ) : Float
+	public override function set_alpha( v ) : Float
 	{
-		super.SetAlpha( v );
+		super.alpha = v;
 		if ( m_DisplayObject != null )
 		{
 			m_DisplayObject.alpha = v;

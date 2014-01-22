@@ -44,7 +44,7 @@ class CRscTextureJS extends CRscTexture
 		catch (d:Dynamic)
 		{
 			CDebug.CONSOLEMSG("unable to cross domain ref img " + m_RscImage.GetPath());
-			m_state = INVALID;
+			m_State = INVALID;
 		}
 		
 	}
@@ -74,7 +74,7 @@ class CRscTextureJS extends CRscTexture
 			CDebug.CONSOLEMSG("GlError:PostCreateTexture:" + l_Err);
 		}
 		
-		m_state = READY;
+		m_State = READY;
 		m_InDevice = true;
 		CDebug.CONSOLEMSG("Created GL tex : "+ m_GlTexture);
 	}

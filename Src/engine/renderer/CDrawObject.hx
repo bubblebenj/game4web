@@ -23,14 +23,14 @@ class DO<T> extends CDrawObject
 		m_Name = name;
 	}
 	
-	public var o(get,set) : T;
+	public var o(get_o,set_o) : T;
 	
-	public function get() : T
+	public function get_o() : T
 	{
 		return cast m_Native;
 	}
 	
-	public function set(v) : T
+	public function set_o(v) : T
 	{
 		m_Native = v;
 		return m_Native;
@@ -39,7 +39,7 @@ class DO<T> extends CDrawObject
 
 class CDrawObject 
 {
-	public	var m_Priority(getPrio,setPrio)	: Int;
+	public	var m_Priority	(get_m_Priority, set_m_Priority) : Int;
 			var m_Visible	: Bool;
 	private var	m_Alpha		: Float;
 			var	m_Activated	: Bool;			/* We need it because, in AS, setting an object to a not visible is
@@ -51,8 +51,8 @@ class CDrawObject
 			var	m_Cameras	: Array<CCamera>;
 	public	var m_Native	: Dynamic;
 	
-	public var alpha(GetAlpha, SetAlpha) : Float;
-	public var visible(IsVisible, SetVisible) : Bool;
+	public var alpha	(get_alpha, set_alpha) : Float;
+	public var visible	(get_visible, set_visible) : Bool;
 	
 	public	var	m_Name : String;
 	
@@ -81,12 +81,12 @@ class CDrawObject
 		return m_Activated;
 	}
 	
-	public function getPrio()
+	public function get_m_Priority()
 	{
 		return m_Priority;
 	}
 	
-	public function setPrio(v) : Int
+	public function set_m_Priority(v) : Int
 	{
 		m_Priority = v;
 		if ( m_Activated )
@@ -145,24 +145,24 @@ class CDrawObject
 		return SUCCESS;
 	}
 	
-	public function SetVisible( v : Bool ) : Bool 
+	public function set_visible( v : Bool ) : Bool 
 	{
 		m_Visible = v;
 		return v;
 	}
 	
-	public function IsVisible() : Bool 
+	public function get_visible() : Bool 
 	{
 		return m_Visible;
 	}
 	
-	public function SetAlpha( _Value : Float )		: Float
+	public function set_alpha( _Value : Float )		: Float
 	{
 		m_Alpha 	= _Value;
 		return m_Alpha;
 	}
 	
-	public function GetAlpha() : Float
+	public function get_alpha() : Float
 	{
 		return m_Alpha;
 	}
