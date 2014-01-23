@@ -3,6 +3,7 @@ package rsc;
 import kernel.CSystem;
 import kernel.Glb;
 import remotedata.IRemoteData;
+import CTypes;
 
 using Lambda;
 
@@ -69,9 +70,9 @@ class CRsc implements IRemoteData
 		Glb.g_System.GetRscMan().AddToQueue( this );
 	}
 
-	public function Update()
+	public function Update() : Result
 	{
-		
+		return SUCCESS;
 	}
 	
 	public inline function IsReady() : Bool

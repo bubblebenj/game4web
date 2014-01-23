@@ -34,9 +34,10 @@ class CKeyboard extends CRsc
 		m_PreviousUpArray.Fill( true );
 	}
 	
-	public override function Update()
+	public override function Update() : Result
 	{
 		m_PreviousUpArray.Copy( m_UpArray );
+		return SUCCESS;
 	}
 	
 	public function IsKeyDown( _Kc : Int ) : Bool

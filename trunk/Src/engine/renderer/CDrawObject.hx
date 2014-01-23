@@ -156,13 +156,23 @@ class CDrawObject
 		return m_Visible;
 	}
 	
-	public function set_alpha( _Value : Float )		: Float
+	public inline function set_alpha( _Value : Float )		: Float
 	{
-		m_Alpha 	= _Value;
+		return SetAlpha( _Value );
+	}
+	
+	public function SetAlpha( _Value : Float )		: Float
+	{
+		m_Alpha = _Value;
 		return m_Alpha;
 	}
 	
 	public function get_alpha() : Float
+	{
+		return GetAlpha();
+	}
+	
+	public function GetAlpha() : Float
 	{
 		return m_Alpha;
 	}
