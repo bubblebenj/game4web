@@ -27,8 +27,8 @@ class CTransition < TState, TActuator >
 class CFiniteStateMachine < TState, TActuator >
 {
 	private	var m_CurrentState			: TState;
-
-	public var m_CurrentActuator(get_m_CurrentActuator, set_m_CurrentActuator)		: TActuator;
+	
+	public var m_CurrentActuator( default, set_m_CurrentActuator )		: TActuator;
 	public	var m_TransitionList		: Array < CTransition < TState, TActuator > > ;
 	
 	/* /!\ No default state, be carefull to initialise the FSM before using it. */
@@ -42,7 +42,7 @@ class CFiniteStateMachine < TState, TActuator >
 		SetState( _State );
 	}	
 	
-	private function get_m_CurrentActuator( _Actuator	: TActuator )	: TActuator
+	private function set_m_CurrentActuator( _Actuator	: TActuator )	: TActuator
 	{
 		m_CurrentActuator	= _Actuator;
 		if ( _Actuator != null )
@@ -50,11 +50,6 @@ class CFiniteStateMachine < TState, TActuator >
 			HandleTransition();	
 		}
 		return m_CurrentActuator;
-	}
-		
-	private function set_m_CurrentActuator()	: TActuator
-	{
-		return	m_CurrentActuator;
 	}
 	
 	public function GetCurrentState()	: TState

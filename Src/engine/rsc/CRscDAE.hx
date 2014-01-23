@@ -3,6 +3,8 @@ import haxe.xml.Fast;
 import kernel.Glb;
 import renderer.CMesh;
 import remotedata.IRemoteData;
+import CTypes;
+
 /**
  * ...
  * @author 
@@ -35,7 +37,7 @@ class CRscDAE extends CRsc
 		Queue();
 	}
 	 
-	public override function Update()
+	public override function Update() : Result 
 	{
 		if ( m_Buffer.IsReady())
 		{
@@ -46,6 +48,7 @@ class CRscDAE extends CRsc
 			BuildMeshes();
 			m_State = READY;
 		}
+		return SUCCESS;
 	}
 	
 	public function BuildMeshes()

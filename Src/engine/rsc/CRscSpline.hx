@@ -43,7 +43,7 @@ class	CRscSpline extends CRsc
 		return m_xmlFile.Load( _Path );
 	}
 	
-	public function Update() : Result
+	override public function Update() : Result
 	{
 		m_xmlFile.Update();
 		if ( m_xmlFile.IsLoaded() && m_spline == null )
