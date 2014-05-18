@@ -18,16 +18,13 @@ import math.CV2D;
 import math.Registers;
 
 import renderer.C2DQuad;
-import renderer.camera.C2DCamera;
-
-
 
 class C2DContainer extends C2DQuad
 {
 	public 	var m_Name				: String;
 	private var m_2DObjects			: Array<C2DQuad>;
 	private	var m_AllEltActivated	: Bool;
-	
+
 	public function new()
 	{
 		super();
@@ -36,12 +33,12 @@ class C2DContainer extends C2DQuad
 		m_AllEltActivated	= false;
 		SetSize( CV2D.ONE );
 	}
-	
+
 	public function GetElements() : Array<C2DQuad>
 	{
 		return m_2DObjects;
 	}
-	
+
 	public function AddElement( _Object : C2DQuad ) : Result
 	{
 		if ( Lambda.exists( m_2DObjects, function( x ) { return x == _Object; } ) )
@@ -55,7 +52,7 @@ class C2DContainer extends C2DQuad
 			return SUCCESS;
 		}
 	}
-	
+
 	public function RemoveElement( _Object : C2DQuad ) : Result
 	{
 		if ( Lambda.exists( m_2DObjects, function( x ) { return x == _Object; } ) )
@@ -69,7 +66,7 @@ class C2DContainer extends C2DQuad
 			return FAILURE;
 		}
 	}
-	
+
 	public function GetChildIndex( _Object : C2DQuad ) : Int
 	{
 		for ( i in 0 ... m_2DObjects.length )
@@ -81,7 +78,7 @@ class C2DContainer extends C2DQuad
 		}
 		return -1;
 	}
-	
+
 	public override function SetTHECamera( _Camera : C2DCamera ): Void
 	{
 		super.SetTHECamera( _Camera );
@@ -90,8 +87,8 @@ class C2DContainer extends C2DQuad
 			i_Object.SetTHECamera( _Camera );
 		}
 	}
-	
-	/* 
+
+	/*
 	 * Position
 	 */
 	public override function SetPosition( _Pos : CV2D ) : Void
@@ -106,7 +103,7 @@ class C2DContainer extends C2DQuad
 		}
 		super.SetPosition( _Pos );
 	}
-	 
+
 	public override function SetCenterPosition( _Pos : CV2D ) : Void
 	{
 		var l_ObjPos	: CV2D = new CV2D( 0, 0 );
@@ -119,7 +116,7 @@ class C2DContainer extends C2DQuad
 		}
 		super.SetCenterPosition( _Pos );
 	}
-	
+
 	public override function SetTLPosition( _Pos : CV2D ) : Void
 	{
 		var l_ObjPos	: CV2D = new CV2D( 0, 0 );
@@ -132,26 +129,26 @@ class C2DContainer extends C2DQuad
 		}
 		super.SetTLPosition( _Pos );
 	}
-	
-	/* 
+
+	/*
 	 * Size
 	 */
 	private inline function ScaleAndMoveChildren( _Ratio : { x : Float, y : Float } )
 	{
 		for ( i_Object in m_2DObjects )
 		{
-			// 1st scale		
+			// 1st scale
 			var l_V2D	= new CV2D(	i_Object.GetSize().x * _Ratio.x,
 									i_Object.GetSize().y * _Ratio.y );
 			i_Object.SetSize( l_V2D );
-			
+
 			// 2nd adapt the relative position
 			l_V2D.Set( 	( i_Object.GetTL().x - GetTL().x ) * _Ratio.x,
 						( i_Object.GetTL().y - GetTL().y ) * _Ratio.y );
 			i_Object.SetTLPosition( l_V2D );
 		}
 	}
-	
+
 	/**
 	 * Need test
 	 * @param	_Scale
@@ -164,7 +161,7 @@ class C2DContainer extends C2DQuad
 		}
 		super.SetScale( _Scale );
 	}
-	
+
 	public override function SetSize( _Size : CV2D ) : Void
 	{
 		if ( _Size.x != 0 && _Size.y != 0 )
@@ -174,13 +171,13 @@ class C2DContainer extends C2DQuad
 		}
 		super.SetSize( _Size );
 	}
-	
+
 	public override function SetTLSize( _TL : CV2D, _Sz : CV2D ) : Void
 	{
 		SetSize( _Sz );
 		SetTLPosition( _TL );
 	}
-	
+
 	public override function SetVisible( _Vis : Bool ) : Void
 	{
 		super.SetVisible( _Vis );
@@ -189,7 +186,7 @@ class C2DContainer extends C2DQuad
 			i_Object.SetVisible( _Vis );
 		}
 	}
-	
+
 	public override function SetAlpha( _Value : Float ) : Void
 	{
 		super.SetAlpha( _Value );
@@ -198,12 +195,12 @@ class C2DContainer extends C2DQuad
 			i_Object.SetAlpha( _Value );
 		}
 	}
-	
+
 	public override function Activate() : Result
 	{
 		// by-passing super.activate();
 		m_Activated	= true;
-		
+
 		var l_CntActivatedElements	: Int = 0;
 		for ( i_Object in m_2DObjects )
 		{
@@ -219,12 +216,12 @@ class C2DContainer extends C2DQuad
 		}
 		return SUCCESS;
 	}
-	
+
 	public override function IsReady() : Bool
 	{
 		return Lambda.foreach( m_2DObjects, function( x ) { return x.IsReady(); } );
 	}
-	
+
 	public override function Shut() : Result
 	{
 		for ( i_Object in m_2DObjects )
@@ -234,7 +231,7 @@ class C2DContainer extends C2DQuad
 		super.Shut();
 		return SUCCESS;
 	}
-	
+
 	public override function Update() : Result
 	{
 		super.Update();
@@ -242,14 +239,14 @@ class C2DContainer extends C2DQuad
 		{
 			i_Object.Update();
 		}
-		
+
 		if ( m_Activated && ! m_AllEltActivated )
 		{
 			Activate();
 		}
 		return SUCCESS;
 	}
-	
+
 	/* Debug functions */
 	public override function DebugInfo( ?_Prefix : String ) : Void
 	{
@@ -259,19 +256,19 @@ class C2DContainer extends C2DQuad
 		}
 		CDebug.CONSOLEMSG( _Prefix +" " + this +" Name: " + m_Name+", Pos: " + GetPosition().toString()+ ", Pivot: " + GetPivot().toString() + ", Sz: " + GetSize().toString() + ", Vis : " + m_Visible );
 	}
-	
+
 	public function ShowTree( ? _Depth : Int ) : Void
 	{
 		_Depth	= ( _Depth == null ) ? 0 : _Depth;
-		
+
 		var l_Tabs	: String	= "";
 		for ( i in 0 ... _Depth )
 		{
 			l_Tabs	= l_Tabs + "\t ";
 		}
-		
+
 		DebugInfo( l_Tabs );
-			
+
 		if ( m_2DObjects.length == 0 )
 		{
 			trace ( l_Tabs + "\t is empty" );

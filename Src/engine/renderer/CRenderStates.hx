@@ -21,13 +21,13 @@ enum Z_EQUATION
 
 class CRenderStates extends CRsc
 {
-	public static var 	RSC_ID = CRscMan.RSC_COUNT++;
-	public static function GetType() : Int
+	public static var 	RSC_ID : Int = { CRscMan.RSC_COUNT++; };
+	public override function GetType() : Int
 	{
 		return RSC_ID;
 	}
-	
-	public function new() 
+
+	public function new()
 	{
 		super();
 		m_ZRead = true;
@@ -36,31 +36,31 @@ class CRenderStates extends CRsc
 		m_VPMatrix = new CMatrix44();
 		m_VPMatrix.Identity();
 	}
-	
+
 	public override function Copy( _Rsc : CRsc ) : Void
 	{
 		super.Copy(_Rsc);
-		
+
 		var l_Rs = cast(_Rsc,CRenderStates);
 		m_ZRead = l_Rs.m_ZRead;
 		m_ZWrite = l_Rs.m_ZWrite;
 		m_ZEq = l_Rs.m_ZEq;
-		
+
 		m_VPMatrix.Copy(l_Rs.m_VPMatrix);
 	}
-	
+
 	public function Activate() : Result
 	{
 		return SUCCESS;
 	}
-	
+
 	public function Reset()
 	{
 		m_ZRead = true;
 		m_ZWrite = true;
 		m_ZEq = Z_GREATER_EQ;
 	}
-	
+
 	public function SetCurrentVPMatrix( _Mat : CMatrix44 )
 	{
 		m_VPMatrix = _Mat;

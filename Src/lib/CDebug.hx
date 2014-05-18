@@ -11,7 +11,7 @@ class CDebug
 	{
 		if ( _Obj == false )//|| _Obj == null )
 		{
-			
+
 			CDebug.CONSOLEMSG( "Assert in " + pos.className + "::" + pos.methodName, pos );
 			if ( _Msg != null )
 			{
@@ -23,10 +23,10 @@ class CDebug
 	#else
 	public static inline function ASSERT( _Obj : Bool, ?_Msg : String, ?pos : haxe.PosInfos  )
 	{
-		
+
 	}
 	#end
-	
+
 	#if debug
 	public static function BREAK( _Str : String, ?pos : haxe.PosInfos  )
 	{
@@ -41,7 +41,7 @@ class CDebug
 	{
 	}
 	#end
-	
+
 	#if debug
 	public static function ERRORMSG( _Error : Dynamic, ?pos : haxe.PosInfos  )
 	{
@@ -52,12 +52,12 @@ class CDebug
 	{
 	}
 	#end
-	
-	
+
+
 	#if debug
 	public static function CONSOLEMSG( _Msg : String, ?pos : haxe.PosInfos  )
 	{
-		
+
 		#if neko
 			neko.Web.logMessage( pos.fileName +":"+pos.lineNumber+" : "+ _Msg );
 		#else
