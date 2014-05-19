@@ -53,9 +53,10 @@ class CPool<T>
 		m_UsedList = new List<T>();
 		
 		m_FreeList.clear();
+		
 		for (i in 0..._Len)
 		{
-			m_FreeList.add( Type.createInstance(Type.getClass(_OriginalCopy),[]) );
+			m_FreeList.add( Reflect.copy(_OriginalCopy) );
 		}
 		
 		m_UsedList.clear();
