@@ -13,30 +13,30 @@ import math.CMatrix44;
 class Registers 
 {
 	//engine use
-	public static var V0 : CV3D = new CV3D(0,0,0);
-	public static var V1 : CV3D = new CV3D(0,0,0);
-	public static var V2 : CV3D = new CV3D(0,0,0);
-	public static var V3 : CV3D = new CV3D(0,0,0);
-	
-	//math use
-	public static var V4 : CV3D = new CV3D(0,0,0);
-	public static var V5 : CV3D = new CV3D(0,0,0);
-	public static var V6 : CV3D = new CV3D(0,0,0);
-	public static var V7 : CV3D = new CV3D(0,0,0);
+	public static var V0 : CV3D = new CV3D(0, 0, 0);
+	public static var V1 : CV3D = new CV3D(0, 0, 0);
+	public static var V2 : CV3D = new CV3D(0, 0, 0);
+	public static var V3 : CV3D = new CV3D(0, 0, 0);
+	                                             
+	//math use                                   
+	public static var V4 : CV3D = new CV3D(0, 0, 0);
+	public static var V5 : CV3D = new CV3D(0, 0, 0);
+	public static var V6 : CV3D = new CV3D(0, 0, 0);
+	public static var V7 : CV3D = new CV3D(0, 0, 0);
 	
 	//user use
-	public static var V8 : CV3D = new CV3D(0,0,0);
-	public static var V9 : CV3D = new CV3D(0,0,0);
-	public static var V10 : CV3D = new CV3D(0,0,0);
+	public static var V8 : CV3D = new CV3D(0, 0, 0);
+	public static var V9 : CV3D = new CV3D(0, 0, 0);
+	public static var V10 : CV3D = new CV3D(0, 0, 0);
 	public static var V11 : CV3D = new CV3D(0, 0, 0);
 	
 	//user use
-	public static var V2_0 : CV2D = new CV2D(0,0);
+	public static var V2_0 : CV2D = new CV2D(0, 0);
 	public static var V2_1 : CV2D = new CV2D(0, 0);
 	public static var V2_2 : CV2D = new CV2D(0, 0);
 	
-	public static var V2_8 : CV2D = new CV2D(0,0);
-	public static var V2_9 : CV2D = new CV2D(0,0);
+	public static var V2_8 : CV2D = new CV2D(0, 0);
+	public static var V2_9 : CV2D = new CV2D(0, 0);
 	
 	
 	//engine use
@@ -51,5 +51,5 @@ class Registers
 	public static var M6 : CMatrix44 = new CMatrix44();
 	public static var M7 : CMatrix44 = new CMatrix44();
 	
-	public static var V2DPool : CPool<CV2D> = new CPool( 64, new CV2D(0,0) );
+	public static var V2DPool : CPool<CV2D> = { new CPool( 64, CV2D.ZERO );} 
 }
